@@ -3,9 +3,10 @@ CPPFLAGS = -Wall #-Werror
 DEBUG = -g # -c
 
 PROJECTS_PATH = ~/Projects
-PROGRAM = $(PROJECTS_PATH)/Bin/QueryPlaygroundProgram
-PROJECT_PATH = $(PROJECTS_PATH)/QueryPlayground
-TEST_PATH = $(PROJECTS_PATH)/QueryPlaygroundTest
+PROJECT_PATH = $(PROJECTS_PATH)/CppQueryable
+PROGRAM_DIR = $(PROJECT_PATH)/Bin
+PROGRAM = $(PROGRAM_DIR)/CppQueryableProgram
+PROGRAM_TEST_DIR = $(PROJECT_PATH)/CppQueryableTest
 
 DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
 
@@ -22,7 +23,7 @@ PROGRAM_OBJS = $(PROGRAM_SRCS_PATHS:.cpp=.o)
 
 PROGRAM_SRCS_BASES = $(basename $(PROGRAM_SRCS_PATHS))
 
-TEST_SRCS = $(shell find $(TEST_PATH) -name "*.cpp")
+TEST_SRCS = $(shell find $(PROGRAM_TEST_DIR) -name "*.cpp")
 TEST_SRCS_BASES = $(basename $(TEST_SRCS))
 
 TEST_EXCLUDES = $(PROJECT_PATH)/main.o
@@ -72,6 +73,8 @@ $(DEPENDENCIES):
 
 $(REFS_REF):
 	/bin/mkdir -p $(REFS_PATH)
+	/bin/mkdir -p $(PROGRAM_DIR)
+	/bin/mkdir -p $(PROGRAM_TEST_DIR)
 	touch $(REFS_REF)
 
 .PHONY: depend

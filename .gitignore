@@ -1,2 +1,5 @@
 .refs
+Bin
 **/*.o
+Makefile.dep
+
