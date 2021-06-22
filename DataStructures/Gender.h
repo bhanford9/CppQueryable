@@ -1,0 +1,10 @@
+#ifndef QUERYPLAGROUND_DATASTRUCTURES_GENDER_H
+#define QUERYPLAGROUND_DATASTRUCTURES_GENDER_H
+
+enum class Gender
+{
+  Male,
+  Female
+};
+
+#endif
