@@ -28,6 +28,8 @@ public:
   bool IsGender(Gender gender);
   bool IsMale();
   bool IsFemale();
+
+  std::string ToString();
 };
 
 #endif

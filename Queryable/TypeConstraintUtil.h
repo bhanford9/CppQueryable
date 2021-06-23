@@ -1,5 +1,5 @@
-#ifndef FIRST_QUERYABLE_TYPECONSTRAINTUTIL_H
-#define FIRST_QUERYABLE_TYPECONSTRAINTUTIL_H
+#ifndef CPPQUERYABLE_QUERYABLE_TYPECONSTRAINTUTIL_H
+#define CPPQUERYABLE_QUERYABLE_TYPECONSTRAINTUTIL_H
 
 #include <type_traits>
 #include <utility>
@@ -26,5 +26,15 @@ template<typename T, typename = void>
 struct is_equatable : std::false_type { };
 template<typename T>
 struct is_equatable<T, void_t<decltype(std::declval<T>() == std::declval<T>())>> : std::true_type {};
+
+template<typename T, typename = void>
+struct is_aggregatable : std::false_type { };
+template<typename T>
+struct is_aggregatable<T, void_t<decltype(std::declval<T>() += std::declval<T>())>> : std::true_type {};
+
+template<typename T, typename = void>
+struct is_addable : std::false_type { };
+template<typename T>
+struct is_addable<T, void_t<decltype(std::declval<T>() + std::declval<T>())>> : std::true_type {};
 
 #endif

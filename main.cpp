@@ -112,8 +112,23 @@ int main()
         animals,
         [](Person p) { return p.GetAge(); },
         [](Animal a) { return a.GetAge(); },
-        [](Person p, Animal a) { return NumberNameName(p.GetAge(), p.GetName(), a.GetName()); });
+        [](Person p, Animal a) { return NumberNameName(p.GetAge(), p.GetName(), a.GetName()); });\
 
+  Queryable<Person, std::vector>(aged)
+    .Concat(heightOrdered, [](std::vector<Person> * collection, Person person) { collection->push_back(person); })
+    .ForEach([](Person person) { std::cout << person.ToString() << std::endl; });
+
+  std::string emptyString = "";
+  std::string csv = queryablePeople
+    .Aggregate<std::string, std::string>(
+      &emptyString,
+      [](std::string accumulated, Person person) { return accumulated + ", " + person.GetName(); },
+      [](std::string output) { return output.erase(0, 2); });
+
+  std::cout << csv << std::endl;
+
+  std::cout << "max age: " << queryablePeople.Max<double>(0, [](Person person) { return person.GetAge(); }) << std::endl;
+  std::cout << "first alphebetically: " << queryablePeople.Min<std::string>("z", [](Person person) { return person.GetName(); }) << std::endl;
 
   return averageAge + averageMaleHeight;
 }

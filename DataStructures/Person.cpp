@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Gender.h"
 #include "Person.h"
 
@@ -63,4 +65,12 @@ bool Person::IsMale()
 bool Person::IsFemale()
 {
   return this->gender == Gender::Female;
+}
+
+std::string Person::ToString()
+{
+  return "Name: " + this->name +
+    "\n\tAge: " + std::to_string(this->age) +
+    "\n\tHeight (in): " + std::to_string(this->heightInches) +
+    "\n\tGender: " + (this->IsMale() ? "M\n" : "F\n");
 }

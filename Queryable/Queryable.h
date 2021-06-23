@@ -1,5 +1,5 @@
-#ifndef FIRST_QUERYABLE_QUERYABLE_H
-#define FIRST_QUERYABLE_QUERYABLE_H
+#ifndef CPPQUERYABLE_QUERYABLE_QUERYABLE_H
+#define CPPQUERYABLE_QUERYABLE_QUERYABLE_H
 
 #include <algorithm>
 #include <exception>
@@ -180,12 +180,15 @@ public:
     return true;
   }
 
-  void Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
+  Queryable<TObj, TIterable> Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
   {
     for (TObj obj : collection)
     {
       appender(&this->items, obj);
     }
+
+    Queryable<TObj, TIterable> queryableItems(this->items);
+    return queryableItems;
   }
 
   template<typename T>
@@ -201,6 +204,46 @@ public:
     }
 
     return sum;
+  }
+
+  template<typename T>
+  T Max(T startSeed, std::function<T(TObj)> clause)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+
+    T max = startSeed;
+
+    for (TObj item : this->items)
+    {
+      T newValue = clause(item);
+
+      if (max < newValue)
+      {
+        max = newValue;
+      }
+    }
+
+    return max;
+  }
+
+  template<typename T>
+  T Min(T startSeed, std::function<T(TObj)> clause)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+
+    T min = startSeed;
+
+    for (TObj item : this->items)
+    {
+      T newValue = clause(item);
+
+      if (newValue < min)
+      {
+        min = newValue;
+      }
+    }
+
+    return min;
   }
 
   template<typename T>
@@ -296,6 +339,77 @@ public:
 
     Queryable<TObj, std::vector> queryableItems(sorted);
     return queryableItems;
+  }
+
+  TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate)
+  {
+    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated");
+
+    int count = this->Count();
+
+    if (count == 0)
+    {
+      throw std::exception("Cannot aggregate empty collection");
+    }
+
+    TObj aggregatedValue = this->items[0];
+
+    for (int i = 1; i < count; i++)
+    {
+      aggregatedValue += accumulate(aggregatedValue, this->items[i]);
+    }
+
+    return aggregatedValue;
+  }
+
+  TObj Aggregate(TObj * seed, std::function<TObj(TObj, TObj)> accumulate)
+  {
+    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated (+= operator)");
+    static_assert(is_addable<TObj>::value, "Type must be able to be aggregated (+ operator)");
+
+    return seed != NULL ? (seed + this->Aggregate(accumulate)) : this->Aggregate(accumulate);
+  }
+
+  template<typename T>
+  T Aggregate(T * seed, std::function<T(T, TObj)> accumulate)
+  {
+    static_assert(is_aggregatable<T>::value, "Type must be able to be aggregated (+= operator)");
+    static_assert(is_addable<T>::value, "Type must be able to be aggregated (+ operator)");
+
+    int count = this->Count();
+
+    T aggregatedValue = *seed;
+
+    for (int i = 1; i < count; i++)
+    {
+      aggregatedValue = accumulate(aggregatedValue, this->items[i]);
+    }
+
+    return aggregatedValue;
+  }
+
+  template<typename TFinalizer>
+  TFinalizer Aggregate(
+    TObj * seed,
+    std::function<TObj(TObj, TObj)> accumulate,
+    std::function<TFinalizer(TObj)> finalizer)
+  {
+    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated (+= operator)");
+    static_assert(is_addable<TObj>::value, "Type must be able to be aggregated (+ operator)");
+
+    return finalizer(this->Aggregate(seed, accumulate));
+  }
+
+  template<typename T, typename TFinalizer>
+  TFinalizer Aggregate(
+    T * seed,
+    std::function<T(T, TObj)> accumulate,
+    std::function<TFinalizer(T)> finalizer)
+  {
+    static_assert(is_aggregatable<T>::value, "Type must be able to be aggregated (+= operator)");
+    static_assert(is_addable<T>::value, "Type must be able to be aggregated (+ operator)");
+
+    return finalizer(this->Aggregate<T>(seed, accumulate));
   }
 
   template<typename TJoinObj, typename TJoinOn, typename TOut>
