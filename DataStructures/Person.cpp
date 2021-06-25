@@ -4,12 +4,18 @@
 #include "Person.h"
 
 
-Person::Person(std::string name, double age, int height, Gender gender)
+Person::Person(long id, std::string name, double age, int height, Gender gender)
 {
+  this->id = id;
   this->name = name;
   this->age = age;
   this->heightInches = height;
   this->gender = gender;
+}
+
+long Person::GetId()
+{
+  return this->id;
 }
 
 std::string Person::GetName()
@@ -73,4 +79,9 @@ std::string Person::ToString()
     "\n\tAge: " + std::to_string(this->age) +
     "\n\tHeight (in): " + std::to_string(this->heightInches) +
     "\n\tGender: " + (this->IsMale() ? "M\n" : "F\n");
+}
+
+bool operator< (Person const& lhs, Person const& rhs)
+{
+  return lhs.name < rhs.name;
 }

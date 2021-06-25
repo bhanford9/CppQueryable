@@ -1,5 +1,5 @@
-#ifndef QUERYPLAGROUND_DATASTRUCTURES_ANIMAL_H
-#define QUERYPLAGROUND_DATASTRUCTURES_ANIMAL_H
+#ifndef CPPQUERYABLE_DATASTRUCTURES_ANIMAL_H
+#define CPPQUERYABLE_DATASTRUCTURES_ANIMAL_H
 
 #include <string>
 
@@ -8,14 +8,18 @@
 class Animal
 {
 private:
+  long id;
+  long ownerId;
   std::string name;
   double age;
   int heightInches;
   Gender gender;
 
 public:
-  Animal(std::string name, double age, Gender gender);
+  Animal(long id, long ownerId, std::string name, double age, Gender gender);
 
+  long GetId();
+  long GetOwnerId();
   std::string GetName();
   void SetName(std::string name);
   double GetAge();

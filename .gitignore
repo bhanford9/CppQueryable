@@ -3,3 +3,4 @@ Bin
 Makefile.dep
 **/*.o
 **/*.gch
+*_testcases

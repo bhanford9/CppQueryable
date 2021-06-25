@@ -2,9 +2,12 @@
 #define CPPQUERYABLE_QUERYABLE_QUERYABLE_H
 
 #include <algorithm>
+#include <deque>
 #include <exception>
+#include <forward_list>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <set>
 #include <vector>
 
@@ -19,9 +22,15 @@ protected:
   TIterable<TObj> items;
 
 public:
+  Queryable() { }
   Queryable(TIterable<TObj> items)
   {
     this->items = items;
+  }
+
+  TIterable<TObj> GetContainer()
+  {
+    return this->items;
   }
 
   std::vector<TObj> ToVector()
@@ -48,28 +57,77 @@ public:
     return newItems;
   }
 
-  TObj At(int index)
+  std::multiset<TObj> ToMultiSet()
   {
-    int i = 0;
+    std::multiset<TObj> newItems;
 
     for (TObj item : this->items)
     {
-      if (i++ == index)
-      {
-        return item;
-      }
+      newItems.insert(item);
     }
 
-    throw std::exception("Invalid Index Provided");
+    return newItems;
+  }
+
+  std::deque<TObj> ToDeque()
+  {
+    std::deque<TObj> newItems;
+
+    for (TObj item : this->items)
+    {
+      newItems.push_back(item);
+    }
+
+    return newItems;
+  }
+
+  std::forward_list<TObj> ToForwardList()
+  {
+    std::forward_list<TObj> newItems;
+    auto it = newItems.before_begin();
+
+    for (TObj item : this->items)
+    {
+      newItems.insert_after(it, item);
+    }
+
+    return newItems;
+  }
+
+  std::list<TObj> ToList()
+  {
+    std::list<TObj> newItems;
+
+    for (TObj item : this->items)
+    {
+      newItems.push_back(item);
+    }
+
+    return newItems;
+  }
+
+  TObj At(int index)
+  {
+    auto it = this->items.begin();
+    std::advance(it, index);
+    return *it;
   }
 
   int Count()
+  {
+    return std::distance(this->items.begin(), this->items.end());
+  }
+
+  int CountIf(std::function<bool(TObj)> condition)
   {
     int count = 0;
 
     for (TObj item : this->items)
     {
-      count++;
+      if (condition(item))
+      {
+        count++;
+      }
     }
 
     return count;
@@ -125,14 +183,14 @@ public:
     return NULL;
   }
 
-  TObj * First()
+  TObj First()
   {
-    if (this->Count() > 0)
+    if (this->items.begin() == this->items.end())
     {
-      return this->items[0];
+      throw std::runtime_error("Cannot get first element of empty collection");
     }
 
-    return NULL;
+    return *this->items.begin();
   }
 
   TObj * Last(std::function<bool(TObj)> clause)
@@ -157,6 +215,63 @@ public:
     }
 
     return NULL;
+  }
+
+  Queryable<TObj, std::vector> Take(int count)
+  {
+    std::vector<TObj> newItems;
+
+    int i = 0;
+    for (TObj item : this->items)
+    {
+      if (i++ > count)
+      {
+        break;
+      }
+
+      newItems.push_back(item);
+    }
+
+    Queryable<TObj, std::vector> queryableItems(newItems);
+    return queryableItems;
+  }
+
+  Queryable<TObj, std::vector> TakeWhile(std::function<bool(TObj)> doTake)
+  {
+    std::vector<TObj> newItems;
+
+    for (TObj item : this->items)
+    {
+      if (!doTake(item))
+      {
+        break;
+      }
+
+      newItems.push_back(item);
+    }
+
+    Queryable<TObj, std::vector> queryableItems(newItems);
+    return queryableItems;
+  }
+
+  Queryable<TObj, TIterable> Skip(int count)
+  {
+    return Queryable<TObj, TIterable>(this->items.erase(this->items.begin(), this->items.begin() + count));
+  }
+
+  Queryable<TObj, TIterable> SkipWhile(std::function<bool(TObj)> doSkip)
+  {
+    int toDelete = 0;
+
+    for (TObj item : this->items)
+    {
+      if (doSkip(item))
+      {
+        toDelete++;
+      }
+    }
+
+    return this->Skip(toDelete);
   }
 
   bool Equal(TIterable<TObj> collection)
@@ -207,6 +322,33 @@ public:
   }
 
   template<typename T>
+  T Max(std::function<T(TObj)> clause)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+
+    bool isFirst = true;
+    T max;
+
+    for (TObj item : this->items)
+    {
+      T newValue = clause(item);
+
+      if (isFirst)
+      {
+        isFirst = false;
+        max = newValue;
+      }
+      else if (max < newValue)
+      {
+        max = newValue;
+      }
+    }
+
+    return max;
+  }
+
+
+  template<typename T>
   T Max(T startSeed, std::function<T(TObj)> clause)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
@@ -224,6 +366,32 @@ public:
     }
 
     return max;
+  }
+
+  template<typename T>
+  T Min(std::function<T(TObj)> clause)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+
+    bool isFirst = true;
+    T min;
+
+    for (TObj item : this->items)
+    {
+      T newValue = clause(item);
+
+      if (isFirst)
+      {
+        isFirst = false;
+        min = newValue;
+      }
+      else if (newValue < min)
+      {
+        min = newValue;
+      }
+    }
+
+    return min;
   }
 
   template<typename T>
@@ -341,6 +509,47 @@ public:
     return queryableItems;
   }
 
+  Queryable<TObj, std::vector> Except(TIterable<TObj> collection)
+  {
+    static_assert(is_equatable<TObj>::value, "Item must be equatable");
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+
+    Queryable<TObj, TIterable> inputCollection(collection);
+
+    std::vector<TObj> localSorted = this->OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
+    std::vector<TObj> inputSorted = inputCollection.OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
+
+    int localCount = this->Count();
+    int inputCount = inputCollection.Count();
+
+    TObj localMax = localSorted[localCount - 1];
+    TObj inputMax = inputSorted[inputCount - 1];
+
+    std::vector<TObj> result;
+
+    int localIndex = 0;
+    int inputIndex = 0;
+
+    while (inputIndex < inputCount && localIndex < localCount)
+    {
+      TObj localItem = localSorted[localIndex];
+      TObj inputItem = inputSorted[inputIndex];
+
+      if (localItem < inputItem)
+      {
+        result.push_back(localItem);
+        localIndex++;
+      }
+      else
+      {
+        inputIndex++;
+      }
+    }
+
+    Queryable<TObj, std::vector> output(result);
+    return output;
+  }
+
   TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate)
   {
     static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated");
@@ -349,14 +558,14 @@ public:
 
     if (count == 0)
     {
-      throw std::exception("Cannot aggregate empty collection");
+      throw std::runtime_error("Cannot aggregate empty collection");
     }
 
-    TObj aggregatedValue = this->items[0];
+    TObj aggregatedValue = this->First();
 
     for (int i = 1; i < count; i++)
     {
-      aggregatedValue += accumulate(aggregatedValue, this->items[i]);
+      aggregatedValue += accumulate(aggregatedValue, this->At(i));
     }
 
     return aggregatedValue;
@@ -382,7 +591,7 @@ public:
 
     for (int i = 1; i < count; i++)
     {
-      aggregatedValue = accumulate(aggregatedValue, this->items[i]);
+      aggregatedValue = accumulate(aggregatedValue, this->At(i));
     }
 
     return aggregatedValue;

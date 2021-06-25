@@ -2,13 +2,25 @@ CXX = g++
 CPPFLAGS = -Wall #-Werror
 DEBUG = -g # -c
 
-PROJECTS_PATH = ~/Projects
+$(warning "Base Project Path: $(PROJECTS_PATH)") # exported environment variable
+$(warning "CppQueryable Project Path: $(CPP_QUERYABLE_PATH)") # exported environment variable
 PROJECT_PATH = $(PROJECTS_PATH)/CppQueryable
 PROGRAM_DIR = $(PROJECT_PATH)/Bin
-PROGRAM = $(PROGRAM_DIR)/CppQueryableProgram
+PROGRAM = $(PROGRAM_DIR)/CppQueryable
 PROGRAM_TEST_DIR = $(PROJECT_PATH)/CppQueryableTest
+TEST_PROGRAM = $(PROGRAM_TEST_DIR)/CppQueryableTest_testcases
 
 DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
+
+GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
+GTEST = $(GTEST_MAIN_CC)
+
+LIBS =
+TEST_LIBS = $(LIBS) -lgtest -lgtest_main -pthread
+INCLUDES =
+TEST_INCLUDES = $(INCLUDES) -I/usr/include/gtest $(GTEST) -L/usr/lib
+
+TEST_TIMEOUT = 10000 # TODO --> get this to work properly
 
 REFS_PATH = $(PROJECT_PATH)/.refs
 SRC_COMPILE_REF = $(REFS_PATH)/.sourceCompileRef
@@ -16,8 +28,8 @@ TEST_COMPILE_REF = $(REFS_PATH)/.testCompileRef
 DEPEND_REF = $(REFS_PATH)/.dependRef
 REFS_REF = $(REFS_PATH)/.refsRef
 
-PROGRAM_SRCS_PATHS = $(shell find $(PROJECT_PATH) -name "*.cpp")
-PROGRAM_HDRS_PATHS = $(shell find $(PROJECT_PATH) -name "*.h")
+PROGRAM_SRCS_PATHS = $(shell find $(PROJECT_PATH) -not \( -path $(PROGRAM_TEST_DIR) -prune \) -name "*.cpp")
+PROGRAM_HDRS_PATHS = $(shell find $(PROJECT_PATH) -not \( -path $(PROGRAM_TEST_DIR) -prune \) -name "*.h")
 
 PROGRAM_OBJS = $(PROGRAM_SRCS_PATHS:.cpp=.o)
 
@@ -28,18 +40,18 @@ TEST_SRCS_BASES = $(basename $(TEST_SRCS))
 
 TEST_EXCLUDES = $(PROJECT_PATH)/main.o
 
-TEST_OBJS = $(filter-out $(TEST_EXCLUDES), $(TEST_SRCS:.spp-.o) $(PROGRAM_OBJS))
+TEST_OBJS = $(filter-out $(TEST_EXCLUDES), $(TEST_SRCS:.cpp=.o) $(PROGRAM_OBJS))
 
 $(PROGRAM): $(DEPEND_REF) $(SRC_COMPILE_REF)
 	@echo Building $(PROGRAM)...
-	$(CXX) -o $(PROGRAM) $(CPPFLAGS) $(PROGRAM_OBJS) # add libs as necessary
+	$(CXX) -o $(PROGRAM) $(CPPFLAGS) $(PROGRAM_OBJS) $(LIBS)
 
 $(SRC_COMPILE_REF): $(REFS_REF) $(PROGRAM_SRCS_PATHS) $(PROGRAM_HDRS_PATHS)
 	@for i in $(PROGRAM_SRCS_BASES); do \
 	src=$$i.cpp ; \
 	obj=$$i.o ; \
 	echo "*** Compile $$src to $$obj..." ; \
-	$(CXX) -c $(DEBUG) $(CPPFLAGS) $$src -o $$obj ; \
+	$(CXX) -c $(DEBUG) $(CPPFLAGS) $(INCLUDES) $$src -o $$obj ; \
 	done;
 	touch $(SRC_COMPILE_REF)
 
@@ -57,16 +69,18 @@ $(TEST_COMPILE_REF): $(REFS_REF) $(SRC_COMPILE_REF) $(TEST_SRCS)
 	src=$$i.cpp ; \
 	obj=$$i.o ; \
 	echo "*** Compile $$src to $$obj..." ; \
-	$(CXX) -c $(CPPFLAGS) $$src -o $$obj ; \
+	$(CXX) -c $(DEBUG) $(CPPFLAGS) $$src -o $$obj ; \
 	done;
 	touch $(TEST_COMPILE_REF)
 
-# $(TEST_PROGRAM): $(TEST_COMPILE_REF) $(GTEST)
-# 	$(CXX) -o $(TEST_PROGRAM) $(CPPFLAGS) $(TEST_OBJS) $(GTEST) $(GTEST_LIBS) $(GMOCK) # add libs as necessary
+$(TEST_PROGRAM): $(TEST_COMPILE_REF)
+	@echo "test objs: "
+	@echo $(TEST_OBJS)
+	$(CXX) -o $(TEST_PROGRAM) $(CPPFLAGS) $(TEST_OBJS) $(TEST_INCLUDES) $(TEST_LIBS)
 
-# .PHONY: tests
-# tests: $(TEST_PROGRAM)
-# 	$(foreach testcase, $(TEST_PROGRAM), $(TEST_TIMEOUT) ./$(testcase) $(GTEST_LOG);)
+.PHONY: tests
+tests: $(TEST_PROGRAM)
+	$(foreach testcase, $(TEST_PROGRAM), $(testcase);)
 
 $(DEPENDENCIES):
 	touch $(DEPENDENCIES)
@@ -92,6 +106,7 @@ clean:
 cleanall: clean cleantests
 	/bin/rm -f $(DEPEND_REF) $(DEPENDENCIES)
 	/bin/rm -rf **/*.o
+	/bin/rm -rf **/*.gch
 
 .PHONY: cleanrefs
 cleanrefs:

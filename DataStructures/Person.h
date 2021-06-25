@@ -1,5 +1,5 @@
-#ifndef QUERYPLAGROUND_DATASTRUCTURES_PERSON_H
-#define QUERYPLAGROUND_DATASTRUCTURES_PERSON_H
+#ifndef CPPQUERYABLE_DATASTRUCTURES_PERSON_H
+#define CPPQUERYABLE_DATASTRUCTURES_PERSON_H
 
 #include <string>
 
@@ -8,14 +8,16 @@
 class Person
 {
 private:
+  long id;
   std::string name;
   double age;
   int heightInches;
   Gender gender;
 
 public:
-  Person(std::string name, double age, int height, Gender gender);
+  Person(long id, std::string name, double age, int height, Gender gender);
 
+  long GetId();
   std::string GetName();
   void SetName(std::string name);
   double GetAge();
@@ -30,6 +32,8 @@ public:
   bool IsFemale();
 
   std::string ToString();
+
+  friend bool operator< (Person const& lhs, Person const& rhs);
 };
 
 #endif

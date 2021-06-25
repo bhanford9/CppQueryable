@@ -2,11 +2,23 @@
 #include "Animal.h"
 
 
-Animal::Animal(std::string name, double age, Gender gender)
+Animal::Animal(long id, long ownderId, std::string name, double age, Gender gender)
 {
+  this->id = id;
+  this->ownerId = ownerId;
   this->name = name;
   this->age = age;
   this->gender = gender;
+}
+
+long Animal::GetId()
+{
+  return this->id;
+}
+
+long Animal::GetOwnerId()
+{
+  return this->ownerId;
 }
 
 std::string Animal::GetName()
