@@ -2,7 +2,6 @@
 
 #include <array>
 #include <deque>
-#include <forward_list>
 #include <iostream>
 #include <list>
 #include <set>
@@ -107,16 +106,6 @@ TEST_F(WhereFunctionalTest, WhereDequeFemale)
   std::deque<Person> people = Queryable<Person, std::deque>(this->queryable.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToDeque();
-
-  for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
-}
-
-TEST_F(WhereFunctionalTest, WhereForwardListFemale)
-{
-  std::forward_list<Person> people = Queryable<Person, std::forward_list>(this->queryable.ToForwardList())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    .ToForwardList();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);

@@ -16,6 +16,5 @@ class QueryableTest : public ::testing::Test
 
 TEST(QueryableTest, DummyTest)
 {
-  std::cout << "test was ran" << std::endl;
   ASSERT_TRUE(true);
 }

@@ -3,7 +3,6 @@
 #include <array>
 #include <deque>
 #include <exception>
-#include <forward_list>
 #include <iostream>
 #include <list>
 #include <set>
@@ -19,17 +18,19 @@
 class FirstFunctionalTest : public ::testing::Test
 {
 protected:
-  Queryable<Person, std::vector> queryable;
+  uint expectedUnorderedFirst = 9;
+  uint expectedOrderedFirst = 0;
+  Queryable<uint, std::vector> queryable;
 
   void SetUp() override
   {
-    this->queryable = Queryable<Person, std::vector>(PersonLibrary().GetPeople());
+    this->queryable = Queryable<uint, std::vector>({ expectedUnorderedFirst, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
   }
 
   void TearDown() override {}
 };
 
-TEST_F(FirstFunctionalTest, FirstVectorUninitializedTest)
+TEST_F(FirstFunctionalTest, FirstVectorUninitialized)
 {
   Queryable<Person, std::vector> emptyQueryable;
 
@@ -45,30 +46,30 @@ TEST_F(FirstFunctionalTest, FirstVectorUninitializedTest)
 
 TEST_F(FirstFunctionalTest, FirstVector)
 {
-  Person p = this->queryable.First();
+  uint value = this->queryable.First();
+  ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstSet)
 {
-  Person p = Queryable<Person, std::set>(this->queryable.ToSet()).First();
+  uint value = Queryable<uint, std::set>(this->queryable.ToSet()).First();
+  ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstMultiSet)
 {
-  Person p = Queryable<Person, std::multiset>(this->queryable.ToMultiSet()).First();
+  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet()).First();
+  ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstDeque)
 {
-  Person p = Queryable<Person, std::deque>(this->queryable.ToDeque()).First();
-}
-
-TEST_F(FirstFunctionalTest, FirstForwardList)
-{
-  Person p = Queryable<Person, std::forward_list>(this->queryable.ToForwardList()).First();
+  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque()).First();
+  ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstList)
 {
-  Person p = Queryable<Person, std::list>(this->queryable.ToList()).First();
+  uint value = Queryable<uint, std::list>(this->queryable.ToList()).First();
+  ASSERT_EQ(this->expectedUnorderedFirst, value);
 }

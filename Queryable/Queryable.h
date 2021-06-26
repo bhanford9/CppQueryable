@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <deque>
 #include <exception>
-#include <forward_list>
 #include <functional>
 #include <iostream>
 #include <list>
@@ -17,6 +16,12 @@ template<typename TObj, template<typename...> typename TIterable>
 class Queryable
 {
   static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
+  static_assert(has_size_method<TIterable<TObj>>::value, "Class must have a size method");
+
+  // TODO --> inherit Queryable with child classes that override specific methods for optimization per container type:
+  //    vector, list, deque, set, multiset, forward_list, etc.
+
+  // forward_list not currently supported because it does not have a size method
 
 protected:
   TIterable<TObj> items;
@@ -24,6 +29,11 @@ protected:
 public:
   Queryable() { }
   Queryable(TIterable<TObj> items)
+  {
+    this->Initialize(items);
+  }
+
+  void Initialize(TIterable<TObj> items)
   {
     this->items = items;
   }
@@ -81,19 +91,6 @@ public:
     return newItems;
   }
 
-  std::forward_list<TObj> ToForwardList()
-  {
-    std::forward_list<TObj> newItems;
-    auto it = newItems.before_begin();
-
-    for (TObj item : this->items)
-    {
-      newItems.insert_after(it, item);
-    }
-
-    return newItems;
-  }
-
   std::list<TObj> ToList()
   {
     std::list<TObj> newItems;
@@ -108,6 +105,23 @@ public:
 
   TObj At(int index)
   {
+    // Since only random access iterators provide + and - operators, the library provides two
+    // function templates advance and distance. These function templates use + and - for random
+    // access iterators (and are, therefore, constant time for them); for input, forward and
+    // bidirectional iterators they use ++ to provide linear time implementations.
+
+    int count = this->Count();
+
+    if (count <= index)
+    {
+      throw std::runtime_error("Specified index was greater than the size of the collection");
+    }
+
+    if (count < 0)
+    {
+      throw std::runtime_error("Index must be greater than zero");
+    }
+
     auto it = this->items.begin();
     std::advance(it, index);
     return *it;
@@ -115,7 +129,9 @@ public:
 
   int Count()
   {
-    return std::distance(this->items.begin(), this->items.end());
+    // distance is a linear count. may be necessary for child classes that dont hold size member
+    // return std::distance(this->items.begin(), this->items.end());
+    return this->items.size();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
@@ -172,6 +188,11 @@ public:
 
   TObj * First(std::function<bool(TObj)> clause)
   {
+    if (this->Count() == 0)
+    {
+      throw std::runtime_error("Cannot get element of empty collection");
+    }
+
     for (TObj item : this->items)
     {
       if (clause(item))
@@ -185,7 +206,7 @@ public:
 
   TObj First()
   {
-    if (this->items.begin() == this->items.end())
+    if (this->Count() == 0)
     {
       throw std::runtime_error("Cannot get first element of empty collection");
     }

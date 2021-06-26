@@ -37,4 +37,9 @@ struct is_addable : std::false_type { };
 template<typename T>
 struct is_addable<T, void_t<decltype(std::declval<T>() + std::declval<T>())>> : std::true_type {};
 
+template<typename T, typename = void>
+struct has_size_method : std::false_type { };
+template<typename T>
+struct has_size_method<T, void_t<decltype(std::declval<T>().size())>> : std::true_type {};
+
 #endif

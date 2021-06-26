@@ -21,6 +21,5 @@ class WherePerformanceTest : public ::testing::Test
 
 TEST(WherePerformanceTest, DummyTest)
 {
-  std::cout << "test was ran" << std::endl;
   ASSERT_TRUE(true);
 }
