@@ -149,34 +149,34 @@ public:
     return count;
   }
 
-  void ForEach(std::function<void(TObj)> clause)
+  void ForEach(std::function<void(TObj)> action)
   {
     for (TObj item : this->items)
     {
-      clause(item);
+      action(item);
     }
   }
 
-  Queryable<TObj, std::vector> OnEach(std::function<TObj(TObj)> clause)
+  Queryable<TObj, std::vector> OnEach(std::function<TObj(TObj)> action)
   {
     std::vector<TObj> newItems;
 
     for (TObj item : this->items)
     {
-      newItems.push_back(clause(item));
+      newItems.push_back(action(item));
     }
 
     Queryable<TObj, std::vector> queryableItems(newItems);
     return queryableItems;
   }
 
-  Queryable<TObj, std::vector> Where(std::function<bool(TObj)> clause)
+  Queryable<TObj, std::vector> Where(std::function<bool(TObj)> condition)
   {
     std::vector<TObj> newItems;
 
     for (TObj item : this->items)
     {
-      if (clause(item))
+      if (condition(item))
       {
         newItems.push_back(item);
       }
@@ -186,7 +186,7 @@ public:
     return queryableItems;
   }
 
-  TObj * First(std::function<bool(TObj)> clause)
+  TObj First(std::function<bool(TObj)> condition)
   {
     if (this->Count() == 0)
     {
@@ -195,13 +195,13 @@ public:
 
     for (TObj item : this->items)
     {
-      if (clause(item))
+      if (condition(item))
       {
-        return &item;
+        return item;
       }
     }
 
-    return NULL;
+    throw std::runtime_error("No item fitting the condition was found.");
   }
 
   TObj First()
@@ -214,28 +214,34 @@ public:
     return *this->items.begin();
   }
 
-  TObj * Last(std::function<bool(TObj)> clause)
+  TObj Last(std::function<bool(TObj)> condition)
   {
-    for (int i = this->count() - 1; i >= 0; i--)
+    int count = this->Count();
+
+    if (count == 0)
     {
-      if (clause(this->items[i]))
+      throw std::runtime_error("Cannot get element of empty collection");
+    }
+
+    for (int i = count - 1; i >= 0; i--)
+    {
+      if (condition(this->items[i]))
       {
-        return &this->items[i];
+        return this->items[i];
       }
     }
 
-    return NULL;
+    throw std::runtime_error("No item fitting the condition was found.");
   }
 
-  TObj * Last()
+  TObj Last()
   {
-    int count = this->Count();
-    if (count > 0)
+    if (this->Count() == 0)
     {
-      return this->items[count - 1];
+      throw std::runtime_error("Cannot get last element of empty collection");
     }
 
-    return NULL;
+    return *this->items.end();
   }
 
   Queryable<TObj, std::vector> Take(int count)
@@ -316,6 +322,25 @@ public:
     return true;
   }
 
+  bool Equal(TIterable<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    int localCount = this->Count();
+    int inputCount = Queryable<TObj, TIterable>(collection).Count();
+
+    if (localCount == inputCount)
+    {
+      for (int i = 0; i < localCount; i++)
+      {
+        if (!areEqual(this->items[i], collection[i]))
+        {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   Queryable<TObj, TIterable> Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
   {
     for (TObj obj : collection)
@@ -328,7 +353,7 @@ public:
   }
 
   template<typename T>
-  T Sum(std::function<T(TObj)> clause)
+  T Sum(std::function<T(TObj)> retrieveValue)
   {
     static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
 
@@ -336,14 +361,14 @@ public:
 
     for (TObj item : this->items)
     {
-      sum += clause(item);
+      sum += retrieveValue(item);
     }
 
     return sum;
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> clause)
+  T Max(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -352,7 +377,7 @@ public:
 
     for (TObj item : this->items)
     {
-      T newValue = clause(item);
+      T newValue = retrieveValue(item);
 
       if (isFirst)
       {
@@ -370,7 +395,7 @@ public:
 
 
   template<typename T>
-  T Max(T startSeed, std::function<T(TObj)> clause)
+  T Max(T startSeed, std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -378,7 +403,7 @@ public:
 
     for (TObj item : this->items)
     {
-      T newValue = clause(item);
+      T newValue = retrieveValue(item);
 
       if (max < newValue)
       {
@@ -390,7 +415,7 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> clause)
+  T Min(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -399,7 +424,7 @@ public:
 
     for (TObj item : this->items)
     {
-      T newValue = clause(item);
+      T newValue = retrieveValue(item);
 
       if (isFirst)
       {
@@ -416,7 +441,7 @@ public:
   }
 
   template<typename T>
-  T Min(T startSeed, std::function<T(TObj)> clause)
+  T Min(T startSeed, std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -424,7 +449,7 @@ public:
 
     for (TObj item : this->items)
     {
-      T newValue = clause(item);
+      T newValue = retrieveValue(item);
 
       if (newValue < min)
       {
@@ -436,7 +461,7 @@ public:
   }
 
   template<typename T>
-  double Average(std::function<T(TObj)> clause)
+  double Average(std::function<T(TObj)> retrieveValue)
   {
     static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
 
@@ -445,7 +470,7 @@ public:
 
     for (TObj item : this->items)
     {
-      sum += clause(item);
+      sum += retrieveValue(item);
       count++;
     }
 
@@ -479,13 +504,13 @@ public:
   }
 
   template<typename T>
-  Queryable<T, std::vector> Select(std::function<T(TObj)> clause)
+  Queryable<T, std::vector> Select(std::function<T(TObj)> retrieveValue)
   {
     std::vector<T> selected;
 
     for (TObj item : this->items)
     {
-      selected.push_back(clause(item));
+      selected.push_back(retrieveValue(item));
     }
 
     return selected;
@@ -507,24 +532,24 @@ public:
   }
 
   template<typename T>
-  Queryable<TObj, std::vector> OrderBy(std::function<T(TObj)> clause)
+  Queryable<TObj, std::vector> OrderBy(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     std::vector<TObj> sorted = this->items;
-    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return clause(a) < clause(b); });
+    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
 
     Queryable<TObj, std::vector> queryableItems(sorted);
     return queryableItems;
   }
 
   template<typename T>
-  Queryable<TObj, std::vector> OrderByDescending(std::function<T(TObj)> clause)
+  Queryable<TObj, std::vector> OrderByDescending(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     std::vector<TObj> sorted = this->items;
-    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return !(clause(a) < clause(b)); });
+    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
 
     Queryable<TObj, std::vector> queryableItems(sorted);
     return queryableItems;
