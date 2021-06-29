@@ -63,6 +63,7 @@ protected:
 
     Queryable<uint, TIterable> result = localQueryable.Take(toTake);
 
+    ASSERT_EQ(-toTake, result.Count());
     ASSERT_EQ(expected.size(), result.Count());
 
     for (int i = 0; i < result.Count(); i++)

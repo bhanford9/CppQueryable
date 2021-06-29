@@ -270,7 +270,7 @@ public:
   {
     // done this way to allow returning the same container that was used to call this method
     // need to refactor with implementations of container-specific queriable classes
-    
+
     int toTake = 0;
 
     for (TObj item : this->items)
@@ -316,10 +316,12 @@ public:
 
     for (TObj item : this->items)
     {
-      if (doSkip(item))
+      if (!doSkip(item))
       {
-        toDelete++;
+        break;
       }
+
+      toDelete++;
     }
 
     return this->Skip(toDelete);
