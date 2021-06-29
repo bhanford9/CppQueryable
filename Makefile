@@ -69,7 +69,7 @@ $(TEST_COMPILE_REF): $(REFS_REF) $(SRC_COMPILE_REF) $(TEST_SRCS)
 	src=$$i.cpp ; \
 	obj=$$i.o ; \
 	echo "*** Compile $$src to $$obj..." ; \
-	$(CXX) -c $(DEBUG) $(CPPFLAGS) $$src -o $$obj ; \
+	$(CXX) -c $(CPPFLAGS) $$src -o $$obj ; \
 	done;
 	touch $(TEST_COMPILE_REF)
 

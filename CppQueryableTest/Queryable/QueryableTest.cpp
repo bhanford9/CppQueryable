@@ -13,8 +13,3 @@ class QueryableTest : public ::testing::Test
 
   void TearDown() override {}
 };
-
-TEST(QueryableTest, DummyTest)
-{
-  ASSERT_TRUE(true);
-}

@@ -18,8 +18,3 @@ class WherePerformanceTest : public ::testing::Test
 
   void TearDown() override {}
 };
-
-TEST(WherePerformanceTest, DummyTest)
-{
-  ASSERT_TRUE(true);
-}

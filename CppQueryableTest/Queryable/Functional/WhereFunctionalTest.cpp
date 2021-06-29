@@ -59,8 +59,6 @@ TEST_F(WhereFunctionalTest, WhereVectorSevenEightNineTest)
     Person(0, "Person 9", 0, 0, Gender::Male),
   });
 
-  std::cout << this->queryable.At(2).ToString() << std::endl;
-
   std::vector<Person> people = this->queryable
     .Where([](Person p) { return p.GetName() >= "Person 7" && p.GetName() <= "Person 9"; })
     .OrderBy<std::string>([](Person p) { return p.GetName(); })

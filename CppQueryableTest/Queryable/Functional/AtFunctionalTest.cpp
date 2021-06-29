@@ -38,7 +38,7 @@ TEST_F(AtFunctionalTest, AtVectorUninitialized)
 
   try
   {
-    Person p = emptyQueryable.At(atIndex);
+    Person p = emptyQueryable.At(this->atIndex);
   }
   catch (std::runtime_error& ex)
   {
@@ -72,30 +72,30 @@ TEST_F(AtFunctionalTest, AtVectorIndexNegative)
 
 TEST_F(AtFunctionalTest, AtVector)
 {
-  uint value = this->queryable.At(atIndex);
+  uint value = this->queryable.At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  uint value = Queryable<uint, std::set>(this->queryable.ToSet()).At(atIndex);
+  uint value = Queryable<uint, std::set>(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet()).At(atIndex);
+  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque()).At(atIndex);
+  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  uint value = Queryable<uint, std::list>(this->queryable.ToList()).At(atIndex);
+  uint value = Queryable<uint, std::list>(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }

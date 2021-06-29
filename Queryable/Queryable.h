@@ -157,17 +157,16 @@ public:
     }
   }
 
-  Queryable<TObj, std::vector> OnEach(std::function<TObj(TObj)> action)
+  Queryable<TObj, TIterable> OnEach(std::function<void(TObj&)> action)
   {
-    std::vector<TObj> newItems;
+    // TODO --> evaluate if it would be useful to create an implementation of this for sets
 
-    for (TObj item : this->items)
+    for (TObj & item : this->items)
     {
-      newItems.push_back(action(item));
+      action(item);
     }
 
-    Queryable<TObj, std::vector> queryableItems(newItems);
-    return queryableItems;
+    return *this;
   }
 
   Queryable<TObj, std::vector> Where(std::function<bool(TObj)> condition)
@@ -223,11 +222,13 @@ public:
       throw std::runtime_error("Cannot get element of empty collection");
     }
 
-    for (int i = count - 1; i >= 0; i--)
+    for (auto it = this->items.rbegin(); it != this->items.rend(); it++)
     {
-      if (condition(this->items[i]))
+      TObj item = *it;
+
+      if (condition(item))
       {
-        return this->items[i];
+        return item;
       }
     }
 
@@ -241,31 +242,36 @@ public:
       throw std::runtime_error("Cannot get last element of empty collection");
     }
 
-    return *this->items.end();
+    return *this->items.rbegin();
   }
 
-  Queryable<TObj, std::vector> Take(int count)
+  Queryable<TObj, TIterable> Take(int count)
   {
-    std::vector<TObj> newItems;
-
-    int i = 0;
-    for (TObj item : this->items)
+    if (count < 0)
     {
-      if (i++ > count)
-      {
-        break;
-      }
-
-      newItems.push_back(item);
+      return this->Skip(this->Count() + count);
     }
 
-    Queryable<TObj, std::vector> queryableItems(newItems);
-    return queryableItems;
+    int eraseFromBack = this->Count() - count;
+    eraseFromBack = eraseFromBack < 0 ? 0 : eraseFromBack;
+
+    for (int i = 0; i < eraseFromBack; i++)
+    {
+      // TODO --> erase method does not have great time complexity and some containers
+      //   can do it in constant time. so it will be better to implement this per
+      //   queryable container class
+      this->items.erase(--this->items.end());
+    }
+
+    return *this;
   }
 
-  Queryable<TObj, std::vector> TakeWhile(std::function<bool(TObj)> doTake)
+  Queryable<TObj, TIterable> TakeWhile(std::function<bool(TObj)> doTake)
   {
-    std::vector<TObj> newItems;
+    // done this way to allow returning the same container that was used to call this method
+    // need to refactor with implementations of container-specific queriable classes
+    
+    int toTake = 0;
 
     for (TObj item : this->items)
     {
@@ -274,16 +280,34 @@ public:
         break;
       }
 
-      newItems.push_back(item);
+      toTake++;
     }
 
-    Queryable<TObj, std::vector> queryableItems(newItems);
-    return queryableItems;
+    return this->Take(toTake);
   }
 
   Queryable<TObj, TIterable> Skip(int count)
   {
-    return Queryable<TObj, TIterable>(this->items.erase(this->items.begin(), this->items.begin() + count));
+    if (count < 0)
+    {
+      return this->Take(this->Count() + count);
+    }
+
+    int localSize = this->Count();
+    if (count > localSize)
+    {
+      count = localSize;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+      // TODO --> removing from front of collection is really bad time complexity
+      //   so create new memory instead and having a custom add_back method would be
+      //   better when implementing individual container queryables
+      this->items.erase(this->items.begin());
+    }
+
+    return *this;
   }
 
   Queryable<TObj, TIterable> SkipWhile(std::function<bool(TObj)> doSkip)
