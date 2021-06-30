@@ -18,6 +18,11 @@ long Person::GetId()
   return this->id;
 }
 
+void Person::SetId(long id)
+{
+  this->id = id;
+}
+
 std::string Person::GetName()
 {
   return this->name;

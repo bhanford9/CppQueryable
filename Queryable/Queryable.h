@@ -269,7 +269,8 @@ public:
   Queryable<TObj, TIterable> TakeWhile(std::function<bool(TObj)> doTake)
   {
     // done this way to allow returning the same container that was used to call this method
-    // need to refactor with implementations of container-specific queriable classes
+    // need to refactor with implementations of container-specific queriable classes.
+    // each container queriable can have its own implementation of adding members
 
     int toTake = 0;
 
@@ -334,14 +335,17 @@ public:
     int localCount = this->Count();
     int inputCount = Queryable<TObj, TIterable>(collection).Count();
 
-    if (localCount == inputCount)
+    if (localCount != inputCount)
     {
-      for (int i = 0; i < localCount; i++)
+      return false;
+    }
+
+    int i = 0;
+    for (TObj item : collection)
+    {
+      if (!(this->At(i++) == item))
       {
-        if (!(this->items[i] == collection[i]))
-        {
-          return false;
-        }
+        return false;
       }
     }
 
@@ -353,20 +357,29 @@ public:
     int localCount = this->Count();
     int inputCount = Queryable<TObj, TIterable>(collection).Count();
 
-    if (localCount == inputCount)
+    if (localCount != inputCount)
     {
-      for (int i = 0; i < localCount; i++)
+      return false;
+    }
+
+    int i = 0;
+    for (TObj item : collection)
+    {
+      if (!areEqual(this->At(i++), item))
       {
-        if (!areEqual(this->items[i], collection[i]))
-        {
-          return false;
-        }
+        return false;
       }
     }
 
     return true;
   }
 
+  // Wait to do this until after each container has its child class because they'll
+  //  implement individual appenders.
+  //
+  // For this and similar methods that require optimizations, we can have the public
+  //  method not include the parameter for the optimization and then call an internal
+  //  overriden method that handles the optimization and returns to the parent.
   Queryable<TObj, TIterable> Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
   {
     for (TObj obj : collection)
@@ -381,7 +394,7 @@ public:
   template<typename T>
   T Sum(std::function<T(TObj)> retrieveValue)
   {
-    static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
+    static_assert(is_aggregatable<T>::value, "Type must be implement the '+=' operator");
 
     T sum = 0;
 

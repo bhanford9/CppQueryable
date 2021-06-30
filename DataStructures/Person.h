@@ -15,9 +15,11 @@ private:
   Gender gender;
 
 public:
+  Person() { }
   Person(long id, std::string name, double age, int height, Gender gender);
 
   long GetId();
+  void SetId(long id);
   std::string GetName();
   void SetName(std::string name);
   double GetAge();
