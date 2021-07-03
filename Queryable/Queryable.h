@@ -26,6 +26,20 @@ class Queryable
 protected:
   TIterable<TObj> items;
 
+  // some containers hold a separate value for their size and can access in constant time
+  virtual int CountInternal()
+  {
+    // need to make this pure virtual, but that brakes all the test cases
+    return std::distance(this->items.begin(), this->items.end());
+  }
+
+  virtual void AddItem(TObj obj)
+  {
+    // need to make this pure virtual, but that brakes all the test cases
+  }
+
+
+
 public:
   Queryable() { }
   Queryable(TIterable<TObj> items)
@@ -103,7 +117,7 @@ public:
     return newItems;
   }
 
-  TObj At(int index)
+  virtual TObj At(int index)
   {
     // Since only random access iterators provide + and - operators, the library provides two
     // function templates advance and distance. These function templates use + and - for random
@@ -129,9 +143,9 @@ public:
 
   int Count()
   {
-    // distance is a linear count. may be necessary for child classes that dont hold size member
+    // distance is a linear count. may be necessary for child classes that dont hold a separate size member
     // return std::distance(this->items.begin(), this->items.end());
-    return this->items.size();
+    return this->CountInternal();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
