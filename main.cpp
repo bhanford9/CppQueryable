@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 
 #include "Queryable/QueryBuilder.h"
 
@@ -15,7 +14,20 @@ int main()
   std::cout << std::endl;
 
   std::set<int> setInts({ 1, 3, 25, 3, 8, 9});
-  BuildQueryable(setInts).ForEach([](int value) { std::cout << "int: " << value << std::endl; });
+  BuildQueryable(setInts)
+    .ForEach([](int value) { std::cout << "int: " << value << std::endl; });
+
+  std::cout << std::endl;
+
+  std::list<int> listInts({ 1, 3, 25, 3, 8, 9, 24});
+  BuildQueryable(listInts)
+    .ForEach([](int value) { std::cout << "int: " << value << std::endl; });
+
+  std::cout << std::endl;
+
+  std::deque<int> dequeInts({ 1, 3, 25, 3, 8, 9, 21});
+  BuildQueryable(dequeInts)
+    .ForEach([](int value) { std::cout << "int: " << value << std::endl; });
 
   return 0;
 }

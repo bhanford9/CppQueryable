@@ -1,12 +1,16 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYBUILDER_H
 #define CPPQUERYABLE_QUERYABLE_QUERYBUILDER_H
 
-#include <vector>
+#include <deque>
+#include <list>
 #include <set>
+#include <vector>
 
 #include "Queryable.h"
-#include "QueryableVector.h"
+#include "QueryableDeque.h"
+#include "QueryableList.h"
 #include "QueryableSet.h"
+#include "QueryableVector.h"
 
 namespace QueryBuilder
 {
@@ -20,6 +24,18 @@ namespace QueryBuilder
   static QueryableSet<T> BuildQueryable(std::set<T> items)
   {
     return QueryableSet<T>(items);
+  }
+
+  template<typename T>
+  static QueryableList<T> BuildQueryable(std::list<T> items)
+  {
+    return QueryableList<T>(items);
+  }
+
+  template<typename T>
+  static QueryableDeque<T> BuildQueryable(std::deque<T> items)
+  {
+    return QueryableDeque<T>(items);
   }
 };
 
