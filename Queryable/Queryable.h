@@ -38,8 +38,6 @@ protected:
     // need to make this pure virtual, but that brakes all the test cases
   }
 
-
-
 public:
   Queryable() { }
   Queryable(TIterable<TObj> items)

@@ -13,7 +13,10 @@
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
 
-#include "../../../Queryable/Queryable.h"
+#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryableVector.h"
+
+using namespace QueryBuilder;
 
 class AtFunctionalTest : public ::testing::Test
 {
@@ -22,11 +25,11 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  Queryable<uint, std::vector> queryable;
+  QueryableVector<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = Queryable<uint, std::vector>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 });
+    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
   }
 
   void TearDown() override {}
@@ -34,7 +37,7 @@ protected:
 
 TEST_F(AtFunctionalTest, AtVectorUninitialized)
 {
-  Queryable<Person, std::vector> emptyQueryable;
+  QueryableVector<Person> emptyQueryable;
 
   try
   {
@@ -78,24 +81,24 @@ TEST_F(AtFunctionalTest, AtVector)
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  uint value = Queryable<uint, std::set>(this->queryable.ToSet()).At(this->atIndex);
+  uint value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet()).At(this->atIndex);
+  uint value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque()).At(this->atIndex);
+  uint value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  uint value = Queryable<uint, std::list>(this->queryable.ToList()).At(this->atIndex);
+  uint value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
