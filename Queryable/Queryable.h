@@ -7,52 +7,43 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <set>
 #include <vector>
 
 #include "TypeConstraintUtil.h"
+#include "QueryableData/IQueryableData.h"
+#include "QueryableData/QueryableVectorData.h"
 
-template<typename TObj, template<typename...> typename TIterable>
+template<typename TObj>
 class Queryable
 {
-  static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
-  static_assert(has_size_method<TIterable<TObj>>::value, "Class must have a size method");
+  // static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
+  // static_assert(has_size_method<TIterable<TObj>>::value, "Class must have a size method");
 
   // TODO --> inherit Queryable with child classes that override specific methods for optimization per container type:
   //    vector, list, deque, set, multiset, forward_list, etc.
 
   // forward_list not currently supported because it does not have a size method
 
+
+  // TODO --> defered execution for WHERE so that doing .WHERE(X).FOREACH(Y) only iterates over the set once
+
 protected:
-  TIterable<TObj> items;
-
-  // some containers hold a separate value for their size and can access in constant time
-  virtual int CountInternal()
-  {
-    // need to make this pure virtual, but that brakes all the test cases
-    return std::distance(this->items.begin(), this->items.end());
-  }
-
-  virtual void AddItem(TObj obj)
-  {
-    // need to make this pure virtual, but that brakes all the test cases
-  }
+  std::unique_ptr<IQueryableData<TObj>> items;
 
 public:
   Queryable() { }
-  Queryable(TIterable<TObj> items)
+  Queryable(IQueryableData<TObj> * items)
   {
     this->Initialize(items);
   }
 
-  void Initialize(TIterable<TObj> items)
+  void Initialize(IQueryableData<TObj> * items)
   {
+    // may need to call create on this instead
+    std::cout << "creating queryable" << std::endl;
     this->items = items;
-  }
-
-  TIterable<TObj> GetContainer()
-  {
-    return this->items;
   }
 
   std::vector<TObj> ToVector()
@@ -134,7 +125,7 @@ public:
       throw std::runtime_error("Index must be greater than zero");
     }
 
-    auto it = this->items.begin();
+    auto it = this->items->begin();
     std::advance(it, index);
     return *it;
   }
@@ -142,8 +133,8 @@ public:
   int Count()
   {
     // distance is a linear count. may be necessary for child classes that dont hold a separate size member
-    // return std::distance(this->items.begin(), this->items.end());
-    return this->CountInternal();
+    // return std::distance(this->item->begin(), this->item->end());
+    return this->items->Count();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
@@ -163,38 +154,38 @@ public:
 
   void ForEach(std::function<void(TObj)> action)
   {
-    for (TObj item : this->items)
+    for (const TObj & item : *this->items.get())
     {
       action(item);
     }
   }
 
-  Queryable<TObj, TIterable> OnEach(std::function<void(TObj&)> action)
+  Queryable<TObj> * OnEach(std::function<void(TObj&)> action)
   {
     // TODO --> evaluate if it would be useful to create an implementation of this for sets
 
-    for (TObj & item : this->items)
+    for (TObj & item : *this->items)
     {
       action(item);
     }
 
-    return *this;
+    return this;
   }
 
-  Queryable<TObj, std::vector> Where(std::function<bool(TObj)> condition)
+  Queryable<TObj> * Where(std::function<bool(TObj)> condition)
   {
-    std::vector<TObj> newItems;
+    std::vector<TObj> copiedItems = this->items->ToVector();
+    this->items->Clear();
 
-    for (TObj item : this->items)
+    for (TObj item : copiedItems)
     {
       if (condition(item))
       {
-        newItems.push_back(item);
+        this->items->Add(item);
       }
     }
 
-    Queryable<TObj, std::vector> queryableItems(newItems);
-    return queryableItems;
+    return this;
   }
 
   TObj First(std::function<bool(TObj)> condition)
@@ -204,7 +195,7 @@ public:
       throw std::runtime_error("Cannot get element of empty collection");
     }
 
-    for (TObj item : this->items)
+    for (auto item : *this->items)
     {
       if (condition(item))
       {
@@ -222,7 +213,7 @@ public:
       throw std::runtime_error("Cannot get first element of empty collection");
     }
 
-    return *this->items.begin();
+    return *this->item->begin();
   }
 
   TObj Last(std::function<bool(TObj)> condition)
@@ -234,7 +225,7 @@ public:
       throw std::runtime_error("Cannot get element of empty collection");
     }
 
-    for (auto it = this->items.rbegin(); it != this->items.rend(); it++)
+    for (auto it = this->item->rbegin(); it != this->item->rend(); it++)
     {
       TObj item = *it;
 
@@ -254,10 +245,10 @@ public:
       throw std::runtime_error("Cannot get last element of empty collection");
     }
 
-    return *this->items.rbegin();
+    return *this->item->rbegin();
   }
 
-  Queryable<TObj, TIterable> Take(int count)
+  Queryable<TObj> * Take(int count)
   {
     if (count < 0)
     {
@@ -272,13 +263,14 @@ public:
       // TODO --> erase method does not have great time complexity and some containers
       //   can do it in constant time. so it will be better to implement this per
       //   queryable container class
-      this->items.erase(--this->items.end());
+      this->item->RemoveLast();
+      // this->item->erase(--this->item->end());
     }
 
-    return *this;
+    return this;
   }
 
-  Queryable<TObj, TIterable> TakeWhile(std::function<bool(TObj)> doTake)
+  Queryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
   {
     // done this way to allow returning the same container that was used to call this method
     // need to refactor with implementations of container-specific queriable classes.
@@ -299,7 +291,7 @@ public:
     return this->Take(toTake);
   }
 
-  Queryable<TObj, TIterable> Skip(int count)
+  Queryable<TObj>* Skip(int count)
   {
     if (count < 0)
     {
@@ -312,18 +304,19 @@ public:
       count = localSize;
     }
 
-    for (int i = 0; i < count; i++)
+    IQueryableData<TObj> * copy = this->item->Clone();
+    this->item->clear();
+
+    // could overide this for containers that have const access to make it faster
+    for (auto it = this->items->begin() + count; it != this->items->end(); it++)
     {
-      // TODO --> removing from front of collection is really bad time complexity
-      //   so create new memory instead and having a custom add_back method would be
-      //   better when implementing individual container queryables
-      this->items.erase(this->items.begin());
+      this->item->Add(*it);
     }
 
-    return *this;
+    return this;
   }
 
-  Queryable<TObj, TIterable> SkipWhile(std::function<bool(TObj)> doSkip)
+  Queryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
   {
     int toDelete = 0;
 
@@ -340,51 +333,51 @@ public:
     return this->Skip(toDelete);
   }
 
-  bool Equal(TIterable<TObj> collection)
-  {
-    static_assert(is_equatable<TObj>::value, "Type must be equatable");
-
-    int localCount = this->Count();
-    int inputCount = Queryable<TObj, TIterable>(collection).Count();
-
-    if (localCount != inputCount)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (TObj item : collection)
-    {
-      if (!(this->At(i++) == item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  bool Equal(TIterable<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
-  {
-    int localCount = this->Count();
-    int inputCount = Queryable<TObj, TIterable>(collection).Count();
-
-    if (localCount != inputCount)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (TObj item : collection)
-    {
-      if (!areEqual(this->At(i++), item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
+  // bool Equal(TIterable<TObj> collection)
+  // {
+  //   static_assert(is_equatable<TObj>::value, "Type must be equatable");
+  //
+  //   int localCount = this->Count();
+  //   int inputCount = Queryable<TObj, TIterable>(collection).Count();
+  //
+  //   if (localCount != inputCount)
+  //   {
+  //     return false;
+  //   }
+  //
+  //   int i = 0;
+  //   for (TObj item : collection)
+  //   {
+  //     if (!(this->At(i++) == item))
+  //     {
+  //       return false;
+  //     }
+  //   }
+  //
+  //   return true;
+  // }
+  //
+  // bool Equal(TIterable<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  // {
+  //   int localCount = this->Count();
+  //   int inputCount = Queryable<TObj, TIterable>(collection).Count();
+  //
+  //   if (localCount != inputCount)
+  //   {
+  //     return false;
+  //   }
+  //
+  //   int i = 0;
+  //   for (TObj item : collection)
+  //   {
+  //     if (!areEqual(this->At(i++), item))
+  //     {
+  //       return false;
+  //     }
+  //   }
+  //
+  //   return true;
+  // }
 
   // Wait to do this until after each container has its child class because they'll
   //  implement individual appenders.
@@ -392,16 +385,16 @@ public:
   // For this and similar methods that require optimizations, we can have the public
   //  method not include the parameter for the optimization and then call an internal
   //  overriden method that handles the optimization and returns to the parent.
-  Queryable<TObj, TIterable> Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
-  {
-    for (TObj obj : collection)
-    {
-      appender(&this->items, obj);
-    }
-
-    Queryable<TObj, TIterable> queryableItems(this->items);
-    return queryableItems;
-  }
+  // Queryable<TObj>* Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
+  // {
+  //   for (TObj obj : collection)
+  //   {
+  //     appender(&this->items, obj);
+  //   }
+  //
+  //   Queryable<TObj, TIterable> queryableItems(this->items);
+  //   return queryableItems;
+  // }
 
   template<typename T>
   T Sum(std::function<T(TObj)> retrieveValue)
@@ -555,15 +548,16 @@ public:
   }
 
   template<typename T>
-  Queryable<T, std::vector> Select(std::function<T(TObj)> retrieveValue)
+  Queryable<T> Select(std::function<T(TObj)> retrieveValue)
   {
-    std::vector<T> selected;
+    QueryableVectorData<T> * selected = std::make_shared<QueryableVectorData<T>>().get();
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items)
     {
-      selected.push_back(retrieveValue(item));
+      this->selected->Add(retrieveValue(item));
     }
 
+    // test if this polymorphically works due to the constructor
     return selected;
   }
 
@@ -583,69 +577,71 @@ public:
   }
 
   template<typename T>
-  Queryable<TObj, std::vector> OrderBy(std::function<T(TObj)> retrieveValue)
+  Queryable<TObj>* OrderBy(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
-    std::vector<TObj> sorted = this->items;
-    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
+    std::sort(
+      this->items->begin(),
+      this->items->end(),
+      [&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
 
-    Queryable<TObj, std::vector> queryableItems(sorted);
-    return queryableItems;
+    return this;
   }
 
   template<typename T>
-  Queryable<TObj, std::vector> OrderByDescending(std::function<T(TObj)> retrieveValue)
+  Queryable<TObj>* OrderByDescending(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
-    std::vector<TObj> sorted = this->items;
-    std::sort(sorted.begin(), sorted.end(), [&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
+    std::sort(
+      this->items->begin(),
+      this->items->end(),
+      [&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
 
-    Queryable<TObj, std::vector> queryableItems(sorted);
-    return queryableItems;
+    return this;
   }
 
-  Queryable<TObj, std::vector> Except(TIterable<TObj> collection)
-  {
-    static_assert(is_equatable<TObj>::value, "Item must be equatable");
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
-
-    Queryable<TObj, TIterable> inputCollection(collection);
-
-    std::vector<TObj> localSorted = this->OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
-    std::vector<TObj> inputSorted = inputCollection.OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
-
-    int localCount = this->Count();
-    int inputCount = inputCollection.Count();
-
-    TObj localMax = localSorted[localCount - 1];
-    TObj inputMax = inputSorted[inputCount - 1];
-
-    std::vector<TObj> result;
-
-    int localIndex = 0;
-    int inputIndex = 0;
-
-    while (inputIndex < inputCount && localIndex < localCount)
-    {
-      TObj localItem = localSorted[localIndex];
-      TObj inputItem = inputSorted[inputIndex];
-
-      if (localItem < inputItem)
-      {
-        result.push_back(localItem);
-        localIndex++;
-      }
-      else
-      {
-        inputIndex++;
-      }
-    }
-
-    Queryable<TObj, std::vector> output(result);
-    return output;
-  }
+  // Queryable<TObj, std::vector> Except(TIterable<TObj> collection)
+  // {
+  //   static_assert(is_equatable<TObj>::value, "Item must be equatable");
+  //   static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+  //
+  //   Queryable<TObj, TIterable> inputCollection(collection);
+  //
+  //   std::vector<TObj> localSorted = this->OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
+  //   std::vector<TObj> inputSorted = inputCollection.OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
+  //
+  //   int localCount = this->Count();
+  //   int inputCount = inputCollection.Count();
+  //
+  //   TObj localMax = localSorted[localCount - 1];
+  //   TObj inputMax = inputSorted[inputCount - 1];
+  //
+  //   std::vector<TObj> result;
+  //
+  //   int localIndex = 0;
+  //   int inputIndex = 0;
+  //
+  //   while (inputIndex < inputCount && localIndex < localCount)
+  //   {
+  //     TObj localItem = localSorted[localIndex];
+  //     TObj inputItem = inputSorted[inputIndex];
+  //
+  //     if (localItem < inputItem)
+  //     {
+  //       result.push_back(localItem);
+  //       localIndex++;
+  //     }
+  //     else
+  //     {
+  //       inputIndex++;
+  //     }
+  //   }
+  //
+  //   Queryable<TObj, std::vector> output(result);
+  //   return output;
+  // }
 
   TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate)
   {
@@ -717,74 +713,74 @@ public:
 
     return finalizer(this->Aggregate<T>(seed, accumulate));
   }
-
-  template<typename TJoinObj, typename TJoinOn, typename TOut>
-  Queryable<TOut, std::vector> Join(
-    TIterable<TJoinObj> collection,
-    std::function<TJoinOn(TObj)> getLocalJoinOn,
-    std::function<TJoinOn(TJoinObj)> getInputJoinOn,
-    std::function<TOut(TObj, TJoinObj)> createFrom)
-  {
-    static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
-    static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
-
-    std::vector<TOut> result;
-
-    Queryable<TJoinObj, TIterable> inputCollection(collection);
-    int inputSize = inputCollection.Count();
-    int localSize = this->Count();
-
-    if (localSize == 0 || inputSize == 0)
-    {
-      return result;
-    }
-
-    std::vector<TObj> localSorted = this->OrderBy(getLocalJoinOn).ToVector();
-    std::vector<TJoinObj> inputSorted = inputCollection.OrderBy(getInputJoinOn).ToVector();
-
-    int inputIndex = 0;
-
-    for (int i = 0; i < localSize; i++) // TObj localItem : localSorted)
-    {
-      TObj localItem = localSorted[i];
-      TJoinOn localValue;
-      TJoinOn inputValue;
-
-      do
-      {
-        TJoinObj inputItem = inputSorted[inputIndex];
-
-        localValue = getLocalJoinOn(localItem);
-        inputValue = getInputJoinOn(inputItem);
-
-        if (localValue == inputValue)
-        {
-          int sameValueIndex = inputIndex;
-          TJoinObj sameValueItem = inputSorted[sameValueIndex];
-          while (getInputJoinOn(sameValueItem) == inputValue)
-          {
-            result.push_back(createFrom(localItem, sameValueItem));
-
-            if (sameValueIndex == inputSize - 1)
-            {
-              break;
-            }
-
-            sameValueItem = inputSorted[++sameValueIndex];
-          }
-        }
-
-        if (inputValue < localValue)
-        {
-          inputIndex++;
-        }
-
-      } while (inputValue < localValue && inputIndex < inputSize);
-    }
-
-    Queryable<TOut, std::vector> output(result);
-    return output;
-  }
+  //
+  // template<typename TJoinObj, typename TJoinOn, typename TOut>
+  // Queryable<TOut, std::vector> Join(
+  //   TIterable<TJoinObj> collection,
+  //   std::function<TJoinOn(TObj)> getLocalJoinOn,
+  //   std::function<TJoinOn(TJoinObj)> getInputJoinOn,
+  //   std::function<TOut(TObj, TJoinObj)> createFrom)
+  // {
+  //   static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
+  //   static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
+  //
+  //   std::vector<TOut> result;
+  //
+  //   Queryable<TJoinObj, TIterable> inputCollection(collection);
+  //   int inputSize = inputCollection.Count();
+  //   int localSize = this->Count();
+  //
+  //   if (localSize == 0 || inputSize == 0)
+  //   {
+  //     return result;
+  //   }
+  //
+  //   std::vector<TObj> localSorted = this->OrderBy(getLocalJoinOn).ToVector();
+  //   std::vector<TJoinObj> inputSorted = inputCollection.OrderBy(getInputJoinOn).ToVector();
+  //
+  //   int inputIndex = 0;
+  //
+  //   for (int i = 0; i < localSize; i++) // TObj localItem : localSorted)
+  //   {
+  //     TObj localItem = localSorted[i];
+  //     TJoinOn localValue;
+  //     TJoinOn inputValue;
+  //
+  //     do
+  //     {
+  //       TJoinObj inputItem = inputSorted[inputIndex];
+  //
+  //       localValue = getLocalJoinOn(localItem);
+  //       inputValue = getInputJoinOn(inputItem);
+  //
+  //       if (localValue == inputValue)
+  //       {
+  //         int sameValueIndex = inputIndex;
+  //         TJoinObj sameValueItem = inputSorted[sameValueIndex];
+  //         while (getInputJoinOn(sameValueItem) == inputValue)
+  //         {
+  //           result.push_back(createFrom(localItem, sameValueItem));
+  //
+  //           if (sameValueIndex == inputSize - 1)
+  //           {
+  //             break;
+  //           }
+  //
+  //           sameValueItem = inputSorted[++sameValueIndex];
+  //         }
+  //       }
+  //
+  //       if (inputValue < localValue)
+  //       {
+  //         inputIndex++;
+  //       }
+  //
+  //     } while (inputValue < localValue && inputIndex < inputSize);
+  //   }
+  //
+  //   Queryable<TOut, std::vector> output(result);
+  //   return output;
+  // }
 };
 
 #endif

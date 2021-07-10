@@ -1,26 +1,21 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEMULTISET_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEMULTISET_H
 
+#include <memory>
 #include <set>
 
 #include "Queryable.h"
+#include "QueryableData/QueryableMultiSetData.h"
 
 template<typename T>
-class QueryableMultiSet : public Queryable<T, std::multiset>
+class QueryableMultiSet : public Queryable<T>
 {
-protected:
-  int CountInternal() override
-  {
-    return this->items.size();
-  }
-
-  void AddItem(T item) override
-  {
-    this->items.insert(item);
-  }
 public:
-  QueryableMultiSet() : Queryable<T, std::multiset>() { }
-  QueryableMultiSet(std::multiset<T> items) : Queryable<T, std::multiset>(items) { }
+  QueryableMultiSet() : Queryable<T>() { }
+  QueryableMultiSet(std::multiset<T> items)
+  {
+    this->items = std::make_unique<QueryableMultiSetData<T>>(items);
+  }
 };
 
 #endif

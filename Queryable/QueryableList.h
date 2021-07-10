@@ -1,26 +1,21 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLELIST_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLELIST_H
 
+#include <memory>
 #include <list>
 
 #include "Queryable.h"
+#include "QueryableData/QueryableListData.h"
 
 template<typename T>
-class QueryableList : public Queryable<T, std::list>
+class QueryableList : public Queryable<T>
 {
-protected:
-  int CountInternal() override
-  {
-    return this->items.size();
-  }
-
-  void AddItem(T item) override
-  {
-    this->items.push_back(item);
-  }
 public:
-  QueryableList() : Queryable<T, std::list>() { }
-  QueryableList(std::list<T> items) : Queryable<T, std::list>(items) { }
+  QueryableList() : Queryable<T>() { }
+  QueryableList(std::list<T> items)
+  {
+    this->items = std::make_unique<QueryableListData<T>>(items);
+  }
 };
 
 #endif

@@ -13,32 +13,35 @@
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
 
-#include "../../../Queryable/Queryable.h"
+#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryableVector.h"
+
+using namespace QueryBuilder;
 
 class ForEachFunctionalTest : public ::testing::Test
 {
 protected:
-  Queryable<uint, std::vector> queryable;
+  QueryableVector<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = Queryable<uint, std::vector>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 });
+    this->queryable = QueryableVector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 });
   }
 
   template<typename TObj, template<typename...> typename TIterable>
-  void TestForEach (Queryable<TObj, TIterable> localQueryable)
+  void TestForEach (Queryable<TObj, TIterable> * localQueryable)
   {
-    std::vector<TObj> iterated(localQueryable.Count(), 0);
+    std::vector<TObj> iterated(localQueryable->Count(), 0);
     int i = 0;
 
-    localQueryable.ForEach([&](TObj value)
+    localQueryable->ForEach([&](TObj value)
     {
       iterated[i++] = value;
     });
 
-    for (i = 0; i < localQueryable.Count(); i++)
+    for (i = 0; i < localQueryable->Count(); i++)
     {
-      ASSERT_EQ(localQueryable.At(i), iterated[i]);
+      ASSERT_EQ(localQueryable->At(i), iterated[i]);
     }
   }
 
@@ -47,7 +50,7 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  Queryable<Person, std::vector> emptyQueryable;
+  QueryableVector<Person> emptyQueryable;
   emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }
@@ -70,24 +73,24 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 
 TEST_F(ForEachFunctionalTest, ForEachSet)
 {
-  Queryable<uint, std::set> localQueryable = this->queryable.ToSet();
-  this->TestForEach(localQueryable);
+  QueryableSet<uint> localQueryable = this->queryable.ToSet();
+  this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachMultiSet)
 {
-  Queryable<uint, std::multiset> localQueryable = this->queryable.ToMultiSet();
-  this->TestForEach(localQueryable);
+  QueryableMultiSet<uint> localQueryable = this->queryable.ToMultiSet();
+  this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
-  Queryable<uint, std::deque> localQueryable = this->queryable.ToDeque();
-  this->TestForEach(localQueryable);
+  QueryableDeque<uint> localQueryable = this->queryable.ToDeque();
+  this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
-  Queryable<uint, std::list> localQueryable = this->queryable.ToList();
-  this->TestForEach(localQueryable);
+  QueryableList<uint> localQueryable = this->queryable.ToList();
+  this->TestForEach(&localQueryable);
 }

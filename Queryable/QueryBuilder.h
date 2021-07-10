@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <list>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -21,6 +22,7 @@
 #include "QueryableMultiSet.h"
 #include "QueryableSet.h"
 #include "QueryableVector.h"
+#include "QueryableData/QueryableVectorData.h"
 
 namespace QueryBuilder
 {

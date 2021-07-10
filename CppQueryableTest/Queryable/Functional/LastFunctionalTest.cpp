@@ -13,7 +13,10 @@
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
 
-#include "../../../Queryable/Queryable.h"
+#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryableVector.h"
+
+using namespace QueryBuilder;
 
 class LastFunctionalTest : public ::testing::Test
 {
@@ -23,11 +26,11 @@ protected:
   uint expectedUnorderedUnder40 = 9;
   uint expectedOrderedUnder40 = 34;
   uint threshold = 40;
-  Queryable<uint, std::vector> queryable;
+  QueryableVector<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = Queryable<uint, std::vector>({ 4, 7, 4, 3, 76, 8, 45, expectedOrderedLast, 76, 0, expectedOrderedUnder40, expectedUnorderedLast });
+    this->queryable = QueryableVector<uint>({ 4, 7, 4, 3, 76, 8, 45, expectedOrderedLast, 76, 0, expectedOrderedUnder40, expectedUnorderedLast });
   }
 
   void TearDown() override {}
@@ -35,7 +38,7 @@ protected:
 
 TEST_F(LastFunctionalTest, LastVectorUninitialized)
 {
-  Queryable<Person, std::vector> emptyQueryable;
+  QueryableVector<Person> emptyQueryable;
 
   try
   {
@@ -55,25 +58,25 @@ TEST_F(LastFunctionalTest, LastVector)
 
 TEST_F(LastFunctionalTest, LastSet)
 {
-  uint value = Queryable<uint, std::set>(this->queryable.ToSet()).Last();
+  uint value = QueryableSet<uint>(this->queryable.ToSet()).Last();
   ASSERT_EQ(this->expectedOrderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastMultiSet)
 {
-  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet()).Last();
+  uint value = QueryableMultiSet<uint>(this->queryable.ToMultiSet()).Last();
   ASSERT_EQ(this->expectedOrderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastDeque)
 {
-  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque()).Last();
+  uint value = QueryableDeque<uint>(this->queryable.ToDeque()).Last();
   ASSERT_EQ(this->expectedUnorderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastList)
 {
-  uint value = Queryable<uint, std::list>(this->queryable.ToList()).Last();
+  uint value = QueryableList<uint>(this->queryable.ToList()).Last();
   ASSERT_EQ(this->expectedUnorderedLast, value);
 }
 

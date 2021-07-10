@@ -1,26 +1,21 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEVECTOR_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEVECTOR_H
 
+#include <memory>
 #include <vector>
 
 #include "Queryable.h"
+#include "QueryableData/QueryableVectorData.h"
 
 template<typename T>
-class QueryableVector : public Queryable<T, std::vector>
+class QueryableVector : public Queryable<T>
 {
-protected:
-  int CountInternal() override
-  {
-    return this->items.size();
-  }
-
-  void AddItem(T item) override
-  {
-    this->items.push_back(item);
-  }
 public:
-  QueryableVector() : Queryable<T, std::vector>() { }
-  QueryableVector(std::vector<T> items) : Queryable<T, std::vector>(items) { }
+  QueryableVector() : Queryable<T>() { }
+  QueryableVector(std::vector<T> items)
+  {
+    this->items = std::make_unique<QueryableVectorData<T>>(items);
+  }
 };
 
 #endif

@@ -13,18 +13,21 @@
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
 
-#include "../../../Queryable/Queryable.h"
+#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryableVector.h"
+
+using namespace QueryBuilder;
 
 class OnEachFunctionalTest : public ::testing::Test
 {
 protected:
-  Queryable<uint, std::vector> queryable;
+  QueryableVector<uint> queryable;
   std::vector<uint> expectedWithDuplicates;
   std::set<uint> expectedWithoutDuplicates;
 
   void SetUp() override
   {
-    this->queryable = Queryable<uint, std::vector>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 });
+    this->queryable = QueryableVector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 });
     this->queryable.ForEach([&](uint value)
     {
       this->expectedWithDuplicates.push_back(value + 9);
@@ -37,7 +40,7 @@ protected:
 
 TEST_F(OnEachFunctionalTest, OnEachVectorUninitialized)
 {
-  Queryable<Person, std::vector> emptyQueryable;
+  QueryableVector<Person> emptyQueryable;
   emptyQueryable.OnEach([](Person & p) { p.SetName("anything"); });
   ASSERT_TRUE(true);
 }
@@ -47,7 +50,7 @@ TEST_F(OnEachFunctionalTest, OnEachInternalChange)
   std::string expectedName = "anything";
   int expectedAge = 32;
   std::vector<Person> people({Person(1, "bob", 30, 74, Gender::Male)});
-  Queryable<Person, std::vector> localQueryable(people);
+  QueryableVector<Person> localQueryable(people);
 
   localQueryable.OnEach([&](Person & p)
   {
@@ -98,7 +101,7 @@ TEST_F(OnEachFunctionalTest, OnEachVector)
 
 TEST_F(OnEachFunctionalTest, OnEachDeque)
 {
-  Queryable<uint, std::deque> localQueryable = this->queryable.ToDeque();
+  QueryableDeque<uint> localQueryable = this->queryable.ToDeque();
   localQueryable.OnEach([](uint & value) { value += 9; });
 
   for (int i = 0; i < localQueryable.Count(); i++)
@@ -109,7 +112,7 @@ TEST_F(OnEachFunctionalTest, OnEachDeque)
 
 TEST_F(OnEachFunctionalTest, OnEachList)
 {
-  Queryable<uint, std::list> localQueryable = this->queryable.ToList();
+  QueryableList<uint> localQueryable = this->queryable.ToList();
   localQueryable.OnEach([](uint & value) { value += 9; });
 
   for (int i = 0; i < localQueryable.Count(); i++)

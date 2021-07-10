@@ -1,26 +1,21 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLESET_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLESET_H
 
+#include <memory>
 #include <set>
 
 #include "Queryable.h"
+#include "QueryableData/QueryableSetData.h"
 
 template<typename T>
-class QueryableSet : public Queryable<T, std::set>
+class QueryableSet : public Queryable<T>
 {
-protected:
-  int CountInternal() override
-  {
-    return this->items.size();
-  }
-
-  void AddItem(T item) override
-  {
-    this->items.insert(item);
-  }
 public:
-  QueryableSet() : Queryable<T, std::set>() { }
-  QueryableSet(std::set<T> items) : Queryable<T, std::set>(items) { }
+  QueryableSet() : Queryable<T>() { }
+  QueryableSet(std::set<T> items)
+  {
+    this->items = std::make_unique<QueryableSetData<T>>(items);
+  }
 };
 
 #endif
