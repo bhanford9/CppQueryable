@@ -38,39 +38,39 @@ protected:
   void TearDown() override {}
 };
 
-TEST_F(OnEachFunctionalTest, OnEachVectorUninitialized)
-{
-  QueryableVector<Person> emptyQueryable;
-  emptyQueryable.OnEach([](Person & p) { p.SetName("anything"); });
-  ASSERT_TRUE(true);
-}
-
-TEST_F(OnEachFunctionalTest, OnEachInternalChange)
-{
-  std::string expectedName = "anything";
-  int expectedAge = 32;
-  std::vector<Person> people({Person(1, "bob", 30, 74, Gender::Male)});
-  QueryableVector<Person> localQueryable(people);
-
-  localQueryable.OnEach([&](Person & p)
-  {
-    p.SetName(expectedName);
-    p.SetAge(expectedAge);
-  });
-
-  ASSERT_EQ(expectedName, localQueryable.At(0).GetName());
-  ASSERT_EQ(expectedAge, localQueryable.At(0).GetAge());
-}
-
-TEST_F(OnEachFunctionalTest, OnEachVector)
-{
-  this->queryable.OnEach([](uint & value) { value += 9; });
-
-  for (int i = 0; i < this->queryable.Count(); i++)
-  {
-    ASSERT_EQ(this->expectedWithDuplicates[i], this->queryable.At(i));
-  }
-}
+// TEST_F(OnEachFunctionalTest, OnEachVectorUninitialized)
+// {
+//   QueryableVector<Person> emptyQueryable;
+//   emptyQueryable.OnEach([](Person & p) { p.SetName("anything"); });
+//   ASSERT_TRUE(true);
+// }
+//
+// TEST_F(OnEachFunctionalTest, OnEachInternalChange)
+// {
+//   std::string expectedName = "anything";
+//   int expectedAge = 32;
+//   std::vector<Person> people({Person(1, "bob", 30, 74, Gender::Male)});
+//   QueryableVector<Person> localQueryable(people);
+//
+//   localQueryable.OnEach([&](Person & p)
+//   {
+//     p.SetName(expectedName);
+//     p.SetAge(expectedAge);
+//   });
+//
+//   ASSERT_EQ(expectedName, localQueryable.At(0).GetName());
+//   ASSERT_EQ(expectedAge, localQueryable.At(0).GetAge());
+// }
+//
+// TEST_F(OnEachFunctionalTest, OnEachVector)
+// {
+//   this->queryable.OnEach([](uint & value) { value += 9; });
+//
+//   for (int i = 0; i < this->queryable.Count(); i++)
+//   {
+//     ASSERT_EQ(this->expectedWithDuplicates[i], this->queryable.At(i));
+//   }
+// }
 
 // sets do not contain mutable contents and a separate OnEach method would need to be created for these
 
@@ -111,13 +111,13 @@ TEST_F(OnEachFunctionalTest, OnEachVector)
 //   }
 // }
 
-TEST_F(OnEachFunctionalTest, OnEachList)
-{
-  QueryableList<uint> localQueryable = BuildQueryable(this->queryable.ToList());
-  localQueryable.OnEach([](uint & value) { value += 9; });
-
-  for (int i = 0; i < localQueryable.Count(); i++)
-  {
-    ASSERT_EQ(this->expectedWithDuplicates[i], localQueryable.At(i));
-  }
-}
+// TEST_F(OnEachFunctionalTest, OnEachList)
+// {
+//   QueryableList<uint> localQueryable = BuildQueryable(this->queryable.ToList());
+//   localQueryable.OnEach([](uint & value) { value += 9; });
+//
+//   for (int i = 0; i < localQueryable.Count(); i++)
+//   {
+//     ASSERT_EQ(this->expectedWithDuplicates[i], localQueryable.At(i));
+//   }
+// }
