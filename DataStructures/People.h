@@ -4,20 +4,20 @@
 #include <vector>
 
 #include "Person.h"
-#include "../Queryable/Queryable.h"
+#include "../Queryable/QueryableVector.h"
 
-class People : public Queryable<Person, std::vector>
+class People : public QueryableVector<Person>
 {
 public:
   People() { }
   People(std::vector<Person> people)
-    : Queryable<Person, std::vector>(people)
+    : QueryableVector<Person>(people)
   {
   }
 
   void Add(Person person)
   {
-    this->items.push_back(person);
+    this->items.get()->Add(person);
   }
 };
 

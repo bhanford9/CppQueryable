@@ -14,10 +14,10 @@ private:
   typedef typename std::list<T>::iterator t_forwardIterator;
   typedef typename std::list<T>::reverse_iterator t_reverseIterator;
 
-  Iterator<T> beggining;
+  Iterator<T> beginning;
   Iterator<T> ending;
 
-  Iterator<T> rbeggining;
+  Iterator<T> rbeginning;
   Iterator<T> rending;
 
   t_forwardIterator beginIterator;
@@ -28,12 +28,14 @@ private:
 
   void InitForwardBegin()
   {
-    beggining.Get = [&]() { return &this->beginIterator; };
-    beggining.Increment = [&]() { this->beginIterator++; };
-    beggining.Decrement = [&]() { this->beginIterator--; };
-    beggining.Equal = [&](const Iterator<T>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
-    beggining.Dereference = [&]() -> T& { return *this->beginIterator; };
-    beggining.ConstDereference = [&]() -> const T& { return *this->beginIterator; };
+    beginning.Get = [&]() { return &this->beginIterator; };
+    beginning.Increment = [&]() { this->beginIterator++; };
+    beginning.Add = [&](int add) { std::advance(this->beginIterator, add); };
+    beginning.Subtract = [&](int subtract) { std::advance(this->beginIterator, -subtract); };
+    beginning.Decrement = [&]() { this->beginIterator--; };
+    beginning.Equal = [&](const Iterator<T>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
+    beginning.Dereference = [&]() -> T& { return *this->beginIterator; };
+    beginning.ConstDereference = [&]() -> const T& { return *this->beginIterator; };
   }
 
   void InitForwardEnd()
@@ -48,12 +50,12 @@ private:
 
   void InitReverseBegin()
   {
-    rbeggining.Get = [&]() { return &this->rbeginIterator; };
-    rbeggining.Increment = [&]() { this->rbeginIterator++; };
-    rbeggining.Decrement = [&]() { this->rbeginIterator--; };
-    rbeggining.Equal = [&](const Iterator<T>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
-    rbeggining.Dereference = [&]() -> T& { return *this->rbeginIterator; };
-    rbeggining.ConstDereference = [&]() -> const T& { return *this->rbeginIterator; };
+    rbeginning.Get = [&]() { return &this->rbeginIterator; };
+    rbeginning.Increment = [&]() { this->rbeginIterator++; };
+    rbeginning.Decrement = [&]() { this->rbeginIterator--; };
+    rbeginning.Equal = [&](const Iterator<T>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
+    rbeginning.Dereference = [&]() -> T& { return *this->rbeginIterator; };
+    rbeginning.ConstDereference = [&]() -> const T& { return *this->rbeginIterator; };
   }
 
   void InitReverseEnd()
@@ -100,7 +102,7 @@ public:
   Iterator<T> begin() override
   {
     this->beginIterator = this->items.begin();
-    return this->beggining;
+    return this->beginning;
   }
 
   Iterator<T> end() override
@@ -112,7 +114,7 @@ public:
   Iterator<T> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    return this->rbeggining;
+    return this->rbeginning;
   }
 
   Iterator<T> rend() override

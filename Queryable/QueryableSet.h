@@ -11,7 +11,12 @@ template<typename T>
 class QueryableSet : public Queryable<T>
 {
 public:
-  QueryableSet() : Queryable<T>() { }
+  QueryableSet()
+  {
+    std::set<T> local;
+    this->items = std::make_unique<QueryableSetData<T>>(local);
+  }
+
   QueryableSet(std::set<T> items)
   {
     this->items = std::make_unique<QueryableSetData<T>>(items);

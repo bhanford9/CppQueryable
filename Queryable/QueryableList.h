@@ -11,7 +11,12 @@ template<typename T>
 class QueryableList : public Queryable<T>
 {
 public:
-  QueryableList() : Queryable<T>() { }
+  QueryableList()
+  {
+    std::list<T> local;
+    this->items = std::make_unique<QueryableListData<T>>(local);
+  }
+
   QueryableList(std::list<T> items)
   {
     this->items = std::make_unique<QueryableListData<T>>(items);

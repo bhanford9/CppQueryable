@@ -25,11 +25,11 @@ protected:
 
   void SetUp() override
   {
-    this->queryable = QueryableVector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 });
+    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
   }
 
-  template<typename TObj, template<typename...> typename TIterable>
-  void TestForEach (Queryable<TObj, TIterable> * localQueryable)
+  template<typename TObj>
+  void TestForEach (Queryable<TObj> * localQueryable)
   {
     std::vector<TObj> iterated(localQueryable->Count(), 0);
     int i = 0;

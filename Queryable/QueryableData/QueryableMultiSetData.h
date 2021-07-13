@@ -6,6 +6,7 @@
 #include <set>
 
 #include "QueryableData.h"
+#include "../Iterators/Iterator.h"
 
 template<typename T>
 class QueryableMultiSetData : public QueryableData<T, std::multiset>
@@ -17,7 +18,7 @@ private:
   Iterator<T> beginning;
   Iterator<T> ending;
 
-  Iterator<T> rbeggining;
+  Iterator<T> rbeginning;
   Iterator<T> rending;
 
   mutable t_forwardIterator beginIterator;
@@ -32,6 +33,8 @@ private:
   {
     beginning.Get = [&]() { return &this->beginIterator; };
     beginning.Increment = [&]() { this->beginIterator++; };
+    beginning.Add = [&](int add) { std::advance(this->beginIterator, add); };
+    beginning.Subtract = [&](int subtract) { std::advance(this->beginIterator, -subtract); };
     beginning.Decrement = [&]() { this->beginIterator--; };
     beginning.Equal = [&](const Iterator<T>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     beginning.Dereference = [&]() -> T& { this->value = *this->beginIterator; return value; };
@@ -50,12 +53,12 @@ private:
 
   void InitReverseBegin()
   {
-    rbeggining.Get = [&]() { return &this->rbeginIterator; };
-    rbeggining.Increment = [&]() { this->rbeginIterator++; };
-    rbeggining.Decrement = [&]() { this->rbeginIterator--; };
-    rbeggining.Equal = [&](const Iterator<T>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
-    rbeggining.Dereference = [&]() -> T& { this->value = *this->rbeginIterator; return value; };
-    rbeggining.ConstDereference = [&]() -> const T& { return *this->rbeginIterator; };
+    rbeginning.Get = [&]() { return &this->rbeginIterator; };
+    rbeginning.Increment = [&]() { this->rbeginIterator++; };
+    rbeginning.Decrement = [&]() { this->rbeginIterator--; };
+    rbeginning.Equal = [&](const Iterator<T>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
+    rbeginning.Dereference = [&]() -> T& { this->value = *this->rbeginIterator; return value; };
+    rbeginning.ConstDereference = [&]() -> const T& { return *this->rbeginIterator; };
   }
 
   void InitReverseEnd()
@@ -117,7 +120,7 @@ public:
   Iterator<T> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    return this->rbeggining;
+    return this->rbeginning;
   }
 
   Iterator<T> rend() override

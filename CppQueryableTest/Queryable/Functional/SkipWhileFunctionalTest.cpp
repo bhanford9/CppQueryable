@@ -38,14 +38,14 @@ protected:
 TEST_F(SkipWhileFunctionalTest, SkipWhileVectorUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-  Queryable<Person, std::vector> * result = emptyQueryable.SkipWhile([](Person p) { return true; });
+  Queryable<Person> * result = emptyQueryable.SkipWhile([](Person p) { return true; });
 
   ASSERT_EQ(0, result->Count());
 }
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 {
-  Queryable<uint, std::vector>* result = this->queryable.SkipWhile([](uint value) { return true; });
+  Queryable<uint>* result = this->queryable.SkipWhile([](uint value) { return true; });
 
   ASSERT_EQ(this->queryable.Count(), result->Count());
 
@@ -57,7 +57,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 {
-  Queryable<uint, std::vector>* result = this->queryable
+  Queryable<uint>* result = this->queryable
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result->Count());
@@ -70,7 +70,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 {
-  Queryable<uint, std::set>* result = QueryableSet<uint>(this->queryable.ToSet())
+  QueryableSet<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
+  Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrderedSet, result->Count());
@@ -83,7 +84,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {
-  Queryable<uint, std::multiset>* result = Queryable<uint, std::multiset>(this->queryable.ToMultiSet())
+  QueryableMultiSet<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
+  Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrdered, result->Count());
@@ -96,7 +98,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 {
-  Queryable<uint, std::deque>* result = Queryable<uint, std::deque>(this->queryable.ToDeque())
+  QueryableDeque<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
+  Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result->Count());
@@ -109,7 +112,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 {
-  Queryable<uint, std::list>* result = Queryable<uint, std::list>(this->queryable.ToList())
+  QueryableList<uint> queryableSet = BuildQueryable(this->queryable.ToList());
+  Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result->Count());

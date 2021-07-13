@@ -29,8 +29,8 @@ protected:
     this->queryable = QueryableVector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 });
   }
 
-  template<typename TObj, template<typename...> typename TIterable>
-  void TestSkip(Queryable<TObj, TIterable> * localQueryable, int toSkip)
+  template<typename TObj>
+  void TestSkip(Queryable<TObj> * localQueryable, int toSkip)
   {
     std::vector<uint> expected;
     for (int i = toSkip; i < localQueryable->Count(); i++)
@@ -38,7 +38,7 @@ protected:
       expected.push_back(localQueryable->At(i));
     }
 
-    Queryable<uint, TIterable> * result = localQueryable->Skip(toSkip);
+    Queryable<uint> * result = localQueryable->Skip(toSkip);
 
     ASSERT_EQ(expected.size(), result->Count());
 
@@ -48,8 +48,8 @@ protected:
     }
   }
 
-  template<typename TObj, template<typename...> typename TIterable>
-  void TestSkipNegative(Queryable<TObj, TIterable> * localQueryable, int toSkip)
+  template<typename TObj>
+  void TestSkipNegative(Queryable<TObj> * localQueryable, int toSkip)
   {
     std::vector<uint> expected;
     int endIndex = localQueryable->Count() + toSkip;
@@ -58,7 +58,7 @@ protected:
       expected.push_back(localQueryable->At(i));
     }
 
-    Queryable<uint, TIterable>* result = localQueryable->Skip(toSkip);
+    Queryable<uint>* result = localQueryable->Skip(toSkip);
 
     ASSERT_EQ(expected.size(), result->Count());
 
@@ -74,7 +74,7 @@ protected:
 TEST_F(SkipFunctionalTest, SkipVectorUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-  Queryable<Person, std::vector> * result = emptyQueryable.Skip(this->SkipCount);
+  Queryable<Person> * result = emptyQueryable.Skip(this->SkipCount);
 
   ASSERT_EQ(0, result->Count());
 }

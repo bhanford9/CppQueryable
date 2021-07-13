@@ -34,23 +34,12 @@ protected:
 
 public:
   Queryable() { }
-  Queryable(IQueryableData<TObj> * items)
-  {
-    this->Initialize(items);
-  }
-
-  void Initialize(IQueryableData<TObj> * items)
-  {
-    // may need to call create on this instead
-    std::cout << "creating queryable" << std::endl;
-    this->items = items;
-  }
 
   std::vector<TObj> ToVector()
   {
     std::vector<TObj> newItems;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       newItems.push_back(item);
     }
@@ -62,7 +51,7 @@ public:
   {
     std::set<TObj> newItems;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       newItems.insert(item);
     }
@@ -74,7 +63,7 @@ public:
   {
     std::multiset<TObj> newItems;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       newItems.insert(item);
     }
@@ -86,7 +75,7 @@ public:
   {
     std::deque<TObj> newItems;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       newItems.push_back(item);
     }
@@ -98,12 +87,18 @@ public:
   {
     std::list<TObj> newItems;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       newItems.push_back(item);
     }
 
     return newItems;
+  }
+
+  template <typename T>
+  T* As()
+  {
+    return static_cast<T*>(this);
   }
 
   virtual TObj At(int index)
@@ -125,7 +120,7 @@ public:
       throw std::runtime_error("Index must be greater than zero");
     }
 
-    auto it = this->items->begin();
+    auto it = this->items.get()->begin();
     std::advance(it, index);
     return *it;
   }
@@ -133,15 +128,15 @@ public:
   int Count()
   {
     // distance is a linear count. may be necessary for child classes that dont hold a separate size member
-    // return std::distance(this->item->begin(), this->item->end());
-    return this->items->Count();
+    // return std::distance(this->items->begin(), this->items->end());
+    return this->items.get()->Count();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
   {
     int count = 0;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (condition(item))
       {
@@ -154,7 +149,7 @@ public:
 
   void ForEach(std::function<void(TObj)> action)
   {
-    for (const TObj & item : *this->items.get())
+    for (TObj item : *this->items.get())
     {
       action(item);
     }
@@ -164,7 +159,7 @@ public:
   {
     // TODO --> evaluate if it would be useful to create an implementation of this for sets
 
-    for (TObj & item : *this->items)
+    for (TObj & item : *this->items.get())
     {
       action(item);
     }
@@ -174,14 +169,14 @@ public:
 
   Queryable<TObj> * Where(std::function<bool(TObj)> condition)
   {
-    std::vector<TObj> copiedItems = this->items->ToVector();
-    this->items->Clear();
+    QueryableVectorData<TObj> copy = this->items.get()->ToVector();
+    this->items.get()->Clear();
 
-    for (TObj item : copiedItems)
+    for (TObj item : copy)
     {
       if (condition(item))
       {
-        this->items->Add(item);
+        this->items.get()->Add(item);
       }
     }
 
@@ -213,7 +208,7 @@ public:
       throw std::runtime_error("Cannot get first element of empty collection");
     }
 
-    return *this->item->begin();
+    return *this->items.get()->begin();
   }
 
   TObj Last(std::function<bool(TObj)> condition)
@@ -225,7 +220,7 @@ public:
       throw std::runtime_error("Cannot get element of empty collection");
     }
 
-    for (auto it = this->item->rbegin(); it != this->item->rend(); it++)
+    for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
       TObj item = *it;
 
@@ -245,7 +240,7 @@ public:
       throw std::runtime_error("Cannot get last element of empty collection");
     }
 
-    return *this->item->rbegin();
+    return *this->items.get()->rbegin();
   }
 
   Queryable<TObj> * Take(int count)
@@ -263,8 +258,8 @@ public:
       // TODO --> erase method does not have great time complexity and some containers
       //   can do it in constant time. so it will be better to implement this per
       //   queryable container class
-      this->item->RemoveLast();
-      // this->item->erase(--this->item->end());
+      this->items.get()->RemoveLast();
+      // this->items->erase(--this->items->end());
     }
 
     return this;
@@ -278,7 +273,7 @@ public:
 
     int toTake = 0;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (!doTake(item))
       {
@@ -304,13 +299,13 @@ public:
       count = localSize;
     }
 
-    IQueryableData<TObj> * copy = this->item->Clone();
-    this->item->clear();
+    QueryableVectorData<TObj> copy = this->items.get()->ToVector();
+    this->items.get()->Clear();
 
-    // could overide this for containers that have const access to make it faster
-    for (auto it = this->items->begin() + count; it != this->items->end(); it++)
+    for (auto it = copy.begin() + count; it != copy.end(); it++)
     {
-      this->item->Add(*it);
+      TObj value = *it;
+      this->items.get()->Add(value);
     }
 
     return this;
@@ -320,7 +315,7 @@ public:
   {
     int toDelete = 0;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (!doSkip(item))
       {
@@ -330,54 +325,105 @@ public:
       toDelete++;
     }
 
-    return this->Skip(toDelete);
+    Queryable<TObj>* retval = this->Skip(toDelete);
+    return retval;
   }
 
-  // bool Equal(TIterable<TObj> collection)
-  // {
-  //   static_assert(is_equatable<TObj>::value, "Type must be equatable");
-  //
-  //   int localCount = this->Count();
-  //   int inputCount = Queryable<TObj, TIterable>(collection).Count();
-  //
-  //   if (localCount != inputCount)
-  //   {
-  //     return false;
-  //   }
-  //
-  //   int i = 0;
-  //   for (TObj item : collection)
-  //   {
-  //     if (!(this->At(i++) == item))
-  //     {
-  //       return false;
-  //     }
-  //   }
-  //
-  //   return true;
-  // }
-  //
-  // bool Equal(TIterable<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
-  // {
-  //   int localCount = this->Count();
-  //   int inputCount = Queryable<TObj, TIterable>(collection).Count();
-  //
-  //   if (localCount != inputCount)
-  //   {
-  //     return false;
-  //   }
-  //
-  //   int i = 0;
-  //   for (TObj item : collection)
-  //   {
-  //     if (!areEqual(this->At(i++), item))
-  //     {
-  //       return false;
-  //     }
-  //   }
-  //
-  //   return true;
-  // }
+  bool Equal(std::vector<TObj> collection)
+  {
+    return this->Equal<TObj, std::vector>(collection, collection.size());
+  }
+
+  bool Equal(std::vector<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    return this->Equal<TObj, std::vector>(collection, collection.size(), areEqual);
+  }
+
+  bool Equal(std::list<TObj> collection)
+  {
+    return this->Equal<TObj, std::list>(collection, collection.size());
+  }
+
+  bool Equal(std::list<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    return this->Equal<TObj, std::list>(collection, collection.size(), areEqual);
+  }
+
+  bool Equal(std::deque<TObj> collection)
+  {
+    return this->Equal<TObj, std::deque>(collection, collection.size());
+  }
+
+  bool Equal(std::deque<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    return this->Equal<TObj, std::deque>(collection, collection.size(), areEqual);
+  }
+
+  bool Equal(std::set<TObj> collection)
+  {
+    return this->Equal<TObj, std::set>(collection, collection.size());
+  }
+
+  bool Equal(std::set<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    return this->Equal<TObj, std::set>(collection, collection.size(), areEqual);
+  }
+
+  bool Equal(std::multiset<TObj> collection)
+  {
+    return this->Equal<TObj, std::multiset>(collection, collection.size());
+  }
+
+  bool Equal(std::multiset<TObj> collection, std::function<bool(TObj, TObj)> areEqual)
+  {
+    return this->Equal<TObj, std::multiset>(collection, collection.size(), areEqual);
+  }
+
+  template<typename T, template<typename...> typename TIterable>
+  bool Equal(TIterable<T> collection, int collectionSize)
+  {
+    static_assert(is_equatable<T>::value, "Type must be equatable");
+
+    int localCount = this->Count();
+
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
+
+    int i = 0;
+    for (T item : collection)
+    {
+      if (!(this->At(i++) == item))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  template<typename T, template<typename...> typename TIterable>
+  bool Equal(TIterable<T> collection, int collectionSize, std::function<bool(T, T)> areEqual)
+  {
+    int localCount = this->Count();
+
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
+
+    int i = 0;
+    for (T item : collection)
+    {
+      if (!areEqual(this->At(i++), item))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   // Wait to do this until after each container has its child class because they'll
   //  implement individual appenders.
@@ -403,7 +449,7 @@ public:
 
     T sum = 0;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       sum += retrieveValue(item);
     }
@@ -419,7 +465,7 @@ public:
     bool isFirst = true;
     T max;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -445,7 +491,7 @@ public:
 
     T max = startSeed;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -466,7 +512,7 @@ public:
     bool isFirst = true;
     T min;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -491,7 +537,7 @@ public:
 
     T min = startSeed;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -512,7 +558,7 @@ public:
     double sum = 0;
     ulong count = 0;
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       sum += retrieveValue(item);
       count++;
@@ -523,7 +569,7 @@ public:
 
   bool Any(std::function<bool(TObj)> clause)
   {
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (clause(item))
       {
@@ -536,7 +582,7 @@ public:
 
   bool All(std::function<bool(TObj)> clause)
   {
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (!clause(item))
       {
@@ -565,7 +611,7 @@ public:
   {
     static_assert(is_equatable<TObj>::value, "Item must be equatable");
 
-    for (TObj item : this->items)
+    for (TObj item : *this->items.get())
     {
       if (item == obj)
       {
@@ -582,8 +628,8 @@ public:
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     std::sort(
-      this->items->begin(),
-      this->items->end(),
+      this->items.get()->begin(),
+      this->items.get()->end(),
       [&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
 
     return this;
@@ -595,8 +641,8 @@ public:
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     std::sort(
-      this->items->begin(),
-      this->items->end(),
+      this->items.get()->begin(),
+      this->items.get()->end(),
       [&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
 
     return this;

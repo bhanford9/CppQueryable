@@ -11,7 +11,12 @@ template<typename T>
 class QueryableMultiSet : public Queryable<T>
 {
 public:
-  QueryableMultiSet() : Queryable<T>() { }
+  QueryableMultiSet()
+  {
+    std::multiset<T> local;
+    this->items = std::make_unique<QueryableMultiSetData<T>>(local);
+  }
+
   QueryableMultiSet(std::multiset<T> items)
   {
     this->items = std::make_unique<QueryableMultiSetData<T>>(items);

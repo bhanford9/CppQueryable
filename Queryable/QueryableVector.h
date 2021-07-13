@@ -11,7 +11,12 @@ template<typename T>
 class QueryableVector : public Queryable<T>
 {
 public:
-  QueryableVector() : Queryable<T>() { }
+  QueryableVector()
+  {
+    std::vector<T> local;
+    this->items = std::make_unique<QueryableVectorData<T>>(local);
+  }
+
   QueryableVector(std::vector<T> items)
   {
     this->items = std::make_unique<QueryableVectorData<T>>(items);

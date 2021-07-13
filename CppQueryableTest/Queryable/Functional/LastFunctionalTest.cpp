@@ -82,7 +82,7 @@ TEST_F(LastFunctionalTest, LastList)
 
 TEST_F(LastFunctionalTest, LastWhereVectorUninitialized)
 {
-  Queryable<Person, std::vector> emptyQueryable;
+  QueryableVector<Person> emptyQueryable;
 
   try
   {
@@ -114,28 +114,28 @@ TEST_F(LastFunctionalTest, LastWhereVector)
 
 TEST_F(LastFunctionalTest, LastWhereSet)
 {
-  uint value = Queryable<uint, std::set>(this->queryable.ToSet())
+  uint value = QueryableSet<uint>(this->queryable.ToSet())
     .Last([&](uint value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereMultiSet)
 {
-  uint value = Queryable<uint, std::multiset>(this->queryable.ToMultiSet())
+  uint value = QueryableMultiSet<uint>(this->queryable.ToMultiSet())
     .Last([&](uint value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereDeque)
 {
-  uint value = Queryable<uint, std::deque>(this->queryable.ToDeque())
+  uint value = QueryableDeque<uint>(this->queryable.ToDeque())
     .Last([&](uint value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereList)
 {
-  uint value = Queryable<uint, std::list>(this->queryable.ToList())
+  uint value = QueryableList<uint>(this->queryable.ToList())
     .Last([&](uint value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }

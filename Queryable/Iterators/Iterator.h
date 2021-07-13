@@ -14,31 +14,11 @@ public:
 
   typedef std::bidirectional_iterator_tag iterator_category;
   typedef T value_type;
-  typedef std::ptrdiff_t difference_type;
+  typedef int difference_type;
   typedef T* pointer;
   typedef T& reference;
 
   Iterator() { }
-  Iterator(const Iterator<T>& iterator)
-  {
-    *this = iterator;
-  }
-  Iterator(
-    std::function<void*()> get,
-    std::function<void()> increment,
-    std::function<void()> decrement,
-    std::function<bool(const Iterator<T>&)> equal,
-    std::function<T&()> dereference,
-    std::function<const T&()> constDereference
-  )
-  {
-    this->Get = get;
-    this->Increment = increment;
-    this->Decrement = decrement;
-    this->Equal = equal;
-    this->Dereference = dereference;
-    this->ConstDereference = constDereference;
-  }
 
   std::function<void*()> Get;
   std::function<void()> Increment;
@@ -46,7 +26,11 @@ public:
   std::function<bool(const Iterator<T>&)> Equal;
   std::function<T&()> Dereference;
   std::function<const T&()> ConstDereference;
-
+  std::function<void(int)> Add;
+  std::function<void(int)> Subtract;
+  std::function<int(const Iterator<T>&)> IterSubtract;
+  std::function<bool(const Iterator<T>&)> LessThan;
+  std::function<void(const Iterator<T>&)> Assign;
 
   virtual Iterator<T>& operator++()
   {
@@ -61,30 +45,59 @@ public:
     return copy;
   }
 
-  virtual Iterator<T>& operator--()
+  Iterator<T>& operator+(int value)
+  {
+    this->Add(value);
+    return *this;
+  }
+
+  Iterator<T>& operator-(int value)
+  {
+    this->Subtract(value);
+    return *this;
+  }
+
+  int operator-(const Iterator<T>& iterator)
+  {
+    return this->IterSubtract(iterator);
+  }
+
+  Iterator<T>& operator--()
   {
     this->Decrement();
     return *this;
   }
 
-  virtual T& operator*()
+  T& operator*()
   {
     return this->Dereference();
   }
 
-  virtual const T& operator*() const
+  const T& operator*() const
   {
     return this->ConstDereference();
   }
 
-  virtual bool operator==(const Iterator<T>& comparison) const
+  bool operator==(const Iterator<T>& comparison) const
   {
     return this->Equal(comparison);
   }
 
-  virtual bool operator!=(const Iterator<T>& comparison) const
+  bool operator!=(const Iterator<T>& comparison) const
   {
     return !this->Equal(comparison);
+  }
+
+  bool operator<(const Iterator<T>& comparison)
+  {
+    return this->LessThan(comparison);
+  }
+
+  Iterator<T>& operator=(const Iterator<T>& value)
+  {
+    std::cout << "assignment made" << std::endl;
+    this->Assign(value);
+    return *this;
   }
 };
 

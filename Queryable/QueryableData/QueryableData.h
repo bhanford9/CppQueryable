@@ -17,7 +17,6 @@ template<typename TObj, template<typename...> typename TIterable>
 class QueryableData : public IQueryableData<TObj>
 {
   static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
-  static_assert(has_size_method<TIterable<TObj>>::value, "Class must have a size method");
 
 protected:
   TIterable<TObj> items;

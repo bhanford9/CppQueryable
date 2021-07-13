@@ -22,7 +22,6 @@
 #include "QueryableMultiSet.h"
 #include "QueryableSet.h"
 #include "QueryableVector.h"
-#include "QueryableData/QueryableVectorData.h"
 
 namespace QueryBuilder
 {

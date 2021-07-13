@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "../Iterators/ConstIterator.h"
 #include "../Iterators/Iterator.h"
 
 template<typename T>
@@ -15,10 +14,6 @@ public:
   virtual Iterator<T> end() = 0;
   virtual Iterator<T> rbegin() = 0;
   virtual Iterator<T> rend() = 0;
-  // virtual ConstIterator<T> begin() const = 0;
-  // virtual ConstIterator<T> end() const = 0;
-  // virtual ConstIterator<T> rbegin() const = 0;
-  // virtual ConstIterator<T> rend() const = 0;
 
   virtual void Clear() = 0;
   virtual void Add(T obj) = 0;

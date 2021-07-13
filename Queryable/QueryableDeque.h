@@ -11,7 +11,12 @@ template<typename T>
 class QueryableDeque : public Queryable<T>
 {
 public:
-  QueryableDeque() : Queryable<T>() { }
+  QueryableDeque()
+  {
+    std::deque<T> local;
+    this->items = std::make_unique<QueryableDequeData<T>>(local);
+  }
+
   QueryableDeque(std::deque<T> items)
   {
     this->items = std::make_unique<QueryableDequeData<T>>(items);
