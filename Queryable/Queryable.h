@@ -11,6 +11,7 @@
 #include <set>
 #include <vector>
 
+#include "DeferredUtilities/Condition.h"
 #include "TypeConstraintUtil.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableVectorData.h"
@@ -31,6 +32,32 @@ class Queryable
 
 protected:
   std::unique_ptr<IQueryableData<TObj>> items;
+  Condition<TObj> condition;
+
+  // should avoid using this method if possible
+  int ApplyCondition()
+  {
+    if (!this->condition)
+    {
+      // if no condition has been specified just return the size of the collection
+      return this->items.get()->Count();
+    }
+
+    std::vector<TObj> copy = this->ToVector();
+    this->Clear();
+    int newCount = 0;
+
+    for (TObj obj : copy)
+    {
+      if (this->condition(obj))
+      {
+        this->items.get()->Add(obj);
+        newCount++;
+      }
+    }
+
+    return newCount;
+  }
 
 public:
   Queryable() { }
@@ -41,7 +68,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      newItems.push_back(item);
+      if (this->condition(item))
+      {
+        newItems.push_back(item);
+      }
     }
 
     return newItems;
@@ -53,7 +83,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      newItems.insert(item);
+      if (this->condition(item))
+      {
+        newItems.insert(item);
+      }
     }
 
     return newItems;
@@ -65,7 +98,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      newItems.insert(item);
+      if (this->condition(item))
+      {
+        newItems.insert(item);
+      }
     }
 
     return newItems;
@@ -77,7 +113,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      newItems.push_back(item);
+      if (this->condition(item))
+      {
+        newItems.push_back(item);
+      }
     }
 
     return newItems;
@@ -89,7 +128,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      newItems.push_back(item);
+      if (this->condition(item))
+      {
+        newItems.push_back(item);
+      }
     }
 
     return newItems;
@@ -103,33 +145,27 @@ public:
 
   virtual TObj At(int index)
   {
-    // Since only random access iterators provide + and - operators, the library provides two
-    // function templates advance and distance. These function templates use + and - for random
-    // access iterators (and are, therefore, constant time for them); for input, forward and
-    // bidirectional iterators they use ++ to provide linear time implementations.
-
-    int count = this->Count();
-
-    if (count <= index)
-    {
-      throw std::runtime_error("Specified index was greater than the size of the collection");
-    }
-
-    if (count < 0)
+    if (index < 0)
     {
       throw std::runtime_error("Index must be greater than zero");
     }
 
-    auto it = this->items.get()->begin();
-    std::advance(it, index);
-    return *it;
+    int i = 0;
+    for (TObj obj : *this->items.get())
+    {
+      // `i` purposefully not incremented if condtion is false
+      if (this->condition(obj) && index == i++)
+      {
+        return obj;
+      }
+    }
+
+    throw std::runtime_error("Specified index was outside the bounds of the container");
   }
 
   int Count()
   {
-    // distance is a linear count. may be necessary for child classes that dont hold a separate size member
-    // return std::distance(this->items->begin(), this->items->end());
-    return this->items.get()->Count();
+    return this->ApplyCondition();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
@@ -169,17 +205,18 @@ public:
 
   Queryable<TObj> * Where(std::function<bool(TObj)> condition)
   {
-    QueryableVectorData<TObj> copy = this->items.get()->ToVector();
-    this->items.get()->Clear();
+    // QueryableVectorData<TObj> copy = this->items.get()->ToVector();
+    // this->items.get()->Clear();
+    //
+    // for (TObj item : copy)
+    // {
+    //   if (condition(item))
+    //   {
+    //     this->items.get()->Add(item);
+    //   }
+    // }
 
-    for (TObj item : copy)
-    {
-      if (condition(item))
-      {
-        this->items.get()->Add(item);
-      }
-    }
-
+    this->condition += condition;
     return this;
   }
 

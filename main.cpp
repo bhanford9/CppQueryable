@@ -7,9 +7,14 @@ using namespace QueryBuilder;
 int main()
 {
   std::vector<int> vectorInts({ 1, 3, 25, 6, 8, 9});
-  BuildQueryable(vectorInts)
+  std::vector<int> newInts = BuildQueryable(vectorInts)
     .Where([](int value) { return value % 2 == 1; })
-    ->ForEach([](int value) { std::cout << "int: " << value << std::endl; });
+    ->ToVector();
+    //->ForEach([](int value) { std::cout << "int: " << value << std::endl; });
+  for (int value : newInts)
+  {
+    std::cout << "value: " << value << std::endl;
+  }
 
   std::cout << std::endl;
 
