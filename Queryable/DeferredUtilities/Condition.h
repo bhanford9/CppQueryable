@@ -8,6 +8,7 @@ template<typename T>
 class Condition
 {
 private:
+  bool applied = false;
   std::function<bool(T)> condition;
 
 public:
@@ -24,11 +25,18 @@ public:
     {
       this->condition = condition;
     }
+
+    this->applied = false;
   }
 
   bool Passes(T obj)
   {
-    return !this->condition || this->condition(obj);
+    return !this->condition || this->applied || this->condition(obj);
+  }
+
+  void MarkApplied(bool applied = true)
+  {
+    this->applied = applied;
   }
 
   Condition & operator+=(std::function<bool(T)> condition)

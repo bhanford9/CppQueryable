@@ -56,11 +56,30 @@ protected:
       }
     }
 
+    this->condition.MarkApplied();
     return newCount;
   }
 
 public:
   Queryable() { }
+
+  Queryable<TObj> * Applied()
+  {
+    this->ApplyCondition();
+    return this;
+  }
+
+  void Clear()
+  {
+    this->items.get()->Clear();
+    this->condition.MarkApplied(false);
+  }
+
+  void Add(TObj obj)
+  {
+    this->items.get()->Add(obj);
+    this->condition.MarkApplied(false);
+  }
 
   std::vector<TObj> ToVector()
   {
@@ -74,6 +93,7 @@ public:
       }
     }
 
+    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -89,6 +109,7 @@ public:
       }
     }
 
+    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -104,6 +125,7 @@ public:
       }
     }
 
+    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -119,6 +141,7 @@ public:
       }
     }
 
+    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -134,6 +157,7 @@ public:
       }
     }
 
+    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -174,7 +198,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (condition(item))
+      if (this->condition(item))
       {
         count++;
       }
@@ -187,7 +211,10 @@ public:
   {
     for (TObj item : *this->items.get())
     {
-      action(item);
+      if (this->condition(item))
+      {
+        action(item);
+      }
     }
   }
 
@@ -203,33 +230,17 @@ public:
     return this;
   }
 
-  Queryable<TObj> * Where(std::function<bool(TObj)> condition)
+  Queryable<TObj> * Where(std::function<bool(TObj)> condition, bool apply = false)
   {
-    // QueryableVectorData<TObj> copy = this->items.get()->ToVector();
-    // this->items.get()->Clear();
-    //
-    // for (TObj item : copy)
-    // {
-    //   if (condition(item))
-    //   {
-    //     this->items.get()->Add(item);
-    //   }
-    // }
-
     this->condition += condition;
-    return this;
+    return apply ? this->Applied() : this;
   }
 
   TObj First(std::function<bool(TObj)> condition)
   {
-    if (this->Count() == 0)
+    for (TObj item : *this->items.get())
     {
-      throw std::runtime_error("Cannot get element of empty collection");
-    }
-
-    for (auto item : *this->items)
-    {
-      if (condition(item))
+      if (this->condition(item) && condition(item))
       {
         return item;
       }
@@ -240,28 +251,24 @@ public:
 
   TObj First()
   {
-    if (this->Count() == 0)
+    for (TObj item : *this->items.get())
     {
-      throw std::runtime_error("Cannot get first element of empty collection");
+      if (this->condition(item))
+      {
+        return item;
+      }
     }
 
-    return *this->items.get()->begin();
+    throw std::runtime_error("Cannot get first item of empty collection.");
   }
 
   TObj Last(std::function<bool(TObj)> condition)
   {
-    int count = this->Count();
-
-    if (count == 0)
-    {
-      throw std::runtime_error("Cannot get element of empty collection");
-    }
-
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
       TObj item = *it;
 
-      if (condition(item))
+      if (this->condition(item) && condition(item))
       {
         return item;
       }
@@ -272,12 +279,17 @@ public:
 
   TObj Last()
   {
-    if (this->Count() == 0)
+    for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
-      throw std::runtime_error("Cannot get last element of empty collection");
+      TObj item = *it;
+
+      if (this->condition(item))
+      {
+        return item;
+      }
     }
 
-    return *this->items.get()->rbegin();
+    throw std::runtime_error("Cannot get last item of empty collection.");
   }
 
   Queryable<TObj> * Take(int count)
@@ -295,32 +307,45 @@ public:
       // TODO --> erase method does not have great time complexity and some containers
       //   can do it in constant time. so it will be better to implement this per
       //   queryable container class
+
+      // if the last item does not meet the condition, then it should not be considered in the count
+      if (!this->condition(*this->items.get()->rbegin()))
+      {
+        i--;
+      }
+
+      // TODO --> need to figure out an optimization for deciding whether its worth
+      //    dropping from the back or creating a copy from the front
+      //    (i.e. if count > 0.5 * size then drop from back)
+      //    (i.e. if count < 16 then take from front)
+
       this->items.get()->RemoveLast();
       // this->items->erase(--this->items->end());
     }
 
+    this->condition.MarkApplied();
     return this;
   }
 
   Queryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
   {
-    // done this way to allow returning the same container that was used to call this method
-    // need to refactor with implementations of container-specific queriable classes.
-    // each container queriable can have its own implementation of adding members
+    // consider optimization of doing this without duplicate vector
+    // may be better/worse depending on container size
+    std::vector<TObj> copy = this->ToVector();
+    this->Clear();
 
     int toTake = 0;
 
-    for (TObj item : *this->items.get())
+    for (TObj item : copy)
     {
-      if (!doTake(item))
+      if (this->condition(item) && doTake(item))
       {
-        break;
+        this->items.get()->Add(item);
       }
-
-      toTake++;
     }
 
-    return this->Take(toTake);
+    this->condition.MarkApplied();
+    return this;
   }
 
   Queryable<TObj>* Skip(int count)
@@ -337,7 +362,7 @@ public:
     }
 
     QueryableVectorData<TObj> copy = this->items.get()->ToVector();
-    this->items.get()->Clear();
+    this->Clear();
 
     for (auto it = copy.begin() + count; it != copy.end(); it++)
     {
@@ -345,6 +370,7 @@ public:
       this->items.get()->Add(value);
     }
 
+    this->condition.MarkApplied();
     return this;
   }
 
@@ -363,6 +389,7 @@ public:
     }
 
     Queryable<TObj>* retval = this->Skip(toDelete);
+    this->condition.MarkApplied();
     return retval;
   }
 
@@ -462,22 +489,30 @@ public:
     return true;
   }
 
-  // Wait to do this until after each container has its child class because they'll
-  //  implement individual appenders.
+  // with preserveFilter true, you can do the following:
+  //   collection.Where(x => x.IsValid).Concat(otherItems, true);
   //
-  // For this and similar methods that require optimizations, we can have the public
-  //  method not include the parameter for the optimization and then call an internal
-  //  overriden method that handles the optimization and returns to the parent.
-  // Queryable<TObj>* Concat(TIterable<TObj> collection, std::function<void(TIterable<TObj>*, TObj)> appender)
-  // {
-  //   for (TObj obj : collection)
-  //   {
-  //     appender(&this->items, obj);
-  //   }
-  //
-  //   Queryable<TObj, TIterable> queryableItems(this->items);
-  //   return queryableItems;
-  // }
+  // and the Where condition will be executed on the incoming items to prevent
+  // unwanted items from being added without needing to immediately apply the
+  // where condition to the rest of the inital collection
+  template<typename T, template<typename...> typename TIterable>
+  Queryable<TObj>* Concat(TIterable<TObj> collection, bool preserveFilter = false)
+  {
+    if (preserveFilter)
+    {
+      this->condition.MarkApplied(false);
+    }
+
+    for (TObj obj : collection)
+    {
+      if (this->condition(obj))
+      {
+        this->items.get()->Add(obj);
+      }
+    }
+
+    return this;
+  }
 
   template<typename T>
   T Sum(std::function<T(TObj)> retrieveValue)
