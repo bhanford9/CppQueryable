@@ -46,7 +46,7 @@ TEST_F(LastFunctionalTest, LastVectorUninitialized)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Cannot get last element of empty collection");
+    ASSERT_STREQ(ex.what(), "Cannot get last item of empty collection.");
   }
 }
 
@@ -90,7 +90,7 @@ TEST_F(LastFunctionalTest, LastWhereVectorUninitialized)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Cannot get element of empty collection");
+    ASSERT_STREQ(ex.what(), "No item fitting the condition was found.");
   }
 }
 
@@ -138,4 +138,40 @@ TEST_F(LastFunctionalTest, LastWhereList)
   uint value = QueryableList<uint>(this->queryable.ToList())
     .Last([&](uint value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedUnorderedUnder40, value);
+}
+
+TEST_F(LastFunctionalTest, LastWhereEven)
+{
+  uint expected = expectedOrderedUnder40;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->Last();
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(LastFunctionalTest, LastWhereOdd)
+{
+  uint expected = expectedUnorderedLast;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 1; })
+    ->Last();
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(LastFunctionalTest, LastWhereWhereEven)
+{
+  uint expected = 76;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->Last([](uint value) { return value > 40; });
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(LastFunctionalTest, LastWhereWhereOdd)
+{
+  uint expected = expectedOrderedLast;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 1; })
+    ->Last([](uint value) { return value > 40; });
+  ASSERT_EQ(expected, value);
 }

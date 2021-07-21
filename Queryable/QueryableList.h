@@ -15,11 +15,13 @@ public:
   {
     std::list<T> local;
     this->items = std::make_unique<QueryableListData<T>>(local);
+    this->type = QueryableType::List;
   }
 
   QueryableList(std::list<T> items)
   {
     this->items = std::make_unique<QueryableListData<T>>(items);
+    this->type = QueryableType::List;
   }
 };
 

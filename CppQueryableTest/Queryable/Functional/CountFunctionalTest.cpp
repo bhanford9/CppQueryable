@@ -67,3 +67,13 @@ TEST_F(CountFunctionalTest, CountList)
   int count = BuildQueryable(this->queryable.ToList()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
+
+TEST_F(CountFunctionalTest, CountWhere)
+{
+  int expected = 7;
+  int count = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->Count();
+
+  ASSERT_EQ(expected, count);
+}

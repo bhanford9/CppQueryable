@@ -15,11 +15,13 @@ public:
   {
     std::deque<T> local;
     this->items = std::make_unique<QueryableDequeData<T>>(local);
+    this->type = QueryableType::Deque;
   }
 
   QueryableDeque(std::deque<T> items)
   {
     this->items = std::make_unique<QueryableDequeData<T>>(items);
+    this->type = QueryableType::Deque;
   }
 };
 

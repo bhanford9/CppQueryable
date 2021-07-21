@@ -46,7 +46,7 @@ TEST_F(FirstFunctionalTest, FirstVectorUninitialized)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Cannot get first element of empty collection");
+    ASSERT_STREQ(ex.what(), "Cannot get first item of empty collection.");
   }
 }
 
@@ -90,7 +90,7 @@ TEST_F(FirstFunctionalTest, FirstWhereVectorUninitialized)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Cannot get element of empty collection");
+    ASSERT_STREQ(ex.what(), "No item fitting the condition was found.");
   }
 }
 
@@ -138,4 +138,40 @@ TEST_F(FirstFunctionalTest, FirstWhereList)
   uint value = QueryableList<uint>(this->queryable.ToList())
     .First([&](uint value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereEven)
+{
+  uint expected = 4;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->First();
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereOdd)
+{
+  uint expected = expectedUnorderedFirst;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 1; })
+    ->First();
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereWhereEven)
+{
+  uint expected = 76;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->First([](uint value) { return value > 10; });
+  ASSERT_EQ(expected, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereWhereOdd)
+{
+  uint expected = 45;
+  uint value = this->queryable
+    .Where([](uint value) { return value % 2 == 1; })
+    ->First([](uint value) { return value > 10; });
+  ASSERT_EQ(expected, value);
 }

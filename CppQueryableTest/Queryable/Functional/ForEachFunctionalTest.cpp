@@ -94,3 +94,15 @@ TEST_F(ForEachFunctionalTest, ForEachList)
   QueryableList<uint> localQueryable = this->queryable.ToList();
   this->TestForEach(&localQueryable);
 }
+
+TEST_F(ForEachFunctionalTest, ForEachWhere)
+{
+  QueryableVector<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  int expectedCount = 6;
+  int count = 0;
+  queryableVector
+    .Where([](uint value) { return value % 2 == 0; })
+    ->ForEach([&](uint value) { ASSERT_EQ(count++ * 2, value); });
+
+  ASSERT_EQ(expectedCount, count);
+}

@@ -72,3 +72,12 @@ TEST_F(CountIfFunctionalTest, CountIfList)
   int count = BuildQueryable(this->queryable.ToList()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
+
+TEST_F(CountIfFunctionalTest, CountIfWhere)
+{
+  int count = this->queryable
+    .Where([](uint value) { return value % 2 == 0; })
+    ->CountIf([] (uint value) { return true; });
+
+  ASSERT_EQ(expectedEvensWithDuplicates, count);
+}

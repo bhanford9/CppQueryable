@@ -52,7 +52,7 @@ public:
 
   operator bool() const
   {
-    return this->condition;
+    return this->condition ? true : false;
   }
 };
 

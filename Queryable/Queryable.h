@@ -15,6 +15,7 @@
 #include "TypeConstraintUtil.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableVectorData.h"
+#include "QueryableType.h"
 
 template<typename TObj>
 class Queryable
@@ -33,6 +34,7 @@ class Queryable
 protected:
   std::unique_ptr<IQueryableData<TObj>> items;
   Condition<TObj> condition;
+  QueryableType type;
 
   // should avoid using this method if possible
   int ApplyCondition()
@@ -198,7 +200,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (this->condition(item) && condition(item))
       {
         count++;
       }
@@ -376,16 +378,21 @@ public:
 
   Queryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
   {
+    // the skip and take methods need to be thought through
+    // to come up with better space/time complexities
     int toDelete = 0;
 
     for (TObj item : *this->items.get())
     {
-      if (!doSkip(item))
+      if (this->condition(item))
       {
-        break;
-      }
+        if (!doSkip(item))
+        {
+          break;
+        }
 
-      toDelete++;
+        toDelete++;
+      }
     }
 
     Queryable<TObj>* retval = this->Skip(toDelete);
@@ -523,7 +530,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      sum += retrieveValue(item);
+      if (this->condition(item))
+      {
+        sum += retrieveValue(item);
+      }
     }
 
     return sum;
@@ -539,16 +549,19 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      T newValue = retrieveValue(item);
+      if (this->condition(item))
+      {
+        T newValue = retrieveValue(item);
 
-      if (isFirst)
-      {
-        isFirst = false;
-        max = newValue;
-      }
-      else if (max < newValue)
-      {
-        max = newValue;
+        if (isFirst)
+        {
+          isFirst = false;
+          max = newValue;
+        }
+        else if (max < newValue)
+        {
+          max = newValue;
+        }
       }
     }
 
@@ -565,11 +578,14 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      T newValue = retrieveValue(item);
-
-      if (max < newValue)
+      if (this->condition(item))
       {
-        max = newValue;
+        T newValue = retrieveValue(item);
+
+        if (max < newValue)
+        {
+          max = newValue;
+        }
       }
     }
 
@@ -586,16 +602,19 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      T newValue = retrieveValue(item);
+      if (this->condition(item))
+      {
+        T newValue = retrieveValue(item);
 
-      if (isFirst)
-      {
-        isFirst = false;
-        min = newValue;
-      }
-      else if (newValue < min)
-      {
-        min = newValue;
+        if (isFirst)
+        {
+          isFirst = false;
+          min = newValue;
+        }
+        else if (newValue < min)
+        {
+          min = newValue;
+        }
       }
     }
 
@@ -611,11 +630,14 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      T newValue = retrieveValue(item);
-
-      if (newValue < min)
+      if (this->condition(item))
       {
-        min = newValue;
+        T newValue = retrieveValue(item);
+
+        if (newValue < min)
+        {
+          min = newValue;
+        }
       }
     }
 
@@ -632,18 +654,23 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      sum += retrieveValue(item);
-      count++;
+      if (this->condition(item))
+      {
+        sum += retrieveValue(item);
+        count++;
+      }
     }
+
+    // consider alternative way of handling count of zero
 
     return count > 0 ? sum / count : 0;
   }
 
-  bool Any(std::function<bool(TObj)> clause)
+  bool Any(std::function<bool(TObj)> condition)
   {
     for (TObj item : *this->items.get())
     {
-      if (clause(item))
+      if (this->condition(item) && condition(item))
       {
         return true;
       }
@@ -652,11 +679,11 @@ public:
     return false;
   }
 
-  bool All(std::function<bool(TObj)> clause)
+  bool All(std::function<bool(TObj)> condition)
   {
     for (TObj item : *this->items.get())
     {
-      if (!clause(item))
+      if (this->condition(item) && !condition(item))
       {
         return false;
       }
@@ -666,16 +693,20 @@ public:
   }
 
   template<typename T>
-  Queryable<T> Select(std::function<T(TObj)> retrieveValue)
+  Queryable<T>* Select(std::function<T(TObj)> retrieveValue)
   {
+    // this won't actually work, but putting in place for now
+    // this method will probably need to be virtual so each child can manually create and return itself
     QueryableVectorData<T> * selected = std::make_shared<QueryableVectorData<T>>().get();
 
     for (TObj item : *this->items)
     {
-      this->selected->Add(retrieveValue(item));
+      if (this->condition(item))
+      {
+        this->selected->Add(retrieveValue(item));
+      }
     }
 
-    // test if this polymorphically works due to the constructor
     return selected;
   }
 
@@ -685,7 +716,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (item == obj)
+      if (this->condition(item) && item == obj)
       {
         return true;
       }
@@ -698,6 +729,7 @@ public:
   Queryable<TObj>* OrderBy(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+    this->ApplyCondition();
 
     std::sort(
       this->items.get()->begin(),
@@ -711,6 +743,7 @@ public:
   Queryable<TObj>* OrderByDescending(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+    this->ApplyCondition();
 
     std::sort(
       this->items.get()->begin(),
@@ -761,48 +794,42 @@ public:
   //   return output;
   // }
 
-  TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate)
+  TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate, TObj * seed = NULL)
   {
-    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated");
+    TObj aggregatedValue;
 
-    int count = this->Count();
-
-    if (count == 0)
+    if (seed != NULL)
     {
-      throw std::runtime_error("Cannot aggregate empty collection");
+      aggregatedValue = *seed;
     }
 
-    TObj aggregatedValue = this->First();
-
-    for (int i = 1; i < count; i++)
+    for (TObj item : *this->items.get())
     {
-      aggregatedValue += accumulate(aggregatedValue, this->At(i));
+      if (this->condition(item))
+      {
+        aggregatedValue = accumulate(aggregatedValue, item);
+      }
     }
 
     return aggregatedValue;
   }
 
-  TObj Aggregate(TObj * seed, std::function<TObj(TObj, TObj)> accumulate)
-  {
-    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated (+= operator)");
-    static_assert(is_addable<TObj>::value, "Type must be able to be aggregated (+ operator)");
-
-    return seed != NULL ? (seed + this->Aggregate(accumulate)) : this->Aggregate(accumulate);
-  }
-
   template<typename T>
-  T Aggregate(T * seed, std::function<T(T, TObj)> accumulate)
+  T Aggregate(std::function<T(T, TObj)> accumulate, T * seed = NULL)
   {
-    static_assert(is_aggregatable<T>::value, "Type must be able to be aggregated (+= operator)");
-    static_assert(is_addable<T>::value, "Type must be able to be aggregated (+ operator)");
+    T aggregatedValue;
 
-    int count = this->Count();
-
-    T aggregatedValue = *seed;
-
-    for (int i = 1; i < count; i++)
+    if (seed != NULL)
     {
-      aggregatedValue = accumulate(aggregatedValue, this->At(i));
+      aggregatedValue = *seed;
+    }
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        aggregatedValue = accumulate(aggregatedValue, item);
+      }
     }
 
     return aggregatedValue;
@@ -810,26 +837,20 @@ public:
 
   template<typename TFinalizer>
   TFinalizer Aggregate(
-    TObj * seed,
     std::function<TObj(TObj, TObj)> accumulate,
-    std::function<TFinalizer(TObj)> finalizer)
+    std::function<TFinalizer(TObj)> finalizer,
+    TObj * seed = NULL)
   {
-    static_assert(is_aggregatable<TObj>::value, "Type must be able to be aggregated (+= operator)");
-    static_assert(is_addable<TObj>::value, "Type must be able to be aggregated (+ operator)");
-
-    return finalizer(this->Aggregate(seed, accumulate));
+    return finalizer(this->Aggregate(accumulate, seed));
   }
 
   template<typename T, typename TFinalizer>
   TFinalizer Aggregate(
-    T * seed,
     std::function<T(T, TObj)> accumulate,
-    std::function<TFinalizer(T)> finalizer)
+    std::function<TFinalizer(T)> finalizer,
+    TObj * seed = NULL)
   {
-    static_assert(is_aggregatable<T>::value, "Type must be able to be aggregated (+= operator)");
-    static_assert(is_addable<T>::value, "Type must be able to be aggregated (+ operator)");
-
-    return finalizer(this->Aggregate<T>(seed, accumulate));
+    return finalizer(this->Aggregate<T>(accumulate, seed));
   }
   //
   // template<typename TJoinObj, typename TJoinOn, typename TOut>

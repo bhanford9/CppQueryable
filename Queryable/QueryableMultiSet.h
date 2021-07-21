@@ -15,11 +15,13 @@ public:
   {
     std::multiset<T> local;
     this->items = std::make_unique<QueryableMultiSetData<T>>(local);
+    this->type = QueryableType::MultiSet;
   }
 
   QueryableMultiSet(std::multiset<T> items)
   {
     this->items = std::make_unique<QueryableMultiSetData<T>>(items);
+    this->type = QueryableType::MultiSet;
   }
 };
 

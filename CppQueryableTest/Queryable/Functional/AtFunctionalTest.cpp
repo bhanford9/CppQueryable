@@ -45,7 +45,7 @@ TEST_F(AtFunctionalTest, AtVectorUninitialized)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Specified index was greater than the size of the collection");
+    ASSERT_STREQ(ex.what(), "Specified index was outside the bounds of the container");
   }
 }
 
@@ -57,7 +57,7 @@ TEST_F(AtFunctionalTest, AtVectorIndexToHigh)
   }
   catch (std::runtime_error& ex)
   {
-    ASSERT_STREQ(ex.what(), "Specified index was greater than the size of the collection");
+    ASSERT_STREQ(ex.what(), "Specified index was outside the bounds of the container");
   }
 }
 
@@ -101,4 +101,14 @@ TEST_F(AtFunctionalTest, AtList)
 {
   uint value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
+}
+
+TEST_F(AtFunctionalTest, AtWhere)
+{
+  uint expected = 8;
+  uint value = this->queryable
+    .Where([](uint val) { return val % 2 == 0; })
+    ->At(3);
+
+  ASSERT_EQ(expected, value);
 }

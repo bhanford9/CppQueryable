@@ -15,11 +15,13 @@ public:
   {
     std::set<T> local;
     this->items = std::make_unique<QueryableSetData<T>>(local);
+    this->type = QueryableType::Set;
   }
 
   QueryableSet(std::set<T> items)
   {
     this->items = std::make_unique<QueryableSetData<T>>(items);
+    this->type = QueryableType::Set;
   }
 };
 
