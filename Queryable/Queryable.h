@@ -336,13 +336,18 @@ public:
     std::vector<TObj> copy = this->ToVector();
     this->Clear();
 
-    int toTake = 0;
-
     for (TObj item : copy)
     {
-      if (this->condition(item) && doTake(item))
+      if (this->condition(item))
       {
-        this->items.get()->Add(item);
+        if (doTake(item))
+        {
+          this->items.get()->Add(item);
+        }
+        else
+        {
+          break;
+        }
       }
     }
 
