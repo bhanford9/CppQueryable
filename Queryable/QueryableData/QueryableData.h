@@ -107,6 +107,25 @@ public:
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
+  QueryableData(const QueryableData& data)
+  {
+    this->items = data.items;
+
+    this->beginning = data.beginning;
+    this->ending = data.ending;
+
+    this->rbeginning = data.rbeginning;
+    this->rending = data.rending;
+
+    this->beginIterator = data.beginIterator;
+    this->endIterator = data.endIterator;
+
+    this->rbeginIterator = data.rbeginIterator;
+    this->rendIterator = data.rendIterator;
+
+    this->value = data.value;
+  }
+  virtual ~QueryableData() { }
 
   void Initialize(TIterable<TObj> items)
   {

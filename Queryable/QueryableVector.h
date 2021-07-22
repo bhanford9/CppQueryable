@@ -14,15 +14,23 @@ public:
   QueryableVector()
   {
     std::vector<T> local;
-    this->items = std::make_unique<QueryableVectorData<T>>(local);
+    this->items = std::make_shared<QueryableVectorData<T>>(local);
     this->type = QueryableType::Vector;
   }
 
   QueryableVector(std::vector<T> items)
   {
-    this->items = std::make_unique<QueryableVectorData<T>>(items);
+    this->items = std::make_shared<QueryableVectorData<T>>(items);
     this->type = QueryableType::Vector;
   }
+
+  QueryableVector(const QueryableVector& queryable)
+    : Queryable<T>(queryable)
+  {
+  }
+
+
+  virtual ~QueryableVector() { }
 };
 
 #endif

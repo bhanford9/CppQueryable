@@ -22,6 +22,12 @@ public:
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
+  QueryableSetData(const QueryableSetData& data)
+    : QueryableData<T, std::deque>(data)
+  {
+  }
+
+  virtual ~QueryableSetData() { }
 
   void Add(T item) override
   {

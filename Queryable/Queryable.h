@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "DeferredUtilities/Condition.h"
+#include "DeferredUtilities/PersistentContainer.h"
 #include "TypeConstraintUtil.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableVectorData.h"
@@ -32,7 +33,8 @@ class Queryable
   // TODO --> defered execution for WHERE so that doing .WHERE(X).FOREACH(Y) only iterates over the set once
 
 protected:
-  std::unique_ptr<IQueryableData<TObj>> items;
+  std::shared_ptr<IQueryableData<TObj>> items;
+  PersistentContainer selected;
   Condition<TObj> condition;
   QueryableType type;
 
@@ -63,7 +65,19 @@ protected:
   }
 
 public:
-  Queryable() { }
+  Queryable()
+  {
+    std::vector<TObj> local;
+    this->items = std::make_shared<QueryableVectorData<TObj>>(local);
+    this->type = QueryableType::Vector;
+  }
+  Queryable(const Queryable<TObj>& queryable)
+  {
+    this->items = queryable.items;
+    this->selected = queryable.selected;
+    this->condition = queryable.condition;
+    this->type = queryable.type;
+  }
 
   Queryable<TObj> * Applied()
   {
@@ -700,19 +714,19 @@ public:
   template<typename T>
   Queryable<T>* Select(std::function<T(TObj)> retrieveValue)
   {
-    // this won't actually work, but putting in place for now
-    // this method will probably need to be virtual so each child can manually create and return itself
-    QueryableVectorData<T> * selected = std::make_shared<QueryableVectorData<T>>().get();
+    std::shared_ptr<Queryable<T>> data = std::make_shared<Queryable<T>>();
+    this->selected.Set(data);
+    std::shared_ptr<Queryable<T>> selected = this->selected.GetAs<Queryable<T>>();
 
-    for (TObj item : *this->items)
+    for (TObj item : *this->items.get())
     {
       if (this->condition(item))
       {
-        this->selected->Add(retrieveValue(item));
+        selected->Add(retrieveValue(item));
       }
     }
 
-    return selected;
+    return this->selected.GetAs<Queryable<T>>().get();
   }
 
   bool Contains(TObj obj)

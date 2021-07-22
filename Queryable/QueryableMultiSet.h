@@ -14,15 +14,23 @@ public:
   QueryableMultiSet()
   {
     std::multiset<T> local;
-    this->items = std::make_unique<QueryableMultiSetData<T>>(local);
+    this->items = std::make_shared<QueryableMultiSetData<T>>(local);
     this->type = QueryableType::MultiSet;
   }
 
   QueryableMultiSet(std::multiset<T> items)
   {
-    this->items = std::make_unique<QueryableMultiSetData<T>>(items);
+    this->items = std::make_shared<QueryableMultiSetData<T>>(items);
     this->type = QueryableType::MultiSet;
   }
+
+  QueryableMultiSet(const QueryableMultiSet& queryable)
+    : Queryable<T>(queryable)
+  {
+  }
+
+
+  virtual ~QueryableMultiSet() { }
 };
 
 #endif

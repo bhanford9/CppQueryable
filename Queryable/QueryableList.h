@@ -14,15 +14,23 @@ public:
   QueryableList()
   {
     std::list<T> local;
-    this->items = std::make_unique<QueryableListData<T>>(local);
+    this->items = std::make_shared<QueryableListData<T>>(local);
     this->type = QueryableType::List;
   }
 
   QueryableList(std::list<T> items)
   {
-    this->items = std::make_unique<QueryableListData<T>>(items);
+    this->items = std::make_shared<QueryableListData<T>>(items);
     this->type = QueryableType::List;
   }
+
+  QueryableList(const QueryableList& queryable)
+    : Queryable<T>(queryable)
+  {
+  }
+
+
+  virtual ~QueryableList() { }
 };
 
 #endif

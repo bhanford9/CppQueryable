@@ -1,6 +1,6 @@
 CXX = g++
 CPPFLAGS = -Wall #-Werror
-DEBUG = -g # -c
+DEBUG = -g  -ggdb3# -c
 
 $(warning "Base Project Path: $(PROJECTS_PATH)") # exported environment variable
 $(warning "CppQueryable Project Path: $(CPP_QUERYABLE_PATH)") # exported environment variable

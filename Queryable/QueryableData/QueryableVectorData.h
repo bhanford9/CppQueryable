@@ -16,6 +16,12 @@ public:
     : QueryableData<T, std::vector>(items)
   {
   }
+  QueryableVectorData(const QueryableVectorData& data)
+    : QueryableData<T, std::deque>(data)
+  {
+  }
+
+  virtual ~QueryableVectorData() { }
 
   void Add(T item) override
   {

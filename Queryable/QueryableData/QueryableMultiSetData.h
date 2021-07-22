@@ -21,6 +21,12 @@ public:
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
+  QueryableMultiSetData(const QueryableMultiSetData& data)
+    : QueryableData<T, std::deque>(data)
+  {
+  }
+
+  virtual ~QueryableMultiSetData() { }
 
   void Add(T item) override
   {
