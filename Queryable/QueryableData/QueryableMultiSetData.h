@@ -22,7 +22,7 @@ public:
     this->InitReverseEnd();
   }
   QueryableMultiSetData(const QueryableMultiSetData& data)
-    : QueryableData<T, std::deque>(data)
+    : QueryableData<T, std::multiset>(data)
   {
   }
 

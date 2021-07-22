@@ -596,12 +596,13 @@ public:
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> retrieveValue)
+  TObj MaxItem(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    T max;
+    T maxValue;
+    TObj maxItem;
 
     for (TObj item : *this->items.get())
     {
@@ -612,21 +613,34 @@ public:
         if (isFirst)
         {
           isFirst = false;
-          max = newValue;
+          maxValue = newValue;
+          maxItem = item;
         }
-        else if (max < newValue)
+        else if (maxValue < newValue)
         {
-          max = newValue;
+          maxValue = newValue;
+          maxItem = item;
         }
       }
     }
 
-    return max;
+    if (isFirst)
+    {
+      throw std::runtime_error("Cannot find maximum item of an empty colleciton.");
+    }
+
+    return maxItem;
   }
 
+  template<typename T>
+  T Max(std::function<T(TObj)> retrieveValue)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+    return retrieveValue(this->MaxItem(retrieveValue));
+  }
 
   template<typename T>
-  T Max(T startSeed, std::function<T(TObj)> retrieveValue)
+  T Max(std::function<T(TObj)> retrieveValue, T startSeed)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -649,12 +663,13 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> retrieveValue)
+  TObj MinItem(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    T min;
+    T minValue;
+    TObj minItem;
 
     for (TObj item : *this->items.get())
     {
@@ -665,20 +680,34 @@ public:
         if (isFirst)
         {
           isFirst = false;
-          min = newValue;
+          minValue = newValue;
+          minItem = item;
         }
-        else if (newValue < min)
+        else if (newValue < minValue)
         {
-          min = newValue;
+          minValue = newValue;
+          minItem = item;
         }
       }
     }
 
-    return min;
+    if (isFirst)
+    {
+      throw std::runtime_error("Cannot find minimum item of an empty colleciton.");
+    }
+
+    return minItem;
   }
 
   template<typename T>
-  T Min(T startSeed, std::function<T(TObj)> retrieveValue)
+  T Min(std::function<T(TObj)> retrieveValue)
+  {
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+    return retrieveValue(this->MinItem(retrieveValue));
+  }
+
+  template<typename T>
+  T Min(std::function<T(TObj)> retrieveValue, T startSeed)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 

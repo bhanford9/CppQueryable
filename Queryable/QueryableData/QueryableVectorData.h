@@ -17,7 +17,7 @@ public:
   {
   }
   QueryableVectorData(const QueryableVectorData& data)
-    : QueryableData<T, std::deque>(data)
+    : QueryableData<T, std::vector>(data)
   {
   }
 

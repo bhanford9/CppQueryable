@@ -17,7 +17,7 @@ public:
   {
   }
   QueryableListData(const QueryableListData& data)
-    : QueryableData<T, std::deque>(data)
+    : QueryableData<T, std::list>(data)
   {
   }
 

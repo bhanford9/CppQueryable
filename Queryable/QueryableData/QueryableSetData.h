@@ -23,7 +23,7 @@ public:
     this->InitReverseEnd();
   }
   QueryableSetData(const QueryableSetData& data)
-    : QueryableData<T, std::deque>(data)
+    : QueryableData<T, std::set>(data)
   {
   }
 
