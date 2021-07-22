@@ -13,7 +13,6 @@ using namespace QueryBuilder;
 
 int main()
 {
-  {
     PersonLibrary library;
     People people(library.GetPeople());
 
@@ -70,6 +69,6 @@ int main()
     std::deque<int> dequeInts({ 1, 3, 25, 3, 8, 9, 21});
     BuildQueryable(dequeInts)
       .ForEach([](int value) { std::cout << "int: " << value << std::endl; });
-  }
+
   return 0;
 }
