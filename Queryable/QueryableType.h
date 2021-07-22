@@ -7,7 +7,8 @@ enum class QueryableType
   List,
   MultiSet,
   Set,
-  Vector
+  Vector,
+  Default
 };
 
 #endif

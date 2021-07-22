@@ -13,10 +13,14 @@
 
 #include "DeferredUtilities/Condition.h"
 #include "DeferredUtilities/PersistentContainer.h"
-#include "TypeConstraintUtil.h"
 #include "QueryableData/IQueryableData.h"
+#include "QueryableData/QueryableDequeData.h"
+#include "QueryableData/QueryableListData.h"
+#include "QueryableData/QueryableMultiSetData.h"
+#include "QueryableData/QueryableSetData.h"
 #include "QueryableData/QueryableVectorData.h"
 #include "QueryableType.h"
+#include "TypeConstraintUtil.h"
 
 template<typename TObj>
 class Queryable
@@ -65,11 +69,44 @@ protected:
   }
 
 public:
-  Queryable()
+  Queryable(QueryableType type = QueryableType::Vector)
   {
-    std::vector<TObj> local;
-    this->items = std::make_shared<QueryableVectorData<TObj>>(local);
-    this->type = QueryableType::Vector;
+    switch (type)
+    {
+      case QueryableType::Deque:
+        {
+          std::deque<TObj> localDeque;
+          this->items = std::make_shared<QueryableDequeData<TObj>>(localDeque);
+        }
+        break;
+      case QueryableType::List:
+        {
+          std::list<TObj> localList;
+          this->items = std::make_shared<QueryableListData<TObj>>(localList);
+        }
+        break;
+      case QueryableType::MultiSet:
+        {
+          std::multiset<TObj> localMultiSet;
+          this->items = std::make_shared<QueryableMultiSetData<TObj>>(localMultiSet);
+        }
+        break;
+      case QueryableType::Set:
+        {
+          std::set<TObj> localSet;
+          this->items = std::make_shared<QueryableSetData<TObj>>(localSet);
+        }
+        break;
+      case QueryableType::Vector:
+      default:
+        {
+          std::vector<TObj> localVector;
+          this->items = std::make_shared<QueryableVectorData<TObj>>(localVector);
+        }
+        break;
+    }
+
+    this->type = type;
   }
   Queryable(const Queryable<TObj>& queryable)
   {
@@ -712,9 +749,14 @@ public:
   }
 
   template<typename T>
-  Queryable<T>* Select(std::function<T(TObj)> retrieveValue)
+  Queryable<T>* Select(std::function<T(TObj)> retrieveValue, QueryableType returnType = QueryableType::Default)
   {
-    std::shared_ptr<Queryable<T>> data = std::make_shared<Queryable<T>>();
+    if (returnType == QueryableType::Default)
+    {
+      returnType = this->type;
+    }
+
+    std::shared_ptr<Queryable<T>> data = std::make_shared<Queryable<T>>(returnType);
     this->selected.Set(data);
     std::shared_ptr<Queryable<T>> selected = this->selected.GetAs<Queryable<T>>();
 
