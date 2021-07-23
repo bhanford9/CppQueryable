@@ -68,6 +68,52 @@ protected:
     return newCount;
   }
 
+  template<typename T, template<typename...> typename TIterable>
+  bool Equal(TIterable<T> collection, int collectionSize)
+  {
+    static_assert(is_equatable<T>::value, "Type must be equatable");
+
+    int localCount = this->Count();
+
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
+
+    int i = 0;
+    for (T item : collection)
+    {
+      if (!(this->At(i++) == item))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  template<typename T, template<typename...> typename TIterable>
+  bool Equal(TIterable<T> collection, int collectionSize, std::function<bool(T, T)> areEqual)
+  {
+    int localCount = this->Count();
+
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
+
+    int i = 0;
+    for (T item : collection)
+    {
+      if (!areEqual(this->At(i++), item))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
 public:
   Queryable(QueryableType type = QueryableType::Vector)
   {
@@ -319,11 +365,9 @@ public:
   {
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
-      TObj item = *it;
-
-      if (this->condition(item) && condition(item))
+      if (this->condition(*it) && condition(*it))
       {
-        return item;
+        return *it;
       }
     }
 
@@ -334,11 +378,9 @@ public:
   {
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
-      TObj item = *it;
-
-      if (this->condition(item))
+      if (this->condition(*it))
       {
-        return item;
+        return *it;
       }
     }
 
@@ -424,8 +466,7 @@ public:
 
     for (auto it = copy.begin() + count; it != copy.end(); it++)
     {
-      TObj value = *it;
-      this->items.get()->Add(value);
+      this->items.get()->Add(*it);
     }
 
     this->condition.MarkApplied();
@@ -506,52 +547,6 @@ public:
     return this->Equal<TObj, std::multiset>(collection, collection.size(), areEqual);
   }
 
-  template<typename T, template<typename...> typename TIterable>
-  bool Equal(TIterable<T> collection, int collectionSize)
-  {
-    static_assert(is_equatable<T>::value, "Type must be equatable");
-
-    int localCount = this->Count();
-
-    if (localCount != collectionSize)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (T item : collection)
-    {
-      if (!(this->At(i++) == item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  template<typename T, template<typename...> typename TIterable>
-  bool Equal(TIterable<T> collection, int collectionSize, std::function<bool(T, T)> areEqual)
-  {
-    int localCount = this->Count();
-
-    if (localCount != collectionSize)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (T item : collection)
-    {
-      if (!areEqual(this->At(i++), item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   // with preserveFilter true, you can do the following:
   //   collection.Where(x => x.IsValid).Concat(otherItems, true);
   //
@@ -601,8 +596,8 @@ public:
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    T maxValue;
-    TObj maxItem;
+    T maxValue = T();
+    TObj maxItem = TObj();
 
     for (TObj item : *this->items.get())
     {
@@ -668,8 +663,8 @@ public:
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    T minValue;
-    TObj minItem;
+    T minValue = T();
+    TObj minItem = TObj();
 
     for (TObj item : *this->items.get())
     {
@@ -886,7 +881,7 @@ public:
 
   TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate, TObj * seed = NULL)
   {
-    TObj aggregatedValue;
+    TObj aggregatedValue = TObj();
 
     if (seed != NULL)
     {
@@ -907,7 +902,7 @@ public:
   template<typename T>
   T Aggregate(std::function<T(T, TObj)> accumulate, T * seed = NULL)
   {
-    T aggregatedValue;
+    T aggregatedValue = T();
 
     if (seed != NULL)
     {
