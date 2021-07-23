@@ -30,7 +30,7 @@ struct is_equatable<T, void_t<decltype(std::declval<T>() == std::declval<T>())>>
 template<typename T, typename = void>
 struct is_aggregatable : std::false_type { };
 template<typename T>
-struct is_aggregatable<T, void_t<decltype(std::declval<T>() += std::declval<T>())>> : std::true_type {};
+struct is_aggregatable<T, void_t<decltype(std::declval<T&>() += std::declval<T>())>> : std::true_type {};
 
 template<typename T, typename = void>
 struct is_addable : std::false_type { };
