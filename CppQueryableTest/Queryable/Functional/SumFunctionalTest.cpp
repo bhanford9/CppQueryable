@@ -12,6 +12,7 @@
 #include "../../../DataStructures/Gender.h"
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Point.h"
 
 #include "../../../Queryable/QueryBuilder.h"
 #include "../../../Queryable/QueryableVector.h"
@@ -38,6 +39,22 @@ TEST_F(SumFunctionalTest, SumUninitialized)
   QueryableVector<Person> emptyQueryable;
   double sum = emptyQueryable.Sum<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0, sum);
+}
+
+TEST_F(SumFunctionalTest, SumOperatorOverload)
+{
+  Point expected(20, 10);
+  QueryableVector<Point> points = BuildQueryable(std::vector<Point>({
+    Point(2, 4),
+    Point(3, 5),
+    Point(7, 1),
+    Point(8, 0)
+  }));
+
+  Point sum = points.Sum<Point>([](Point point) { return point; });
+
+  ASSERT_EQ(expected.X, sum.X);
+  ASSERT_EQ(expected.Y, sum.Y);
 }
 
 TEST_F(SumFunctionalTest, SumVector)

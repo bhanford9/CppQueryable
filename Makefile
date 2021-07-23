@@ -87,15 +87,15 @@ tests: $(TEST_PROGRAM)
 ftest: $(REFS_REF) $(SRC_COMPILE_REF)
 	@echo $(prefix)
 	$(CXX) -c $(CPPFLAGS) $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.cpp -o $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
-	$(CXX) -o $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest \
+	$(CXX) -o $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases \
 		$(CPPFLAGS) \
 		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
 		$(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o \
 		$(TEST_INCLUDES) \
 		$(TEST_LIBS)
 
-	$(foreach testcase, $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest, $(testcase);)
-	/bin/rm -f $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
+	$(foreach testcase, $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases, $(testcase);)
+	/bin/rm -f $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
 
 $(DEPENDENCIES):
 	touch $(DEPENDENCIES)

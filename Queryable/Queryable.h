@@ -582,7 +582,7 @@ public:
   {
     static_assert(is_aggregatable<T>::value, "Type must be implement the '+=' operator");
 
-    T sum = 0;
+    T sum = T();
 
     for (TObj item : *this->items.get())
     {

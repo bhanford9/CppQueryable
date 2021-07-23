@@ -12,6 +12,7 @@
 #include "../../../DataStructures/Gender.h"
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Point.h"
 
 #include "../../../Queryable/QueryBuilder.h"
 #include "../../../Queryable/QueryableVector.h"
@@ -43,6 +44,23 @@ TEST_F(AverageFunctionalTest, AverageUninitialized)
   QueryableVector<Person> emptyQueryable;
   double average = emptyQueryable.Average<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0, average);
+}
+
+TEST_F(AverageFunctionalTest, AverageOperatorOverload)
+{
+  Point expected(5, 2.5);
+  QueryableVector<Point> points = BuildQueryable(std::vector<Point>({
+    Point(2, 4),
+    Point(3, 5),
+    Point(7, 1),
+    Point(8, 0)
+  }));
+
+  double averageX = points.Average<double>([](Point point) { return point.X; });
+  double averageY = points.Average<double>([](Point point) { return point.Y; });
+
+  ASSERT_EQ(expected.X, averageX);
+  ASSERT_EQ(expected.Y, averageY);
 }
 
 TEST_F(AverageFunctionalTest, AverageVector)
