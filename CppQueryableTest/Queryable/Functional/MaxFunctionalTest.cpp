@@ -36,32 +36,18 @@ protected:
   void TearDown() override {}
 };
 
-TEST_F(MaxFunctionalTest, MaxItemUninitialized)
+TEST_F(MaxFunctionalTest, MinItemUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-
-  try
-  {
-    emptyQueryable.MaxItem<double>([](Person p) { return p.GetAge(); });
-  }
-  catch (std::runtime_error& ex)
-  {
-    ASSERT_STREQ(ex.what(), "Cannot find maximum item of an empty colleciton.");
-  }
+  Person max = emptyQueryable.MaxItem<double>([](Person p) { return p.GetAge(); });
+  ASSERT_DOUBLE_EQ(0.0, max.GetAge());
 }
 
-TEST_F(MaxFunctionalTest, MaxUninitialized)
+TEST_F(MaxFunctionalTest, MinUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-
-  try
-  {
-    emptyQueryable.Max<double>([](Person p) { return p.GetAge(); });
-  }
-  catch (std::runtime_error& ex)
-  {
-    ASSERT_STREQ(ex.what(), "Cannot find maximum item of an empty colleciton.");
-  }
+  double max = emptyQueryable.Max<double>([](Person p) { return p.GetAge(); });
+  ASSERT_DOUBLE_EQ(0.0, max);
 }
 
 TEST_F(MaxFunctionalTest, MaxSeededUninitialized)

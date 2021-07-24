@@ -591,6 +591,28 @@ public:
   }
 
   template<typename T>
+  double Average(std::function<T(TObj)> retrieveValue)
+  {
+    static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
+
+    double sum = 0;
+    ulong count = 0;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        sum += retrieveValue(item);
+        count++;
+      }
+    }
+
+    // consider alternative way of handling count of zero
+
+    return count > 0 ? sum / count : 0;
+  }
+
+  template<typename T>
   TObj MaxItem(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
@@ -617,11 +639,6 @@ public:
           maxItem = item;
         }
       }
-    }
-
-    if (isFirst)
-    {
-      throw std::runtime_error("Cannot find maximum item of an empty colleciton.");
     }
 
     return maxItem;
@@ -686,11 +703,6 @@ public:
       }
     }
 
-    if (isFirst)
-    {
-      throw std::runtime_error("Cannot find minimum item of an empty colleciton.");
-    }
-
     return minItem;
   }
 
@@ -725,25 +737,76 @@ public:
   }
 
   template<typename T>
-  double Average(std::function<T(TObj)> retrieveValue)
+  T Range(std::function<T(TObj)> retrieveValue)
   {
-    static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
+    static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
+    static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
 
-    double sum = 0;
-    ulong count = 0;
+    bool isFirst = true;
+    T max = T();
+    T min = T();
 
     for (TObj item : *this->items.get())
     {
       if (this->condition(item))
       {
-        sum += retrieveValue(item);
-        count++;
+        T value = retrieveValue(item);
+
+        if (isFirst)
+        {
+          isFirst = false;
+          max = value;
+          min = value;
+        }
+
+        if (value < min)
+        {
+          min = value;
+        }
+
+        if (max < value)
+        {
+          max = value;
+        }
       }
     }
 
-    // consider alternative way of handling count of zero
+    return max - min;
+  }
 
-    return count > 0 ? sum / count : 0;
+  TObj Range()
+  {
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+    static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");
+
+    bool isFirst = true;
+    TObj max = TObj();
+    TObj min = TObj();
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        if (isFirst)
+        {
+          isFirst = false;
+          max = item;
+          min = item;
+        }
+
+        if (item < min)
+        {
+          min = item;
+        }
+
+        if (max < item)
+        {
+          max = item;
+        }
+      }
+    }
+
+    return max - min;
   }
 
   bool Any(std::function<bool(TObj)> condition)

@@ -39,29 +39,15 @@ protected:
 TEST_F(MinFunctionalTest, MinItemUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-
-  try
-  {
-    emptyQueryable.MinItem<double>([](Person p) { return p.GetAge(); });
-  }
-  catch (std::runtime_error& ex)
-  {
-    ASSERT_STREQ(ex.what(), "Cannot find minimum item of an empty colleciton.");
-  }
+  Person min = emptyQueryable.MinItem<double>([](Person p) { return p.GetAge(); });
+  ASSERT_DOUBLE_EQ(0.0, min.GetAge());
 }
 
 TEST_F(MinFunctionalTest, MinUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
-
-  try
-  {
-    emptyQueryable.Min<double>([](Person p) { return p.GetAge(); });
-  }
-  catch (std::runtime_error& ex)
-  {
-    ASSERT_STREQ(ex.what(), "Cannot find minimum item of an empty colleciton.");
-  }
+  double min = emptyQueryable.Min<double>([](Person p) { return p.GetAge(); });
+  ASSERT_DOUBLE_EQ(0.0, min);
 }
 
 TEST_F(MinFunctionalTest, MinSeededUninitialized)

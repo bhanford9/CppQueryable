@@ -19,6 +19,12 @@ public:
     this->Y = y;
   }
 
+  Point(const Point & other)
+  {
+    this->X = other.X;
+    this->Y = other.Y;
+  }
+
   Point & operator+=(const Point & other)
   {
     this->X += other.X;
@@ -29,6 +35,14 @@ public:
   bool operator<(const Point & other) const
   {
     return this->X < other.X;
+  }
+
+  Point operator-(const Point & other)
+  {
+    Point temp(*this);
+    temp.X -= other.X;
+    temp.Y -= other.Y;
+    return temp;
   }
 };
 

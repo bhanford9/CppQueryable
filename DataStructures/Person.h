@@ -15,7 +15,7 @@ private:
   Gender gender;
 
 public:
-  Person() { }
+  Person() { this->age = 0; }
   Person(long id, std::string name, double age, int height, Gender gender);
 
   long GetId();
