@@ -15,6 +15,8 @@
 #include "../../../Queryable/QueryBuilder.h"
 #include "../../../Queryable/QueryableVector.h"
 
+using namespace QueryBuilder;
+
 class WhereFunctionalTest : public ::testing::Test
 {
 protected:
@@ -51,7 +53,6 @@ TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
     ASSERT_EQ(expected[i], values[i]);
 }
 
-// fix this once orderby is implemented specific to each container
 // TEST_F(WhereFunctionalTest, WhereVectorSevenEightNineTest)
 // {
 //   std::vector<Person> expected(

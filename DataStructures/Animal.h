@@ -16,6 +16,7 @@ private:
   Gender gender;
 
 public:
+  Animal() { this->age = 0; }
   Animal(long id, long ownerId, std::string name, double age, Gender gender);
 
   long GetId();

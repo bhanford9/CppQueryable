@@ -38,7 +38,7 @@ class Queryable
 
 protected:
   std::shared_ptr<IQueryableData<TObj>> items;
-  PersistentContainer selected;
+  PersistentContainer persistentContainer;
   Condition<TObj> condition;
   QueryableType type;
 
@@ -157,7 +157,7 @@ public:
   Queryable(const Queryable<TObj>& queryable)
   {
     this->items = queryable.items;
-    this->selected = queryable.selected;
+    this->persistentContainer = queryable.persistentContainer;
     this->condition = queryable.condition;
     this->type = queryable.type;
   }
@@ -989,8 +989,8 @@ public:
     }
 
     std::shared_ptr<Queryable<T>> data = std::make_shared<Queryable<T>>(returnType);
-    this->selected.Set(data);
-    std::shared_ptr<Queryable<T>> selected = this->selected.GetAs<Queryable<T>>();
+    this->persistentContainer.Set(data);
+    std::shared_ptr<Queryable<T>> selected = this->persistentContainer.GetAs<Queryable<T>>();
 
     for (TObj item : *this->items.get())
     {
@@ -1000,7 +1000,7 @@ public:
       }
     }
 
-    return this->selected.GetAs<Queryable<T>>().get();
+    return this->persistentContainer.GetAs<Queryable<T>>().get();
   }
 
   bool Contains(TObj obj)
@@ -1145,74 +1145,67 @@ public:
   {
     return finalizer(this->Aggregate<T>(accumulate, seed));
   }
-  //
-  // template<typename TJoinObj, typename TJoinOn, typename TOut>
-  // Queryable<TOut, std::vector> Join(
-  //   TIterable<TJoinObj> collection,
-  //   std::function<TJoinOn(TObj)> getLocalJoinOn,
-  //   std::function<TJoinOn(TJoinObj)> getInputJoinOn,
-  //   std::function<TOut(TObj, TJoinObj)> createFrom)
-  // {
-  //   static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
-  //   static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
-  //
-  //   std::vector<TOut> result;
-  //
-  //   Queryable<TJoinObj, TIterable> inputCollection(collection);
-  //   int inputSize = inputCollection.Count();
-  //   int localSize = this->Count();
-  //
-  //   if (localSize == 0 || inputSize == 0)
-  //   {
-  //     return result;
-  //   }
-  //
-  //   std::vector<TObj> localSorted = this->OrderBy(getLocalJoinOn).ToVector();
-  //   std::vector<TJoinObj> inputSorted = inputCollection.OrderBy(getInputJoinOn).ToVector();
-  //
-  //   int inputIndex = 0;
-  //
-  //   for (int i = 0; i < localSize; i++) // TObj localItem : localSorted)
-  //   {
-  //     TObj localItem = localSorted[i];
-  //     TJoinOn localValue;
-  //     TJoinOn inputValue;
-  //
-  //     do
-  //     {
-  //       TJoinObj inputItem = inputSorted[inputIndex];
-  //
-  //       localValue = getLocalJoinOn(localItem);
-  //       inputValue = getInputJoinOn(inputItem);
-  //
-  //       if (localValue == inputValue)
-  //       {
-  //         int sameValueIndex = inputIndex;
-  //         TJoinObj sameValueItem = inputSorted[sameValueIndex];
-  //         while (getInputJoinOn(sameValueItem) == inputValue)
-  //         {
-  //           result.push_back(createFrom(localItem, sameValueItem));
-  //
-  //           if (sameValueIndex == inputSize - 1)
-  //           {
-  //             break;
-  //           }
-  //
-  //           sameValueItem = inputSorted[++sameValueIndex];
-  //         }
-  //       }
-  //
-  //       if (inputValue < localValue)
-  //       {
-  //         inputIndex++;
-  //       }
-  //
-  //     } while (inputValue < localValue && inputIndex < inputSize);
-  //   }
-  //
-  //   Queryable<TOut, std::vector> output(result);
-  //   return output;
-  // }
+
+  template<typename TJoinObj, typename TJoinOn, typename TOut>
+  Queryable<TOut> * Join(
+    Queryable<TJoinObj> * collection,
+    std::function<TJoinOn(TObj)> getLocalJoinOn,
+    std::function<TJoinOn(TJoinObj)> getInputJoinOn,
+    std::function<TOut(TObj, TJoinObj)> createFrom,
+    QueryableType returnType = QueryableType::Default)
+  {
+    static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
+    static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
+
+    QueryableType type = returnType == QueryableType::Default ? this->type : returnType;
+    std::shared_ptr<Queryable<TOut>> data = std::make_shared<Queryable<TOut>>(type);
+    this->persistentContainer.Set(data);
+    std::shared_ptr<Queryable<TOut>> result = this->persistentContainer.GetAs<Queryable<TOut>>();
+
+    // Sort each collection on passed in key getters                             ( + time complexity: nlog(n) )
+    //   this allows us to only need to fully iterate over each collection once  ( + time complexity: n )
+    //   and chunks of non-joinable data can be easily bypassed                  ( + non-generalizable benefit )
+    // Change inner collection to vector to gaurantee constant time indexing     ( - requires extra space )
+    //   may want to only do this if collection type does not have constant time indexing
+    this->OrderBy(getLocalJoinOn);
+    std::vector<TJoinObj> inputSorted = collection.OrderBy(getInputJoinOn).ToVector();
+    int inputSize = inputSorted.size();
+
+    if (inputSize > 0)
+    {
+      int inputIndex = 0;
+
+      for (TObj localItem : *this->items.get())
+      {
+        TJoinOn localValue;
+        TJoinOn inputValue;
+
+        do
+        {
+          TJoinObj inputItem = inputSorted[inputIndex];
+
+          localValue = getLocalJoinOn(localItem);
+          inputValue = getInputJoinOn(inputItem);
+
+          if (localValue == inputValue)
+          {
+            int sameValueIndex = inputIndex;
+            while (sameValueIndex < inputSize && getInputJoinOn(inputSorted[sameValueIndex]) == inputValue)
+            {
+              result.Add(createFrom(localItem, inputSorted[sameValueIndex++]));
+            }
+          }
+          else if (inputValue < localValue)
+          {
+            inputIndex++;
+          }
+
+        } while (inputValue < localValue && inputIndex < inputSize);
+      }
+    }
+
+    return result;
+  }
 };
 
 #endif
