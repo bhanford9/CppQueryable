@@ -590,6 +590,23 @@ public:
     return sum;
   }
 
+  TObj Sum()
+  {
+    static_assert(is_aggregatable<TObj>::value, "Type must be implement the '+=' operator");
+
+    TObj sum = TObj();
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        sum += item;
+      }
+    }
+
+    return sum;
+  }
+
   template<typename T>
   double Average(std::function<T(TObj)> retrieveValue)
   {
@@ -607,7 +624,43 @@ public:
       }
     }
 
-    // consider alternative way of handling count of zero
+    return count > 0 ? sum / count : 0;
+  }
+
+  TObj Average(std::function<TObj(const TObj &, ulong)> divisor)
+  {
+    static_assert(is_aggregatable<TObj>::value, "Type must be implement the '+=' operator");
+
+    TObj sum = TObj();
+    ulong count = 0;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        sum += item;
+        count++;
+      }
+    }
+
+    return divisor(sum, count);
+  }
+
+  double Average()
+  {
+    static_assert(std::is_arithmetic<TObj>::value, "Type must be numeric");
+
+    double sum = 0;
+    ulong count = 0;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        sum += item;
+        count++;
+      }
+    }
 
     return count > 0 ? sum / count : 0;
   }
@@ -651,6 +704,32 @@ public:
     return retrieveValue(this->MaxItem(retrieveValue));
   }
 
+  TObj Max()
+  {
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+
+    bool isFirst = true;
+    TObj maxItem = TObj();
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        if (isFirst)
+        {
+          isFirst = false;
+          maxItem = item;
+        }
+        else if (maxItem < item)
+        {
+          maxItem = item;
+        }
+      }
+    }
+
+    return maxItem;
+  }
+
   template<typename T>
   T Max(std::function<T(TObj)> retrieveValue, T startSeed)
   {
@@ -667,6 +746,26 @@ public:
         if (max < newValue)
         {
           max = newValue;
+        }
+      }
+    }
+
+    return max;
+  }
+
+  TObj Max(TObj startSeed)
+  {
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+
+    TObj max = startSeed;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        if (max < item)
+        {
+          max = item;
         }
       }
     }
@@ -713,6 +812,32 @@ public:
     return retrieveValue(this->MinItem(retrieveValue));
   }
 
+  TObj Min()
+  {
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+
+    bool isFirst = true;
+    TObj minItem = TObj();
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        if (isFirst)
+        {
+          isFirst = false;
+          minItem = item;
+        }
+        else if (item < minItem)
+        {
+          minItem = item;
+        }
+      }
+    }
+
+    return minItem;
+  }
+
   template<typename T>
   T Min(std::function<T(TObj)> retrieveValue, T startSeed)
   {
@@ -729,6 +854,26 @@ public:
         if (newValue < min)
         {
           min = newValue;
+        }
+      }
+    }
+
+    return min;
+  }
+
+  TObj Min(TObj startSeed)
+  {
+    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+
+    TObj min = startSeed;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        if (item < min)
+        {
+          min = item;
         }
       }
     }

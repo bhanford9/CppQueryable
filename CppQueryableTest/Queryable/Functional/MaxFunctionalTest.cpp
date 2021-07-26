@@ -36,17 +36,24 @@ protected:
   void TearDown() override {}
 };
 
-TEST_F(MaxFunctionalTest, MinItemUninitialized)
+TEST_F(MaxFunctionalTest, MaxItemUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
   Person max = emptyQueryable.MaxItem<double>([](Person p) { return p.GetAge(); });
   ASSERT_DOUBLE_EQ(0.0, max.GetAge());
 }
 
-TEST_F(MaxFunctionalTest, MinUninitialized)
+TEST_F(MaxFunctionalTest, MaxUninitialized)
 {
   QueryableVector<Person> emptyQueryable;
   double max = emptyQueryable.Max<double>([](Person p) { return p.GetAge(); });
+  ASSERT_DOUBLE_EQ(0.0, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxUninitializedDefault)
+{
+  QueryableVector<double> emptyQueryable;
+  double max = emptyQueryable.Max();
   ASSERT_DOUBLE_EQ(0.0, max);
 }
 
@@ -55,6 +62,14 @@ TEST_F(MaxFunctionalTest, MaxSeededUninitialized)
   double seed = 9;
   QueryableVector<Person> emptyQueryable;
   double max = emptyQueryable.Max<double>([](Person p) { return p.GetAge(); }, seed);
+  ASSERT_EQ(seed, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxSeededUninitializedDefault)
+{
+  double seed = 9;
+  QueryableVector<double> emptyQueryable;
+  double max = emptyQueryable.Max(seed);
   ASSERT_EQ(seed, max);
 }
 
@@ -98,11 +113,26 @@ TEST_F(MaxFunctionalTest, MaxDeque)
   ASSERT_EQ(this->expectedMax, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxDequeDefault)
+{
+  QueryableDeque<uint> local = BuildQueryable(this->queryable.ToDeque());
+  uint max = local.Max();
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededLowerDeque)
 {
   uint seed = this->expectedMax + 1;
   QueryableDeque<uint> local = BuildQueryable(this->queryable.ToDeque());
   uint max = local.Max<uint>([](uint value) { return value; }, seed);
+  ASSERT_EQ(seed, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxSeededLowerDequeDefault)
+{
+  uint seed = this->expectedMax + 1;
+  QueryableDeque<uint> local = BuildQueryable(this->queryable.ToDeque());
+  uint max = local.Max(seed);
   ASSERT_EQ(seed, max);
 }
 
@@ -113,6 +143,15 @@ TEST_F(MaxFunctionalTest, MaxSeededHigherDeque)
   uint max = local.Max<uint>([](uint value) { return value; }, seed);
   ASSERT_EQ(this->expectedMax, max);
 }
+
+TEST_F(MaxFunctionalTest, MaxSeededHigherDequeDefault)
+{
+  uint seed = this->expectedMax - 1;
+  QueryableDeque<uint> local = BuildQueryable(this->queryable.ToDeque());
+  uint max = local.Max(seed);
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 
 TEST_F(MaxFunctionalTest, MaxItemList)
 {
@@ -128,6 +167,13 @@ TEST_F(MaxFunctionalTest, MaxList)
   ASSERT_EQ(this->expectedMax, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxListDefault)
+{
+  QueryableList<uint> local = BuildQueryable(this->queryable.ToList());
+  uint max = local.Max();
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededLowerList)
 {
   uint seed = this->expectedMax + 1;
@@ -136,11 +182,27 @@ TEST_F(MaxFunctionalTest, MaxSeededLowerList)
   ASSERT_EQ(seed, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxSeededLowerListDefault)
+{
+  uint seed = this->expectedMax + 1;
+  QueryableList<uint> local = BuildQueryable(this->queryable.ToList());
+  uint max = local.Max(seed);
+  ASSERT_EQ(seed, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededHigherList)
 {
   uint seed = this->expectedMax - 1;
   QueryableList<uint> local = BuildQueryable(this->queryable.ToList());
   uint max = local.Max<uint>([](uint value) { return value; }, seed);
+  ASSERT_EQ(this->expectedMax, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxSeededHigherListDefault)
+{
+  uint seed = this->expectedMax - 1;
+  QueryableList<uint> local = BuildQueryable(this->queryable.ToList());
+  uint max = local.Max(seed);
   ASSERT_EQ(this->expectedMax, max);
 }
 
@@ -158,6 +220,13 @@ TEST_F(MaxFunctionalTest, MaxMultiSet)
   ASSERT_EQ(this->expectedMax, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxMultiSetDefault)
+{
+  QueryableMultiSet<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  uint max = local.Max();
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededLowerMultiSet)
 {
   uint seed = this->expectedMax + 1;
@@ -166,11 +235,27 @@ TEST_F(MaxFunctionalTest, MaxSeededLowerMultiSet)
   ASSERT_EQ(seed, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxSeededLowerMultiSetDefault)
+{
+  uint seed = this->expectedMax + 1;
+  QueryableMultiSet<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  uint max = local.Max(seed);
+  ASSERT_EQ(seed, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededHigherMultiSet)
 {
   uint seed = this->expectedMax - 1;
   QueryableMultiSet<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   uint max = local.Max<uint>([](uint value) { return value; }, seed);
+  ASSERT_EQ(this->expectedMax, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxSeededHigherMultiSetDefault)
+{
+  uint seed = this->expectedMax - 1;
+  QueryableMultiSet<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  uint max = local.Max(seed);
   ASSERT_EQ(this->expectedMax, max);
 }
 
@@ -188,11 +273,26 @@ TEST_F(MaxFunctionalTest, MaxSet)
   ASSERT_EQ(this->expectedMax, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxSetDefault)
+{
+  QueryableSet<uint> local = BuildQueryable(this->queryable.ToSet());
+  uint max = local.Max();
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxSeededLowerSet)
 {
   uint seed = this->expectedMax + 1;
   QueryableSet<uint> local = BuildQueryable(this->queryable.ToSet());
   uint max = local.Max<uint>([](uint value) { return value; }, seed);
+  ASSERT_EQ(seed, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxSeededLowerSetDefault)
+{
+  uint seed = this->expectedMax + 1;
+  QueryableSet<uint> local = BuildQueryable(this->queryable.ToSet());
+  uint max = local.Max(seed);
   ASSERT_EQ(seed, max);
 }
 
@@ -204,11 +304,28 @@ TEST_F(MaxFunctionalTest, MaxSeededHigherSet)
   ASSERT_EQ(this->expectedMax, max);
 }
 
+TEST_F(MaxFunctionalTest, MaxSeededHigherSetDefault)
+{
+  uint seed = this->expectedMax - 1;
+  QueryableSet<uint> local = BuildQueryable(this->queryable.ToSet());
+  uint max = local.Max(seed);
+  ASSERT_EQ(this->expectedMax, max);
+}
+
 TEST_F(MaxFunctionalTest, MaxWhere)
 {
   uint expected = 8;
   uint max = this->queryable
     .Where([](uint value) { return value < 10; })
     ->Max<uint>([](uint value) { return value; });
+  ASSERT_EQ(expected, max);
+}
+
+TEST_F(MaxFunctionalTest, MaxWhereDefault)
+{
+  uint expected = 8;
+  uint max = this->queryable
+    .Where([](uint value) { return value < 10; })
+    ->Max();
   ASSERT_EQ(expected, max);
 }
