@@ -25,17 +25,6 @@
 template<typename TObj>
 class Queryable
 {
-  // static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
-  // static_assert(has_size_method<TIterable<TObj>>::value, "Class must have a size method");
-
-  // TODO --> inherit Queryable with child classes that override specific methods for optimization per container type:
-  //    vector, list, deque, set, multiset, forward_list, etc.
-
-  // forward_list not currently supported because it does not have a size method
-
-
-  // TODO --> defered execution for WHERE so that doing .WHERE(X).FOREACH(Y) only iterates over the set once
-
 protected:
   std::shared_ptr<IQueryableData<TObj>> items;
   PersistentContainer persistentContainer;
@@ -180,9 +169,10 @@ public:
     this->condition.MarkApplied(false);
   }
 
-  std::vector<TObj> ToVector()
+  template<typename TAllocator = std::allocator<TObj>>
+  std::deque<TObj, TAllocator> ToDeque()
   {
-    std::vector<TObj> newItems;
+    std::deque<TObj, TAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -196,9 +186,27 @@ public:
     return newItems;
   }
 
-  std::set<TObj> ToSet()
+  template<typename TAllocator = std::allocator<TObj>>
+  std::list<TObj, TAllocator> ToList()
   {
-    std::set<TObj> newItems;
+    std::list<TObj, TAllocator> newItems;
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        newItems.push_back(item);
+      }
+    }
+
+    this->condition.MarkApplied();
+    return newItems;
+  }
+
+  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  std::multiset<TObj, TCompare, TAllocator> ToMultiSet()
+  {
+    std::multiset<TObj, TCompare, TAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -212,9 +220,10 @@ public:
     return newItems;
   }
 
-  std::multiset<TObj> ToMultiSet()
+  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  std::set<TObj, TCompare, TAllocator> ToSet()
   {
-    std::multiset<TObj> newItems;
+    std::set<TObj, TCompare, TAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -228,9 +237,10 @@ public:
     return newItems;
   }
 
-  std::deque<TObj> ToDeque()
+  template<typename TAllocator = std::allocator<TObj>>
+  std::vector<TObj, TAllocator> ToVector()
   {
-    std::deque<TObj> newItems;
+    std::vector<TObj, TAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -244,26 +254,74 @@ public:
     return newItems;
   }
 
-  std::list<TObj> ToList()
+  template<typename TAllocator = std::allocator<TObj>>
+  Queryable<TObj>* ToQueryableDeque()
   {
-    std::list<TObj> newItems;
+    std::deque<TObj> copy = this->ToDeque();
 
-    for (TObj item : *this->items.get())
+    this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>();
+    for (TObj item : copy)
     {
-      if (this->condition(item))
-      {
-        newItems.push_back(item);
-      }
+      this->items.get()->Add(item);
     }
 
-    this->condition.MarkApplied();
-    return newItems;
+    return this;
   }
 
-  template <typename T>
-  T* As()
+  template<typename TAllocator = std::allocator<TObj>>
+  Queryable<TObj>* ToQueryableList()
   {
-    return static_cast<T*>(this);
+    std::list<TObj> copy = this->ToList();
+
+    this->items = std::make_shared<QueryableListData<TObj, TAllocator>>();
+    for (TObj item : copy)
+    {
+      this->items.get()->Add(item);
+    }
+
+    return this;
+  }
+
+  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  Queryable<TObj>* ToQueryableMultiSet()
+  {
+    std::multiset<TObj> copy = this->ToMultiSet();
+
+    this->items = std::make_shared<QueryableMultiSetData<TObj, TCompare, TAllocator>>();
+    for (TObj item : copy)
+    {
+      this->items.get()->Add(item);
+    }
+
+    return this;
+  }
+
+  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  Queryable<TObj>* ToQueryableSet()
+  {
+    std::set<TObj> copy = this->ToSet();
+
+    this->items = std::make_shared<QueryableSetData<TObj, TCompare, TAllocator>>();
+    for (TObj item : copy)
+    {
+      this->items.get()->Add(item);
+    }
+
+    return this;
+  }
+
+  template<typename TAllocator = std::allocator<TObj>>
+  Queryable<TObj>* ToQueryableVector()
+  {
+    std::vector<TObj> copy = this->ToVector();
+
+    this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>();
+    for (TObj item : copy)
+    {
+      this->items.get()->Add(item);
+    }
+
+    return this;
   }
 
   virtual TObj At(int index)
