@@ -21,6 +21,7 @@ public:
   virtual void RemoveLast() = 0;
   virtual void RemoveFirst() = 0;
   virtual std::vector<T> ToVector() = 0;
+  virtual void Sort(std::function<bool(T, T)> compare) = 0;
 };
 
 #endif

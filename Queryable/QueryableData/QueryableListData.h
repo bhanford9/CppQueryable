@@ -5,19 +5,18 @@
 #include <list>
 
 #include "QueryableData.h"
-// #include "../Iterators/Iterator.h"
 
-template<typename T>
-class QueryableListData : public QueryableData<T, std::list>
+template<typename T, typename TAllocator = std::allocator<T>>
+class QueryableListData : public QueryableData<T, std::list, TAllocator>
 {
 public:
-  QueryableListData() : QueryableData<T, std::list>() { }
-  QueryableListData(std::list<T> items)
-    : QueryableData<T, std::list>(items)
+  QueryableListData() : QueryableData<T, std::list, TAllocator>() { }
+  QueryableListData(std::list<T, TAllocator> items)
+    : QueryableData<T, std::list, TAllocator>(items)
   {
   }
   QueryableListData(const QueryableListData& data)
-    : QueryableData<T, std::list>(data)
+    : QueryableData<T, std::list, TAllocator>(data)
   {
   }
 
@@ -41,6 +40,11 @@ public:
   void RemoveFirst() override
   {
 
+  }
+
+  void Sort(std::function<bool(T, T)> compare) override
+  {
+    this->items.sort(compare);
   }
 };
 

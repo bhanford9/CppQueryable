@@ -7,15 +7,16 @@
 
 #include "QueryableData.h"
 
-#include "../Iterators/Iterator.h"
-
-template<typename T>
-class QueryableSetData : public QueryableData<T, std::set>
+template<
+  typename T,
+  typename TCompare = std::less<T>,
+  typename TAllocator = std::allocator<T>>
+class QueryableSetData : public QueryableData<T, std::set, TCompare, TAllocator>
 {
 public:
-  QueryableSetData() : QueryableData<T, std::set>() { }
-  QueryableSetData(std::set<T> items)
-    : QueryableData<T, std::set>(items)
+  QueryableSetData() : QueryableData<T, std::set, TCompare, TAllocator>() { }
+  QueryableSetData(std::set<T, TCompare, TAllocator> items)
+    : QueryableData<T, std::set, TCompare, TAllocator>(items)
   {
     this->InitForwardBegin();
     this->InitForwardEnd();
@@ -23,7 +24,7 @@ public:
     this->InitReverseEnd();
   }
   QueryableSetData(const QueryableSetData& data)
-    : QueryableData<T, std::set>(data)
+    : QueryableData<T, std::set, TCompare, TAllocator>(data)
   {
   }
 
@@ -50,6 +51,11 @@ public:
   void RemoveFirst() override
   {
 
+  }
+
+  void Sort(std::function<bool(T, T)> compare) override
+  {
+    // already sorted
   }
 };
 

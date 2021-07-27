@@ -35,7 +35,7 @@ public:
 
   std::string ToString();
 
-  friend bool operator< (Person const& lhs, Person const& rhs);
+  bool operator<(const Person & other) const;
 };
 
 #endif

@@ -31,13 +31,13 @@ namespace QueryBuilder
     return QueryableVector<T>(items);
   }
 
-  template<typename T>
+  template<typename T, typename TCompare = std::less<T>>
   static QueryableSet<T> BuildQueryable(std::set<T> items)
   {
     return QueryableSet<T>(items);
   }
 
-  template<typename T>
+  template<typename T, typename TCompare = std::less<T>>
   static QueryableMultiSet<T> BuildQueryable(std::multiset<T> items)
   {
     return QueryableMultiSet<T>(items);

@@ -23,12 +23,12 @@ class JoinFunctionalTest : public ::testing::Test
 {
 protected:
   QueryableVector<Person> people;
-  QueryableVector<Animal> animals;
+  //QueryableVector<Animal> animals;
 
   void SetUp() override
   {
     this->people = QueryableVector<Person>(PersonLibrary().GetPeople());
-    this->animals = QueryableVector<Animal>(AnimalLibrary().GetAnimals());
+    //this->animals = QueryableVector<Animal>(AnimalLibrary().GetAnimals());
   }
 
   void TearDown() override {}

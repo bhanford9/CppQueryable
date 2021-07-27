@@ -1018,32 +1018,61 @@ public:
     return false;
   }
 
+  // Things to note
+  //   1. [multi]sets must use a copy of storage
+  //   1.1. this is due to the sorting algorithm being type dependent within the container
+  //   2. this should not be used for [multi]sets if the comparator is the same it was built with
+  //   2.1. the default comparator for [multi]sets is the type's less than comparison operator
+  //   3. all other types use their built in optimized sorting algorithms
+  Queryable<TObj>* Sort(std::function<bool(TObj, TObj)> comparator)
+  {
+    this->ApplyCondition();
+
+    switch (this->type)
+    {
+      case QueryableType::Set:
+        {
+          std::vector<TObj> copy = this->ToVector();
+          this->items = std::make_shared<QueryableSetData<TObj, decltype(comparator)>>();
+          for (TObj item : copy)
+          {
+            this->items.get()->Add(item);
+          }
+        }
+        break;
+      case QueryableType::MultiSet:
+        {
+          std::vector<TObj> copy = this->ToVector();
+          this->items = std::make_shared<QueryableMultiSetData<TObj, decltype(comparator)>>();
+          for (TObj item : copy)
+          {
+            this->items.get()->Add(item);
+          }
+        }
+        break;
+      case QueryableType::Deque:
+      case QueryableType::List:
+      case QueryableType::Vector:
+      default:
+        this->items.get()->Sort(comparator);
+        break;
+    }
+
+    return this;
+  }
+
   template<typename T>
   Queryable<TObj>* OrderBy(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
-    this->ApplyCondition();
-
-    std::sort(
-      this->items.get()->begin(),
-      this->items.get()->end(),
-      [&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
-
-    return this;
+    return this->Sort([&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
   }
 
   template<typename T>
   Queryable<TObj>* OrderByDescending(std::function<T(TObj)> retrieveValue)
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
-    this->ApplyCondition();
-
-    std::sort(
-      this->items.get()->begin(),
-      this->items.get()->end(),
-      [&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
-
-    return this;
+    return this->Sort([&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
   }
 
   // Queryable<TObj, std::vector> Except(TIterable<TObj> collection)

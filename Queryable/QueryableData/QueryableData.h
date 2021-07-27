@@ -13,15 +13,15 @@
 #include "../TypeConstraintUtil.h"
 #include "IQueryableData.h"
 
-template<typename TObj, template<typename...> typename TIterable>
+template<typename TObj, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class QueryableData : public IQueryableData<TObj>
 {
-  static_assert(can_iterate<TIterable<TObj>>::value, "Class must be able to be iterated over");
+  static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  TIterable<TObj> items;
+  TIterable<TObj, TArgs...> items;
 
-  typedef typename TIterable<TObj>::iterator t_forwardIterator;
-  typedef typename TIterable<TObj>::reverse_iterator t_reverseIterator;
+  typedef typename TIterable<TObj, TArgs...>::iterator t_forwardIterator;
+  typedef typename TIterable<TObj, TArgs...>::reverse_iterator t_reverseIterator;
 
   Iterator<TObj> beginning;
   Iterator<TObj> ending;
@@ -47,9 +47,9 @@ protected:
     beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     beginning.Add = [&](int add) { std::advance(this->beginIterator, add); };
     beginning.Subtract = [&](int subtract) { std::advance(this->beginIterator, -subtract); };
-    //beginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->beginIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
-    //beginning.LessThan = [&](const Iterator<TObj>& value) -> bool { std::cout << (this->beginIterator < *static_cast<t_forwardIterator*>(value.Get())) << std::endl; return this->beginIterator < *static_cast<t_forwardIterator*>(value.Get()); };
+    beginning.LessThan = [&](const Iterator<TObj>& value) -> bool { return *this->beginIterator < **static_cast<t_forwardIterator*>(value.Get()); };
     beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
+    // beginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->beginIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
   }
 
   virtual void InitForwardEnd()
@@ -62,9 +62,9 @@ protected:
     ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     ending.Add = [&](int add) { std::advance(this->endIterator, add); };
     ending.Subtract = [&](int subtract) { std::advance(this->endIterator, -subtract); };
-    //ending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->endIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
-    //ending.LessThan = [&](const Iterator<TObj>& value) -> bool { std::cout << (this->endIterator < *static_cast<t_forwardIterator*>(value.Get())) << std::endl; return this->endIterator < *static_cast<t_forwardIterator*>(value.Get()); };
+    ending.LessThan = [&](const Iterator<TObj>& value) -> bool { return *this->endIterator < **static_cast<t_forwardIterator*>(value.Get()); };
     ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
+    // ending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->endIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
   }
 
   virtual void InitReverseBegin()
@@ -77,9 +77,9 @@ protected:
     rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     rbeginning.Add = [&](int add) { std::advance(this->rbeginIterator, add); };
     rbeginning.Subtract = [&](int subtract) { std::advance(this->rbeginIterator, -subtract); };
-    //rbeginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rbeginIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
-    //rbeginning.LessThan = [&](const Iterator<TObj>& value) -> bool { std::cout << (this->rbeginIterator < *static_cast<t_reverseIterator*>(value.Get())) << std::endl; return this->rbeginIterator < *static_cast<t_reverseIterator*>(value.Get()); };
+    rbeginning.LessThan = [&](const Iterator<TObj>& value) -> bool { return *this->rbeginIterator < **static_cast<t_reverseIterator*>(value.Get()); };
     rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
+    // rbeginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rbeginIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
   }
 
   virtual void InitReverseEnd()
@@ -92,14 +92,14 @@ protected:
     rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     rending.Add = [&](int add) { std::advance(this->rendIterator, add); };
     rending.Subtract = [&](int subtract) { std::advance(this->rendIterator, -subtract); };
-    //rending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rendIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
-    //rending.LessThan = [&](const Iterator<TObj>& value) -> bool { return this->rendIterator < *static_cast<t_reverseIterator*>(value.Get()); };
+    rending.LessThan = [&](const Iterator<TObj>& value) -> bool { return *this->rendIterator < **static_cast<t_reverseIterator*>(value.Get()); };
     rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
+    // rending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rendIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
   }
 
 public:
   QueryableData() { }
-  QueryableData(TIterable<TObj> items)
+  QueryableData(TIterable<TObj, TArgs...> items)
   {
     this->Initialize(items);
     this->InitForwardBegin();
@@ -127,12 +127,12 @@ public:
   }
   virtual ~QueryableData() { }
 
-  void Initialize(TIterable<TObj> items)
+  void Initialize(TIterable<TObj, TArgs...> items)
   {
     this->items = items;
   }
 
-  TIterable<TObj> GetItems()
+  TIterable<TObj, TArgs...> GetItems()
   {
     return this->items;
   }

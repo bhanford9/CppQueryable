@@ -86,7 +86,7 @@ std::string Person::ToString()
     "\n\tGender: " + (this->IsMale() ? "M\n" : "F\n");
 }
 
-bool operator< (Person const& lhs, Person const& rhs)
+bool Person::operator<(const Person & other) const
 {
-  return lhs.name < rhs.name;
+  return this->name < other.name;
 }

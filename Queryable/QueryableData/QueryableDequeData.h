@@ -1,25 +1,25 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEDEQUEDATA_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEDEQUEDATA_H
 
+#include <algorithm>
 #include <deque>
 #include <iostream>
 #include <memory>
 
 #include "QueryableData.h"
-#include "../Iterators/Iterator.h"
 
-template<typename T>
-class QueryableDequeData : public QueryableData<T, std::deque>
+template<typename T, typename TAllocator = std::allocator<T>>
+class QueryableDequeData : public QueryableData<T, std::deque, TAllocator>
 {
 public:
-  QueryableDequeData() : QueryableData<T, std::deque>() { }
-  QueryableDequeData(std::deque<T> items)
-    : QueryableData<T, std::deque>(items)
+  QueryableDequeData() : QueryableData<T, std::deque, TAllocator>() { }
+  QueryableDequeData(std::deque<T, TAllocator> items)
+    : QueryableData<T, std::deque, TAllocator>(items)
   {
   }
   QueryableDequeData(const QueryableDequeData& data)
-    : QueryableData<T, std::deque>(data)
-  {    
+    : QueryableData<T, std::deque, TAllocator>(data)
+  {
   }
 
   virtual ~QueryableDequeData() { }
@@ -42,6 +42,11 @@ public:
   void RemoveFirst() override
   {
 
+  }
+
+  void Sort(std::function<bool(T, T)> compare) override
+  {
+    std::sort(this->items.begin(), this->items.end(), compare);
   }
 };
 

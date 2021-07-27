@@ -95,7 +95,6 @@ public:
 
   Iterator<T>& operator=(const Iterator<T>& value)
   {
-    std::cout << "assignment made" << std::endl;
     this->Assign(value);
     return *this;
   }
