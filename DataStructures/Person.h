@@ -36,6 +36,7 @@ public:
   std::string ToString();
 
   bool operator<(const Person & other) const;
+  bool operator==(const Person & other) const;
 };
 
 #endif

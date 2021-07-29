@@ -85,7 +85,8 @@ public:
 
   bool operator!=(const Iterator<T>& comparison) const
   {
-    return !this->Equal(comparison);
+    bool notEqual = !this->Equal(comparison);
+    return notEqual;
   }
 
   bool operator<(const Iterator<T>& comparison)

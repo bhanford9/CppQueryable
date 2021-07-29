@@ -13,15 +13,20 @@ template<
   typename TAllocator = std::allocator<T>>
 class QueryableMultiSetData : public QueryableData<T, std::multiset, TCompare, TAllocator>
 {
+  typedef typename std::multiset<T>::iterator t_forwardIterator;
 public:
-  QueryableMultiSetData() : QueryableData<T, std::multiset, TCompare, TAllocator>() { }
-  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
-    : QueryableData<T, std::multiset, TCompare, TAllocator>(items)
+  QueryableMultiSetData(TCompare compare = TCompare())
+    : QueryableData<T, std::multiset, TCompare, TAllocator>()
   {
+    this->items = std::multiset<T, TCompare>(compare);
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
+  }
+  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
+    : QueryableData<T, std::multiset, TCompare, TAllocator>(items)
+  {
   }
   QueryableMultiSetData(const QueryableMultiSetData& data)
     : QueryableData<T, std::multiset, TCompare, TAllocator>(data)

@@ -31,6 +31,8 @@ public:
   bool IsGender(Gender gender);
   bool IsMale();
   bool IsFemale();
+
+  bool operator<(const Animal & other) const;
 };
 
 #endif

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Gender.h"
 #include "Animal.h"
 
@@ -64,4 +65,10 @@ bool Animal::IsMale()
 bool Animal::IsFemale()
 {
   return this->gender == Gender::Female;
+}
+
+bool Animal::operator<(const Animal & other) const
+{
+  std::cout << "animal less than" << std::endl;
+  return this->name < other.name;
 }

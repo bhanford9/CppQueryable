@@ -22,7 +22,9 @@
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
 
-template<typename TObj>
+template<
+  typename TObj,
+  typename TCompare = std::less<TObj>>
 class Queryable
 {
 protected:
@@ -104,7 +106,9 @@ protected:
   }
 
 public:
-  Queryable(QueryableType type = QueryableType::Vector)
+  Queryable(
+    QueryableType type = QueryableType::Vector,
+    TCompare compare = TCompare())
   {
     switch (type)
     {
@@ -122,14 +126,14 @@ public:
         break;
       case QueryableType::MultiSet:
         {
-          std::multiset<TObj> localMultiSet;
-          this->items = std::make_shared<QueryableMultiSetData<TObj>>(localMultiSet);
+          std::multiset<TObj, TCompare> localMultiSet(compare);
+          this->items = std::make_shared<QueryableMultiSetData<TObj, TCompare>>(localMultiSet);
         }
         break;
       case QueryableType::Set:
         {
-          std::set<TObj> localSet;
-          this->items = std::make_shared<QueryableSetData<TObj>>(localSet);
+          std::set<TObj, TCompare> localSet(compare);
+          this->items = std::make_shared<QueryableSetData<TObj, TCompare>>(localSet);
         }
         break;
       case QueryableType::Vector:
@@ -169,10 +173,10 @@ public:
     this->condition.MarkApplied(false);
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  std::deque<TObj, TAllocator> ToDeque()
+  template<typename TNewAllocator = std::allocator<TObj>>
+  std::deque<TObj, TNewAllocator> ToDeque()
   {
-    std::deque<TObj, TAllocator> newItems;
+    std::deque<TObj, TNewAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -186,10 +190,10 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  std::list<TObj, TAllocator> ToList()
+  template<typename TNewAllocator = std::allocator<TObj>>
+  std::list<TObj, TNewAllocator> ToList()
   {
-    std::list<TObj, TAllocator> newItems;
+    std::list<TObj, TNewAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -203,10 +207,10 @@ public:
     return newItems;
   }
 
-  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::multiset<TObj, TCompare, TAllocator> ToMultiSet()
+  template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
+  std::multiset<TObj, TNewCompare, TNewAllocator> ToMultiSet()
   {
-    std::multiset<TObj, TCompare, TAllocator> newItems;
+    std::multiset<TObj, TNewCompare, TNewAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -220,10 +224,10 @@ public:
     return newItems;
   }
 
-  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::set<TObj, TCompare, TAllocator> ToSet()
+  template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
+  std::set<TObj, TNewCompare, TNewAllocator> ToSet()
   {
-    std::set<TObj, TCompare, TAllocator> newItems;
+    std::set<TObj, TNewCompare, TNewAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -237,10 +241,10 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  std::vector<TObj, TAllocator> ToVector()
+  template<typename TNewAllocator = std::allocator<TObj>>
+  std::vector<TObj, TNewAllocator> ToVector()
   {
-    std::vector<TObj, TAllocator> newItems;
+    std::vector<TObj, TNewAllocator> newItems;
 
     for (TObj item : *this->items.get())
     {
@@ -254,12 +258,12 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
+  template<typename TNewAllocator = std::allocator<TObj>>
   Queryable<TObj>* ToQueryableDeque()
   {
     std::deque<TObj> copy = this->ToDeque();
 
-    this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>();
+    this->items = std::make_shared<QueryableDequeData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -268,12 +272,12 @@ public:
     return this;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
+  template<typename TNewAllocator = std::allocator<TObj>>
   Queryable<TObj>* ToQueryableList()
   {
     std::list<TObj> copy = this->ToList();
 
-    this->items = std::make_shared<QueryableListData<TObj, TAllocator>>();
+    this->items = std::make_shared<QueryableListData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -282,12 +286,12 @@ public:
     return this;
   }
 
-  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
   Queryable<TObj>* ToQueryableMultiSet()
   {
     std::multiset<TObj> copy = this->ToMultiSet();
 
-    this->items = std::make_shared<QueryableMultiSetData<TObj, TCompare, TAllocator>>();
+    this->items = std::make_shared<QueryableMultiSetData<TObj, TNewCompare, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -296,12 +300,12 @@ public:
     return this;
   }
 
-  template<typename TCompare = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
+  template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
   Queryable<TObj>* ToQueryableSet()
   {
     std::set<TObj> copy = this->ToSet();
 
-    this->items = std::make_shared<QueryableSetData<TObj, TCompare, TAllocator>>();
+    this->items = std::make_shared<QueryableSetData<TObj, TNewCompare, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -310,12 +314,12 @@ public:
     return this;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
+  template<typename TNewAllocator = std::allocator<TObj>>
   Queryable<TObj>* ToQueryableVector()
   {
     std::vector<TObj> copy = this->ToVector();
 
-    this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>();
+    this->items = std::make_shared<QueryableVectorData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -1090,7 +1094,7 @@ public:
     {
       case QueryableType::Set:
         {
-          std::vector<TObj> copy = this->ToVector();
+          std::set<TObj> copy = this->ToSet();
           this->items = std::make_shared<QueryableSetData<TObj, decltype(comparator)>>();
           for (TObj item : copy)
           {
@@ -1100,8 +1104,8 @@ public:
         break;
       case QueryableType::MultiSet:
         {
-          std::vector<TObj> copy = this->ToVector();
-          this->items = std::make_shared<QueryableMultiSetData<TObj, decltype(comparator)>>();
+          std::multiset<TObj> copy = this->ToMultiSet();
+          this->items = std::make_shared<QueryableMultiSetData<TObj, decltype(comparator)>>(comparator);
           for (TObj item : copy)
           {
             this->items.get()->Add(item);
@@ -1233,21 +1237,27 @@ public:
     return finalizer(this->Aggregate<T>(accumulate, seed));
   }
 
-  template<typename TJoinObj, typename TJoinOn, typename TOut>
-  Queryable<TOut> * Join(
+  template<
+    typename TJoinObj,
+    typename TJoinOn,
+    typename TOut,
+    typename TOutCompare = std::less<TOut>>
+  Queryable<TOut, TOutCompare> * Join(
     Queryable<TJoinObj> * collection,
     std::function<TJoinOn(TObj)> getLocalJoinOn,
     std::function<TJoinOn(TJoinObj)> getInputJoinOn,
     std::function<TOut(TObj, TJoinObj)> createFrom,
+    TOutCompare outCompare = TOutCompare(),
     QueryableType returnType = QueryableType::Default)
   {
     static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
     static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
+    typedef Queryable<TOut, TOutCompare> TReturn;
 
     QueryableType type = returnType == QueryableType::Default ? this->type : returnType;
-    std::shared_ptr<Queryable<TOut>> data = std::make_shared<Queryable<TOut>>(type);
+    std::shared_ptr<TReturn> data = std::make_shared<TReturn>(type, outCompare);
     this->persistentContainer.Set(data);
-    std::shared_ptr<Queryable<TOut>> result = this->persistentContainer.GetAs<Queryable<TOut>>();
+    std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
 
     // Sort each collection on passed in key getters                             ( + time complexity: nlog(n) )
     //   this allows us to only need to fully iterate over each collection once  ( + time complexity: n )
@@ -1255,7 +1265,7 @@ public:
     // Change inner collection to vector to gaurantee constant time indexing     ( - requires extra space )
     //   may want to only do this if collection type does not have constant time indexing
     this->OrderBy(getLocalJoinOn);
-    std::vector<TJoinObj> inputSorted = collection.OrderBy(getInputJoinOn).ToVector();
+    std::vector<TJoinObj> inputSorted = collection->OrderBy(getInputJoinOn)->ToVector();
     int inputSize = inputSorted.size();
 
     if (inputSize > 0)
@@ -1279,7 +1289,7 @@ public:
             int sameValueIndex = inputIndex;
             while (sameValueIndex < inputSize && getInputJoinOn(inputSorted[sameValueIndex]) == inputValue)
             {
-              result.Add(createFrom(localItem, inputSorted[sameValueIndex++]));
+              result.get()->Add(createFrom(localItem, inputSorted[sameValueIndex++]));
             }
           }
           else if (inputValue < localValue)
@@ -1291,7 +1301,7 @@ public:
       }
     }
 
-    return result;
+    return result.get();
   }
 };
 

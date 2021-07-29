@@ -9,20 +9,24 @@
 class PersonAndPet
 {
 public:
-  int id;
   Person person;
   Animal pet;
 
-  PersonAndPet(int id, Person person, Animal pet)
+  PersonAndPet() { }
+  PersonAndPet(Person person, Animal pet)
   {
-    this->id = id;
     this->person = person;
     this->pet = pet;
   }
 
-  int GetId() { return this->id; }
   Person GetPerson() { return this->person; }
   Animal GetAnimal() { return this->pet; }
+
+
+  // bool operator<(const PersonAndPet & other) const
+  // {
+  //   return this->person < other.person;
+  // }
 };
 
 #endif

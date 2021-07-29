@@ -14,14 +14,18 @@ template<
 class QueryableSetData : public QueryableData<T, std::set, TCompare, TAllocator>
 {
 public:
-  QueryableSetData() : QueryableData<T, std::set, TCompare, TAllocator>() { }
-  QueryableSetData(std::set<T, TCompare, TAllocator> items)
-    : QueryableData<T, std::set, TCompare, TAllocator>(items)
+  QueryableSetData(TCompare compare = TCompare())
+    : QueryableData<T, std::set, TCompare, TAllocator>()
   {
+    this->items = std::set<T, TCompare>(compare);
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
+  }
+  QueryableSetData(std::set<T, TCompare, TAllocator> items)
+    : QueryableData<T, std::set, TCompare, TAllocator>(items)
+  {
   }
   QueryableSetData(const QueryableSetData& data)
     : QueryableData<T, std::set, TCompare, TAllocator>(data)
