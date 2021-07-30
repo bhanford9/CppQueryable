@@ -155,6 +155,11 @@ public:
     this->type = queryable.type;
   }
 
+  QueryableType GetType()
+  {
+    return this->type;
+  }
+
   Queryable<TObj> * Applied()
   {
     this->ApplyCondition();
@@ -1094,8 +1099,8 @@ public:
     {
       case QueryableType::Set:
         {
-          std::set<TObj> copy = this->ToSet();
-          this->items = std::make_shared<QueryableSetData<TObj, decltype(comparator)>>();
+          std::vector<TObj> copy = this->ToVector();
+          this->items = std::make_shared<QueryableSetData<TObj, decltype(comparator)>>(comparator);
           for (TObj item : copy)
           {
             this->items.get()->Add(item);
@@ -1104,7 +1109,7 @@ public:
         break;
       case QueryableType::MultiSet:
         {
-          std::multiset<TObj> copy = this->ToMultiSet();
+          std::vector<TObj> copy = this->ToVector();
           this->items = std::make_shared<QueryableMultiSetData<TObj, decltype(comparator)>>(comparator);
           for (TObj item : copy)
           {
@@ -1259,6 +1264,11 @@ public:
     this->persistentContainer.Set(data);
     std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
 
+    if (!collection)
+    {
+      return result.get();
+    }
+
     // Sort each collection on passed in key getters                             ( + time complexity: nlog(n) )
     //   this allows us to only need to fully iterate over each collection once  ( + time complexity: n )
     //   and chunks of non-joinable data can be easily bypassed                  ( + non-generalizable benefit )
@@ -1292,7 +1302,8 @@ public:
               result.get()->Add(createFrom(localItem, inputSorted[sameValueIndex++]));
             }
           }
-          else if (inputValue < localValue)
+
+          if (inputValue <= localValue)
           {
             inputIndex++;
           }

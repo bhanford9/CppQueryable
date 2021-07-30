@@ -27,6 +27,15 @@ public:
   // {
   //   return this->person < other.person;
   // }
+
+  std::string ToString()
+  {
+    return
+      "\n" +
+      this->GetPerson().ToString() +
+      this->GetAnimal().ToString() +
+      "\n";
+  }
 };
 
 #endif

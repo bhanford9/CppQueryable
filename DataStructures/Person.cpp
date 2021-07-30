@@ -80,7 +80,9 @@ bool Person::IsFemale()
 
 std::string Person::ToString()
 {
-  return "Name: " + this->name +
+  return
+    "Name: " + this->name +
+    "\n\tId: " + std::to_string(this->id) +
     "\n\tAge: " + std::to_string(this->age) +
     "\n\tHeight (in): " + std::to_string(this->heightInches) +
     "\n\tGender: " + (this->IsMale() ? "M\n" : "F\n");

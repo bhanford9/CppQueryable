@@ -32,6 +32,8 @@ public:
   bool IsMale();
   bool IsFemale();
 
+  std::string ToString();
+
   bool operator<(const Animal & other) const;
 };
 

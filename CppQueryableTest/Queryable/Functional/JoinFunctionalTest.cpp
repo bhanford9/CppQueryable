@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <deque>
 #include <iostream>
@@ -13,17 +14,22 @@
 #include "../../../DataStructures/Gender.h"
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonAndPet.h"
+#include "../../../DataStructures/PersonAndPetLibrary.h"
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryableType.h"
 
 using namespace QueryBuilder;
 
 class JoinFunctionalTest : public ::testing::Test
 {
 protected:
+  PersonLibrary personLibrary;
+  AnimalLibrary animalLibrary;
   QueryableVector<Person> people;
   QueryableVector<Animal> animals;
+  std::vector<PersonAndPet> petOwners;
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
     [](PersonAndPet a, PersonAndPet b) -> bool { std::cout << "comparison" << std::endl;return a.GetPerson() < b.GetPerson(); };
   typedef decltype(comparison) TComparison;
@@ -31,12 +37,56 @@ protected:
 
   void SetUp() override
   {
-    this->people = QueryableVector<Person>(PersonLibrary().GetPeople());
-    this->animals = QueryableVector<Animal>(AnimalLibrary().GetAnimals());
+    this->people = QueryableVector<Person>(this->personLibrary.GetPeople());
+    this->animals = QueryableVector<Animal>(this->animalLibrary.GetAnimals());
+    this->petOwners = PersonAndPetLibrary().GetPetOwners();
   }
 
   void TearDown() override {}
+
+  bool PersonEqual(Person a, Person b)
+  {
+    return
+      a.GetId() == b.GetId() &&
+      a.GetName() == b.GetName() &&
+      a.GetAge() == b.GetAge() &&
+      a.GetHeight() == b.GetHeight() &&
+      a.GetGender() == b.GetGender();
+  }
+
+  bool AnimalEqual(Animal a, Animal b)
+  {
+    return
+      a.GetId() == b.GetId() &&
+      a.GetOwnerId() == b.GetOwnerId() &&
+      a.GetName() == b.GetName() &&
+      a.GetAge() == b.GetAge() &&
+      a.GetGender() == b.GetGender();
+  }
+
+  bool PetOwnerEqual(PersonAndPet a, PersonAndPet b)
+  {
+    return
+      this->PersonEqual(a.GetPerson(), b.GetPerson()) &&
+      this->AnimalEqual(a.GetAnimal(), b.GetAnimal());
+  }
 };
+
+TEST_F(JoinFunctionalTest, JoinNullCollection)
+{
+  QueryableDeque<Person> people;
+  Queryable<PersonAndPet, TComparison>* petOwners =
+    people.Join<Animal, long, PersonAndPet, TComparison>(
+      NULL,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(petOwners);
+  ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::Deque);
+}
 
 TEST_F(JoinFunctionalTest, JoinUninitializedDequeTest)
 {
@@ -52,6 +102,7 @@ TEST_F(JoinFunctionalTest, JoinUninitializedDequeTest)
 
   ASSERT_TRUE(petOwners);
   ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::Deque);
 }
 
 TEST_F(JoinFunctionalTest, JoinUninitializedListTest)
@@ -68,6 +119,7 @@ TEST_F(JoinFunctionalTest, JoinUninitializedListTest)
 
   ASSERT_TRUE(petOwners);
   ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::List);
 }
 
 TEST_F(JoinFunctionalTest, JoinUninitializedMultiSetTest)
@@ -84,6 +136,7 @@ TEST_F(JoinFunctionalTest, JoinUninitializedMultiSetTest)
 
   ASSERT_TRUE(petOwners);
   ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::MultiSet);
 }
 
 TEST_F(JoinFunctionalTest, JoinUninitializedSetTest)
@@ -100,6 +153,7 @@ TEST_F(JoinFunctionalTest, JoinUninitializedSetTest)
 
   ASSERT_TRUE(petOwners);
   ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::Set);
 }
 
 TEST_F(JoinFunctionalTest, JoinUninitializedVectorTest)
@@ -116,4 +170,167 @@ TEST_F(JoinFunctionalTest, JoinUninitializedVectorTest)
 
   ASSERT_TRUE(petOwners);
   ASSERT_EQ(0, petOwners->Count());
+  ASSERT_TRUE(petOwners->GetType() == QueryableType::Vector);
 }
+
+TEST_F(JoinFunctionalTest, JoinFullVectorVectorDefaultOutTest)
+{
+  Queryable<PersonAndPet, TComparison>* result =
+    this->people.Join<Animal, long, PersonAndPet, TComparison>(
+      &this->animals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeListDefaultOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Deque);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeMultiSetDefaultOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableMultiSet<Animal> multiSetAnimals(this->animals.ToMultiSet());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &multiSetAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Deque);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the multiset gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetAnimal().GetOwnerId() <= p2.GetAnimal().GetOwnerId() &&
+        p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
+    });
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeSetDefaultOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableSet<Animal> setAnimals(this->animals.ToSet());
+
+  std::cout << "set count: " << setAnimals.Count() << std::endl;
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &setAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Deque);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  int index = 0;
+  PersonAndPet previous;
+  for (auto it = this->petOwners.begin(); it != this->petOwners.end();)
+  {
+    if (index != 0)
+    {
+      if (previous.GetAnimal().GetOwnerId() == (*it).GetAnimal().GetOwnerId())
+      {
+        this->petOwners.erase(it);
+      }
+    }
+
+    index++;
+    previous = *it;
+  }
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the multiset gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetAnimal().GetOwnerId() <= p2.GetAnimal().GetOwnerId() &&
+        p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
+    });
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+// deque, list
+// deque, multiset
+// deque, set
+// deque, vector
+// list, deque
+// list, multiset
+// list, set
+// list, vector
+// set, deque
+// set, list
+// set, multiset
+// set, vector
+// multiset, deque
+// multiset, list
+// multiset, set
+// multiset, vector
+// vector, deque
+// vector, list
+// vector, multiset
+// vector, set
+
+// THINGS TO TEST
+// - TOut built in type without need for comparison
+// - TOut class with less-than overload so comparison not needed
+// - test different queryable type return types (every combination)
+// - test collection different queryable type than caller  (every combination)
+//
+// - Where --> Join --> Where

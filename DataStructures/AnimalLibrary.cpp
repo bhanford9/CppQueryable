@@ -20,6 +20,8 @@ AnimalLibrary::AnimalLibrary()
   this->animals.push_back(std::make_unique<Animal>(this->animals.size(), 6, "Animal 3", 52, Gender::Male));
   this->animals.push_back(std::make_unique<Animal>(this->animals.size(), 7, "Animal 7", 52, Gender::Male));
   this->animals.push_back(std::make_unique<Animal>(this->animals.size(), 8, "Animal 4", 61, Gender::Female));
+  this->animals.push_back(std::make_unique<Animal>(this->animals.size(), 100, "No Owner", 46, Gender::Female));
+
 }
 
 std::vector<Animal> AnimalLibrary::GetAnimals()

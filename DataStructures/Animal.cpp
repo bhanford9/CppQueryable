@@ -3,7 +3,7 @@
 #include "Animal.h"
 
 
-Animal::Animal(long id, long ownderId, std::string name, double age, Gender gender)
+Animal::Animal(long id, long ownerId, std::string name, double age, Gender gender)
 {
   this->id = id;
   this->ownerId = ownerId;
@@ -67,8 +67,17 @@ bool Animal::IsFemale()
   return this->gender == Gender::Female;
 }
 
+std::string Animal::ToString()
+{
+  return
+    "Name: " + this->name +
+    "\n\tOwner Id: " + std::to_string(this->ownerId) +
+    "\n\tId: " + std::to_string(this->id) +
+    "\n\tAge: " + std::to_string(this->age) +
+    "\n\tGender: " + (this->IsMale() ? "M\n" : "F\n");
+}
+
 bool Animal::operator<(const Animal & other) const
 {
-  std::cout << "animal less than" << std::endl;
   return this->name < other.name;
 }
