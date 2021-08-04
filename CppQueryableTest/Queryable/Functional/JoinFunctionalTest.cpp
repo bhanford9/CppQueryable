@@ -70,6 +70,34 @@ protected:
       this->PersonEqual(a.GetPerson(), b.GetPerson()) &&
       this->AnimalEqual(a.GetAnimal(), b.GetAnimal());
   }
+
+  void RemovePetOwnerDuplicates()
+  {
+    // sets can remove duplicate values based on comparison of (!(a < b) && !(b < a))
+    // need to remove duplicates freom expected in a similar way
+    int index = 0;
+    PersonAndPet previous;
+    for (auto it = this->petOwners.begin(); it != this->petOwners.end();)
+    {
+      if (index++ != 0)
+      {
+        if (previous.GetPerson().GetName() == (*it).GetPerson().GetName())
+        {
+          this->petOwners.erase(it);
+        }
+        else
+        {
+          previous = *it;
+          it++;
+        }
+      }
+      else
+      {
+        previous = *it;
+        it++;
+      }
+    }
+  }
 };
 
 TEST_F(JoinFunctionalTest, JoinNullCollection)
@@ -281,30 +309,7 @@ TEST_F(JoinFunctionalTest, JoinFullDequeSetDefaultOutTest)
         p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
     });
 
-  // sets can remove duplicate values based on comparison of (!(a < b) && !(b < a))
-  // need to remove duplicates freom expected in a similar way
-  int index = 0;
-  PersonAndPet previous;
-  for (auto it = this->petOwners.begin(); it != this->petOwners.end();)
-  {
-    if (index++ != 0)
-    {
-      if (previous.GetAnimal().GetOwnerId() == (*it).GetAnimal().GetOwnerId())
-      {
-        this->petOwners.erase(it);
-      }
-      else
-      {
-        previous = *it;
-        it++;
-      }
-    }
-    else
-    {
-      previous = *it;
-      it++;
-    }
-  }
+  this->RemovePetOwnerDuplicates();
 
   ASSERT_EQ(this->petOwners.size(), result->Count());
 
@@ -425,30 +430,7 @@ TEST_F(JoinFunctionalTest, JoinFullListSetDefaultOutTest)
         p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
     });
 
-  // sets can remove duplicate values based on comparison of (!(a < b) && !(b < a))
-  // need to remove duplicates freom expected in a similar way
-  int index = 0;
-  PersonAndPet previous;
-  for (auto it = this->petOwners.begin(); it != this->petOwners.end();)
-  {
-    if (index++ != 0)
-    {
-      if (previous.GetAnimal().GetOwnerId() == (*it).GetAnimal().GetOwnerId())
-      {
-        this->petOwners.erase(it);
-      }
-      else
-      {
-        previous = *it;
-        it++;
-      }
-    }
-    else
-    {
-      previous = *it;
-      it++;
-    }
-  }
+  this->RemovePetOwnerDuplicates();
 
   ASSERT_EQ(this->petOwners.size(), result->Count());
 
@@ -580,30 +562,7 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetSetDefaultOutTest)
       return p1.GetPerson().GetName() <= p2.GetPerson().GetName();
     });
 
-  // sets can remove duplicate values based on comparison of (!(a < b) && !(b < a))
-  // need to remove duplicates freom expected in a similar way
-  int index = 0;
-  PersonAndPet previous;
-  for (auto it = this->petOwners.begin(); it != this->petOwners.end();)
-  {
-    if (index++ != 0)
-    {
-      if (previous.GetAnimal().GetOwnerId() == (*it).GetAnimal().GetOwnerId())
-      {
-        this->petOwners.erase(it);
-      }
-      else
-      {
-        previous = *it;
-        it++;
-      }
-    }
-    else
-    {
-      previous = *it;
-      it++;
-    }
-  }
+  this->RemovePetOwnerDuplicates();
 
   ASSERT_EQ(this->petOwners.size(), result->Count());
   for (int i = 0; i < result->Count(); i++)
@@ -639,6 +598,374 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetVectorDefaultOutTest)
     {
       return p1.GetPerson().GetName() < p2.GetPerson().GetName();
     });
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullSetDequeDefaultOutTest)
+{
+  QueryableSet<Person> setPeople(this->people.ToSet());
+  QueryableDeque<Animal> dequeAnimals(this->animals.ToDeque());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    setPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &dequeAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the set gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetPerson() < p2.GetPerson();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullSetListDefaultOutTest)
+{
+  QueryableSet<Person> setPeople(this->people.ToSet());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    setPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the set gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetPerson() < p2.GetPerson();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullSetMultiSetDefaultOutTest)
+{
+  QueryableSet<Person> setPeople(this->people.ToSet());
+  QueryableMultiSet<Animal> multiSetAnimals(this->animals.ToMultiSet());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    setPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &multiSetAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the set gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      if (p1.GetAnimal().GetOwnerId() == p2.GetAnimal().GetOwnerId())
+      {
+        return p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
+      }
+      return p1.GetPerson().GetName() < p2.GetPerson().GetName();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullSetVectorDefaultOutTest)
+{
+  QueryableSet<Person> setPeople(this->people.ToSet());
+  QueryableVector<Animal> vectorAnimals(this->animals.ToVector());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    setPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &vectorAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the set gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetPerson() < p2.GetPerson();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullVectorDequeDefaultOutTest)
+{
+  QueryableVector<Person> vectorPeople(this->people.ToVector());
+  QueryableDeque<Animal> dequeAnimals(this->animals.ToDeque());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    vectorPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &dequeAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullVectorListDefaultOutTest)
+{
+  QueryableVector<Person> vectorPeople(this->people.ToVector());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    vectorPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullVectorMultiSetDefaultOutTest)
+{
+  QueryableVector<Person> vectorPeople(this->people.ToVector());
+  QueryableMultiSet<Animal> multiSetAnimals(this->animals.ToMultiSet());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    vectorPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &multiSetAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the multiset gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetAnimal().GetOwnerId() <= p2.GetAnimal().GetOwnerId() &&
+        p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
+    });
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullVectorSetDefaultOutTest)
+{
+  QueryableVector<Person> vectorPeople(this->people.ToVector());
+  QueryableSet<Animal> setAnimals(this->animals.ToSet());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    vectorPeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &setAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
+
+  // Join orders by ID, but sets are naturally ordered as well,
+  // so the set gets ordered by name by default as well
+  // which can make the output order different than the order of
+  // added items
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetAnimal().GetOwnerId() <= p2.GetAnimal().GetOwnerId() &&
+        p1.GetAnimal().GetName() < p2.GetAnimal().GetName();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeListListOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison,
+      QueryableType::List);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::List);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeListMultiSetOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison,
+      QueryableType::MultiSet);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::MultiSet);
+  ASSERT_EQ(this->petOwners.size(), result->Count());
+
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetPerson() < p2.GetPerson();
+    });
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(this->PetOwnerEqual(result->At(i), this->petOwners[i]));
+  }
+}
+
+TEST_F(JoinFunctionalTest, JoinFullDequeListSetOutTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<PersonAndPet, TComparison>* result =
+    dequePeople.Join<Animal, long, PersonAndPet, TComparison>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return PersonAndPet(person, animal); },
+      this->comparison,
+      QueryableType::Set);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  std::sort(
+    this->petOwners.begin(),
+    this->petOwners.end(),
+    [](PersonAndPet p1, PersonAndPet p2)
+    {
+      return p1.GetPerson() < p2.GetPerson();
+    });
+
+  this->RemovePetOwnerDuplicates();
+
+  ASSERT_EQ(this->petOwners.size(), result->Count());
 
   for (int i = 0; i < result->Count(); i++)
   {

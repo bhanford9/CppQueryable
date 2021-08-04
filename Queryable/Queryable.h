@@ -1255,7 +1255,6 @@ public:
     TOutCompare outCompare = TOutCompare(),
     QueryableType returnType = QueryableType::Default)
   {
-    static_assert(is_equatable<TJoinOn>::value, "Type must be equatable");
     static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
     typedef Queryable<TOut, TOutCompare> TReturn;
 
@@ -1297,8 +1296,16 @@ public:
           if (localValue == inputValue)
           {
             int sameValueIndex = inputIndex;
-            while (sameValueIndex < inputSize && getInputJoinOn(inputSorted[sameValueIndex]) == inputValue)
+            while (sameValueIndex < inputSize)
             {
+              TJoinOn nextValue = getInputJoinOn(inputSorted[sameValueIndex]);
+
+              // if they're not equal then move on
+              if ((nextValue < inputValue) || (inputValue < nextValue))
+              {
+                break;
+              }
+
               result.get()->Add(createFrom(localItem, inputSorted[sameValueIndex++]));
             }
           }
