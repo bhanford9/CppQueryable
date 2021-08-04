@@ -11,11 +11,13 @@
 
 #include "../../../DataStructures/Animal.h"
 #include "../../../DataStructures/AnimalLibrary.h"
+#include "../../../DataStructures/DogWalker.h"
 #include "../../../DataStructures/Gender.h"
 #include "../../../DataStructures/Person.h"
 #include "../../../DataStructures/PersonAndPet.h"
 #include "../../../DataStructures/PersonAndPetLibrary.h"
 #include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Point.h"
 
 #include "../../../Queryable/QueryBuilder.h"
 #include "../../../Queryable/QueryableType.h"
@@ -33,7 +35,9 @@ protected:
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
     [](PersonAndPet a, PersonAndPet b) -> bool { return a.GetPerson() < b.GetPerson(); };
   typedef decltype(comparison) TComparison;
-
+  std::function<bool(Person, Person)> comparisonId =
+    [](Person a, Person b) -> bool { return a.GetId() < b.GetId(); };
+  typedef decltype(comparisonId) TComparisonId;
 
   void SetUp() override
   {
@@ -84,6 +88,32 @@ protected:
         if (previous.GetPerson().GetName() == (*it).GetPerson().GetName())
         {
           this->petOwners.erase(it);
+        }
+        else
+        {
+          previous = *it;
+          it++;
+        }
+      }
+      else
+      {
+        previous = *it;
+        it++;
+      }
+    }
+  }
+
+  void RemovePersonDuplicates(std::vector<Person> & people)
+  {
+    int index = 0;
+    Person previous;
+    for (auto it = people.begin(); it != people.end();)
+    {
+      if (index++ != 0)
+      {
+        if (previous.GetId() == (*it).GetId())
+        {
+          people.erase(it);
         }
         else
         {
@@ -973,34 +1003,95 @@ TEST_F(JoinFunctionalTest, JoinFullDequeListSetOutTest)
   }
 }
 
-// deque, list
-// deque, multiset
-// deque, set
-// deque, vector
-// list, deque
-// list, multiset
-// list, set
-// list, vector
-// multiset, deque
-// multiset, list
-// multiset, set
-// multiset, vector
-// set, deque
-// set, list
-// set, multiset
-// set, vector
-// vector, deque
-// vector, list
-// vector, multiset
-// vector, set
+TEST_F(JoinFunctionalTest, DefaultOutComparisonTest)
+{
+  double expectedX = 9;
+  double expectedY = 10;
 
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableSet<Animal> setAnimals(this->animals.ToSet());
 
-// *** Test case to ensure compare is being used as out compare for sets
+  // Testing that supplying the comparison type is not necessary when the default
+  //   comparison for a class can be used.
+  // This is more likely the common use case and it is much more convecient to
+  //   only have to deal with 3 type parameters and 4 variable parameters
+  Queryable<Point>* result =
+    dequePeople.Join<Animal, long, Point>(
+      &setAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [&](Person person, Animal animal) { return Point(expectedX, expectedY); });
+
+  ASSERT_TRUE(result->Count() > 0);
+
+  result->ForEach([&](Point p)
+  {
+    ASSERT_EQ(expectedX, p.X);
+    ASSERT_EQ(expectedY, p.Y);
+  });
+}
+
+TEST_F(JoinFunctionalTest, PassedInCompareOverwritesDefaultTest)
+{
+  // person is ordered by name by default
+  // passing in an ID comparison should overwrite this
+  QueryableSet<Person> setPeople(this->people.ToSet());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<Person, TComparisonId>* result =
+    setPeople.Join<Animal, long, Person, TComparisonId>(
+      &listAnimals,
+      [](Person person) { return person.GetId(); },
+      [](Animal animal) { return animal.GetOwnerId(); },
+      [](Person person, Animal animal) { return person; },
+      this->comparisonId);
+
+  ASSERT_TRUE(result);
+  ASSERT_TRUE(result->GetType() == QueryableType::Set);
+
+  std::vector<Person> sortedPeople;
+  this->animals.ForEach([&](Animal a)
+  {
+    if (this->people.Any([&](Person p) { return p.GetId() == a.GetOwnerId(); }))
+      sortedPeople.push_back(this->people.First([&](Person p) { return p.GetId() == a.GetOwnerId(); } ));
+  });
+  std::sort(sortedPeople.begin(), sortedPeople.end(), this->comparisonId);
+
+  this->RemovePersonDuplicates(sortedPeople);
+
+  ASSERT_EQ(sortedPeople.size(), result->Count());
+
+  for (int i = 0; i < result->Count(); i++)
+  {
+    ASSERT_TRUE(result->At(i).GetId() == sortedPeople[i].GetId());
+  }
+}
+
+TEST_F(JoinFunctionalTest, WhereJoinWhereTest)
+{
+  QueryableDeque<Person> dequePeople(this->people.ToDeque());
+  QueryableList<Animal> listAnimals(this->animals.ToList());
+
+  Queryable<DogWalker>* result =
+    dequePeople
+      .Where([](Person p) { return p.GetId() >= 2 && p.GetId() <= 5; })
+      ->Join<Animal, long, DogWalker>(
+        &listAnimals,
+        [](Person person) { return person.GetId(); },
+        [](Animal animal) { return animal.GetOwnerId(); },
+        [](Person person, Animal animal) { return DogWalker(person, animal); })
+      ->Where([](DogWalker dw) { return dw.GetId() % 2 == 0; });
+
+  int expectedCount = 0;
+  this->animals.ForEach([&](Animal a) { if (a.GetOwnerId() >= 2 && a.GetOwnerId() <= 5 && a.GetOwnerId() % 2 == 0) expectedCount++; });
+
+  ASSERT_TRUE(expectedCount > 0);
+  ASSERT_EQ(expectedCount, result->Count());
+
+  result->ForEach([](DogWalker dw) { ASSERT_TRUE(dw.GetId() == 2 || dw.GetId() == 4); });
+}
+
 
 // THINGS TO TEST
-// - TOut built in type without need for comparison
-// - TOut class with less-than overload so comparison not needed
-// - test different queryable type return types (every combination)
-// - test collection different queryable type than caller  (every combination)
 //
 // - Where --> Join --> Where
