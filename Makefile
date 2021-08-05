@@ -9,6 +9,7 @@ PROGRAM_DIR = $(PROJECT_PATH)/Bin
 PROGRAM = $(PROGRAM_DIR)/CppQueryable
 PROGRAM_TEST_DIR = $(PROJECT_PATH)/CppQueryableTest
 FUNCTIONAL_TEST_DIR = $(PROGRAM_TEST_DIR)/Queryable/Functional
+UTILITIES_TEST_DIR = $(PROGRAM_TEST_DIR)/Queryable/Utilities
 TEST_PROGRAM = $(PROGRAM_TEST_DIR)/CppQueryableTest_testcases
 
 DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
@@ -96,6 +97,20 @@ ftest: $(REFS_REF) $(SRC_COMPILE_REF)
 
 	$(foreach testcase, $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases, $(testcase);)
 	/bin/rm -f $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
+
+.PHONY: utest
+utest: $(REFS_REF) $(SRC_COMPILE_REF)
+	@echo $(prefix)
+	$(CXX) -c $(CPPFLAGS) $(UTILITIES_TEST_DIR)/$(prefix)Test.cpp -o $(UTILITIES_TEST_DIR)/$(prefix)Test.o
+	$(CXX) -o $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases \
+		$(CPPFLAGS) \
+		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
+		$(UTILITIES_TEST_DIR)/$(prefix)Test.o \
+		$(TEST_INCLUDES) \
+		$(TEST_LIBS)
+
+	$(foreach testcase, $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases, $(testcase);)
+	/bin/rm -f $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases $(UTILITIES_TEST_DIR)/$(prefix)Test.o
 
 $(DEPENDENCIES):
 	touch $(DEPENDENCIES)

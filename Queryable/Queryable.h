@@ -11,8 +11,9 @@
 #include <set>
 #include <vector>
 
-#include "DeferredUtilities/Condition.h"
-#include "DeferredUtilities/PersistentContainer.h"
+#include "Utilities/Condition.h"
+#include "Utilities/Group.h"
+#include "Utilities/PersistentContainer.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableDequeData.h"
 #include "QueryableData/QueryableListData.h"
@@ -1320,6 +1321,35 @@ public:
     }
 
     return result.get();
+  }
+
+  template<typename TKey>
+  Queryable<Group<TKey, TObj>> * GroupBy(
+    std::function<TKey(TObj)> getKey,
+    QueryableType storageType = QueryableType::Default
+  )
+  {
+    // todo use container to get this to persist
+    Queryable<Group<TKey, TObj>> queryableGroups(QueryableType::Set);
+
+    for (TObj item : *this->items.get())
+    {
+      if (this->condition(item))
+      {
+        TKey key = getKey(item);
+        if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.GetKey() == key; }))
+        {
+          queryableGroups.Add(Group<TKey, TObj>(key));
+        }
+
+        queryableGroups
+          -First([&](Group<TKey, TObj> group) { return group.GetKey() == key; })
+          ->Add(item);
+      }
+    }
+
+    // todo use container to get this to persist
+    return &queryableGroups;
   }
 };
 

@@ -98,14 +98,17 @@ protected:
   }
 
 public:
-  QueryableData() { }
-  explicit QueryableData(TIterable<TObj, TArgs...> items)
+  QueryableData()
   {
-    this->Initialize(items);
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
+  }
+  explicit QueryableData(TIterable<TObj, TArgs...> items)
+    : QueryableData<TObj, TIterable, TArgs...>()
+  {
+    this->Initialize(items);
   }
   QueryableData(const QueryableData& data)
   {
@@ -132,7 +135,7 @@ public:
     this->items = items;
   }
 
-  TIterable<TObj, TArgs...> GetItems()
+  virtual TIterable<TObj, TArgs...> GetItems()
   {
     return this->items;
   }
