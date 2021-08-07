@@ -13,6 +13,7 @@
 
 #include "Utilities/Condition.h"
 #include "Utilities/Group.h"
+#include "Utilities/IGroup.h"
 #include "Utilities/PersistentContainer.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableDequeData.h"
@@ -1024,8 +1025,15 @@ public:
 
   bool Any(std::function<bool(TObj)> condition)
   {
+    std::cout << "within Any" << std::endl;
+    std::cout << "type: " << typeid(this->items.get()).name() << std::endl;
+    auto vector = this->items.get()->ToVector();
+    std::cout << "got vector" << std::endl;
+    auto it = this->items.get()->begin();
+    std::cout << "got beginning" << std::endl;
     for (TObj item : *this->items.get())
     {
+      std::cout << "any iteration" << std::endl;
       if (this->condition(item) && condition(item))
       {
         return true;
@@ -1246,18 +1254,18 @@ public:
   template<
     typename TJoinObj,
     typename TJoinOn,
-    typename TOut,
-    typename TOutCompare = std::less<TOut>>
-  Queryable<TOut, TOutCompare> * Join(
+    typename TResult,
+    typename TResultCompare = std::less<TResult>>
+  Queryable<TResult, TResultCompare> * Join(
     Queryable<TJoinObj> * collection,
     std::function<TJoinOn(TObj)> getLocalJoinOn,
     std::function<TJoinOn(TJoinObj)> getInputJoinOn,
-    std::function<TOut(TObj, TJoinObj)> createFrom,
-    TOutCompare outCompare = TOutCompare(),
+    std::function<TResult(TObj, TJoinObj)> createFrom,
+    TResultCompare outCompare = TResultCompare(),
     QueryableType returnType = QueryableType::Default)
   {
     static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
-    typedef Queryable<TOut, TOutCompare> TReturn;
+    typedef Queryable<TResult, TResultCompare> TReturn;
 
     QueryableType type = returnType == QueryableType::Default ? this->type : returnType;
     std::shared_ptr<TReturn> data = std::make_shared<TReturn>(type, outCompare);
@@ -1323,33 +1331,148 @@ public:
     return result.get();
   }
 
-  template<typename TKey>
-  Queryable<Group<TKey, TObj>> * GroupBy(
+  template<typename TOut>
+  Queryable<TOut>* Cast()
+  {
+    // TODO --> make this a deferred action
+    typedef Queryable<TOut> TReturn;
+    std::shared_ptr<TReturn> data = std::make_shared<TReturn>(this->type);
+    this->persistentContainer.Set(data);
+    std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
+
+    for (TObj item : *this->items.get())
+    {
+      result.get()->Add(static_cast<TOut>(item));
+    }
+
+    return result.get();
+  }
+
+
+  template<
+    typename TKey,
+    typename TData = TObj,
+    typename TKeyCompare = std::less<TKey>,
+    typename TDataCompare = std::less<TData>>
+  Queryable<IGroup<TKey, TObj, TKeyCompare, TDataCompare>> * GroupBy(
     std::function<TKey(TObj)> getKey,
-    QueryableType storageType = QueryableType::Default
+    QueryableType storageType = QueryableType::Default,
+    TDataCompare dataCompare = TDataCompare(),
+    std::function<TData(TObj)> retrieveData = [](TObj obj) { return obj; },
+    TKeyCompare keyCompare = TKeyCompare()
   )
   {
-    // todo use container to get this to persist
-    Queryable<Group<TKey, TObj>> queryableGroups(QueryableType::Set);
+    typedef Group<TKey, TData, std::deque, TKeyCompare, TDataCompare> TGroupDeque;
+    typedef Group<TKey, TData, std::list, TKeyCompare, TDataCompare> TGroupList;
+    typedef Group<TKey, TData, std::multiset, TKeyCompare, TDataCompare> TGroupMultiSet;
+    typedef Group<TKey, TData, std::set, TKeyCompare, TDataCompare> TGroupSet;
+    typedef Group<TKey, TData, std::vector, TKeyCompare, TDataCompare> TGroupVector;
+    typedef IGroup<TKey, TData, TKeyCompare, TDataCompare> TGroup;
+    typedef Queryable<TGroup> TReturn;
+    typedef Queryable<TGroupDeque> TReturnDeque;
+    typedef Queryable<TGroupList> TReturnList;
+    typedef Queryable<TGroupMultiSet> TReturnMultiSet;
+    typedef Queryable<TGroupSet> TReturnSet;
+    typedef Queryable<TGroupVector> TReturnVector;
+
+    QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
+    TReturn * queryableGroups = NULL;
+
+    switch (type) {
+      case QueryableType::Deque:
+        {
+          std::shared_ptr<TReturnDeque> data = std::make_shared<TReturnDeque>(type);
+          this->persistentContainer.Set(data);
+          queryableGroups = this->persistentContainer
+            .GetAs<TReturnDeque>()
+            .get()
+            ->template Cast<TGroup>();
+        }
+        break;
+      case QueryableType::List:
+        {
+          std::shared_ptr<TReturnList> data = std::make_shared<TReturnList>(type);
+          this->persistentContainer.Set(data);
+          queryableGroups = this->persistentContainer
+            .GetAs<TReturnList>()
+            .get()
+            ->template Cast<TGroup>();
+        }
+        break;
+      case QueryableType::MultiSet:
+        {
+          std::shared_ptr<TReturnMultiSet> data = std::make_shared<TReturnMultiSet>(type);
+          this->persistentContainer.Set(data);
+          queryableGroups = this->persistentContainer
+            .GetAs<TReturnMultiSet>()
+            .get()
+            ->template Cast<TGroup>();
+        }
+        break;
+      case QueryableType::Set:
+        {
+          std::shared_ptr<TReturnSet> data = std::make_shared<TReturnSet>(type);
+          this->persistentContainer.Set(data);
+          queryableGroups = this->persistentContainer
+            .GetAs<TReturnSet>()
+            .get()
+            ->template Cast<TGroup>();
+        }
+        break;
+      case QueryableType::Vector:
+        {
+          std::shared_ptr<TReturnVector> data = std::make_shared<TReturnVector>(type);
+          this->persistentContainer.Set(data);
+          queryableGroups = this->persistentContainer
+            .GetAs<TReturnVector>()
+            .get()
+            ->template Cast<TGroup>();
+        }
+        break;
+      default:
+        return NULL;
+    }
 
     for (TObj item : *this->items.get())
     {
       if (this->condition(item))
       {
         TKey key = getKey(item);
-        if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.GetKey() == key; }))
+
+
+        if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
         {
-          queryableGroups.Add(Group<TKey, TObj>(key));
+          // these ugly switch statements are telling me that I am missing a
+          //   layer of abstraction or a key architectural feature
+          switch (type)
+          {
+            case QueryableType::Deque:
+              queryableGroups->Add(TGroupDeque(key, type));
+              break;
+            case QueryableType::List:
+              queryableGroups->Add(TGroupList(key, type));
+              break;
+            case QueryableType::MultiSet:
+              queryableGroups->Add(TGroupMultiSet(key, type));
+              break;
+            case QueryableType::Set:
+              queryableGroups->Add(TGroupSet(key, type));
+              break;
+            case QueryableType::Vector:
+            default:
+              queryableGroups->Add(TGroupVector(key, type));
+              break;
+          }
         }
 
-        queryableGroups
-          -First([&](Group<TKey, TObj> group) { return group.GetKey() == key; })
-          ->Add(item);
+        auto firstMatch = queryableGroups
+          ->First([&](TGroup group) { return group.GetKey() == key; });
+
+        firstMatch.Add(item);
       }
     }
 
-    // todo use container to get this to persist
-    return &queryableGroups;
+    return queryableGroups;
   }
 };
 

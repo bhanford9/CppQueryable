@@ -14,7 +14,7 @@
 #include "IQueryableData.h"
 
 template<typename TObj, template<typename, typename ...> typename TIterable, typename ...TArgs>
-class QueryableData : public IQueryableData<TObj>
+class QueryableData : virtual public IQueryableData<TObj>
 {
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:

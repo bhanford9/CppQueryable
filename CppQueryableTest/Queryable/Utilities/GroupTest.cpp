@@ -43,7 +43,7 @@ TEST_F(GroupTest, GroupDefaultDequeTest)
   }
 
   Group<char, std::string, std::deque> wGroup('w', QueryableType::Deque);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
 
   ASSERT_TRUE(wGroup.GetKey() == 'w');
   ASSERT_TRUE(wGroup.Count() > 0);
@@ -69,7 +69,7 @@ TEST_F(GroupTest, GroupDefaultListTest)
   }
 
   Group<char, std::string, std::list> wGroup('w', QueryableType::Deque);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
 
   ASSERT_TRUE(wGroup.GetKey() == 'w');
   ASSERT_TRUE(wGroup.Count() > 0);
@@ -95,7 +95,7 @@ TEST_F(GroupTest, GroupDefaultMultiSetTest)
   }
 
   Group<char, std::string, std::multiset> wGroup('w', QueryableType::MultiSet);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
 
   ASSERT_TRUE(wGroup.GetKey() == 'w');
   ASSERT_TRUE(wGroup.Count() > 0);
@@ -121,7 +121,7 @@ TEST_F(GroupTest, GroupDefaultSetTest)
   }
 
   Group<char, std::string, std::set> wGroup('w', QueryableType::Set);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
 
   ASSERT_TRUE(wGroup.GetKey() == 'w');
   ASSERT_EQ(wUniques, wGroup.Count());
@@ -147,7 +147,7 @@ TEST_F(GroupTest, GroupDefaultVectorTest)
   }
 
   Group<char, std::string> wGroup('w', QueryableType::Vector);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
 
   ASSERT_TRUE(wGroup.GetKey() == 'w');
   ASSERT_TRUE(wGroup.Count() > 0);
@@ -191,11 +191,11 @@ TEST_F(GroupTest, GroupDefaultLessThanTest)
   }
 
   Group<char, std::string> wGroup('w', QueryableType::Vector);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
   Group<char, std::string> tGroup('t', QueryableType::Vector);
-  tGroup.Add(tStrings);
+  tGroup.AddMany(tStrings);
   Group<char, std::string> hGroup('h', QueryableType::Vector);
-  hGroup.Add(hStrings);
+  hGroup.AddMany(hStrings);
 
   ASSERT_TRUE(hGroup < tGroup);
   ASSERT_TRUE(tGroup < wGroup);
@@ -236,11 +236,11 @@ TEST_F(GroupTest, GroupCustomLessThanTest)
   typedef decltype(backwardCompare) TComparison;
 
   Group<char, std::string, std::vector, TComparison> wGroup('w', QueryableType::Vector, backwardCompare);
-  wGroup.Add(wStrings);
+  wGroup.AddMany(wStrings);
   Group<char, std::string, std::vector, TComparison> tGroup('t', QueryableType::Vector, backwardCompare);
-  tGroup.Add(tStrings);
+  tGroup.AddMany(tStrings);
   Group<char, std::string, std::vector, TComparison> hGroup('h', QueryableType::Vector, backwardCompare);
-  hGroup.Add(hStrings);
+  hGroup.AddMany(hStrings);
 
   ASSERT_TRUE(wGroup < tGroup);
   ASSERT_TRUE(tGroup < hGroup);
