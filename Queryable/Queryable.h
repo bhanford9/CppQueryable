@@ -150,7 +150,9 @@ public:
     this->type = type;
   }
   Queryable(const Queryable<TObj>& queryable)
+    : Queryable(queryable.type)
   {
+    // probably need to deep copy items instead
     this->items = queryable.items;
     this->persistentContainer = queryable.persistentContainer;
     this->condition = queryable.condition;
@@ -402,6 +404,21 @@ public:
   {
     this->condition += condition;
     return apply ? this->Applied() : this;
+  }
+
+  Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
+  {
+    Queryable<TObj> copy(this->type);
+
+    this->ForEach([&](TObj obj)
+    {
+      if (condition(obj))
+      {
+        copy.Add(obj);
+      }
+    });
+
+    return copy;
   }
 
   TObj First(std::function<bool(TObj)> condition)
@@ -1025,15 +1042,10 @@ public:
 
   bool Any(std::function<bool(TObj)> condition)
   {
-    std::cout << "within Any" << std::endl;
-    std::cout << "type: " << typeid(this->items.get()).name() << std::endl;
     auto vector = this->items.get()->ToVector();
-    std::cout << "got vector" << std::endl;
     auto it = this->items.get()->begin();
-    std::cout << "got beginning" << std::endl;
     for (TObj item : *this->items.get())
     {
-      std::cout << "any iteration" << std::endl;
       if (this->condition(item) && condition(item))
       {
         return true;
@@ -1100,7 +1112,8 @@ public:
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   2.1. the default comparator for [multi]sets is the type's less than comparison operator
   //   3. all other types use their built in optimized sorting algorithms
-  Queryable<TObj>* Sort(std::function<bool(TObj, TObj)> comparator)
+  Queryable<TObj>* Sort(
+    std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
     this->ApplyCondition();
 
@@ -1137,15 +1150,17 @@ public:
     return this;
   }
 
-  template<typename T>
-  Queryable<TObj>* OrderBy(std::function<T(TObj)> retrieveValue)
+  template<typename T = TObj>
+  Queryable<TObj>* OrderBy(
+    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; })
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return this->Sort([&](TObj a, TObj b){ return retrieveValue(a) < retrieveValue(b); });
   }
 
-  template<typename T>
-  Queryable<TObj>* OrderByDescending(std::function<T(TObj)> retrieveValue)
+  template<typename T = TObj>
+  Queryable<TObj>* OrderByDescending(
+    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; })
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return this->Sort([&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
@@ -1367,13 +1382,14 @@ public:
     typedef Group<TKey, TData, std::multiset, TKeyCompare, TDataCompare> TGroupMultiSet;
     typedef Group<TKey, TData, std::set, TKeyCompare, TDataCompare> TGroupSet;
     typedef Group<TKey, TData, std::vector, TKeyCompare, TDataCompare> TGroupVector;
-    typedef IGroup<TKey, TData, TKeyCompare, TDataCompare> TGroup;
-    typedef Queryable<TGroup> TReturn;
     typedef Queryable<TGroupDeque> TReturnDeque;
     typedef Queryable<TGroupList> TReturnList;
     typedef Queryable<TGroupMultiSet> TReturnMultiSet;
     typedef Queryable<TGroupSet> TReturnSet;
     typedef Queryable<TGroupVector> TReturnVector;
+
+    typedef IGroup<TKey, TData, TKeyCompare, TDataCompare> TGroup;
+    typedef Queryable<TGroup> TReturn;
 
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
     TReturn * queryableGroups = NULL;
@@ -1438,7 +1454,7 @@ public:
       if (this->condition(item))
       {
         TKey key = getKey(item);
-
+        TData data = retrieveData(item);
 
         if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
         {
@@ -1465,10 +1481,9 @@ public:
           }
         }
 
-        auto firstMatch = queryableGroups
-          ->First([&](TGroup group) { return group.GetKey() == key; });
-
-        firstMatch.Add(item);
+        queryableGroups
+          ->First([&](TGroup group) { return group.GetKey() == key; })
+          .Add(data);
       }
     }
 
