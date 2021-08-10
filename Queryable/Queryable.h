@@ -1463,20 +1463,20 @@ public:
           switch (type)
           {
             case QueryableType::Deque:
-              queryableGroups->Add(TGroupDeque(key, type));
+              queryableGroups->Add(TGroupDeque(key, type, keyCompare, dataCompare));
               break;
             case QueryableType::List:
-              queryableGroups->Add(TGroupList(key, type));
+              queryableGroups->Add(TGroupList(key, type, keyCompare, dataCompare));
               break;
             case QueryableType::MultiSet:
-              queryableGroups->Add(TGroupMultiSet(key, type));
+              queryableGroups->Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
               break;
             case QueryableType::Set:
-              queryableGroups->Add(TGroupSet(key, type));
+              queryableGroups->Add(TGroupSet(key, type, keyCompare, dataCompare));
               break;
             case QueryableType::Vector:
             default:
-              queryableGroups->Add(TGroupVector(key, type));
+              queryableGroups->Add(TGroupVector(key, type, keyCompare, dataCompare));
               break;
           }
         }
@@ -1487,7 +1487,7 @@ public:
       }
     }
 
-    return queryableGroups;
+    return queryableGroups->Sort();
   }
 };
 
