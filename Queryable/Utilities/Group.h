@@ -45,6 +45,8 @@ public:
     TDataCompare dataCompare = TDataCompare())
     : TQueryableData(), TGroup()
   {
+    this->keyCompare = keyCompare;
+
     switch (type)
     {
       case QueryableType::Deque:
@@ -86,10 +88,9 @@ public:
     QueryableType type,
     TKeyCompare keyCompare = TKeyCompare(),
     TDataCompare dataCompare = TDataCompare())
-    : Group(type)
+    : Group(type, keyCompare, dataCompare)
   {
     this->key = key;
-    this->keyCompare = keyCompare;
   }
   Group(const Group& group)
     : TQueryableData(group), TGroup()

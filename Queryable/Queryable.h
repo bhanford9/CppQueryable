@@ -1373,22 +1373,21 @@ public:
     std::function<TKey(TObj)> getKey,
     QueryableType storageType = QueryableType::Default,
     TDataCompare dataCompare = TDataCompare(),
-    std::function<TData(TObj)> retrieveData = [](TObj obj) { return obj; },
     TKeyCompare keyCompare = TKeyCompare()
   )
   {
-    typedef Group<TKey, TData, std::deque, TKeyCompare, TDataCompare> TGroupDeque;
-    typedef Group<TKey, TData, std::list, TKeyCompare, TDataCompare> TGroupList;
-    typedef Group<TKey, TData, std::multiset, TKeyCompare, TDataCompare> TGroupMultiSet;
-    typedef Group<TKey, TData, std::set, TKeyCompare, TDataCompare> TGroupSet;
-    typedef Group<TKey, TData, std::vector, TKeyCompare, TDataCompare> TGroupVector;
+    typedef Group<TKey, TObj, std::deque, TKeyCompare, TDataCompare> TGroupDeque;
+    typedef Group<TKey, TObj, std::list, TKeyCompare, TDataCompare> TGroupList;
+    typedef Group<TKey, TObj, std::multiset, TKeyCompare, TDataCompare> TGroupMultiSet;
+    typedef Group<TKey, TObj, std::set, TKeyCompare, TDataCompare> TGroupSet;
+    typedef Group<TKey, TObj, std::vector, TKeyCompare, TDataCompare> TGroupVector;
     typedef Queryable<TGroupDeque> TReturnDeque;
     typedef Queryable<TGroupList> TReturnList;
     typedef Queryable<TGroupMultiSet> TReturnMultiSet;
     typedef Queryable<TGroupSet> TReturnSet;
     typedef Queryable<TGroupVector> TReturnVector;
 
-    typedef IGroup<TKey, TData, TKeyCompare, TDataCompare> TGroup;
+    typedef IGroup<TKey, TObj, TKeyCompare, TDataCompare> TGroup;
     typedef Queryable<TGroup> TReturn;
 
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
@@ -1454,7 +1453,6 @@ public:
       if (this->condition(item))
       {
         TKey key = getKey(item);
-        TData data = retrieveData(item);
 
         if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
         {
@@ -1482,8 +1480,12 @@ public:
         }
 
         queryableGroups
-          ->First([&](TGroup group) { return group.GetKey() == key; })
-          .Add(data);
+          ->First([&](TGroup group)
+          {
+            TKey groupKey = group.GetKey();
+            return !(keyCompare(groupKey, key) || keyCompare(key, groupKey));
+          })
+          .Add(item);
       }
     }
 
