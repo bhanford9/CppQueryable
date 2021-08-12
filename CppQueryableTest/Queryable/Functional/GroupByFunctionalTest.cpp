@@ -514,4 +514,39 @@ TEST_F(GroupByFunctionalTest, CustomDataCompareTest)
   });
 }
 
-// GroupBy --> Where
+TEST_F(GroupByFunctionalTest, GroupByWhereTest)
+{
+  typedef IGroup<double, Person> TAgePerson;
+  Queryable<TAgePerson> * ageGroupsOverThirty = this->people
+    .GroupBy<double>([](Person p) { return p.GetAge(); })
+    ->Where([](TAgePerson group) { return group.GetKey() > 30; });
+
+  Queryable<TAgePerson> * overThirtyAgeGroups = this->people
+    .Where([](Person person) { return person.GetAge() > 30; })
+    ->GroupBy<double>([](Person p) { return p.GetAge(); });
+
+  ASSERT_TRUE(ageGroupsOverThirty != NULL);
+  ASSERT_TRUE(overThirtyAgeGroups != NULL);
+  ASSERT_EQ(3, ageGroupsOverThirty->Count());
+  ASSERT_EQ(3, overThirtyAgeGroups->Count());
+  ASSERT_TRUE(ageGroupsOverThirty->At(0).GetKey() == 51);
+  ASSERT_TRUE(ageGroupsOverThirty->At(1).GetKey() == 52);
+  ASSERT_TRUE(ageGroupsOverThirty->At(2).GetKey() == 61);
+  ASSERT_TRUE(overThirtyAgeGroups->At(0).GetKey() == 51);
+  ASSERT_TRUE(overThirtyAgeGroups->At(1).GetKey() == 52);
+  ASSERT_TRUE(overThirtyAgeGroups->At(2).GetKey() == 61);
+
+  int iGroup = 0;
+  ageGroupsOverThirty->ForEach([&](TAgePerson group)
+  {
+    ASSERT_TRUE(group.Count() == overThirtyAgeGroups->At(iGroup).Count());
+
+    int iPerson = 0;
+    for (Person person : group)
+    {
+      ASSERT_TRUE(person == overThirtyAgeGroups->At(iGroup).ToVector()[iPerson++]);
+    }
+
+    iGroup++;
+  });
+}
