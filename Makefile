@@ -86,31 +86,31 @@ tests: $(TEST_PROGRAM)
 
 .PHONY: ftest
 ftest: $(REFS_REF) $(SRC_COMPILE_REF)
-	@echo $(prefix)
-	$(CXX) -c $(CPPFLAGS) $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.cpp -o $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
-	$(CXX) -o $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases \
-		$(CPPFLAGS) \
-		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
-		$(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o \
-		$(TEST_INCLUDES) \
-		$(TEST_LIBS)
-
-	$(foreach testcase, $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases, $(testcase);)
-	/bin/rm -f $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest_testcases $(FUNCTIONAL_TEST_DIR)/$(prefix)FunctionalTest.o
+	directory="Queryable/Functional" $(MAKE) dtest
 
 .PHONY: utest
 utest: $(REFS_REF) $(SRC_COMPILE_REF)
-	@echo $(prefix)
-	$(CXX) -c $(CPPFLAGS) $(UTILITIES_TEST_DIR)/$(prefix)Test.cpp -o $(UTILITIES_TEST_DIR)/$(prefix)Test.o
-	$(CXX) -o $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases \
+	directory="Queryable/Utilities" $(MAKE) dtest
+
+.PHONY: time_test
+time_test: $(REFS_REF) $(SRC_COMPILE_REF)
+	directory="Queryable/Performance/Time" $(MAKE) dtest
+
+.PHONY: dtest
+dtest:$(REFS_REF) $(SRC_COMPILE_REF)
+	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
+		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+	$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
 		$(CPPFLAGS) \
 		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
-		$(UTILITIES_TEST_DIR)/$(prefix)Test.o \
+		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o \
 		$(TEST_INCLUDES) \
 		$(TEST_LIBS)
 
-	$(foreach testcase, $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases, $(testcase);)
-	/bin/rm -f $(UTILITIES_TEST_DIR)/$(prefix)Test_testcases $(UTILITIES_TEST_DIR)/$(prefix)Test.o
+	$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
+		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o ;
+
 
 $(DEPENDENCIES):
 	touch $(DEPENDENCIES)
