@@ -1163,7 +1163,7 @@ public:
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; })
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
-    return this->Sort([&](TObj a, TObj b){ return !(retrieveValue(a) < retrieveValue(b)); });
+    return this->Sort([&](TObj a, TObj b){ return retrieveValue(b) < retrieveValue(a); });
   }
 
   // Queryable<TObj, std::vector> Except(TIterable<TObj> collection)
