@@ -98,7 +98,7 @@ time_test: $(REFS_REF) $(SRC_COMPILE_REF)
 
 # TOOD: for loop through the wildcard files specified
 .PHONY: dtest
-dtest:$(REFS_REF) $(SRC_COMPILE_REF)
+dtest: $(REFS_REF) $(SRC_COMPILE_REF)
 	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
 		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
@@ -110,6 +110,28 @@ dtest:$(REFS_REF) $(SRC_COMPILE_REF)
 
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
+
+.PHONY: memtests
+memtests: $(TEST_PROGRAM)
+	/usr/bin/valgrind -v --trace-children=yes --track-fds=yes --track-origins=yes \
+		--leak-check=full --show-leak-kinds=all $(TEST_PROGRAM)
+
+.PHONY: dmemtest
+dmemtest: $(REFS_REF) $(SRC_COMPILE_REF)
+	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
+		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+	$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
+		$(CPPFLAGS) \
+		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
+		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o \
+		$(TEST_INCLUDES) \
+		$(TEST_LIBS)
+
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+	/usr/bin/valgrind -v --trace-children=yes --track-fds=yes --track-origins=yes \
+		--leak-check=full --show-leak-kinds=all \
+		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
 $(DEPENDENCIES):
