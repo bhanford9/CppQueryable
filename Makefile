@@ -96,6 +96,7 @@ utest: $(REFS_REF) $(SRC_COMPILE_REF)
 time_test: $(REFS_REF) $(SRC_COMPILE_REF)
 	directory="Queryable/Performance/Time" $(MAKE) dtest
 
+# TOOD: for loop through the wildcard files specified
 .PHONY: dtest
 dtest:$(REFS_REF) $(SRC_COMPILE_REF)
 	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
@@ -107,10 +108,9 @@ dtest:$(REFS_REF) $(SRC_COMPILE_REF)
 		$(TEST_INCLUDES) \
 		$(TEST_LIBS)
 
-	$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
-	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
-		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o ;
-
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
 $(DEPENDENCIES):
 	touch $(DEPENDENCIES)
