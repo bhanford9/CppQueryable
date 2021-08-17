@@ -129,7 +129,7 @@ dmemtest: $(REFS_REF) $(SRC_COMPILE_REF)
 		$(TEST_LIBS)
 
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
-	/usr/bin/valgrind -v --trace-children=yes --track-fds=yes --track-origins=yes \
+	-/usr/bin/valgrind -v --trace-children=yes --track-origins=yes \
 		--leak-check=full --show-leak-kinds=all \
 		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases

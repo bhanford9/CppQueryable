@@ -19,7 +19,7 @@ public:
     if (this->condition)
     {
       std::function<bool(T)> copy = this->condition;
-      this->condition = [&](T obj) -> bool { return copy(obj) && condition(obj); };
+      this->condition = [&](T obj) { return copy(obj) && condition(obj); };
     }
     else
     {

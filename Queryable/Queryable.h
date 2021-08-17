@@ -152,11 +152,14 @@ public:
   Queryable(const Queryable<TObj>& queryable)
     : Queryable(queryable.type)
   {
-    // probably need to deep copy items instead
-    this->items = queryable.items;
     this->persistentContainer = queryable.persistentContainer;
     this->condition = queryable.condition;
     this->type = queryable.type;
+
+    for (auto it = this->items.get()->begin(); it != this->items.get()->end(); it++)
+    {
+      this->items.get()->Add(*it);
+    }
   }
 
   QueryableType GetType()
@@ -337,7 +340,7 @@ public:
     return this;
   }
 
-  virtual TObj At(int index)
+  TObj At(int index)
   {
     if (index < 0)
     {
@@ -408,7 +411,7 @@ public:
 
   Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
   {
-    Queryable<TObj> copy(this->type);
+    Queryable<TObj> copy(*this);
 
     this->ForEach([&](TObj obj)
     {

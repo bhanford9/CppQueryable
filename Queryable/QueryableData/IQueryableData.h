@@ -10,6 +10,8 @@ template<typename T>
 class IQueryableData
 {
 public:
+  virtual ~IQueryableData() { }
+
   virtual Iterator<T> begin() = 0;
   virtual Iterator<T> end() = 0;
   virtual Iterator<T> rbegin() = 0;
