@@ -47,32 +47,35 @@ protected:
     }
   }
 
+  void DecrementPastCondition(t_forwardIterator & iterator)
+  {
+    while (!(iterator == this->items.begin()) && !this->condition(*iterator))
+    {
+      iterator--;
+    }
+  }
+
+  void RIncrementPastCondition(t_reverseIterator & iterator)
+  {
+    while (!(iterator == this->items.rend()) && !this->condition(*iterator))
+    {
+      iterator++;
+    }
+  }
+
+  void RDecrementPastCondition(t_reverseIterator & iterator)
+  {
+    while (!(iterator == this->items.rbegin()) && !this->condition(*iterator))
+    {
+      iterator--;
+    }
+  }
+
   virtual void InitForwardBegin()
   {
-    beginning.Increment = [&]()
-    {
-      // this->beginIterator++;
-      this->IncrementPastCondition(++this->beginIterator);
-
-      // while (!(this->beginIterator == this->items.end()) &&
-      //   !this->condition(*this->beginIterator))
-      // {
-      //   this->beginIterator++;
-      // }
-    };
-
-    beginning.Decrement = [&]()
-    {
-      this->beginIterator--;
-
-      while (!(this->beginIterator == this->items.begin()) &&
-        !this->condition(*this->beginIterator))
-      {
-        this->beginIterator--;
-      }
-    };
-
     beginning.Get = [&]() { return &this->beginIterator; };
+    beginning.Increment = [&]() { this->IncrementPastCondition(++this->beginIterator); };
+    beginning.Decrement = [&]() { this->DecrementPastCondition(--this->beginIterator); };
     beginning.Equal = [&](const Iterator<TObj>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
@@ -86,8 +89,8 @@ protected:
   virtual void InitForwardEnd()
   {
     ending.Get = [&]() { return &this->endIterator; };
-    ending.Increment = [&]() { this->endIterator++; };
-    ending.Decrement = [&]() { this->endIterator--; };
+    ending.Increment = [&]() { this->IncrementPastCondition(++this->endIterator); };
+    ending.Decrement = [&]() { this->DecrementPastCondition(--this->endIterator); };
     ending.Equal = [&](const Iterator<TObj>& value) { return this->endIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
@@ -101,8 +104,8 @@ protected:
   virtual void InitReverseBegin()
   {
     rbeginning.Get = [&]() { return &this->rbeginIterator; };
-    rbeginning.Increment = [&]() { this->rbeginIterator++; };
-    rbeginning.Decrement = [&]() { this->rbeginIterator--; };
+    rbeginning.Increment = [&]() { this->RIncrementPastCondition(++this->rbeginIterator); };
+    rbeginning.Decrement = [&]() { this->RDecrementPastCondition(--this->rbeginIterator); };
     rbeginning.Equal = [&](const Iterator<TObj>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
@@ -116,8 +119,8 @@ protected:
   virtual void InitReverseEnd()
   {
     rending.Get = [&]() { return &this->rendIterator; };
-    rending.Increment = [&]() { this->rendIterator++; };
-    rending.Decrement = [&]() { this->rendIterator--; };
+    rending.Increment = [&]() { this->RIncrementPastCondition(++this->rendIterator); };
+    rending.Decrement = [&]() { this->RDecrementPastCondition(--this->rendIterator); };
     rending.Equal = [&](const Iterator<TObj>& value) { return this->rendIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
@@ -174,6 +177,11 @@ public:
     this->condition += condition;
   }
 
+  bool PassesCondition(TObj obj) override
+  {
+    return this->condition(obj);
+  }
+
   void Clear() override
   {
     this->items.clear();
@@ -195,11 +203,6 @@ public:
   {
     this->beginIterator = this->items.begin();
     this->IncrementPastCondition(this->beginIterator);
-    // while (!(this->beginIterator == this->items.end()) &&
-    //   !this->condition(*this->beginIterator))
-    // {
-    //   this->beginIterator++;
-    // }
 
     return this->beginning;
   }
@@ -213,6 +216,8 @@ public:
   Iterator<TObj> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
+    this->RIncrementPastCondition(this->rbeginIterator);
+
     return this->rbeginning;
   }
 

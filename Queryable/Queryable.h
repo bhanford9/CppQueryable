@@ -31,7 +31,6 @@ class Queryable
 protected:
   std::shared_ptr<IQueryableData<TObj>> items;
   PersistentContainer persistentContainer;
-  Condition<TObj> condition;
   QueryableType type;
 
   // may want to create an enumeration for this
@@ -41,30 +40,27 @@ protected:
   }
 
   // should avoid using this method if possible
-  int ApplyCondition()
-  {
-    if (!this->condition)
-    {
-      // if no condition has been specified just return the size of the collection
-      return this->items.get()->Count();
-    }
-
-    std::vector<TObj> copy = this->ToVector();
-    this->Clear();
-    int newCount = 0;
-
-    for (TObj obj : copy)
-    {
-      if (this->condition(obj))
-      {
-        this->items.get()->Add(obj);
-        newCount++;
-      }
-    }
-
-    this->condition.MarkApplied();
-    return newCount;
-  }
+  // int ApplyCondition()
+  // {
+  //   if (!this->condition)
+  //   {
+  //     // if no condition has been specified just return the size of the collection
+  //     return this->items.get()->Count();
+  //   }
+  //
+  //   std::vector<TObj> copy = this->ToVector();
+  //   this->Clear();
+  //   int newCount = 0;
+  //
+  //   for (TObj obj : copy)
+  //   {
+  //     this->items.get()->Add(obj);
+  //     newCount++;
+  //   }
+  //
+  //   this->condition.MarkApplied();
+  //   return newCount;
+  // }
 
   template<typename T, template<typename...> typename TIterable>
   bool Equal(TIterable<T> collection, int collectionSize)
@@ -158,7 +154,6 @@ public:
     : Queryable(queryable.type)
   {
     this->persistentContainer = queryable.persistentContainer;
-    this->condition = queryable.condition;
     this->type = queryable.type;
 
     for (auto it = this->items.get()->begin(); it != this->items.get()->end(); it++)
@@ -174,20 +169,21 @@ public:
 
   Queryable<TObj> * Applied()
   {
-    this->ApplyCondition();
+    // this->ApplyCondition();
     return this;
   }
 
   void Clear()
   {
     this->items.get()->Clear();
-    this->condition.MarkApplied(false);
   }
 
   void Add(TObj obj)
   {
-    this->items.get()->Add(obj);
-    this->condition.MarkApplied(false);
+    if (this->items.get()->PassesCondition(obj))
+    {
+      this->items.get()->Add(obj);
+    }
   }
 
   template<typename TNewAllocator = std::allocator<TObj>>
@@ -197,13 +193,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        newItems.push_back(item);
-      }
+      newItems.push_back(item);
     }
 
-    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -214,13 +206,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        newItems.push_back(item);
-      }
+      newItems.push_back(item);
     }
 
-    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -231,13 +219,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        newItems.insert(item);
-      }
+      newItems.insert(item);
     }
 
-    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -248,13 +232,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        newItems.insert(item);
-      }
+      newItems.insert(item);
     }
 
-    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -265,13 +245,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      // if (this->condition(item))
-      // {
-        newItems.push_back(item);
-      // }
+      newItems.push_back(item);
     }
 
-    this->condition.MarkApplied();
     return newItems;
   }
 
@@ -355,8 +331,7 @@ public:
     int i = 0;
     for (TObj obj : *this->items.get())
     {
-      // `i` purposefully not incremented if condtion is false
-      if (this->condition(obj) && index == i++)
+      if (index == i++)
       {
         return obj;
       }
@@ -367,7 +342,7 @@ public:
 
   int Count()
   {
-    return this->ApplyCondition();
+    return this->items.get()->Count();
   }
 
   int CountIf(std::function<bool(TObj)> condition)
@@ -376,7 +351,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item) && condition(item))
+      if (condition(item))
       {
         count++;
       }
@@ -389,16 +364,12 @@ public:
   {
     for (TObj item : *this->items.get())
     {
-      // if (this->condition(item))
-      // {
-        action(item);
-      // }
+      action(item);
     }
   }
 
   Queryable<TObj> * Where(std::function<bool(TObj)> condition, bool apply = false)
   {
-    // this->condition += condition;
     this->items.get()->AddCondition(condition);
     return apply ? this->Applied() : this;
   }
@@ -422,7 +393,7 @@ public:
   {
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item) && condition(item))
+      if (condition(item))
       {
         return item;
       }
@@ -433,12 +404,9 @@ public:
 
   TObj First()
   {
-    for (TObj item : *this->items.get())
+    if (!(this->items.get()->begin() == this->items.get()->end()))
     {
-      if (this->condition(item))
-      {
-        return item;
-      }
+      return *this->items.get()->begin();
     }
 
     throw std::runtime_error("Cannot get first item of empty collection.");
@@ -448,7 +416,7 @@ public:
   {
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
     {
-      if (this->condition(*it) && condition(*it))
+      if (condition(*it))
       {
         return *it;
       }
@@ -459,12 +427,9 @@ public:
 
   TObj Last()
   {
-    for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
+    if (!(this->items.get()->rbegin() == this->items.get()->rend()))
     {
-      if (this->condition(*it))
-      {
-        return *it;
-      }
+      return *this->items.get()->rbegin();
     }
 
     throw std::runtime_error("Cannot get last item of empty collection.");
@@ -487,7 +452,7 @@ public:
       //   queryable container class
 
       // if the last item does not meet the condition, then it should not be considered in the count
-      if (!this->condition(*this->items.get()->rbegin()))
+      if (!this->items.get()->PassesCondition(*this->items.get()->rbegin()))
       {
         i--;
       }
@@ -501,7 +466,6 @@ public:
       // this->items->erase(--this->items->end());
     }
 
-    this->condition.MarkApplied();
     return this;
   }
 
@@ -514,20 +478,16 @@ public:
 
     for (TObj item : copy)
     {
-      if (this->condition(item))
+      if (doTake(item))
       {
-        if (doTake(item))
-        {
-          this->items.get()->Add(item);
-        }
-        else
-        {
-          break;
-        }
+        this->items.get()->Add(item);
+      }
+      else
+      {
+        break;
       }
     }
 
-    this->condition.MarkApplied();
     return this;
   }
 
@@ -556,7 +516,6 @@ public:
       }
     }
 
-    this->condition.MarkApplied();
     return this;
   }
 
@@ -568,19 +527,15 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (!doSkip(item))
       {
-        if (!doSkip(item))
-        {
-          break;
-        }
-
-        toDelete++;
+        break;
       }
+
+      toDelete++;
     }
 
     Queryable<TObj>* retval = this->Skip(toDelete);
-    this->condition.MarkApplied();
     return retval;
   }
 
@@ -643,14 +598,9 @@ public:
   template<typename T, template<typename...> typename TIterable>
   Queryable<TObj>* Concat(TIterable<TObj> collection, bool preserveFilter = false)
   {
-    if (preserveFilter)
-    {
-      this->condition.MarkApplied(false);
-    }
-
     for (TObj obj : collection)
     {
-      if (this->condition(obj))
+      if (!preserveFilter || this->items.get()->PassesCondition(obj))
       {
         this->items.get()->Add(obj);
       }
@@ -668,10 +618,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        sum += retrieveValue(item);
-      }
+      sum += retrieveValue(item);
     }
 
     return sum;
@@ -685,10 +632,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        sum += item;
-      }
+      sum += item;
     }
 
     return sum;
@@ -704,11 +648,8 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        sum += retrieveValue(item);
-        count++;
-      }
+      sum += retrieveValue(item);
+      count++;
     }
 
     return count > 0 ? sum / count : 0;
@@ -723,11 +664,8 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        sum += item;
-        count++;
-      }
+      sum += item;
+      count++;
     }
 
     return divisor(sum, count);
@@ -742,11 +680,8 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        sum += item;
-        count++;
-      }
+      sum += item;
+      count++;
     }
 
     return count > 0 ? sum / count : 0;
@@ -763,21 +698,18 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        T newValue = retrieveValue(item);
+      T newValue = retrieveValue(item);
 
-        if (isFirst)
-        {
-          isFirst = false;
-          maxValue = newValue;
-          maxItem = item;
-        }
-        else if (maxValue < newValue)
-        {
-          maxValue = newValue;
-          maxItem = item;
-        }
+      if (isFirst)
+      {
+        isFirst = false;
+        maxValue = newValue;
+        maxItem = item;
+      }
+      else if (maxValue < newValue)
+      {
+        maxValue = newValue;
+        maxItem = item;
       }
     }
 
@@ -800,17 +732,14 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (isFirst)
       {
-        if (isFirst)
-        {
-          isFirst = false;
-          maxItem = item;
-        }
-        else if (maxItem < item)
-        {
-          maxItem = item;
-        }
+        isFirst = false;
+        maxItem = item;
+      }
+      else if (maxItem < item)
+      {
+        maxItem = item;
       }
     }
 
@@ -826,14 +755,11 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        T newValue = retrieveValue(item);
+      T newValue = retrieveValue(item);
 
-        if (max < newValue)
-        {
-          max = newValue;
-        }
+      if (max < newValue)
+      {
+        max = newValue;
       }
     }
 
@@ -848,12 +774,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (max < item)
       {
-        if (max < item)
-        {
-          max = item;
-        }
+        max = item;
       }
     }
 
@@ -871,21 +794,18 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        T newValue = retrieveValue(item);
+      T newValue = retrieveValue(item);
 
-        if (isFirst)
-        {
-          isFirst = false;
-          minValue = newValue;
-          minItem = item;
-        }
-        else if (newValue < minValue)
-        {
-          minValue = newValue;
-          minItem = item;
-        }
+      if (isFirst)
+      {
+        isFirst = false;
+        minValue = newValue;
+        minItem = item;
+      }
+      else if (newValue < minValue)
+      {
+        minValue = newValue;
+        minItem = item;
       }
     }
 
@@ -908,17 +828,14 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (isFirst)
       {
-        if (isFirst)
-        {
-          isFirst = false;
-          minItem = item;
-        }
-        else if (item < minItem)
-        {
-          minItem = item;
-        }
+        isFirst = false;
+        minItem = item;
+      }
+      else if (item < minItem)
+      {
+        minItem = item;
       }
     }
 
@@ -934,14 +851,11 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        T newValue = retrieveValue(item);
+      T newValue = retrieveValue(item);
 
-        if (newValue < min)
-        {
-          min = newValue;
-        }
+      if (newValue < min)
+      {
+        min = newValue;
       }
     }
 
@@ -956,12 +870,9 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (item < min)
       {
-        if (item < min)
-        {
-          min = item;
-        }
+        min = item;
       }
     }
 
@@ -980,26 +891,23 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      T value = retrieveValue(item);
+
+      if (isFirst)
       {
-        T value = retrieveValue(item);
+        isFirst = false;
+        max = value;
+        min = value;
+      }
 
-        if (isFirst)
-        {
-          isFirst = false;
-          max = value;
-          min = value;
-        }
+      if (value < min)
+      {
+        min = value;
+      }
 
-        if (value < min)
-        {
-          min = value;
-        }
-
-        if (max < value)
-        {
-          max = value;
-        }
+      if (max < value)
+      {
+        max = value;
       }
     }
 
@@ -1017,24 +925,21 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      if (isFirst)
       {
-        if (isFirst)
-        {
-          isFirst = false;
-          max = item;
-          min = item;
-        }
+        isFirst = false;
+        max = item;
+        min = item;
+      }
 
-        if (item < min)
-        {
-          min = item;
-        }
+      if (item < min)
+      {
+        min = item;
+      }
 
-        if (max < item)
-        {
-          max = item;
-        }
+      if (max < item)
+      {
+        max = item;
       }
     }
 
@@ -1043,11 +948,9 @@ public:
 
   bool Any(std::function<bool(TObj)> condition)
   {
-    auto vector = this->items.get()->ToVector();
-    auto it = this->items.get()->begin();
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item) && condition(item))
+      if (condition(item))
       {
         return true;
       }
@@ -1060,7 +963,7 @@ public:
   {
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item) && !condition(item))
+      if (!condition(item))
       {
         return false;
       }
@@ -1083,10 +986,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        selected->Add(retrieveValue(item));
-      }
+      selected->Add(retrieveValue(item));
     }
 
     return this->persistentContainer.GetAs<Queryable<T>>().get();
@@ -1098,7 +998,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item) && item == obj)
+      if (item == obj)
       {
         return true;
       }
@@ -1116,7 +1016,7 @@ public:
   Queryable<TObj>* Sort(
     std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
-    this->ApplyCondition();
+    // this->ApplyCondition();
 
     switch (this->type)
     {
@@ -1219,10 +1119,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        aggregatedValue = accumulate(aggregatedValue, item);
-      }
+      aggregatedValue = accumulate(aggregatedValue, item);
     }
 
     return aggregatedValue;
@@ -1240,10 +1137,7 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
-        aggregatedValue = accumulate(aggregatedValue, item);
-      }
+      aggregatedValue = accumulate(aggregatedValue, item);
     }
 
     return aggregatedValue;
@@ -1451,43 +1345,40 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
+      TKey key = getKey(item);
+
+      if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
       {
-        TKey key = getKey(item);
-
-        if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
+        // these ugly switch statements are telling me that I am missing a
+        //   layer of abstraction or a key architectural feature
+        switch (type)
         {
-          // these ugly switch statements are telling me that I am missing a
-          //   layer of abstraction or a key architectural feature
-          switch (type)
-          {
-            case QueryableType::Deque:
-              queryableGroups->Add(TGroupDeque(key, type, keyCompare, dataCompare));
-              break;
-            case QueryableType::List:
-              queryableGroups->Add(TGroupList(key, type, keyCompare, dataCompare));
-              break;
-            case QueryableType::MultiSet:
-              queryableGroups->Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
-              break;
-            case QueryableType::Set:
-              queryableGroups->Add(TGroupSet(key, type, keyCompare, dataCompare));
-              break;
-            case QueryableType::Vector:
-            default:
-              queryableGroups->Add(TGroupVector(key, type, keyCompare, dataCompare));
-              break;
-          }
+          case QueryableType::Deque:
+            queryableGroups->Add(TGroupDeque(key, type, keyCompare, dataCompare));
+            break;
+          case QueryableType::List:
+            queryableGroups->Add(TGroupList(key, type, keyCompare, dataCompare));
+            break;
+          case QueryableType::MultiSet:
+            queryableGroups->Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
+            break;
+          case QueryableType::Set:
+            queryableGroups->Add(TGroupSet(key, type, keyCompare, dataCompare));
+            break;
+          case QueryableType::Vector:
+          default:
+            queryableGroups->Add(TGroupVector(key, type, keyCompare, dataCompare));
+            break;
         }
-
-        queryableGroups
-          ->First([&](TGroup group)
-          {
-            TKey groupKey = group.GetKey();
-            return !(keyCompare(groupKey, key) || keyCompare(key, groupKey));
-          })
-          .Add(item);
       }
+
+      queryableGroups
+        ->First([&](TGroup group)
+        {
+          TKey groupKey = group.GetKey();
+          return !(keyCompare(groupKey, key) || keyCompare(key, groupKey));
+        })
+        .Add(item);
     }
 
     return queryableGroups->Sort();

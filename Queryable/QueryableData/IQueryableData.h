@@ -26,6 +26,7 @@ public:
   virtual void Sort(std::function<bool(T, T)> compare) = 0;
 
   virtual void AddCondition(std::function<bool(T)> condition) = 0;
+  virtual bool PassesCondition(T obj) = 0;
 };
 
 #endif
