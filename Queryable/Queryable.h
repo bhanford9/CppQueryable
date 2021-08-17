@@ -11,6 +11,7 @@
 #include <set>
 #include <vector>
 
+#include "LinkedQueryable.h"
 #include "Utilities/Condition.h"
 #include "Utilities/Group.h"
 #include "Utilities/IGroup.h"
@@ -24,9 +25,7 @@
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
 
-template<
-  typename TObj,
-  typename TCompare = std::less<TObj>>
+template<typename TObj, typename TCompare>
 class Queryable
 {
 protected:
@@ -34,6 +33,12 @@ protected:
   PersistentContainer persistentContainer;
   Condition<TObj> condition;
   QueryableType type;
+
+  // may want to create an enumeration for this
+  virtual bool IsLinked()
+  {
+    return false;
+  }
 
   // should avoid using this method if possible
   int ApplyCondition()
@@ -260,10 +265,10 @@ public:
 
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
+      // if (this->condition(item))
+      // {
         newItems.push_back(item);
-      }
+      // }
     }
 
     this->condition.MarkApplied();
@@ -384,28 +389,17 @@ public:
   {
     for (TObj item : *this->items.get())
     {
-      if (this->condition(item))
-      {
+      // if (this->condition(item))
+      // {
         action(item);
-      }
+      // }
     }
-  }
-
-  Queryable<TObj> * OnEach(std::function<void(TObj&)> action)
-  {
-    // TODO --> evaluate if it would be useful to create an implementation of this for sets
-
-    for (TObj & item : *this->items.get())
-    {
-      action(item);
-    }
-
-    return this;
   }
 
   Queryable<TObj> * Where(std::function<bool(TObj)> condition, bool apply = false)
   {
-    this->condition += condition;
+    // this->condition += condition;
+    this->items.get()->AddCondition(condition);
     return apply ? this->Applied() : this;
   }
 
@@ -553,9 +547,13 @@ public:
     QueryableVectorData<TObj> copy = this->items.get()->ToVector();
     this->Clear();
 
-    for (auto it = copy.begin() + count; it != copy.end(); it++)
+    int i = 0;
+    for (auto it = copy.begin(); it != copy.end(); it++)
     {
-      this->items.get()->Add(*it);
+      if (count <= i++)
+      {
+        this->items.get()->Add(*it);
+      }
     }
 
     this->condition.MarkApplied();

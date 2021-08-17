@@ -101,7 +101,7 @@ time_test: $(REFS_REF) $(SRC_COMPILE_REF)
 dtest: $(REFS_REF) $(SRC_COMPILE_REF)
 	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
 		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
-	$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
+	-$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
 		$(CPPFLAGS) \
 		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
 		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o \
@@ -157,8 +157,8 @@ clean:
 .PHONY: cleanall
 cleanall: clean cleantests
 	/bin/rm -f $(DEPEND_REF) $(DEPENDENCIES)
-	/bin/rm -rf **/*.o
-	/bin/rm -rf **/*.gch
+	find . -name "*.o" -type f -delete
+	find . -name "*.gch" -type f -delete
 
 .PHONY: cleanrefs
 cleanrefs:

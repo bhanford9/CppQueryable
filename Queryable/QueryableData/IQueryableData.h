@@ -1,7 +1,7 @@
 #ifndef CPPQUERYABLE_QUERYABLE_IQUERYABLEDATA_H
 #define CPPQUERYABLE_QUERYABLE_IQUERYABLEDATA_H
 
-#include <iostream>
+#include <functional>
 #include <vector>
 
 #include "../Iterators/Iterator.h"
@@ -24,6 +24,8 @@ public:
   virtual void RemoveFirst() = 0;
   virtual std::vector<T> ToVector() = 0;
   virtual void Sort(std::function<bool(T, T)> compare) = 0;
+
+  virtual void AddCondition(std::function<bool(T)> condition) = 0;
 };
 
 #endif
