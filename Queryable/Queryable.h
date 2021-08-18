@@ -39,29 +39,6 @@ protected:
     return false;
   }
 
-  // should avoid using this method if possible
-  // int ApplyCondition()
-  // {
-  //   if (!this->condition)
-  //   {
-  //     // if no condition has been specified just return the size of the collection
-  //     return this->items.get()->Count();
-  //   }
-  //
-  //   std::vector<TObj> copy = this->ToVector();
-  //   this->Clear();
-  //   int newCount = 0;
-  //
-  //   for (TObj obj : copy)
-  //   {
-  //     this->items.get()->Add(obj);
-  //     newCount++;
-  //   }
-  //
-  //   this->condition.MarkApplied();
-  //   return newCount;
-  // }
-
   template<typename T, template<typename...> typename TIterable>
   bool Equal(TIterable<T> collection, int collectionSize)
   {
@@ -165,12 +142,6 @@ public:
   QueryableType GetType()
   {
     return this->type;
-  }
-
-  Queryable<TObj> * Applied()
-  {
-    // this->ApplyCondition();
-    return this;
   }
 
   void Clear()
@@ -321,6 +292,11 @@ public:
     return this;
   }
 
+  bool IsEmpty()
+  {
+    return this->items.get()->begin() == this->items.get()->end();
+  }
+
   TObj At(int index)
   {
     if (index < 0)
@@ -376,10 +352,10 @@ public:
     }
   }
 
-  Queryable<TObj> * Where(std::function<bool(TObj)> condition, bool apply = false)
+  Queryable<TObj> * Where(std::function<bool(TObj)> condition)
   {
     this->items.get()->AddCondition(condition);
-    return apply ? this->Applied() : this;
+    return this;
   }
 
   Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
@@ -412,7 +388,7 @@ public:
 
   TObj First()
   {
-    if (!(this->items.get()->begin() == this->items.get()->end()))
+    if (!this->IsEmpty())
     {
       return *this->items.get()->begin();
     }
@@ -435,7 +411,7 @@ public:
 
   TObj Last()
   {
-    if (!(this->items.get()->rbegin() == this->items.get()->rend()))
+    if (!this->IsEmpty())
     {
       return *this->items.get()->rbegin();
     }
@@ -619,7 +595,7 @@ public:
   template<typename T>
   T Sum(std::function<T(TObj)> retrieveValue)
   {
-    static_assert(is_aggregatable<T>::value, "Type must be implement the '+=' operator");
+    static_assert(is_aggregatable<T>::value, "Type must implement the '+=' operator");
 
     T sum = T();
 
@@ -633,7 +609,7 @@ public:
 
   TObj Sum()
   {
-    static_assert(is_aggregatable<TObj>::value, "Type must be implement the '+=' operator");
+    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
     TObj sum = TObj();
 
@@ -664,7 +640,7 @@ public:
 
   TObj Average(std::function<TObj(const TObj &, ulong)> divisor)
   {
-    static_assert(is_aggregatable<TObj>::value, "Type must be implement the '+=' operator");
+    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
     TObj sum = TObj();
     ulong count = 0;
