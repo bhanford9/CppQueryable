@@ -342,7 +342,15 @@ public:
 
   int Count()
   {
-    return this->items.get()->Count();
+    int i = 0;
+
+    for (auto _ : *this->items.get())
+    {
+      std::ignore = _;
+      i++;
+    }
+
+    return i;
   }
 
   int CountIf(std::function<bool(TObj)> condition)
@@ -463,7 +471,6 @@ public:
       //    (i.e. if count < 16 then take from front)
 
       this->items.get()->RemoveLast();
-      // this->items->erase(--this->items->end());
     }
 
     return this;
@@ -510,7 +517,7 @@ public:
     int i = 0;
     for (auto it = copy.begin(); it != copy.end(); it++)
     {
-      if (count <= i++)
+      if (this->items.get()->PassesCondition(*it) && count <= i++)
       {
         this->items.get()->Add(*it);
       }
