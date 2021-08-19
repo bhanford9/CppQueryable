@@ -1091,24 +1091,7 @@ public:
   //   return output;
   // }
 
-  TObj Aggregate(std::function<TObj(TObj, TObj)> accumulate, TObj * seed = NULL)
-  {
-    TObj aggregatedValue = TObj();
-
-    if (seed != NULL)
-    {
-      aggregatedValue = *seed;
-    }
-
-    for (TObj item : *this->items.get())
-    {
-      aggregatedValue = accumulate(aggregatedValue, item);
-    }
-
-    return aggregatedValue;
-  }
-
-  template<typename T>
+  template<typename T = TObj>
   T Aggregate(std::function<T(T, TObj)> accumulate, T * seed = NULL)
   {
     T aggregatedValue = T();
@@ -1126,20 +1109,11 @@ public:
     return aggregatedValue;
   }
 
-  template<typename TFinalizer>
-  TFinalizer Aggregate(
-    std::function<TObj(TObj, TObj)> accumulate,
-    std::function<TFinalizer(TObj)> finalizer,
-    TObj * seed = NULL)
-  {
-    return finalizer(this->Aggregate(accumulate, seed));
-  }
-
-  template<typename T, typename TFinalizer>
+  template<typename T = TObj, typename TFinalizer>
   TFinalizer Aggregate(
     std::function<T(T, TObj)> accumulate,
     std::function<TFinalizer(T)> finalizer,
-    TObj * seed = NULL)
+    T * seed = NULL)
   {
     return finalizer(this->Aggregate<T>(accumulate, seed));
   }
