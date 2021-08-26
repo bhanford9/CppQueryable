@@ -133,7 +133,7 @@ public:
     this->persistentContainer = queryable.persistentContainer;
     this->type = queryable.type;
 
-    for (auto it = this->items.get()->begin(); it != this->items.get()->end(); it++)
+    for (auto it = queryable.items.get()->begin(); it != queryable.items.get()->end(); it++)
     {
       this->items.get()->Add(*it);
     }
@@ -360,7 +360,7 @@ public:
 
   Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
   {
-    Queryable<TObj> copy(*this);
+    Queryable<TObj> copy(this->GetType());
 
     this->ForEach([&](TObj obj)
     {
@@ -999,8 +999,6 @@ public:
   Queryable<TObj>* Sort(
     std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
-    // this->ApplyCondition();
-
     switch (this->type)
     {
       case QueryableType::Set:
@@ -1050,46 +1048,77 @@ public:
     return this->Sort([&](TObj a, TObj b){ return retrieveValue(b) < retrieveValue(a); });
   }
 
-  // Queryable<TObj, std::vector> Except(TIterable<TObj> collection)
-  // {
-  //   static_assert(is_equatable<TObj>::value, "Item must be equatable");
-  //   static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
-  //
-  //   Queryable<TObj, TIterable> inputCollection(collection);
-  //
-  //   std::vector<TObj> localSorted = this->OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
-  //   std::vector<TObj> inputSorted = inputCollection.OrderBy<TObj>([](TObj obj){ return obj; }).ToVector();
-  //
-  //   int localCount = this->Count();
-  //   int inputCount = inputCollection.Count();
-  //
-  //   TObj localMax = localSorted[localCount - 1];
-  //   TObj inputMax = inputSorted[inputCount - 1];
-  //
-  //   std::vector<TObj> result;
-  //
-  //   int localIndex = 0;
-  //   int inputIndex = 0;
-  //
-  //   while (inputIndex < inputCount && localIndex < localCount)
-  //   {
-  //     TObj localItem = localSorted[localIndex];
-  //     TObj inputItem = inputSorted[inputIndex];
-  //
-  //     if (localItem < inputItem)
-  //     {
-  //       result.push_back(localItem);
-  //       localIndex++;
-  //     }
-  //     else
-  //     {
-  //       inputIndex++;
-  //     }
-  //   }
-  //
-  //   Queryable<TObj, std::vector> output(result);
-  //   return output;
-  // }
+  // TODO --> is returing it ordered based on the given comparator okay?
+  //          should having an implementation that doesn't change order be done?
+  Queryable<TObj> * Except(
+    Queryable<TObj> collection,
+    std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
+  {
+    // TODO --> if  nXm < max(nlog(n), mlog(m)) then sorting is not worth it
+    // TODO --> don't call toVector if the type is already a random access iterator
+
+    std::vector<TObj> localSorted = this->Sort(comparator)->ToVector();
+    std::vector<TObj> inputSorted = collection.Sort(comparator)->ToVector();
+
+    int localCount = localSorted.size();
+    int inputCount = inputSorted.size();
+
+    if (localCount <= 0 || inputCount <= 0)
+    {
+      return this;
+    }
+
+    std::vector<TObj> result;
+    int localIndex = 0;
+    int inputIndex = 0;
+
+    std::function<bool(TObj, TObj)> equal = [&](TObj a, TObj b)
+    {
+      return !comparator(a, b) && !comparator(b, a);
+    };
+
+    while (localIndex < localCount && inputIndex < inputCount)
+    {
+      TObj localItem = localSorted[localIndex];
+      TObj inputItem = inputSorted[inputIndex];
+
+      if (equal(localItem, inputItem))
+      {
+        TObj equalValue = localItem;
+
+        while (++localIndex < localCount && equal(equalValue, localSorted[localIndex]));
+        while (++inputIndex < inputCount && equal(equalValue, inputSorted[inputIndex]));
+      }
+      else if (comparator(localItem, inputItem))
+      {
+        result.push_back(localItem);
+        localIndex++;
+      }
+      else
+      {
+        inputIndex++;
+      }
+    }
+
+    // gather leftovers
+    while (localIndex < localCount)
+    {
+      if (!equal(localSorted[localIndex], inputSorted[inputCount - 1]))
+      {
+        result.push_back(localSorted[localIndex++]);
+      }
+    }
+
+    // TODO --> figure out a better way to do this wrt time & memory
+    // TODO --> figure out if its better to return self or a new object
+    this->items.get()->Clear();
+    for (TObj obj : result)
+    {
+      this->items.get()->Add(obj);
+    }
+
+    return this;
+  }
 
   template<typename T = TObj>
   T Aggregate(std::function<T(T, TObj)> accumulate, T * seed = NULL)
