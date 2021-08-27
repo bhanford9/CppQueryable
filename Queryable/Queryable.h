@@ -86,6 +86,8 @@ protected:
   }
 
 public:
+
+  // BEGIN CONSTRUCTORS
   Queryable(
     QueryableType type = QueryableType::Vector,
     TCompare compare = TCompare())
@@ -127,6 +129,7 @@ public:
 
     this->type = type;
   }
+
   Queryable(const Queryable<TObj>& queryable)
     : Queryable(queryable.type)
   {
@@ -138,6 +141,37 @@ public:
       this->items.get()->Add(*it);
     }
   }
+
+  Queryable(const std::deque<TObj>& deque)
+  {
+    this->type = QueryableType::Deque;
+    this->items = std::make_shared<QueryableDequeData<TObj>>(deque);
+  }
+
+  Queryable(const std::list<TObj>& list)
+  {
+    this->type = QueryableType::List;
+    this->items = std::make_shared<QueryableListData<TObj>>(list);
+  }
+
+  Queryable(const std::multiset<TObj>& multiset)
+  {
+    this->type = QueryableType::MultiSet;
+    this->items = std::make_shared<QueryableMultiSetData<TObj>>(multiset);
+  }
+
+  Queryable(const std::set<TObj>& set)
+  {
+    this->type = QueryableType::Set;
+    this->items = std::make_shared<QueryableSetData<TObj>>(set);
+  }
+
+  Queryable(const std::vector<TObj>& vector)
+  {
+    this->type = QueryableType::Vector;
+    this->items = std::make_shared<QueryableVectorData<TObj>>(vector);
+  }
+  // END CONSTRUCTORS
 
   QueryableType GetType()
   {
