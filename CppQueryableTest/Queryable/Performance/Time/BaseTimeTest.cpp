@@ -6,6 +6,13 @@
 #include <string>
 #include <thread>
 
+#include "Utilities/Duration.h"
+#include "Utilities/TimeStats.h"
+#include "Utilities/TimingTypes.h"
+#include "Utilities/TimingUtilities.h"
+
+using namespace TimingUtilities;
+
 class BaseTimeTest : public ::testing::Test
 {
 protected:
@@ -14,12 +21,6 @@ protected:
   }
 
   void TearDown() override {}
-
-  typedef std::chrono::high_resolution_clock THighRes;
-  typedef std::chrono::time_point<THighRes> TTime;
-  typedef std::chrono::duration<double> TDuration;
-  typedef std::chrono::microseconds TMicros;
-  typedef std::chrono::milliseconds TMillis;
 
   TTime Now()
   {
@@ -31,11 +32,11 @@ protected:
     TTime now = this->Now();
     previous = previous == TTime() ? now : previous;
 
-    TDuration epochElpased = now.time_since_epoch();
-    uint64_t epochMicros = std::chrono::duration_cast<TMicros>(epochElpased).count();
+    Duration epochElpased(now.time_since_epoch());
+    uint64_t epochMicros = std::chrono::duration_cast<TMicros>(epochElpased.Get()).count();
 
-    TDuration elapsed = now - previous;
-    uint64_t elapsedMicros = std::chrono::duration_cast<TMicros>(elapsed).count();
+    Duration elapsed(now - previous);
+    uint64_t elapsedMicros = std::chrono::duration_cast<TMicros>(elapsed.Get()).count();
 
     std::cout << "[" << epochMicros << "] (Elapsed: ";
     std::cout << std::setfill(' ') << std::setw(10) << elapsedMicros;
@@ -49,7 +50,8 @@ TEST_F(BaseTimeTest, SetupTest)
 {
   TTime previous = PrintWithTime("Starting Test");
 
-  std::this_thread::sleep_for(TMillis(1000));
+  TimeStats stats = RunAndTime([]() { std::this_thread::sleep_for(TMillis(10)); }, 4);
+  std::cout << stats.ToSecString() << std::endl;
 
   PrintWithTime("Ending Test", previous);
 }

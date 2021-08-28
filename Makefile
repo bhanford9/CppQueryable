@@ -99,7 +99,7 @@ time_test: $(REFS_REF) $(SRC_COMPILE_REF)
 # TOOD: for loop through the wildcard files specified
 .PHONY: dtest
 dtest: $(REFS_REF) $(SRC_COMPILE_REF)
-	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*) \
+	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*.cpp) \
 		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	-$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
 		$(CPPFLAGS) \
