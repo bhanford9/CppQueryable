@@ -14,7 +14,7 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
@@ -23,7 +23,7 @@ class CountFunctionalTest : public ::testing::Test
 protected:
   uint expectedWithDuplicates = 12;
   uint expectedWithoutDuplicates = 8;
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
@@ -35,7 +35,7 @@ protected:
 
 TEST_F(CountFunctionalTest, CountVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
   ASSERT_EQ(0, emptyQueryable.Count());
 }
 

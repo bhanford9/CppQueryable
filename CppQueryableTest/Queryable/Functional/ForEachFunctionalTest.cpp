@@ -14,14 +14,14 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
 class ForEachFunctionalTest : public ::testing::Test
 {
 protected:
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
@@ -50,7 +50,7 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
   emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }
@@ -73,31 +73,31 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 
 TEST_F(ForEachFunctionalTest, ForEachSet)
 {
-  QueryableSet<uint> localQueryable = this->queryable.ToSet();
+  Queryable<uint> localQueryable = this->queryable.ToSet();
   this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachMultiSet)
 {
-  QueryableMultiSet<uint> localQueryable = this->queryable.ToMultiSet();
+  Queryable<uint> localQueryable = this->queryable.ToMultiSet();
   this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
-  QueryableDeque<uint> localQueryable = this->queryable.ToDeque();
+  Queryable<uint> localQueryable = this->queryable.ToDeque();
   this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
-  QueryableList<uint> localQueryable = this->queryable.ToList();
+  Queryable<uint> localQueryable = this->queryable.ToList();
   this->TestForEach(&localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachWhere)
 {
-  QueryableVector<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   int expectedCount = 6;
   int count = 0;
   queryableVector

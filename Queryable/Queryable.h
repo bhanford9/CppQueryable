@@ -11,7 +11,7 @@
 #include <set>
 #include <vector>
 
-#include "LinkedQueryable.h"
+// #include "LinkedQueryable.h"
 #include "Utilities/Condition.h"
 #include "Utilities/Group.h"
 #include "Utilities/IGroup.h"
@@ -25,7 +25,7 @@
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
 
-template<typename TObj, typename TCompare>
+template<typename TObj, typename TCompare = std::less<TObj>>
 class Queryable
 {
 protected:

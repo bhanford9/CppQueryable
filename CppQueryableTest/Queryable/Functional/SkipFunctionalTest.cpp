@@ -14,7 +14,7 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
@@ -22,11 +22,11 @@ class SkipFunctionalTest : public ::testing::Test
 {
 protected:
   int SkipCount = 5;
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = QueryableVector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 });
+    this->queryable = Queryable<uint>(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
   }
 
   template<typename TObj>
@@ -73,7 +73,7 @@ protected:
 
 TEST_F(SkipFunctionalTest, SkipVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
   Queryable<Person> * result = emptyQueryable.Skip(this->SkipCount);
 
   ASSERT_EQ(0, result->Count());
@@ -91,25 +91,25 @@ TEST_F(SkipFunctionalTest, SkipVector)
 
 TEST_F(SkipFunctionalTest, SkipSet)
 {
-  QueryableSet<uint> localQueryable(this->queryable.ToSet());
+  Queryable<uint> localQueryable(this->queryable.ToSet());
   this->TestSkip(&localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipMultiSet)
 {
-  QueryableMultiSet<uint> localQueryable(this->queryable.ToMultiSet());
+  Queryable<uint> localQueryable(this->queryable.ToMultiSet());
   this->TestSkip(&localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipDeque)
 {
-  QueryableDeque<uint> localQueryable(this->queryable.ToDeque());
+  Queryable<uint> localQueryable(this->queryable.ToDeque());
   this->TestSkip(&localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipList)
 {
-  QueryableList<uint> localQueryable(this->queryable.ToList());
+  Queryable<uint> localQueryable(this->queryable.ToList());
   this->TestSkip(&localQueryable, this->SkipCount);
 }
 
@@ -120,25 +120,25 @@ TEST_F(SkipFunctionalTest, SkipVectorNegative)
 
 TEST_F(SkipFunctionalTest, SkipSetNegative)
 {
-  QueryableSet<uint> localQueryable(this->queryable.ToSet());
+  Queryable<uint> localQueryable(this->queryable.ToSet());
   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipMultiSetNegative)
 {
-  QueryableMultiSet<uint> localQueryable(this->queryable.ToMultiSet());
+  Queryable<uint> localQueryable(this->queryable.ToMultiSet());
   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipDequeNegative)
 {
-  QueryableDeque<uint> localQueryable(this->queryable.ToDeque());
+  Queryable<uint> localQueryable(this->queryable.ToDeque());
   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipListNegative)
 {
-  QueryableList<uint> localQueryable(this->queryable.ToList());
+  Queryable<uint> localQueryable(this->queryable.ToList());
   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 }
 
@@ -146,7 +146,7 @@ TEST_F(SkipFunctionalTest, SkipWhere)
 {
   int skipCount = 3;
   int expectedCount = 3;
-  QueryableVector<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   Queryable<uint> * result = queryableVector
     .Where([](uint value) { return value % 2 == 0; })
     ->Skip(skipCount);

@@ -14,7 +14,7 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
@@ -25,7 +25,7 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
@@ -37,7 +37,7 @@ protected:
 
 TEST_F(AtFunctionalTest, AtVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
 
   try
   {

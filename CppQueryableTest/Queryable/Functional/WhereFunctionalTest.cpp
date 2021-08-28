@@ -13,18 +13,18 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
 class WhereFunctionalTest : public ::testing::Test
 {
 protected:
-  QueryableVector<Person> queryable;
+  Queryable<Person> queryable;
 
   void SetUp() override
   {
-    this->queryable = QueryableVector<Person>(PersonLibrary().GetPeople());
+    this->queryable = Queryable<Person>(PersonLibrary().GetPeople());
   }
 
   void TearDown() override {}
@@ -32,7 +32,7 @@ protected:
 
 TEST_F(WhereFunctionalTest, WhereVectorUninitializedTest)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
 
   emptyQueryable.Where([](Person p) { return false; });
 
@@ -41,7 +41,7 @@ TEST_F(WhereFunctionalTest, WhereVectorUninitializedTest)
 
 TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 {
-  QueryableVector<int> localQueryable({2, 1, 3, 7, 8, 12, 17});
+  Queryable<int> localQueryable(std::vector<int>({2, 1, 3, 7, 8, 12, 17}));
   std::vector<int> expected({2, 8, 12});
 
   std::vector<int> values = localQueryable
@@ -84,7 +84,7 @@ TEST_F(WhereFunctionalTest, WhereVectorFemale)
 
 TEST_F(WhereFunctionalTest, WhereSetFemale)
 {
-  std::set<Person> people = QueryableSet<Person>(this->queryable.ToSet())
+  std::set<Person> people = Queryable<Person>(this->queryable.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     ->ToSet();
 
@@ -94,7 +94,7 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
 
 TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
-  std::multiset<Person> people = QueryableMultiSet<Person>(this->queryable.ToMultiSet())
+  std::multiset<Person> people = Queryable<Person>(this->queryable.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     ->ToMultiSet();
 
@@ -104,7 +104,7 @@ TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 
 TEST_F(WhereFunctionalTest, WhereDequeFemale)
 {
-  std::deque<Person> people = QueryableDeque<Person>(this->queryable.ToDeque())
+  std::deque<Person> people = Queryable<Person>(this->queryable.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     ->ToDeque();
 
@@ -114,7 +114,7 @@ TEST_F(WhereFunctionalTest, WhereDequeFemale)
 
 TEST_F(WhereFunctionalTest, WhereListFemale)
 {
-  std::list<Person> people = QueryableList<Person>(this->queryable.ToList())
+  std::list<Person> people = Queryable<Person>(this->queryable.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     ->ToList();
 

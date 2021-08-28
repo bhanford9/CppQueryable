@@ -17,42 +17,37 @@
 // priority_queue
 
 #include "Queryable.h"
-#include "QueryableDeque.h"
-#include "QueryableList.h"
-#include "QueryableMultiSet.h"
-#include "QueryableSet.h"
-#include "QueryableVector.h"
 
 namespace QueryBuilder
 {
   template<typename T>
-  static QueryableVector<T> BuildQueryable(std::vector<T> items)
+  static Queryable<T> BuildQueryable(std::vector<T> items)
   {
-    return QueryableVector<T>(items);
+    return Queryable<T>(items);
   }
 
   template<typename T, typename TCompare = std::less<T>>
-  static QueryableSet<T> BuildQueryable(std::set<T> items)
+  static Queryable<T> BuildQueryable(std::set<T, TCompare> items)
   {
-    return QueryableSet<T>(items);
+    return Queryable<T, TCompare>(items);
   }
 
   template<typename T, typename TCompare = std::less<T>>
-  static QueryableMultiSet<T> BuildQueryable(std::multiset<T> items)
+  static Queryable<T> BuildQueryable(std::multiset<T, TCompare> items)
   {
-    return QueryableMultiSet<T>(items);
+    return Queryable<T, TCompare>(items);
   }
 
   template<typename T>
-  static QueryableList<T> BuildQueryable(std::list<T> items)
+  static Queryable<T> BuildQueryable(std::list<T> items)
   {
-    return QueryableList<T>(items);
+    return Queryable<T>(items);
   }
 
   template<typename T>
-  static QueryableDeque<T> BuildQueryable(std::deque<T> items)
+  static Queryable<T> BuildQueryable(std::deque<T> items)
   {
-    return QueryableDeque<T>(items);
+    return Queryable<T>(items);
   }
 };
 

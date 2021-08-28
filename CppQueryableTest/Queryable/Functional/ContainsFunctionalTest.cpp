@@ -14,14 +14,14 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
 class ContainsFunctionalTest : public ::testing::Test
 {
 protected:
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
@@ -33,14 +33,14 @@ protected:
 
 TEST_F(ContainsFunctionalTest, ContainsUninitialized)
 {
-  QueryableVector<uint> emptyQueryable;
+  Queryable<uint> emptyQueryable;
   bool contains = emptyQueryable.Contains(12);
   ASSERT_FALSE(contains);
 }
 
 TEST_F(ContainsFunctionalTest, ContainsObjectCompare)
 {
-  QueryableVector<Person> people = PersonLibrary().GetPeople();
+  Queryable<Person> people = PersonLibrary().GetPeople();
 
   // Person equality is based off of the ID (first param)
   Person goodPerson(7, "Person 4", 51, 55, Gender::Female);

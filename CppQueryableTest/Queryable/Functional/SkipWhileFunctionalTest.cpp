@@ -14,7 +14,7 @@
 #include "../../../DataStructures/PersonLibrary.h"
 
 #include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableVector.h"
+
 
 using namespace QueryBuilder;
 
@@ -25,11 +25,11 @@ protected:
   int expectedCountUnordered = 8;
   int expectedCountOrdered = 6;
   int expectedCountOrderedSet = 5;
-  QueryableVector<uint> queryable;
+  Queryable<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = QueryableVector<uint>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 });
+    this->queryable = Queryable<uint>(std::vector<uint>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 }));
   }
 
   void TearDown() override {}
@@ -37,7 +37,7 @@ protected:
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  Queryable<Person> emptyQueryable;
   Queryable<Person> * result = emptyQueryable.SkipWhile([](Person p) { return true; });
 
   ASSERT_EQ(0, result->Count());
@@ -70,7 +70,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 {
-  QueryableSet<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
+  Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
   Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
@@ -84,7 +84,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {
-  QueryableMultiSet<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
+  Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
   Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
@@ -98,7 +98,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 {
-  QueryableDeque<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
+  Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
   Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
@@ -112,7 +112,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 {
-  QueryableList<uint> queryableSet = BuildQueryable(this->queryable.ToList());
+  Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToList());
   Queryable<uint>* result = queryableSet
     .SkipWhile([&](uint value) { return value < this->threshold; });
 
@@ -128,7 +128,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileWhere)
 {
   int skipCount = 4;
   int expectedCount = 2;
-  QueryableVector<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   Queryable<uint> * result = queryableVector
     .Where([](uint value) { return value % 2 == 0; })
     ->SkipWhile([](uint value) { return value < 8; });

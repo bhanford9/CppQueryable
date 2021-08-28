@@ -31,8 +31,8 @@ class GroupByFunctionalTest : public ::testing::Test
 protected:
   PersonLibrary personLibrary;
   AnimalLibrary animalLibrary;
-  QueryableVector<Person> people;
-  QueryableVector<Animal> animals;
+  Queryable<Person> people;
+  Queryable<Animal> animals;
   std::vector<PersonAndPet> petOwners;
 
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
@@ -46,8 +46,8 @@ protected:
 
   void SetUp() override
   {
-    this->people = QueryableVector<Person>(this->personLibrary.GetPeople());
-    this->animals = QueryableVector<Animal>(this->animalLibrary.GetAnimals());
+    this->people = Queryable<Person>(this->personLibrary.GetPeople());
+    this->animals = Queryable<Animal>(this->animalLibrary.GetAnimals());
     this->petOwners = PersonAndPetLibrary().GetPetOwners();
   }
 
@@ -521,7 +521,7 @@ TEST_F(GroupByFunctionalTest, GroupByWhereTest)
     .GroupBy<double>([](Person p) { return p.GetAge(); })
     ->WhereCopy([](TAgePerson group) { return group.GetKey() > 30; });
 
-  QueryableVector<Person> people2 = BuildQueryable(this->people.ToVector());
+  Queryable<Person> people2 = BuildQueryable(this->people.ToVector());
   Queryable<TAgePerson> * overThirtyAgeGroups = people2
     .Where([](Person person) { return person.GetAge() > 30; })
     ->GroupBy<double>([](Person p) { return p.GetAge(); });

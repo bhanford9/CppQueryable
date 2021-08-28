@@ -4,14 +4,14 @@
 #include <vector>
 
 #include "Person.h"
-#include "../Queryable/QueryableVector.h"
+#include "../Queryable/Queryable.h"
 
-class People : public QueryableVector<Person>
+class People : public Queryable<Person>
 {
 public:
   People() { }
   People(std::vector<Person> people)
-    : QueryableVector<Person>(people)
+    : Queryable<Person>(people)
   {
   }
 
