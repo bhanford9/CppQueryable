@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <iostream>
 #include <ratio>
 #include <sstream>
 #include <string>
@@ -34,16 +35,16 @@ public:
   static Duration Min() { return Duration(std::chrono::duration<double>::min()); }
 
   std::chrono::duration<double> Get() const { return this->duration; }
-  double Nanos() { return std::chrono::duration_cast<TNanos>(this->duration).count(); }
-  double Micros() { return this->Nanos() / 1000.0; }
-  double Millis() { return this->Micros() / 1000.0; }
-  double Secs() { return this->Millis() / 1000.0; }
-  double Mins() { return this->Secs() / 60.0; }
-  std::string NanosStr() { return std::to_string(this->Nanos()); }
-  std::string MicrosStr() { return std::to_string(this->Micros()); }
-  std::string MillisStr() { return std::to_string(this->Millis()); }
-  std::string SecsStr() { return std::to_string(this->Secs()); }
-  std::string MinsStr() { return std::to_string(this->Mins()); }
+  double Nanos() const { return std::chrono::duration_cast<TNanos>(this->duration).count(); }
+  double Micros() const { return this->Nanos() / 1000.0; }
+  double Millis() const { return this->Micros() / 1000.0; }
+  double Secs() const { return this->Millis() / 1000.0; }
+  double Mins() const { return this->Secs() / 60.0; }
+  std::string NanosStr() const { return std::to_string(this->Nanos()); }
+  std::string MicrosStr() const { return std::to_string(this->Micros()); }
+  std::string MillisStr() const { return std::to_string(this->Millis()); }
+  std::string SecsStr() const { return std::to_string(this->Secs()); }
+  std::string MinsStr() const { return std::to_string(this->Mins()); }
 
   Duration * Calculate(TTime start, TTime end)
   {
@@ -118,21 +119,34 @@ public:
     return Duration(this->duration / divisor);
   }
 
+  // double operator/ (Duration divisor) const
+  // {
+  //   return this->duration / divisor.Get();
+  // }
+
+  Duration operator/ (Duration divisor) const
+  {
+    Duration result(TDurationSecs(this->Nanos() / divisor.Nanos()));
+    return result;
+  }
+
   Duration & operator= (const Duration & other)
   {
     this->duration = other.Get();
     return *this;
   }
+
+  bool operator>(const Duration & rhs) const
+  {
+    return this->Get() > rhs.Get();
+  }
+
+  bool operator<(const Duration & rhs) const
+  {
+    return this->Get() < rhs.Get();
+  }
 };
 
-bool operator>(const Duration & lhs, const Duration & rhs)
-{
-  return lhs.Get() > rhs.Get();
-}
 
-bool operator<(const Duration & lhs, const Duration & rhs)
-{
-  return lhs.Get() < rhs.Get();
-}
 
 #endif

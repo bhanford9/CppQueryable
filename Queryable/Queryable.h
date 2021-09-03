@@ -627,7 +627,7 @@ public:
   }
 
   template<typename T>
-  T Sum(std::function<T(TObj)> retrieveValue)
+  T Sum(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_aggregatable<T>::value, "Type must implement the '+=' operator");
 
@@ -641,7 +641,7 @@ public:
     return sum;
   }
 
-  TObj Sum()
+  TObj Sum() const
   {
     static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
@@ -656,7 +656,7 @@ public:
   }
 
   template<typename T>
-  double Average(std::function<T(TObj)> retrieveValue)
+  double Average(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
 
@@ -672,7 +672,7 @@ public:
     return count > 0 ? sum / count : 0;
   }
 
-  TObj Average(std::function<TObj(const TObj &, ulong)> divisor)
+  TObj Average(std::function<TObj(const TObj &, ulong)> divisor) const
   {
     static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
@@ -688,7 +688,7 @@ public:
     return divisor(sum, count);
   }
 
-  double Average()
+  double Average() const
   {
     static_assert(std::is_arithmetic<TObj>::value, "Type must be numeric");
 
@@ -705,7 +705,7 @@ public:
   }
 
   template<typename T>
-  TObj MaxItem(std::function<T(TObj)> retrieveValue)
+  TObj MaxItem(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -734,13 +734,13 @@ public:
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> retrieveValue)
+  T Max(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MaxItem(retrieveValue));
   }
 
-  TObj Max()
+  TObj Max() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -764,7 +764,7 @@ public:
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> retrieveValue, T startSeed)
+  T Max(std::function<T(TObj)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -783,7 +783,7 @@ public:
     return max;
   }
 
-  TObj Max(TObj startSeed)
+  TObj Max(TObj startSeed) const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -801,7 +801,7 @@ public:
   }
 
   template<typename T>
-  TObj MinItem(std::function<T(TObj)> retrieveValue)
+  TObj MinItem(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -830,13 +830,13 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> retrieveValue)
+  T Min(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MinItem(retrieveValue));
   }
 
-  TObj Min()
+  TObj Min() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -860,7 +860,7 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> retrieveValue, T startSeed)
+  T Min(std::function<T(TObj)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -879,7 +879,7 @@ public:
     return min;
   }
 
-  TObj Min(TObj startSeed)
+  TObj Min(TObj startSeed) const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -897,7 +897,7 @@ public:
   }
 
   template<typename T>
-  T Range(std::function<T(TObj)> retrieveValue)
+  T Range(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
@@ -931,7 +931,7 @@ public:
     return max - min;
   }
 
-  TObj Range()
+  TObj Range() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
     static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");
@@ -963,7 +963,7 @@ public:
     return max - min;
   }
 
-  bool Any(std::function<bool(TObj)> condition)
+  bool Any(std::function<bool(TObj)> condition) const
   {
     for (TObj item : *this->items.get())
     {
@@ -976,7 +976,7 @@ public:
     return false;
   }
 
-  bool All(std::function<bool(TObj)> condition)
+  bool All(std::function<bool(TObj)> condition) const
   {
     for (TObj item : *this->items.get())
     {
@@ -1009,7 +1009,7 @@ public:
     return this->persistentContainer.GetAs<Queryable<T>>().get();
   }
 
-  bool Contains(TObj obj)
+  bool Contains(TObj obj) const
   {
     static_assert(is_equatable<TObj>::value, "Item must be equatable");
 
