@@ -25,7 +25,6 @@ public:
   std::function<void*()> Get;
   std::function<void(uint64_t & index)> Increment;
   std::function<void(uint64_t & index)> Decrement;
-  std::function<bool(const Iterator<T>&)> Equal;
   std::function<T&()> Dereference;
   std::function<const T&()> ConstDereference;
   std::function<void(const Iterator<T>&)> Assign;
@@ -70,7 +69,6 @@ public:
     return this->ConstDereference();
   }
 
-  // using the index comparison increases
   bool operator==(const Iterator<T>& comparison) const
   {
     return this->index == comparison.index;

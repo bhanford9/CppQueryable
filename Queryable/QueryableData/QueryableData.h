@@ -83,7 +83,6 @@ protected:
     this->beginning.Get = [&]() { return &this->beginIterator; };
     this->beginning.Increment = [&](uint64_t & index) { this->IncrementPastCondition(++this->beginIterator, index); };
     this->beginning.Decrement = [&](uint64_t & index) { this->DecrementPastCondition(--this->beginIterator, index); };
-    this->beginning.Equal = [&](const Iterator<TObj>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
@@ -94,7 +93,6 @@ protected:
     this->ending.Get = [&]() { return &this->endIterator; };
     this->ending.Increment = [&](uint64_t & index) { this->IncrementPastCondition(++this->endIterator, index); };
     this->ending.Decrement = [&](uint64_t & index) { this->DecrementPastCondition(--this->endIterator, index); };
-    this->ending.Equal = [&](const Iterator<TObj>& value) { return this->endIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
@@ -105,7 +103,6 @@ protected:
     this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
     this->rbeginning.Increment = [&](uint64_t & index) { this->RIncrementPastCondition(++this->rbeginIterator, index); };
     this->rbeginning.Decrement = [&](uint64_t & index) { this->RDecrementPastCondition(--this->rbeginIterator, index); };
-    this->rbeginning.Equal = [&](const Iterator<TObj>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
@@ -116,7 +113,6 @@ protected:
     this->rending.Get = [&]() { return &this->rendIterator; };
     this->rending.Increment = [&](uint64_t & index) { this->RIncrementPastCondition(++this->rendIterator, index); };
     this->rending.Decrement = [&](uint64_t & index) { this->RDecrementPastCondition(--this->rendIterator, index); };
-    this->rending.Equal = [&](const Iterator<TObj>& value) { return this->rendIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
