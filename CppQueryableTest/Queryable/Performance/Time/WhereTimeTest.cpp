@@ -68,10 +68,10 @@ TEST_P(WhereTimeTest, VectorTest)
 
 TEST_P(WhereTimeTest, VectorWhereMaxNaiveTest)
 {
-  uint expected = 76;
   TimeTestParams params = GetParam();
+  uint expected = params.GetContainerSize() >= 10 ? 76 : 4;
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<uint> dataSample = { 4, 7, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::vector<uint> data;
   for (uint64_t i = 0; i < params.GetContainerSize(); i++)
   {
@@ -113,6 +113,9 @@ TEST_P(WhereTimeTest, VectorWhereMaxNaiveTest)
 
   TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), data, this->standardName);
 
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
   CompareAndLog(queryableStats, standardStats);
 }
 
@@ -120,10 +123,10 @@ INSTANTIATE_TEST_SUITE_P(
   ForEachTimeTesting,
   WhereTimeTest,
   ::testing::Values(
-    TimeTestParams(1, 30),
-    TimeTestParams(10, 30),
-    TimeTestParams(100, 30),
-    TimeTestParams(1000, 30),
-    TimeTestParams(10000, 30),
-    TimeTestParams(100000, 30),
-    TimeTestParams(1000000, 30)));
+    TimeTestParams(30, 1),
+    TimeTestParams(30, 10),
+    TimeTestParams(30, 100),
+    TimeTestParams(30, 1000),
+    TimeTestParams(30, 10000),
+    TimeTestParams(30, 100000),
+    TimeTestParams(30, 1000000)));
