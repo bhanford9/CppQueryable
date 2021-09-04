@@ -38,6 +38,7 @@ public:
   void Add(T item) override
   {
     this->items.insert(item);
+    this->size++;
   }
 
   int Count() override
@@ -51,6 +52,8 @@ public:
     {
       this->items.erase(--this->items.end());
     }
+
+    this->size = this->items.size();
   }
 
   void RemoveFirst() override

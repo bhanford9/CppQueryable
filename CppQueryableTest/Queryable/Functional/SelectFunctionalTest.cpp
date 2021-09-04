@@ -218,6 +218,7 @@ TEST_F(SelectFunctionalTest, SelectWhere)
 {
   Queryable<Person> local1 = BuildQueryable(this->people.ToVector());
   Queryable<Person> local2 = BuildQueryable(this->people.ToVector());
+
   Queryable<double> * ages1 = local1
     .Select<double>([](Person p) { return p.GetAge() / 10; })
     ->Where([](double age) { return age > 3 && age < 8; });
@@ -228,6 +229,7 @@ TEST_F(SelectFunctionalTest, SelectWhere)
   ASSERT_TRUE(ages1 != NULL);
   ASSERT_TRUE(ages2 != NULL);
   ASSERT_EQ(5, ages1->Count());
+  ages1->Count();
   ASSERT_EQ(ages1->Count(), ages2->Count());
 
   int i = 0;

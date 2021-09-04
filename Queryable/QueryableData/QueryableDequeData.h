@@ -27,6 +27,7 @@ public:
   void Add(T item) override
   {
     this->items.push_back(item);
+    this->size++;
   }
 
   int Count() override
@@ -37,6 +38,7 @@ public:
   void RemoveLast() override
   {
     this->items.pop_back();
+    this->size--;
   }
 
   void RemoveFirst() override

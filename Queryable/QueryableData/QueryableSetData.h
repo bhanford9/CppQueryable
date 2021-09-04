@@ -37,6 +37,11 @@ public:
   void Add(T item) override
   {
     this->items.insert(item);
+
+    // because its a set, the tiem may not have actually been added. Insert
+    // returns true/false whether the item was added, but the size method is
+    // also a constant time action, so its cleaner to use it
+    this->size = this->items.size();
   }
 
   int Count() override
@@ -50,6 +55,8 @@ public:
     {
       this->items.erase(--this->items.end());
     }
+
+    this->size = this->items.size();
   }
 
   void RemoveFirst() override

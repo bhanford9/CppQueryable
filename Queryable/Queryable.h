@@ -185,7 +185,7 @@ public:
 
   void Add(TObj obj)
   {
-    if (this->items.get()->PassesCondition(&obj))
+    if (this->items.get()->PassesCondition(obj))
     {
       this->items.get()->Add(obj);
     }
@@ -354,9 +354,9 @@ public:
   {
     int i = 0;
 
-    for (auto _ : *this->items.get())
+    for (auto obj : *this->items.get())
     {
-      std::ignore = _;
+      (void)obj; // silence compiler
       i++;
     }
 
@@ -470,7 +470,7 @@ public:
       //   queryable container class
 
       // if the last item does not meet the condition, then it should not be considered in the count
-      if (!this->items.get()->PassesCondition(&(*this->items.get()->rbegin())))
+      if (!this->items.get()->PassesCondition(*this->items.get()->rbegin()))
       {
         i--;
       }
@@ -527,7 +527,7 @@ public:
     int i = 0;
     for (auto it = copy.begin(); it != copy.end(); it++)
     {
-      if (this->items.get()->PassesCondition(&(*it)) && count <= i++)
+      if (this->items.get()->PassesCondition(*it) && count <= i++)
       {
         this->items.get()->Add(*it);
       }
@@ -617,7 +617,7 @@ public:
   {
     for (TObj obj : collection)
     {
-      if (!preserveFilter || this->items.get()->PassesCondition(&obj))
+      if (!preserveFilter || this->items.get()->PassesCondition(obj))
       {
         this->items.get()->Add(obj);
       }
