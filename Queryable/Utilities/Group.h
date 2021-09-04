@@ -118,8 +118,8 @@ public:
   void RemoveFirst() { TGroup::RemoveFirst(); }
   std::vector<TData> ToVector() { return TGroup::ToVector(); }
   void Sort(std::function<bool(TData, TData)> compare) { return TGroup::Sort(compare); }
-  void AddCondition(std::function<bool(TData)> condition) { TGroup::AddCondition(condition); }
-  bool PassesCondition(TData obj) { return TGroup::PassesCondition(obj); }
+  void AddCondition(std::function<bool(const TData &)> condition) { TGroup::AddCondition(condition); }
+  bool PassesCondition(const TData & obj) const { return TGroup::PassesCondition(obj); }
 };
 
 #endif

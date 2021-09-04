@@ -9,12 +9,12 @@ class Condition
 {
 private:
   bool applied = false;
-  std::function<bool(T)> condition;
+  std::function<bool(const T &)> condition;
 
 public:
   Condition() { }
 
-  void Add(std::function<bool(T)> condition)
+  void Add(std::function<bool(const T &)> condition)
   {
     if (this->condition)
     {
@@ -29,7 +29,7 @@ public:
     this->applied = false;
   }
 
-  bool Passes(T obj)
+  bool Passes(const T & obj) const
   {
     return !this->condition || this->applied || this->condition(obj);
   }
@@ -39,13 +39,13 @@ public:
     this->applied = applied;
   }
 
-  Condition & operator+=(std::function<bool(T)> condition)
+  Condition & operator+=(std::function<bool(const T &)> condition)
   {
     this->Add(condition);
     return *this;
   }
 
-  bool operator()(T obj)
+  bool operator()(const T & obj) const
   {
     return this->Passes(obj);
   }

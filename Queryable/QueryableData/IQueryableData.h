@@ -25,8 +25,8 @@ public:
   virtual std::vector<T> ToVector() = 0;
   virtual void Sort(std::function<bool(T, T)> compare) = 0;
 
-  virtual void AddCondition(std::function<bool(T)> condition) = 0;
-  virtual bool PassesCondition(T obj) = 0;
+  virtual void AddCondition(std::function<bool(const T &)> condition) = 0;
+  virtual bool PassesCondition(const T & obj) const = 0;
 };
 
 #endif

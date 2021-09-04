@@ -88,12 +88,12 @@ public:
     return this->data.get()->rend();
   }
 
-  void AddCondition(std::function<bool(TData)> condition) override
+  void AddCondition(std::function<bool(const TData &)> condition) override
   {
     this->data.get()->AddCondition(condition);
   }
 
-  bool PassesCondition(TData obj) override
+  bool PassesCondition(const TData & obj) const override
   {
     return this->data.get()->PassesCondition(obj);
   }

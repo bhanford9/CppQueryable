@@ -79,11 +79,7 @@ protected:
     beginning.Equal = [&](const Iterator<TObj>& value) { return this->beginIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
-    // beginning.Add = [&](int add) { std::advance(this->beginIterator, add); };
-    // beginning.Subtract = [&](int subtract) { std::advance(this->beginIterator, -subtract); };
-    // beginning.LessThan = [&](const Iterator<TObj>& value) -> bool { return this->beginIterator < *static_cast<t_forwardIterator*>(value.Get()); };
     beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
-    // beginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->beginIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
   }
 
   virtual void InitForwardEnd()
@@ -94,11 +90,7 @@ protected:
     ending.Equal = [&](const Iterator<TObj>& value) { return this->endIterator == *static_cast<t_forwardIterator*>(value.Get()); };
     ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
-    // ending.Add = [&](int add) { std::advance(this->endIterator, add); };
-    // ending.Subtract = [&](int subtract) { std::advance(this->endIterator, -subtract); };
-    // ending.LessThan = [&](const Iterator<TObj>& value) -> bool { return this->endIterator < *static_cast<t_forwardIterator*>(value.Get()); };
     ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
-    // ending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->endIterator - *static_cast<t_forwardIterator*>(subtract.Get()); };
   }
 
   virtual void InitReverseBegin()
@@ -109,11 +101,7 @@ protected:
     rbeginning.Equal = [&](const Iterator<TObj>& value) { return this->rbeginIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
-    // rbeginning.Add = [&](int add) { std::advance(this->rbeginIterator, add); };
-    // rbeginning.Subtract = [&](int subtract) { std::advance(this->rbeginIterator, -subtract); };
-    // rbeginning.LessThan = [&](const Iterator<TObj>& value) -> bool { return this->rbeginIterator < *static_cast<t_reverseIterator*>(value.Get()); };
     rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
-    // rbeginning.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rbeginIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
   }
 
   virtual void InitReverseEnd()
@@ -124,11 +112,7 @@ protected:
     rending.Equal = [&](const Iterator<TObj>& value) { return this->rendIterator == *static_cast<t_reverseIterator*>(value.Get()); };
     rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
-    // rending.Add = [&](int add) { std::advance(this->rendIterator, add); };
-    // rending.Subtract = [&](int subtract) { std::advance(this->rendIterator, -subtract); };
-    // rending.LessThan = [&](const Iterator<TObj>& value) -> bool { return this->rendIterator < *static_cast<t_reverseIterator*>(value.Get()); };
     rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
-    // rending.IterSubtract = [&](const Iterator<TObj>& subtract) -> int { return this->rendIterator - *static_cast<t_reverseIterator*>(subtract.Get()); };
   }
 
 public:
@@ -172,12 +156,12 @@ public:
     return this->items;
   }
 
-  void AddCondition(std::function<bool(TObj)> condition) override
+  void AddCondition(std::function<bool(const TObj &)> condition) override
   {
     this->condition += condition;
   }
 
-  bool PassesCondition(TObj obj) override
+  bool PassesCondition(const TObj & obj) const override
   {
     return this->condition(obj);
   }

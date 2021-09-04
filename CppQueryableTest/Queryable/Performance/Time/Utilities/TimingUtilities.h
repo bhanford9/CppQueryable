@@ -59,15 +59,15 @@ namespace TimingUtilities
     return stats;
   }
 
-  static void RunTimeAndLog(std::function<void()> action, std::string name = "")
-  {
-    if (name != "")
-    {
-      std::cout << name << std::endl;
-    }
-
-    std::cout << RunAndTime(action).ToString() << std::endl;
-  }
+  // static void RunTimeAndLog(std::function<void()> action, std::string name = "")
+  // {
+  //   if (name != "")
+  //   {
+  //     std::cout << name << std::endl;
+  //   }
+  //
+  //   std::cout << RunAndTime(action).ToString() << std::endl;
+  // }
 
   static TimeStats RunTimeAndLog(std::function<void()> action, ulong iterations, std::string name = "")
   {

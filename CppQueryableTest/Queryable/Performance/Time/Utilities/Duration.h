@@ -119,11 +119,6 @@ public:
     return Duration(this->duration / divisor);
   }
 
-  // double operator/ (Duration divisor) const
-  // {
-  //   return this->duration / divisor.Get();
-  // }
-
   Duration operator/ (Duration divisor) const
   {
     Duration result(TDurationSecs(this->Nanos() / divisor.Nanos()));

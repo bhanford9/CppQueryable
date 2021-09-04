@@ -1,6 +1,7 @@
 #ifndef CPPQUERYABLE_QUERYABLE_ITERATORS_LISTITERATOR_H
 #define CPPQUERYABLE_QUERYABLE_ITERATORS_LISTITERATOR_H
 
+#include <chrono>
 #include <functional>
 #include <iostream>
 #include <iterator>
@@ -18,7 +19,13 @@ public:
   typedef T* pointer;
   typedef T& reference;
 
-  Iterator() { }
+
+  typedef std::chrono::high_resolution_clock THighRes;
+  typedef std::chrono::time_point<THighRes> TTime;
+
+  Iterator()
+  {
+  }
 
   std::function<void*()> Get;
   std::function<void()> Increment;
@@ -26,10 +33,6 @@ public:
   std::function<bool(const Iterator<T>&)> Equal;
   std::function<T&()> Dereference;
   std::function<const T&()> ConstDereference;
-  // std::function<void(int)> Add;
-  // std::function<void(int)> Subtract;
-  // std::function<int(const Iterator<T>&)> IterSubtract;
-  // std::function<bool(const Iterator<T>&)> LessThan;
   std::function<void(const Iterator<T>&)> Assign;
 
   virtual Iterator<T>& operator++()
@@ -44,27 +47,6 @@ public:
     this->Increment();
     return copy;
   }
-
-  // Iterator<T>& operator+(int value)
-  // {
-  //   this->Add(value);
-  //   return *this;
-  // }
-  //
-  // Iterator<T>& operator-(int value)
-  // {
-  //   this->Subtract(value);
-  //   return *this;
-  // }
-  //
-  // int operator-(const Iterator<T>& iterator)
-  // {
-  //   return this->IterSubtract(iterator);
-  // }
-  // bool operator<(const Iterator<T>& comparison)
-  // {
-    //   return this->LessThan(comparison);
-    // }
 
   Iterator<T>& operator--()
   {

@@ -14,13 +14,14 @@ TEST_PROGRAM = $(PROGRAM_TEST_DIR)/CppQueryableTest_testcases
 
 DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
 
-GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
+# GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
+GTEST_MAIN_CC = /home/bhanford9/Projects/googletest/googletest/src/gtest_main.cc
 GTEST = $(GTEST_MAIN_CC)
 
 LIBS =
-TEST_LIBS = $(LIBS) -lgtest -lgtest_main -pthread
+TEST_LIBS = $(LIBS) -lgtest -lgtest_main -lpthread
 INCLUDES =
-TEST_INCLUDES = $(INCLUDES) -I/usr/include/gtest $(GTEST) -L/usr/lib
+TEST_INCLUDES = $(INCLUDES) -I/home/bhanford9/Projects/googletest/googletest/include/gtest $(GTEST) -L/home/bhanford9/Projects/googletest/build/lib
 
 TEST_TIMEOUT = 10000 # TODO --> get this to work properly
 
