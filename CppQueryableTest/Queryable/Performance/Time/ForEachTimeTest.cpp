@@ -6,6 +6,7 @@
 #include "../../../../DataStructures/Animal.h"
 #include "../../../../DataStructures/Person.h"
 #include "../../../../DataStructures/People.h"
+#include "../../../../DataStructures/PersonLibrary.h"
 
 #include "../../../../Queryable/Queryable.h"
 
@@ -23,6 +24,7 @@ class ForEachTimeTest : public ::testing::TestWithParam<TimeTestParams>
 protected:
   std::string queryableName = "QUERYABLE";
   std::string standardName = "STANDARD";
+
   void SetUp() override
   {
   }
@@ -30,7 +32,7 @@ protected:
   void TearDown() override {}
 };
 
-TEST_P(ForEachTimeTest, DequeTest)
+TEST_P(ForEachTimeTest, DequeNumberTest)
 {
   TimeTestParams params = GetParam();
 
@@ -65,7 +67,7 @@ TEST_P(ForEachTimeTest, DequeTest)
   CompareAndLog(queryableStats, standardStats);
 }
 
-TEST_P(ForEachTimeTest, ListTest)
+TEST_P(ForEachTimeTest, ListNumberTest)
 {
   TimeTestParams params = GetParam();
 
@@ -100,7 +102,7 @@ TEST_P(ForEachTimeTest, ListTest)
   CompareAndLog(queryableStats, standardStats);
 }
 
-TEST_P(ForEachTimeTest, MultiSetTest)
+TEST_P(ForEachTimeTest, MultiSetNumberTest)
 {
   TimeTestParams params = GetParam();
 
@@ -135,7 +137,7 @@ TEST_P(ForEachTimeTest, MultiSetTest)
   CompareAndLog(queryableStats, standardStats);
 }
 
-TEST_P(ForEachTimeTest, SetTest)
+TEST_P(ForEachTimeTest, SetNumberTest)
 {
   TimeTestParams params = GetParam();
 
@@ -169,7 +171,7 @@ TEST_P(ForEachTimeTest, SetTest)
   CompareAndLog(queryableStats, standardStats);
 }
 
-TEST_P(ForEachTimeTest, VectorTest)
+TEST_P(ForEachTimeTest, VectorNumberTest)
 {
   TimeTestParams params = GetParam();
 
@@ -191,6 +193,226 @@ TEST_P(ForEachTimeTest, VectorTest)
   std::function<void()> action = [&]()
   {
     for (uint value : data)
+    {
+      (void)value;
+    }
+  };
+
+  TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
+  CompareAndLog(queryableStats, standardStats);
+}
+
+TEST_P(ForEachTimeTest, DequePersonTest)
+{
+  TimeTestParams params = GetParam();
+
+  std::vector<Person> dataSample =
+  {
+    Person(0, "Person 4", 0, 0, Gender::Male),
+    Person(0, "Person 5", 0, 0, Gender::Male),
+    Person(0, "Person 6", 0, 0, Gender::Male),
+    Person(0, "Person 7", 0, 0, Gender::Male),
+    Person(0, "Person 8", 0, 0, Gender::Male),
+    Person(0, "Person 9", 0, 0, Gender::Male),
+  };
+
+  std::deque<Person> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 6]);
+  }
+
+  Queryable<Person> local = BuildQueryable(data);
+
+  TimeStats queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](Person value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  std::function<void()> action = [&]()
+  {
+    for (Person value : data)
+    {
+      (void)value;
+    }
+  };
+
+  TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
+  CompareAndLog(queryableStats, standardStats);
+}
+
+TEST_P(ForEachTimeTest, ListPersonTest)
+{
+  TimeTestParams params = GetParam();
+
+  std::vector<Person> dataSample =
+  {
+    Person(0, "Person 4", 0, 0, Gender::Male),
+    Person(0, "Person 5", 0, 0, Gender::Male),
+    Person(0, "Person 6", 0, 0, Gender::Male),
+    Person(0, "Person 7", 0, 0, Gender::Male),
+    Person(0, "Person 8", 0, 0, Gender::Male),
+    Person(0, "Person 9", 0, 0, Gender::Male),
+  };
+
+  std::list<Person> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 6]);
+  }
+
+  Queryable<Person> local = BuildQueryable(data);
+
+  TimeStats queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](Person value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  std::function<void()> action = [&]()
+  {
+    for (Person value : data)
+    {
+      (void)value;
+    }
+  };
+
+  TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
+  CompareAndLog(queryableStats, standardStats);
+}
+
+TEST_P(ForEachTimeTest, MultiSetPersonTest)
+{
+  TimeTestParams params = GetParam();
+
+  std::vector<Person> dataSample =
+  {
+    Person(0, "Person 4", 0, 0, Gender::Male),
+    Person(0, "Person 5", 0, 0, Gender::Male),
+    Person(0, "Person 6", 0, 0, Gender::Male),
+    Person(0, "Person 7", 0, 0, Gender::Male),
+    Person(0, "Person 8", 0, 0, Gender::Male),
+    Person(0, "Person 9", 0, 0, Gender::Male),
+  };
+
+  std::multiset<Person> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.insert(dataSample[i % 6]);
+  }
+
+  Queryable<Person> local = BuildQueryable(data);
+
+  TimeStats queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](Person value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  std::function<void()> action = [&]()
+  {
+    for (Person value : data)
+    {
+      (void)value;
+    }
+  };
+
+  TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
+  CompareAndLog(queryableStats, standardStats);
+}
+
+TEST_P(ForEachTimeTest, SetPersonTest)
+{
+  TimeTestParams params = GetParam();
+
+  std::vector<Person> dataSample =
+  {
+    Person(0, "Person 4", 0, 0, Gender::Male),
+    Person(0, "Person 5", 0, 0, Gender::Male),
+    Person(0, "Person 6", 0, 0, Gender::Male),
+    Person(0, "Person 7", 0, 0, Gender::Male),
+    Person(0, "Person 8", 0, 0, Gender::Male),
+    Person(0, "Person 9", 0, 0, Gender::Male),
+  };
+
+  std::set<Person> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.insert(dataSample[i % 6]);
+  }
+
+  Queryable<Person> local = BuildQueryable(data);
+
+  TimeStats queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](Person value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  std::function<void()> action = [&]()
+  {
+    for (Person value : data)
+    {
+      (void)value;
+    }
+  };
+
+  TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+
+  std::cout << "\nTest Data:" << std::endl;
+  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
+  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
+  CompareAndLog(queryableStats, standardStats);
+}
+
+TEST_P(ForEachTimeTest, VectorPersonTest)
+{
+  TimeTestParams params = GetParam();
+
+  std::vector<Person> dataSample =
+  {
+    Person(0, "Person 4", 0, 0, Gender::Male),
+    Person(0, "Person 5", 0, 0, Gender::Male),
+    Person(0, "Person 6", 0, 0, Gender::Male),
+    Person(0, "Person 7", 0, 0, Gender::Male),
+    Person(0, "Person 8", 0, 0, Gender::Male),
+    Person(0, "Person 9", 0, 0, Gender::Male),
+  };
+
+  std::vector<Person> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 6]);
+  }
+
+  Queryable<Person> local = BuildQueryable(data);
+
+  TimeStats queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](Person value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  std::function<void()> action = [&]()
+  {
+    for (Person value : data)
     {
       (void)value;
     }

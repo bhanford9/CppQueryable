@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "TriggerType.h"
+
 class TimeTestParams
 {
 private:
@@ -11,18 +13,21 @@ private:
   bool doLog = true;
   bool doRecordStats = false;
   std::string statsFilePath = "";
+  TriggerType triggerType = TriggerType::NotApplicable;
 
 public:
   TimeTestParams() { }
   TimeTestParams(
     uint64_t iterations,
     uint64_t containerSize,
+    TriggerType triggerType = TriggerType::NotApplicable,
     bool doLog = true,
     bool doRecordStats = false,
     std::string statsFilePath = "")
   {
     this->iterations = iterations;
     this->containerSize = containerSize;
+    this->triggerType = triggerType;
     this->doLog = doLog;
     this->doRecordStats = doRecordStats;
     this->statsFilePath = statsFilePath;
@@ -33,12 +38,14 @@ public:
   bool GetDoLog() const { return this->doLog; }
   bool GetDoRecordStats() const { return this->doRecordStats; }
   std::string GetStatsFilePath() const { return this->statsFilePath; }
+  TriggerType GetTriggerType() const { return this->triggerType; }
 
   void SetIterations(uint64_t iterations) { this->iterations = iterations; }
   void SetContainerSize(uint64_t containerSize) { this->containerSize = containerSize; }
   void SetDoLog(bool doLog) { this->doLog = doLog; }
   void SetDoRecordStats(bool doRecordStats) { this->doRecordStats = doRecordStats; }
   void SetStatsFilePath(std::string statsFilePath) { this->statsFilePath = statsFilePath; }
+  void SetTriggerType(TriggerType type) { this->triggerType = type; }
 };
 
 #endif
