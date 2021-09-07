@@ -65,7 +65,7 @@ TEST_F(WhereFunctionalTest, WhereVectorSevenEightNineTest)
   std::vector<Person> people = this->queryable
     .Where([](Person p) { return p.GetName() >= "Person 7" && p.GetName() <= "Person 9"; })
     .OrderBy<std::string>([](Person p) { return p.GetName(); })
-    ->ToVector();
+    .ToVector();
 
   ASSERT_EQ(expected.size(), people.size());
   for (int i = 0; i < (int)expected.size(); i++)
