@@ -108,7 +108,7 @@ TEST_F(AtFunctionalTest, AtWhere)
   uint expected = 8;
   uint value = this->queryable
     .Where([](uint val) { return val % 2 == 0; })
-    ->At(3);
+    .At(3);
 
   ASSERT_EQ(expected, value);
 }

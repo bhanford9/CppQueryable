@@ -87,7 +87,7 @@ TEST_F(AggregateFunctionalTest, AggregateDeque)
   Queryable<Person> local = BuildQueryable(this->people.ToDeque());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string>([](std::string s, Person p)
+    .Aggregate<std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -104,7 +104,7 @@ TEST_F(AggregateFunctionalTest, AggregateList)
   Queryable<Person> local = BuildQueryable(this->people.ToList());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string>([](std::string s, Person p)
+    .Aggregate<std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -121,7 +121,7 @@ TEST_F(AggregateFunctionalTest, AggregateMultiSet)
   Queryable<Person> local = BuildQueryable(this->people.ToMultiSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string>([](std::string s, Person p)
+    .Aggregate<std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -138,7 +138,7 @@ TEST_F(AggregateFunctionalTest, AggregateSet)
   Queryable<Person> local = BuildQueryable(this->people.ToSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string>([](std::string s, Person p)
+    .Aggregate<std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -155,7 +155,7 @@ TEST_F(AggregateFunctionalTest, AggregateVector)
   Queryable<Person> local = BuildQueryable(this->people.ToVector());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string>([](std::string s, Person p)
+    .Aggregate<std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -174,7 +174,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerDeque)
   Queryable<Person> local = BuildQueryable(this->people.ToDeque());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string, std::string>(
+    .Aggregate<std::string, std::string>(
       [](std::string s, Person p)
       {
         std::string newStr = p.GetName() + " (" +
@@ -199,7 +199,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerList)
   Queryable<Person> local = BuildQueryable(this->people.ToList());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string, std::string>([](std::string s, Person p)
+    .Aggregate<std::string, std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -223,7 +223,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerMultiSet)
   Queryable<Person> local = BuildQueryable(this->people.ToMultiSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string, std::string>([](std::string s, Person p)
+    .Aggregate<std::string, std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -247,7 +247,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerSet)
   Queryable<Person> local = BuildQueryable(this->people.ToSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string, std::string>([](std::string s, Person p)
+    .Aggregate<std::string, std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +
@@ -271,7 +271,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerVector)
   Queryable<Person> local = BuildQueryable(this->people.ToVector());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
-    ->Aggregate<std::string, std::string>([](std::string s, Person p)
+    .Aggregate<std::string, std::string>([](std::string s, Person p)
     {
       std::string newStr = p.GetName() + " (" +
         (p.IsMale() ? "Male" : "Female") +

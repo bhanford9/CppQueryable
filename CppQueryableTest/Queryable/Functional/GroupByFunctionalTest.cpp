@@ -56,19 +56,18 @@ protected:
 
 TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableDeque()
-    ->GroupBy<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableDeque()
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
 
     if (group.GetKey() == Gender::Male)
@@ -97,19 +96,18 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableList()
-    ->GroupBy<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableList()
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -137,8 +135,8 @@ TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableMultiSet()
-    ->GroupBy<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableMultiSet()
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males.Sort();
@@ -146,12 +144,11 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females.Sort();
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -179,21 +176,20 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableSet()
-    ->GroupBy<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableSet()
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  males = *males.ToQueryableSet();
+  males = males.ToQueryableSet();
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
-  females = *females.ToQueryableSet();
+  females = females.ToQueryableSet();
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -221,19 +217,18 @@ TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people
+  Queryable<TGenderPerson> & genderGroups = this->people
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -262,7 +257,7 @@ TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 {
   typedef IGroup<Gender, Person, std::function<bool(Gender,Gender)>, std::function<bool(Person,Person)>> TGroupBy;
-  Queryable<TGroupBy> * genderGroups = this->people
+  Queryable<TGroupBy> & genderGroups = this->people
     .GroupBy<Gender, Person, std::function<bool(Gender,Gender)>, std::function<bool(Person,Person)>>(
         [](Person p) { return p.GetGender(); },
         QueryableType::Vector,
@@ -274,13 +269,12 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
+  ASSERT_EQ(2, genderGroups.Count());
   // order of keys are swapped
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Female);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGroupBy group)
+  genderGroups.ForEach([&](TGroupBy group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -309,14 +303,13 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 {
   typedef IGroup<void*, Person> TVoidGroup;
-  Queryable<TVoidGroup> * voidGroups = this->people
+  Queryable<TVoidGroup> & voidGroups = this->people
     .GroupBy<void*>([](Person p) { return (void*)NULL; });
 
-  ASSERT_TRUE(voidGroups != NULL);
-  ASSERT_EQ(1, voidGroups->Count());
-  ASSERT_TRUE(voidGroups->At(0).GetKey() == NULL);
+  ASSERT_EQ(1, voidGroups.Count());
+  ASSERT_TRUE(voidGroups.At(0).GetKey() == NULL);
 
-  voidGroups->ForEach([&](TVoidGroup group)
+  voidGroups.ForEach([&](TVoidGroup group)
   {
     ASSERT_EQ(this->people.Count(), group.Count());
 
@@ -330,8 +323,8 @@ TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 
 TEST_F(GroupByFunctionalTest, DequeToListStorageTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableDeque()
-    ->GroupBy<Gender>(
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableDeque()
+    .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::List);
   Queryable<Person> males = this->people
@@ -339,12 +332,11 @@ TEST_F(GroupByFunctionalTest, DequeToListStorageTest)
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
 
     if (group.GetKey() == Gender::Male)
@@ -373,8 +365,8 @@ TEST_F(GroupByFunctionalTest, DequeToListStorageTest)
 
 TEST_F(GroupByFunctionalTest, DequeToMultiSetStorageTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableDeque()
-    ->GroupBy<Gender>(
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableDeque()
+    .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::MultiSet);
   Queryable<Person> males = this->people
@@ -384,12 +376,11 @@ TEST_F(GroupByFunctionalTest, DequeToMultiSetStorageTest)
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females.Sort();
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
 
     if (group.GetKey() == Gender::Male)
@@ -418,23 +409,22 @@ TEST_F(GroupByFunctionalTest, DequeToMultiSetStorageTest)
 
 TEST_F(GroupByFunctionalTest, DequeToSetStorageTest)
 {
-  Queryable<TGenderPerson> * genderGroups = this->people.ToQueryableDeque()
-    ->GroupBy<Gender>(
+  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableDeque()
+    .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::Set);
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  males = *males.ToQueryableSet();
+  males = males.ToQueryableSet();
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
-  females = *females.ToQueryableSet();
+  females = females.ToQueryableSet();
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Female);
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGenderPerson group)
+  genderGroups.ForEach([&](TGenderPerson group)
   {
 
     if (group.GetKey() == Gender::Male)
@@ -464,7 +454,7 @@ TEST_F(GroupByFunctionalTest, DequeToSetStorageTest)
 TEST_F(GroupByFunctionalTest, CustomDataCompareTest)
 {
   typedef IGroup<Gender, Person, std::function<bool(Gender,Gender)>, std::function<bool(Person,Person)>> TGroupBy;
-  Queryable<TGroupBy> * genderGroups = this->people
+  Queryable<TGroupBy> & genderGroups = this->people
     .GroupBy<Gender, Person, std::function<bool(Gender,Gender)>, std::function<bool(Person,Person)>>(
         [](Person p) { return p.GetGender(); },
         QueryableType::MultiSet,
@@ -478,13 +468,12 @@ TEST_F(GroupByFunctionalTest, CustomDataCompareTest)
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   males.OrderBy<double>([](Person p) { return p.GetAge(); });
 
-  ASSERT_TRUE(genderGroups != NULL);
-  ASSERT_EQ(2, genderGroups->Count());
+  ASSERT_EQ(2, genderGroups.Count());
   // order of keys are swapped
-  ASSERT_TRUE(genderGroups->At(1).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups->At(0).GetKey() == Gender::Female);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Female);
 
-  genderGroups->ForEach([&](TGroupBy group)
+  genderGroups.ForEach([&](TGroupBy group)
   {
     if (group.GetKey() == Gender::Male)
     {
@@ -519,33 +508,32 @@ TEST_F(GroupByFunctionalTest, GroupByWhereTest)
   typedef IGroup<double, Person> TAgePerson;
   Queryable<TAgePerson> ageGroupsOverThirty = this->people
     .GroupBy<double>([](Person p) { return p.GetAge(); })
-    ->WhereCopy([](TAgePerson group) { return group.GetKey() > 30; });
+    .WhereCopy([](TAgePerson group) { return group.GetKey() > 30; });
 
   Queryable<Person> people2 = BuildQueryable(this->people.ToVector());
-  Queryable<TAgePerson> * overThirtyAgeGroups = people2
+  Queryable<TAgePerson> & overThirtyAgeGroups = people2
     .Where([](Person person) { return person.GetAge() > 30; })
-    ->GroupBy<double>([](Person p) { return p.GetAge(); });
+    .GroupBy<double>([](Person p) { return p.GetAge(); });
 
   // ASSERT_TRUE(ageGroupsOverThirty != NULL);
-  ASSERT_TRUE(overThirtyAgeGroups != NULL);
   ASSERT_EQ(3, ageGroupsOverThirty.Count());
-  ASSERT_EQ(3, overThirtyAgeGroups->Count());
+  ASSERT_EQ(3, overThirtyAgeGroups.Count());
   ASSERT_TRUE(ageGroupsOverThirty.At(0).GetKey() == 51);
   ASSERT_TRUE(ageGroupsOverThirty.At(1).GetKey() == 52);
   ASSERT_TRUE(ageGroupsOverThirty.At(2).GetKey() == 61);
-  ASSERT_TRUE(overThirtyAgeGroups->At(0).GetKey() == 51);
-  ASSERT_TRUE(overThirtyAgeGroups->At(1).GetKey() == 52);
-  ASSERT_TRUE(overThirtyAgeGroups->At(2).GetKey() == 61);
+  ASSERT_TRUE(overThirtyAgeGroups.At(0).GetKey() == 51);
+  ASSERT_TRUE(overThirtyAgeGroups.At(1).GetKey() == 52);
+  ASSERT_TRUE(overThirtyAgeGroups.At(2).GetKey() == 61);
 
   int iGroup = 0;
   ageGroupsOverThirty.ForEach([&](TAgePerson group)
   {
-    ASSERT_TRUE(group.Count() == overThirtyAgeGroups->At(iGroup).Count());
+    ASSERT_TRUE(group.Count() == overThirtyAgeGroups.At(iGroup).Count());
 
     int iPerson = 0;
     for (Person person : group)
     {
-      ASSERT_TRUE(person == overThirtyAgeGroups->At(iGroup).ToVector()[iPerson++]);
+      ASSERT_TRUE(person == overThirtyAgeGroups.At(iGroup).ToVector()[iPerson++]);
     }
 
     iGroup++;

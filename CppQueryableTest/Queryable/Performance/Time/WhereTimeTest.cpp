@@ -82,7 +82,7 @@ TEST_P(WhereTimeTest, VectorWhereMaxNaiveTest)
 
   std::function<void(Queryable<uint>*)> queryableAction = [&](Queryable<uint>* q)
   {
-    uint max = q->Where([](uint value) { return (value % 2) == 0; })->Max();
+    uint max = q->Where([](uint value) { return (value % 2) == 0; }).Max();
     ASSERT_EQ(expected, max);
   };
 

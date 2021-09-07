@@ -145,7 +145,7 @@ TEST_F(FirstFunctionalTest, FirstWhereEven)
   uint expected = 4;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->First();
+    .First();
   ASSERT_EQ(expected, value);
 }
 
@@ -154,7 +154,7 @@ TEST_F(FirstFunctionalTest, FirstWhereOdd)
   uint expected = expectedUnorderedFirst;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 1; })
-    ->First();
+    .First();
   ASSERT_EQ(expected, value);
 }
 
@@ -163,7 +163,7 @@ TEST_F(FirstFunctionalTest, FirstWhereWhereEven)
   uint expected = 76;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->First([](uint value) { return value > 10; });
+    .First([](uint value) { return value > 10; });
   ASSERT_EQ(expected, value);
 }
 
@@ -172,6 +172,6 @@ TEST_F(FirstFunctionalTest, FirstWhereWhereOdd)
   uint expected = 45;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 1; })
-    ->First([](uint value) { return value > 10; });
+    .First([](uint value) { return value > 10; });
   ASSERT_EQ(expected, value);
 }

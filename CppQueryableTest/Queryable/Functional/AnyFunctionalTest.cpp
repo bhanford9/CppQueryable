@@ -112,7 +112,7 @@ TEST_F(AnyFunctionalTest, AnyWhereFalse)
 {
   bool any = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Any([](uint value) { return value < 10; });
+    .Any([](uint value) { return value < 10; });
   ASSERT_FALSE(any);
 }
 
@@ -120,6 +120,6 @@ TEST_F(AnyFunctionalTest, AnyWhereTrue)
 {
   bool any = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Any([](uint value) { return value % 2 == 0; });
+    .Any([](uint value) { return value % 2 == 0; });
   ASSERT_TRUE(any);
 }

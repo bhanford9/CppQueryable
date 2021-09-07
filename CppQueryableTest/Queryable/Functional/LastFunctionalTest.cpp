@@ -145,7 +145,7 @@ TEST_F(LastFunctionalTest, LastWhereEven)
   uint expected = expectedOrderedUnder40;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->Last();
+    .Last();
   ASSERT_EQ(expected, value);
 }
 
@@ -154,7 +154,7 @@ TEST_F(LastFunctionalTest, LastWhereOdd)
   uint expected = expectedUnorderedLast;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 1; })
-    ->Last();
+    .Last();
   ASSERT_EQ(expected, value);
 }
 
@@ -163,7 +163,7 @@ TEST_F(LastFunctionalTest, LastWhereWhereEven)
   uint expected = 76;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->Last([](uint value) { return value > 40; });
+    .Last([](uint value) { return value > 40; });
   ASSERT_EQ(expected, value);
 }
 
@@ -172,6 +172,6 @@ TEST_F(LastFunctionalTest, LastWhereWhereOdd)
   uint expected = expectedOrderedLast;
   uint value = this->queryable
     .Where([](uint value) { return value % 2 == 1; })
-    ->Last([](uint value) { return value > 40; });
+    .Last([](uint value) { return value > 40; });
   ASSERT_EQ(expected, value);
 }

@@ -156,7 +156,7 @@ TEST_F(AverageFunctionalTest, AverageWhere)
   uint expected = 185;
   uint average = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Average<uint>([](uint value) { return value; });
+    .Average<uint>([](uint value) { return value; });
   ASSERT_EQ(expected, average);
 }
 
@@ -165,6 +165,6 @@ TEST_F(AverageFunctionalTest, AverageWhereDefault)
   uint expected = 185;
   uint average = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Average();
+    .Average();
   ASSERT_EQ(expected, average);
 }

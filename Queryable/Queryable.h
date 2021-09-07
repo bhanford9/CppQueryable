@@ -257,7 +257,7 @@ public:
   }
 
   template<typename TNewAllocator = std::allocator<TObj>>
-  Queryable<TObj>* ToQueryableDeque()
+  Queryable<TObj> & ToQueryableDeque()
   {
     std::deque<TObj> copy = this->ToDeque();
 
@@ -267,11 +267,11 @@ public:
       this->items.get()->Add(item);
     }
 
-    return this;
+    return *this;
   }
 
   template<typename TNewAllocator = std::allocator<TObj>>
-  Queryable<TObj>* ToQueryableList()
+  Queryable<TObj> & ToQueryableList()
   {
     std::list<TObj> copy = this->ToList();
 
@@ -281,11 +281,11 @@ public:
       this->items.get()->Add(item);
     }
 
-    return this;
+    return *this;
   }
 
   template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
-  Queryable<TObj>* ToQueryableMultiSet()
+  Queryable<TObj> & ToQueryableMultiSet()
   {
     std::multiset<TObj> copy = this->ToMultiSet();
 
@@ -295,11 +295,11 @@ public:
       this->items.get()->Add(item);
     }
 
-    return this;
+    return *this;
   }
 
   template<typename TNewCompare = std::less<TObj>, typename TNewAllocator = std::allocator<TObj>>
-  Queryable<TObj>* ToQueryableSet()
+  Queryable<TObj> & ToQueryableSet()
   {
     std::set<TObj> copy = this->ToSet();
 
@@ -309,11 +309,11 @@ public:
       this->items.get()->Add(item);
     }
 
-    return this;
+    return *this;
   }
 
   template<typename TNewAllocator = std::allocator<TObj>>
-  Queryable<TObj>* ToQueryableVector()
+  Queryable<TObj> & ToQueryableVector()
   {
     std::vector<TObj> copy = this->ToVector();
 
@@ -323,7 +323,7 @@ public:
       this->items.get()->Add(item);
     }
 
-    return this;
+    return *this;
   }
 
   bool IsEmpty()
@@ -386,10 +386,10 @@ public:
     }
   }
 
-  Queryable<TObj> * Where(std::function<bool(const TObj &)> condition)
+  Queryable<TObj> & Where(std::function<bool(const TObj &)> condition)
   {
     this->items.get()->AddCondition(condition);
-    return this;
+    return *this;
   }
 
   Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
@@ -1030,7 +1030,7 @@ public:
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   2.1. the default comparator for [multi]sets is the type's less than comparison operator
   //   3. all other types use their built in optimized sorting algorithms
-  Queryable<TObj>* Sort(
+  Queryable<TObj> & Sort(
     std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
     switch (this->type)
@@ -1063,11 +1063,11 @@ public:
         break;
     }
 
-    return this;
+    return *this;
   }
 
   template<typename T = TObj>
-  Queryable<TObj>* OrderBy(
+  Queryable<TObj> & OrderBy(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; })
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
@@ -1075,7 +1075,7 @@ public:
   }
 
   template<typename T = TObj>
-  Queryable<TObj>* OrderByDescending(
+  Queryable<TObj> & OrderByDescending(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; })
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
@@ -1186,7 +1186,7 @@ public:
     typename TJoinOn,
     typename TResult,
     typename TResultCompare = std::less<TResult>>
-  Queryable<TResult, TResultCompare> * Join(
+  Queryable<TResult, TResultCompare> & Join(
     Queryable<TJoinObj> * collection,
     std::function<TJoinOn(TObj)> getLocalJoinOn,
     std::function<TJoinOn(TJoinObj)> getInputJoinOn,
@@ -1204,7 +1204,7 @@ public:
 
     if (!collection)
     {
-      return result.get();
+      return *result.get();
     }
 
     // Sort each collection on passed in key getters                             ( + time complexity: nlog(n) )
@@ -1213,7 +1213,7 @@ public:
     // Change inner collection to vector to gaurantee constant time indexing     ( - requires extra space )
     //   may want to only do this if collection type does not have constant time indexing
     this->OrderBy(getLocalJoinOn);
-    std::vector<TJoinObj> inputSorted = collection->OrderBy(getInputJoinOn)->ToVector();
+    std::vector<TJoinObj> inputSorted = collection->OrderBy(getInputJoinOn).ToVector();
     int inputSize = inputSorted.size();
 
     if (inputSize > 0)
@@ -1258,7 +1258,7 @@ public:
       }
     }
 
-    return result.get();
+    return *result.get();
   }
 
   template<typename TOut>
@@ -1284,7 +1284,7 @@ public:
     typename TData = TObj,
     typename TKeyCompare = std::less<TKey>,
     typename TDataCompare = std::less<TData>>
-  Queryable<IGroup<TKey, TObj, TKeyCompare, TDataCompare>> * GroupBy(
+  Queryable<IGroup<TKey, TObj, TKeyCompare, TDataCompare>> & GroupBy(
     std::function<TKey(TObj)> getKey,
     QueryableType storageType = QueryableType::Default,
     TDataCompare dataCompare = TDataCompare(),
@@ -1350,6 +1350,7 @@ public:
         }
         break;
       case QueryableType::Vector:
+      default:
         {
           std::shared_ptr<TReturnVector> data = std::make_shared<TReturnVector>(type);
           this->persistentContainer.Set(data);
@@ -1359,8 +1360,6 @@ public:
             ->template Cast<TGroup>();
         }
         break;
-      default:
-        return NULL;
     }
 
     for (TObj item : *this->items.get())

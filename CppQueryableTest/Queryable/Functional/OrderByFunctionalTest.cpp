@@ -38,9 +38,8 @@ protected:
 TEST_F(OrderByFunctionalTest, OrderByUninitialized)
 {
   Queryable<Person> emptyQueryable;
-  Queryable<Person> * result = emptyQueryable.OrderBy();
-
-  ASSERT_FALSE(result == NULL);
+  Queryable<Person> & result = emptyQueryable.OrderBy();
+  result.ToList();
 }
 
 TEST_F(OrderByFunctionalTest, DequeDefault)
@@ -256,7 +255,7 @@ TEST_F(OrderByFunctionalTest, WhereOrderBy)
 
   local
     .Where([](uint value) { return (value % 2) == 0; })
-    ->OrderBy();
+    .OrderBy();
 
     ASSERT_TRUE(this->queryable.Count() > local.Count());
 

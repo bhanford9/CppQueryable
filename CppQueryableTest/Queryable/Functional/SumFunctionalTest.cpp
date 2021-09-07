@@ -139,7 +139,7 @@ TEST_F(SumFunctionalTest, SumWhere)
   uint expected = 1110;
   uint sum = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Sum<uint>([](uint value) { return value; });
+    .Sum<uint>([](uint value) { return value; });
   ASSERT_EQ(expected, sum);
 }
 
@@ -148,6 +148,6 @@ TEST_F(SumFunctionalTest, SumWhereDefault)
   uint expected = 1110;
   uint sum = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Sum();
+    .Sum();
   ASSERT_EQ(expected, sum);
 }

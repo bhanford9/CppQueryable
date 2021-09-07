@@ -73,7 +73,7 @@ TEST_F(CountFunctionalTest, CountWhere)
   int expected = 7;
   int count = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->Count();
+    .Count();
 
   ASSERT_EQ(expected, count);
 }

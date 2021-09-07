@@ -77,7 +77,7 @@ TEST_F(CountIfFunctionalTest, CountIfWhere)
 {
   int count = this->queryable
     .Where([](uint value) { return value % 2 == 0; })
-    ->CountIf([] (uint value) { return true; });
+    .CountIf([] (uint value) { return true; });
 
   ASSERT_EQ(expectedEvensWithDuplicates, count);
 }

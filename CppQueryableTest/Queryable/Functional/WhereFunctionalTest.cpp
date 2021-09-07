@@ -46,7 +46,7 @@ TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 
   std::vector<int> values = localQueryable
     .Where([](int x) { return (x % 2) == 0; })
-    ->ToVector();
+    .ToVector();
 
   ASSERT_EQ(expected.size(), values.size());
   for (int i = 0; i < (int)expected.size(); i++)
@@ -64,7 +64,7 @@ TEST_F(WhereFunctionalTest, WhereVectorSevenEightNineTest)
 
   std::vector<Person> people = this->queryable
     .Where([](Person p) { return p.GetName() >= "Person 7" && p.GetName() <= "Person 9"; })
-    ->OrderBy<std::string>([](Person p) { return p.GetName(); })
+    .OrderBy<std::string>([](Person p) { return p.GetName(); })
     ->ToVector();
 
   ASSERT_EQ(expected.size(), people.size());
@@ -76,7 +76,7 @@ TEST_F(WhereFunctionalTest, WhereVectorFemale)
 {
   std::vector<Person> people = this->queryable
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    ->ToVector();
+    .ToVector();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);
@@ -86,7 +86,7 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
 {
   std::set<Person> people = Queryable<Person>(this->queryable.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    ->ToSet();
+    .ToSet();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);
@@ -96,7 +96,7 @@ TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
   std::multiset<Person> people = Queryable<Person>(this->queryable.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    ->ToMultiSet();
+    .ToMultiSet();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);
@@ -106,7 +106,7 @@ TEST_F(WhereFunctionalTest, WhereDequeFemale)
 {
   std::deque<Person> people = Queryable<Person>(this->queryable.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    ->ToDeque();
+    .ToDeque();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);
@@ -116,7 +116,7 @@ TEST_F(WhereFunctionalTest, WhereListFemale)
 {
   std::list<Person> people = Queryable<Person>(this->queryable.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
-    ->ToList();
+    .ToList();
 
   for (Person p : people)
     ASSERT_TRUE(p.GetGender() == Gender::Female);

@@ -131,7 +131,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileWhere)
   Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   Queryable<uint> * result = queryableVector
     .Where([](uint value) { return value % 2 == 0; })
-    ->TakeWhile([](uint value) { return value < 8; });
+    .TakeWhile([](uint value) { return value < 8; });
 
   ASSERT_EQ(expectedCount, result->Count());
   result->ForEach([&](uint value) { ASSERT_EQ(takeCount++ * 2, value); });

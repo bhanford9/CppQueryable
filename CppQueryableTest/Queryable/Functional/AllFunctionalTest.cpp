@@ -112,7 +112,7 @@ TEST_F(AllFunctionalTest, AllWhereFalse)
 {
   bool all = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->All([](uint value) { return value < 20; });
+    .All([](uint value) { return value < 20; });
   ASSERT_FALSE(all);
 }
 
@@ -120,6 +120,6 @@ TEST_F(AllFunctionalTest, AllWhereTrue)
 {
   bool all = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->All([](uint value) { return value < 2000; });
+    .All([](uint value) { return value < 2000; });
   ASSERT_TRUE(all);
 }

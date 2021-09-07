@@ -141,13 +141,13 @@ TEST_F(RangeFunctionalTest, RangeWhere)
   uint expected = 855;
   uint range = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Range<uint>([](uint value) { return value; });
+    .Range<uint>([](uint value) { return value; });
   ASSERT_EQ(expected, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeWhereDefault)
 {
   uint expected = 855;
-  uint range = this->queryable.Where([](uint value) { return value > 10; })->Range();
+  uint range = this->queryable.Where([](uint value) { return value > 10; }).Range();
   ASSERT_EQ(expected, range);
 }

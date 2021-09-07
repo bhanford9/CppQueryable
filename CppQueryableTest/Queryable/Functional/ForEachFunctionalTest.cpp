@@ -102,7 +102,7 @@ TEST_F(ForEachFunctionalTest, ForEachWhere)
   int count = 0;
   queryableVector
     .Where([](uint value) { return value % 2 == 0; })
-    ->ForEach([&](uint value) { ASSERT_EQ(count++ * 2, value); });
+    .ForEach([&](uint value) { ASSERT_EQ(count++ * 2, value); });
 
   ASSERT_EQ(expectedCount, count);
 }

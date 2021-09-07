@@ -316,7 +316,7 @@ TEST_F(MinFunctionalTest, MinWhere)
   uint expected = 12;
   uint min = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Min<uint>([](uint value) { return value; });
+    .Min<uint>([](uint value) { return value; });
   ASSERT_EQ(expected, min);
 }
 
@@ -325,6 +325,6 @@ TEST_F(MinFunctionalTest, MinWhereDefault)
   uint expected = 12;
   uint min = this->queryable
     .Where([](uint value) { return value > 10; })
-    ->Min();
+    .Min();
   ASSERT_EQ(expected, min);
 }

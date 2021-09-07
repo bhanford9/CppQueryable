@@ -294,7 +294,7 @@ TEST_F(ExceptFunctionalTest, ExceptWhere)
   Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
   Queryable<uint> * result = local
     .Where([](uint value) { return value > 10; })
-    ->Except(evens);
+    .Except(evens);
 
   ASSERT_TRUE(result != NULL);
   ASSERT_TRUE(result->GetType() == QueryableType::Deque);
@@ -307,12 +307,11 @@ TEST_F(ExceptFunctionalTest, WhereExcept)
   int oddsUnderTen = 3;
   Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
   Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> * result = local
+  Queryable<uint> & result = local
     .Except(evens)
     ->Where([](uint value) { return value < 10; });
 
-  ASSERT_TRUE(result != NULL);
-  ASSERT_TRUE(result->GetType() == QueryableType::Deque);
-  ASSERT_EQ(oddsUnderTen, result->Count());
-  result->ForEach([](int value) { ASSERT_TRUE(value < 10); });
+  ASSERT_TRUE(result.GetType() == QueryableType::Deque);
+  ASSERT_EQ(oddsUnderTen, result.Count());
+  result.ForEach([](int value) { ASSERT_TRUE(value < 10); });
 }

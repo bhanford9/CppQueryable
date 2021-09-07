@@ -618,7 +618,7 @@ TEST_F(EqualFunctionalTest, EqualWhereEven)
 {
   bool areEqual = this->queryableInts
     .Where([](int value) { return value % 2 == 0; })
-    ->Equal(std::vector<int>({ 4, 4, 4 }));
+    .Equal(std::vector<int>({ 4, 4, 4 }));
 
   ASSERT_TRUE(areEqual);
 }
@@ -627,7 +627,7 @@ TEST_F(EqualFunctionalTest, EqualWhereOdd)
 {
   bool areEqual = this->queryableInts
     .Where([](int value) { return value % 2 == 1; })
-    ->Equal(std::vector<int>({ 7, 7 }));
+    .Equal(std::vector<int>({ 7, 7 }));
 
   ASSERT_TRUE(areEqual);
 }

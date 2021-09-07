@@ -38,9 +38,8 @@ protected:
 TEST_F(SortFunctionalTest, SortUninitialized)
 {
   Queryable<Person> emptyQueryable;
-  Queryable<Person> * result = emptyQueryable.Sort();
-
-  ASSERT_FALSE(result == NULL);
+  Queryable<Person> & result = emptyQueryable.Sort();
+  result.ToList();
 }
 
 TEST_F(SortFunctionalTest, DequeDefault)
@@ -256,7 +255,7 @@ TEST_F(SortFunctionalTest, WhereSort)
 
   local
     .Where([](uint value) { return (value % 2) == 0; })
-    ->Sort();
+    .Sort();
 
     ASSERT_TRUE(this->queryable.Count() > local.Count());
 

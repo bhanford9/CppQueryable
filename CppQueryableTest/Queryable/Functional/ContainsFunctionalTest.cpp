@@ -52,46 +52,46 @@ TEST_F(ContainsFunctionalTest, ContainsObjectCompare)
 TEST_F(ContainsFunctionalTest, DequeContains)
 {
   int count = this->queryable.Count();
-  Queryable<uint>* local = this->queryable.ToQueryableDeque();
-  ASSERT_EQ(count, local->Count());
-  ASSERT_TRUE(local->Contains(76));
-  ASSERT_FALSE(local->Contains(99));
+  Queryable<uint> & local = this->queryable.ToQueryableDeque();
+  ASSERT_EQ(count, local.Count());
+  ASSERT_TRUE(local.Contains(76));
+  ASSERT_FALSE(local.Contains(99));
 }
 
 TEST_F(ContainsFunctionalTest, ListContains)
 {
   int count = this->queryable.Count();
-  Queryable<uint>* local = this->queryable.ToQueryableList();
-  ASSERT_EQ(count, local->Count());
-  ASSERT_TRUE(local->Contains(76));
-  ASSERT_FALSE(local->Contains(99));
+  Queryable<uint> & local = this->queryable.ToQueryableList();
+  ASSERT_EQ(count, local.Count());
+  ASSERT_TRUE(local.Contains(76));
+  ASSERT_FALSE(local.Contains(99));
 }
 
 TEST_F(ContainsFunctionalTest, MultiSetContains)
 {
   int count = this->queryable.Count();
-  Queryable<uint>* local = this->queryable.ToQueryableMultiSet();
-  ASSERT_EQ(count, local->Count());
-  ASSERT_TRUE(local->Contains(76));
-  ASSERT_FALSE(local->Contains(99));
+  Queryable<uint> & local = this->queryable.ToQueryableMultiSet();
+  ASSERT_EQ(count, local.Count());
+  ASSERT_TRUE(local.Contains(76));
+  ASSERT_FALSE(local.Contains(99));
 }
 
 TEST_F(ContainsFunctionalTest, SetContains)
 {
   int count = this->queryable.Count();
-  Queryable<uint>* local = this->queryable.ToQueryableSet();
-  ASSERT_TRUE(count > local->Count());
-  ASSERT_TRUE(local->Contains(76));
-  ASSERT_FALSE(local->Contains(99));
+  Queryable<uint> & local = this->queryable.ToQueryableSet();
+  ASSERT_TRUE(count > local.Count());
+  ASSERT_TRUE(local.Contains(76));
+  ASSERT_FALSE(local.Contains(99));
 }
 
 TEST_F(ContainsFunctionalTest, VectorContains)
 {
   int count = this->queryable.Count();
-  Queryable<uint>* local = this->queryable.ToQueryableVector();
-  ASSERT_EQ(count, local->Count());
-  ASSERT_TRUE(local->Contains(76));
-  ASSERT_FALSE(local->Contains(99));
+  Queryable<uint> & local = this->queryable.ToQueryableVector();
+  ASSERT_EQ(count, local.Count());
+  ASSERT_TRUE(local.Contains(76));
+  ASSERT_FALSE(local.Contains(99));
 }
 
 TEST_F(ContainsFunctionalTest, WhereContains)

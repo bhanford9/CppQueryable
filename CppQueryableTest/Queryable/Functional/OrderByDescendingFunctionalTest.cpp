@@ -38,9 +38,8 @@ protected:
 TEST_F(OrderByDescendingFunctionalTest, OrderByDescendingUninitialized)
 {
   Queryable<Person> emptyQueryable;
-  Queryable<Person> * result = emptyQueryable.OrderByDescending();
-
-  ASSERT_FALSE(result == NULL);
+  Queryable<Person> & result = emptyQueryable.OrderByDescending();
+  result.ToList();
 }
 
 TEST_F(OrderByDescendingFunctionalTest, DequeDefault)
@@ -250,21 +249,21 @@ TEST_F(OrderByDescendingFunctionalTest, VectorClass)
   });
 }
 
-// TEST_F(OrderByDescendingFunctionalTest, WhereOrderByDescending)
-// {
-//   Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
-//
-//   local
-//     .Where([](uint value) { return (value % 2) == 0; })
-//     ->OrderByDescending();
-//
-//     ASSERT_TRUE(this->queryable.Count() > local.Count());
-//
-//     uint previous = 999999;
-//     local.ForEach([&](uint value)
-//     {
-//       ASSERT_TRUE((value % 2) == 0);
-//       ASSERT_TRUE(previous >= value);
-//       previous = value;
-//     });
-// }
+TEST_F(OrderByDescendingFunctionalTest, WhereOrderByDescending)
+{
+  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
+
+  local
+    .Where([](uint value) { return (value % 2) == 0; })
+    .OrderByDescending();
+
+    ASSERT_TRUE(this->queryable.Count() > local.Count());
+
+    uint previous = 999999;
+    local.ForEach([&](uint value)
+    {
+      ASSERT_TRUE((value % 2) == 0);
+      ASSERT_TRUE(previous >= value);
+      previous = value;
+    });
+}

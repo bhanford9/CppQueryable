@@ -317,7 +317,7 @@ TEST_F(MaxFunctionalTest, MaxWhere)
   uint expected = 8;
   uint max = this->queryable
     .Where([](uint value) { return value < 10; })
-    ->Max<uint>([](uint value) { return value; });
+    .Max<uint>([](uint value) { return value; });
   ASSERT_EQ(expected, max);
 }
 
@@ -326,6 +326,6 @@ TEST_F(MaxFunctionalTest, MaxWhereDefault)
   uint expected = 8;
   uint max = this->queryable
     .Where([](uint value) { return value < 10; })
-    ->Max();
+    .Max();
   ASSERT_EQ(expected, max);
 }
