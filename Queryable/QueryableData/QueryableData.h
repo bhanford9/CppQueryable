@@ -159,28 +159,28 @@ public:
   virtual Iterator<TObj> begin() override
   {
     this->beginIterator = this->items.begin();
-    this->beginning.SetIndex(0);
+    this->beginning.Index = 0;
     return this->beginning;
   }
 
   virtual Iterator<TObj> end() override
   {
     this->endIterator = this->items.end();
-    this->ending.SetIndex(this->size);
+    this->ending.Index = this->size;
     return this->ending;
   }
 
   virtual Iterator<TObj> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    this->rbeginning.SetIndex(0);
+    this->rbeginning.Index = 0;
     return this->rbeginning;
   }
 
   virtual Iterator<TObj> rend() override
   {
     this->rendIterator = this->items.rend();
-    this->rending.SetIndex(this->size);
+    this->rending.Index = this->size;
     return this->rending;
   }
 };

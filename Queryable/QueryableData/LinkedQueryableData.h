@@ -27,6 +27,8 @@ protected:
   IQueryableData<TOriginal> * original;
   Iterator<TOriginal> originalBeginning;
   Iterator<TOriginal> originalEnding;
+  Iterator<TOriginal> originalRBeginning;
+  Iterator<TOriginal> originalREnding;
 
   void LinkedIncrementPastCondition(Iterator<TOriginal> & iterator, uint64_t & index)
   {
@@ -35,18 +37,16 @@ protected:
       TCurrent current = this->ToCurrent(*iterator);
       while (index < this->size && this->DoSkip(current))
       {
-        iterator++;
+        ++iterator;
         current = this->ToCurrent(*iterator);
-        index = iterator.GetIndex();
-        this->beginning.SetIndex(index);
+        index = iterator.Index;
+        this->beginning.Index = index;
       }
     }
   }
 
   void LinkedInitForwardBegin()
   {
-    // this->beginning.Get = [&]() { return &this->beginIterator; };
-
     this->beginning.Increment = [&](uint64_t & index)
     {
       if (index < this->size)
@@ -56,10 +56,13 @@ protected:
 
         do
         {
-          this->originalBeginning++;
-          index = this->originalBeginning.GetIndex();
-          this->beginning.SetIndex(index);
-          value = *this->originalBeginning;
+          ++this->originalBeginning;
+          index = this->originalBeginning.Index;
+
+          if (index < this->size)
+          {
+            value = *this->originalBeginning;
+          }
         }
         while (index < this->size && this->DoSkip(value));
       }
@@ -71,21 +74,23 @@ protected:
 
       do
       {
-        this->originalBeginning.Decrement(index);
-        value = *this->originalBeginning;
+        --this->originalBeginning;
+        index = this->originalBeginning.Index;
+
+        if (index >= 0)
+        {
+          value = *this->originalBeginning;
+        }
       }
       while (index >= 0 && this->DoSkip(value));
     };
 
     this->beginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
     this->beginning.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
-    // this->beginning.Assign = [&](const Iterator<TCurrent> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
   }
 
   void LinkedInitForwardEnd()
   {
-    // this->ending.Get = [&]() { return &this->endIterator; };
-
     this->ending.Increment = [&](uint64_t & index)
     {
       // TOOD --> create this variable with passed in allocator
@@ -93,8 +98,13 @@ protected:
 
       do
       {
-        this->originalEnding.Increment(index);
-        value = *this->originalEnding;
+        ++this->originalEnding;
+        index = this->originalEnding.Index;
+
+        if (index < this->size)
+        {
+          value = *this->originalEnding;
+        }
       }
       while (index < this->size && this->DoSkip(value));
     };
@@ -105,60 +115,102 @@ protected:
 
       do
       {
-        this->originalEnding.Decrement(index);
-        value = *this->originalEnding;
+        --this->originalEnding;
+        index = this->originalEnding.Index;
+
+        if (index >= 0)
+        {
+          value = *this->originalEnding;
+        }
       }
       while (index >= 0 && this->DoSkip(value));
     };
 
     this->ending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalEnding); return this->value; };
-    this->ending.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
-    // this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
+    this->ending.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalEnding); return this->value; };
   }
-  //
-  // void InitReverseBegin()
-  // {
-  //   this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
-  //
-  //   this->rbeginning.Increment = [&](uint64_t & index)
-  //   {
-  //     ++this->rbeginIterator;
-  //     if (this->condition)
-  //       this->RIncrementPastCondition(this->rbeginIterator, index);
-  //   };
-  //   this->rbeginning.Decrement = [&](uint64_t & index)
-  //   {
-  //     --this->rbeginIterator;
-  //     if (this->condition)
-  //       this->RDecrementPastCondition(this->rbeginIterator, index);
-  //   };
-  //
-  //   this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
-  //   this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
-  //   this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
-  // }
-  //
-  // void InitReverseEnd()
-  // {
-  //   this->rending.Get = [&]() { return &this->rendIterator; };
-  //
-  //   this->rending.Increment = [&](uint64_t & index)
-  //   {
-  //     ++this->rendIterator;
-  //     if (this->condition)
-  //       this->RIncrementPastCondition(this->rendIterator, index);
-  //   };
-  //   this->rending.Decrement = [&](uint64_t & index)
-  //   {
-  //     --this->rendIterator;
-  //     if (this->condition)
-  //       this->RDecrementPastCondition(this->rendIterator, index);
-  //   };
-  //
-  //   this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
-  //   this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
-  //   this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
-  // }
+
+  void LinkedInitReverseBegin()
+  {
+    this->rbeginning.Increment = [&](uint64_t & index)
+    {
+      // TOOD --> create this variable with passed in allocator
+      TOriginal value;
+
+      do
+      {
+        ++this->originalRBeginning;
+        index = this->originalRBeginning.Index;
+
+        if (index < this->size)
+        {
+          value = *this->originalRBeginning;
+        }
+      }
+      while (index <= this->size && this->DoSkip(value));
+    };
+    this->rbeginning.Decrement = [&](uint64_t & index)
+    {
+      // TOOD --> create this variable with passed in allocator
+      TOriginal value;
+
+      do
+      {
+        --this->originalRBeginning;
+        index = this->originalRBeginning.Index;
+
+        if (index >= 0)
+        {
+          value = *this->originalRBeginning;
+        }
+      }
+      while (index >= 0 && this->DoSkip(value));
+    };
+
+    this->rbeginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalRBeginning); return this->value; };
+    this->rbeginning.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalRBeginning); return this->value; };
+  }
+
+  void LinkedInitReverseEnd()
+  {
+    this->rending.Increment = [&](uint64_t & index)
+    {
+      // TOOD --> create this variable with passed in allocator
+      TOriginal value;
+
+      do
+      {
+        ++this->originalREnding;
+        index = this->originalREnding.Index;
+
+        if (index < this->size)
+        {
+          value = *this->originalREnding;
+        }
+      }
+      while (index <= this->size && this->DoSkip(value));
+    };
+    this->rending.Decrement = [&](uint64_t & index)
+    {
+      // TOOD --> create this variable with passed in allocator
+      TOriginal value;
+
+      do
+      {
+        --this->originalREnding;
+        index = this->originalREnding.Index;
+
+        if (index >= 0)
+        {
+          value = *this->originalREnding;
+        }
+      }
+      while (index >= 0 && this->DoSkip(value));
+    };
+
+    this->rending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalREnding); return this->value; };
+    this->rending.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalREnding); return this->value; };
+  }
 
 public:
 
@@ -169,8 +221,8 @@ public:
     this->size = this->original->StorageSize();
     this->LinkedInitForwardBegin();
     this->LinkedInitForwardEnd();
-    // this->InitReverseBegin();
-    // this->InitReverseEnd();
+    this->LinkedInitReverseBegin();
+    this->LinkedInitReverseEnd();
   }
   virtual ~LinkedQueryableData() { }
 
@@ -205,8 +257,8 @@ public:
   {
     this->originalBeginning = this->original->begin();
     this->beginIterator = this->items.begin();
-    this->beginning.SetIndex(this->originalBeginning.GetIndex());
-    this->LinkedIncrementPastCondition(this->originalBeginning, this->originalBeginning.GetIndex());
+    this->beginning.Index = this->originalBeginning.Index;
+    this->LinkedIncrementPastCondition(this->originalBeginning, this->originalBeginning.Index);
 
     return this->beginning;
   }
@@ -215,22 +267,25 @@ public:
   {
     this->originalEnding = this->original->end();
     this->endIterator = this->items.end();
-    this->ending.SetIndex(this->size);
+    this->ending.Index = this->size;
     return this->ending;
   }
 
   Iterator<TCurrent> rbegin() override
   {
-    // this->rbeginIterator = this->items.rbegin();
-    // this->RIncrementPastCondition(this->rbeginIterator, this->rbeginning.GetIndex());
+    this->originalRBeginning = this->original->rbegin();
+    this->rbeginIterator = this->items.rbegin();
+    this->rbeginning.Index = this->originalRBeginning.Index;
+    this->LinkedIncrementPastCondition(this->originalRBeginning, this->originalRBeginning.Index);
 
     return this->rbeginning;
   }
 
   Iterator<TCurrent> rend() override
   {
-    // this->rendIterator = this->items.rend();
-    // this->rending.SetIndex(this->size);
+    this->originalREnding = this->original->rend();
+    this->rendIterator = this->items.rend();
+    this->rending.Index = this->size;
     return this->rending;
   }
 };

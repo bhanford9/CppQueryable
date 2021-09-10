@@ -10,7 +10,6 @@ template <typename T>
 class Iterator
 {
 private:
-  uint64_t index = 0;
 
 public:
 
@@ -20,7 +19,7 @@ public:
   typedef T* pointer;
   typedef T& reference;
 
-  Iterator() {}
+  Iterator() : Index(0) {}
 
   std::function<void*()> Get;
   std::function<void(uint64_t & index)> Increment;
@@ -29,33 +28,31 @@ public:
   std::function<const T&()> ConstDereference;
   std::function<void(const Iterator<T>&)> Assign;
 
-  uint64_t & GetIndex() { return this->index; }
-  void SetIndex(uint64_t index) { this->index = index; }
-  void IncrementIndex() { this->index++; }
-  void DecrementIndex() { this->index--; }
+  // intentionally public
+  uint64_t Index = 0;
 
   Iterator<T>& operator++()
   {
-    this->index++;
+    this->Index++;
 
-    this->Increment(this->index);
+    this->Increment(this->Index);
     return *this;
   }
 
-  Iterator<T> operator++(int)
-  {
-    this->index++;
-
-    Iterator<T> copy = *this;
-    this->Increment(this->index);
-    return copy;
-  }
+  // Iterator<T> operator++(int)
+  // {
+  //   this->Index++;
+  //
+  //   Iterator<T> copy = *this;
+  //   this->Increment(this->Index);
+  //   return copy;
+  // }
 
   Iterator<T>& operator--()
   {
-    this->index--;
+    this->Index--;
 
-    this->Decrement(this->index);
+    this->Decrement(this->Index);
     return *this;
   }
 
@@ -71,12 +68,12 @@ public:
 
   bool operator==(const Iterator<T>& comparison) const
   {
-    return this->index == comparison.index;
+    return this->Index == comparison.Index;
   }
 
   bool operator!=(const Iterator<T>& comparison) const
   {
-    return this->index != comparison.index;
+    return this->Index != comparison.Index;
   }
 
   Iterator<T>& operator=(const Iterator<T>& value)
@@ -87,7 +84,7 @@ public:
     this->Dereference = value.Dereference;
     this->ConstDereference = value.ConstDereference;
     this->Assign = value.Assign;
-    this->index = value.index;
+    this->Index = value.Index;
     this->Assign(value);
     return *this;
   }

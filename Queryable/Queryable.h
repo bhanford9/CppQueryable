@@ -22,6 +22,9 @@
 #include "QueryableData/QueryableSetData.h"
 #include "QueryableData/QueryableVectorData.h"
 #include "QueryableData/SelectQueryableData/SelectQueryableData.h"
+#include "QueryableData/SelectQueryableData/SelectQueryableVectorData.h"
+#include "QueryableData/WhereQueryableData/WhereQueryableData.h"
+#include "QueryableData/WhereQueryableData/WhereQueryableVectorData.h"
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
 
@@ -29,14 +32,14 @@ template<typename TObj, typename TCompare = std::less<TObj>>
 class Queryable
 {
 protected:
-  std::shared_ptr<IQueryableData<TObj>> items;
+  std::unique_ptr<IQueryableData<TObj>> items;
   PersistentContainer persistentContainer;
   QueryableType type;
 
-  // may want to create an enumeration for this
-  virtual bool IsLinked()
+  template<typename T, typename... Args>
+  std::unique_ptr<T> make_unique(Args&&... args)
   {
-    return false;
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
   }
 
   template<typename T, template<typename...> typename TIterable>
@@ -97,32 +100,32 @@ public:
       case QueryableType::Deque:
         {
           std::deque<TObj> localDeque;
-          this->items = std::make_shared<QueryableDequeData<TObj>>(localDeque);
+          this->items = make_unique<QueryableDequeData<TObj>>(localDeque);
         }
         break;
       case QueryableType::List:
         {
           std::list<TObj> localList;
-          this->items = std::make_shared<QueryableListData<TObj>>(localList);
+          this->items = make_unique<QueryableListData<TObj>>(localList);
         }
         break;
       case QueryableType::MultiSet:
         {
           std::multiset<TObj, TCompare> localMultiSet(compare);
-          this->items = std::make_shared<QueryableMultiSetData<TObj, TCompare>>(localMultiSet);
+          this->items = make_unique<QueryableMultiSetData<TObj, TCompare>>(localMultiSet);
         }
         break;
       case QueryableType::Set:
         {
           std::set<TObj, TCompare> localSet(compare);
-          this->items = std::make_shared<QueryableSetData<TObj, TCompare>>(localSet);
+          this->items = make_unique<QueryableSetData<TObj, TCompare>>(localSet);
         }
         break;
       case QueryableType::Vector:
       default:
         {
           std::vector<TObj> localVector;
-          this->items = std::make_shared<QueryableVectorData<TObj>>(localVector);
+          this->items = make_unique<QueryableVectorData<TObj>>(localVector);
         }
         break;
     }
@@ -145,31 +148,31 @@ public:
   Queryable(const std::deque<TObj>& deque)
   {
     this->type = QueryableType::Deque;
-    this->items = std::make_shared<QueryableDequeData<TObj>>(deque);
+    this->items = make_unique<QueryableDequeData<TObj>>(deque);
   }
 
   Queryable(const std::list<TObj>& list)
   {
     this->type = QueryableType::List;
-    this->items = std::make_shared<QueryableListData<TObj>>(list);
+    this->items = make_unique<QueryableListData<TObj>>(list);
   }
 
   Queryable(const std::multiset<TObj>& multiset)
   {
     this->type = QueryableType::MultiSet;
-    this->items = std::make_shared<QueryableMultiSetData<TObj>>(multiset);
+    this->items = make_unique<QueryableMultiSetData<TObj>>(multiset);
   }
 
   Queryable(const std::set<TObj>& set)
   {
     this->type = QueryableType::Set;
-    this->items = std::make_shared<QueryableSetData<TObj>>(set);
+    this->items = make_unique<QueryableSetData<TObj>>(set);
   }
 
   Queryable(const std::vector<TObj>& vector)
   {
     this->type = QueryableType::Vector;
-    this->items = std::make_shared<QueryableVectorData<TObj>>(vector);
+    this->items = make_unique<QueryableVectorData<TObj>>(vector);
   }
   // END CONSTRUCTORS
 
@@ -261,7 +264,7 @@ public:
   {
     std::deque<TObj> copy = this->ToDeque();
 
-    this->items = std::make_shared<QueryableDequeData<TObj, TNewAllocator>>();
+    this->items = make_unique<QueryableDequeData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -275,7 +278,7 @@ public:
   {
     std::list<TObj> copy = this->ToList();
 
-    this->items = std::make_shared<QueryableListData<TObj, TNewAllocator>>();
+    this->items = make_unique<QueryableListData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -289,7 +292,7 @@ public:
   {
     std::multiset<TObj> copy = this->ToMultiSet();
 
-    this->items = std::make_shared<QueryableMultiSetData<TObj, TNewCompare, TNewAllocator>>();
+    this->items = make_unique<QueryableMultiSetData<TObj, TNewCompare, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -303,7 +306,7 @@ public:
   {
     std::set<TObj> copy = this->ToSet();
 
-    this->items = std::make_shared<QueryableSetData<TObj, TNewCompare, TNewAllocator>>();
+    this->items = make_unique<QueryableSetData<TObj, TNewCompare, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -317,7 +320,7 @@ public:
   {
     std::vector<TObj> copy = this->ToVector();
 
-    this->items = std::make_shared<QueryableVectorData<TObj, TNewAllocator>>();
+    this->items = make_unique<QueryableVectorData<TObj, TNewAllocator>>();
     for (TObj item : copy)
     {
       this->items.get()->Add(item);
@@ -388,7 +391,24 @@ public:
 
   Queryable<TObj> & Where(std::function<bool(const TObj &)> condition)
   {
-    this->items.get()->AddCondition(condition);
+    std::cout << "in where" << std::endl;
+    std::unique_ptr<WhereQueryableVectorData<TObj>> whereData =
+    make_unique<WhereQueryableVectorData<TObj>>(this->items.get(), condition);
+
+    std::cout << "created where data" << std::endl;
+
+    // std::unique_ptr<IQueryableData<TObj>> temp = std::move(this->items);
+    //
+    // std::cout << "moved items to temp" << std::endl;
+
+
+    this->items = std::move(whereData);
+
+    std::cout << "moved where data to items" << std::endl;
+
+    for (TObj value : *this->items.get())
+      std::cout << "inner value: " << value << std::endl;
+    // this->items.get()->AddCondition(condition);
     return *this;
   }
 
@@ -997,7 +1017,7 @@ public:
       returnType = this->type;
     }
 
-    std::shared_ptr<Queryable<T>> data = std::make_shared<Queryable<T>>(returnType);
+    std::shared_ptr<Queryable<T>> data = make_unique<Queryable<T>>(returnType);
     this->persistentContainer.Set(data);
     std::shared_ptr<Queryable<T>> selected = this->persistentContainer.GetAs<Queryable<T>>();
 
@@ -1038,7 +1058,7 @@ public:
       case QueryableType::Set:
         {
           std::vector<TObj> copy = this->ToVector();
-          this->items = std::make_shared<QueryableSetData<TObj, decltype(comparator)>>(comparator);
+          this->items = make_unique<QueryableSetData<TObj, decltype(comparator)>>(comparator);
           for (TObj item : copy)
           {
             this->items.get()->Add(item);
@@ -1048,7 +1068,7 @@ public:
       case QueryableType::MultiSet:
         {
           std::vector<TObj> copy = this->ToVector();
-          this->items = std::make_shared<QueryableMultiSetData<TObj, decltype(comparator)>>(comparator);
+          this->items = make_unique<QueryableMultiSetData<TObj, decltype(comparator)>>(comparator);
           for (TObj item : copy)
           {
             this->items.get()->Add(item);
@@ -1198,7 +1218,7 @@ public:
     typedef Queryable<TResult, TResultCompare> TReturn;
 
     QueryableType type = returnType == QueryableType::Default ? this->type : returnType;
-    std::shared_ptr<TReturn> data = std::make_shared<TReturn>(type, outCompare);
+    std::shared_ptr<TReturn> data = make_unique<TReturn>(type, outCompare);
     this->persistentContainer.Set(data);
     std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
 
@@ -1266,7 +1286,7 @@ public:
   {
     // TODO --> make this a deferred action
     typedef Queryable<TOut> TReturn;
-    std::shared_ptr<TReturn> data = std::make_shared<TReturn>(this->type);
+    std::shared_ptr<TReturn> data = make_unique<TReturn>(this->type);
     this->persistentContainer.Set(data);
     std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
 
@@ -1311,7 +1331,7 @@ public:
     switch (type) {
       case QueryableType::Deque:
         {
-          std::shared_ptr<TReturnDeque> data = std::make_shared<TReturnDeque>(type);
+          std::shared_ptr<TReturnDeque> data = make_unique<TReturnDeque>(type);
           this->persistentContainer.Set(data);
           queryableGroups = this->persistentContainer
             .GetAs<TReturnDeque>()
@@ -1321,7 +1341,7 @@ public:
         break;
       case QueryableType::List:
         {
-          std::shared_ptr<TReturnList> data = std::make_shared<TReturnList>(type);
+          std::shared_ptr<TReturnList> data = make_unique<TReturnList>(type);
           this->persistentContainer.Set(data);
           queryableGroups = this->persistentContainer
             .GetAs<TReturnList>()
@@ -1331,7 +1351,7 @@ public:
         break;
       case QueryableType::MultiSet:
         {
-          std::shared_ptr<TReturnMultiSet> data = std::make_shared<TReturnMultiSet>(type);
+          std::shared_ptr<TReturnMultiSet> data = make_unique<TReturnMultiSet>(type);
           this->persistentContainer.Set(data);
           queryableGroups = this->persistentContainer
             .GetAs<TReturnMultiSet>()
@@ -1341,7 +1361,7 @@ public:
         break;
       case QueryableType::Set:
         {
-          std::shared_ptr<TReturnSet> data = std::make_shared<TReturnSet>(type);
+          std::shared_ptr<TReturnSet> data = make_unique<TReturnSet>(type);
           this->persistentContainer.Set(data);
           queryableGroups = this->persistentContainer
             .GetAs<TReturnSet>()
@@ -1352,7 +1372,7 @@ public:
       case QueryableType::Vector:
       default:
         {
-          std::shared_ptr<TReturnVector> data = std::make_shared<TReturnVector>(type);
+          std::shared_ptr<TReturnVector> data = make_unique<TReturnVector>(type);
           this->persistentContainer.Set(data);
           queryableGroups = this->persistentContainer
             .GetAs<TReturnVector>()
