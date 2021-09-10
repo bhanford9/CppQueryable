@@ -44,26 +44,6 @@ public:
     this->size = this->items.size();
   }
 
-  int Count() override
-  {
-    return this->items.size();
-  }
-
-  void RemoveLast() override
-  {
-    if (this->Count() > 0)
-    {
-      this->items.erase(--this->items.end());
-    }
-
-    this->size = this->items.size();
-  }
-
-  void RemoveFirst() override
-  {
-
-  }
-
   void Sort(std::function<bool(T, T)> compare) override
   {
     // already sorted

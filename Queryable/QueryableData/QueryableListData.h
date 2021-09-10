@@ -28,22 +28,6 @@ public:
     this->size++;
   }
 
-  int Count() override
-  {
-    return this->items.size();
-  }
-
-  void RemoveLast() override
-  {
-    this->items.pop_back();
-    this->size--;
-  }
-
-  void RemoveFirst() override
-  {
-
-  }
-
   void Sort(std::function<bool(T, T)> compare) override
   {
     this->items.sort(compare);

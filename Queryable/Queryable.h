@@ -11,7 +11,6 @@
 #include <set>
 #include <vector>
 
-// #include "LinkedQueryable.h"
 #include "Utilities/Condition.h"
 #include "Utilities/Group.h"
 #include "Utilities/IGroup.h"
@@ -22,6 +21,7 @@
 #include "QueryableData/QueryableMultiSetData.h"
 #include "QueryableData/QueryableSetData.h"
 #include "QueryableData/QueryableVectorData.h"
+#include "QueryableData/SelectQueryableData/SelectQueryableData.h"
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
 
@@ -480,7 +480,7 @@ public:
       //    (i.e. if count > 0.5 * size then drop from back)
       //    (i.e. if count < 16 then take from front)
 
-      this->items.get()->RemoveLast();
+      // this->items.get()->RemoveLast();
     }
 
     return this;

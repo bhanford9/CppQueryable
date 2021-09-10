@@ -81,8 +81,14 @@ public:
 
   Iterator<T>& operator=(const Iterator<T>& value)
   {
-    this->Assign(value);
+    this->Get = value.Get;
+    this->Increment = value.Increment;
+    this->Decrement = value.Decrement;
+    this->Dereference = value.Dereference;
+    this->ConstDereference = value.ConstDereference;
+    this->Assign = value.Assign;
     this->index = value.index;
+    this->Assign(value);
     return *this;
   }
 };

@@ -20,13 +20,12 @@ public:
   virtual void Clear() = 0;
   virtual void Add(T obj) = 0;
   virtual int Count() = 0;
-  virtual void RemoveLast() = 0;
-  virtual void RemoveFirst() = 0;
+  virtual int StorageSize() = 0;
   virtual std::vector<T> ToVector() = 0;
   virtual void Sort(std::function<bool(T, T)> compare) = 0;
 
-  virtual void AddCondition(std::function<bool(const T &)> condition) = 0;
-  virtual bool PassesCondition(const T & obj) const = 0;
+  // virtual void AddCondition(std::function<bool(const T &)> condition) = 0;
+  // virtual bool PassesCondition(const T & obj) const = 0;
 };
 
 #endif

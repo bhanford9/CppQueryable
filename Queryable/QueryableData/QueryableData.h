@@ -19,166 +19,76 @@ class QueryableData : virtual public IQueryableData<TObj>
 {
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  TIterable<TObj, TArgs...> items;
-  Condition<TObj> condition;
+  typedef typename TIterable<TObj, TArgs...>::iterator TForwardIterator;
+  typedef typename TIterable<TObj, TArgs...>::reverse_iterator TReverseIterator;
 
-  typedef typename TIterable<TObj, TArgs...>::iterator t_forwardIterator;
-  typedef typename TIterable<TObj, TArgs...>::reverse_iterator t_reverseIterator;
+  TIterable<TObj, TArgs...> items;
 
   Iterator<TObj> beginning;
   Iterator<TObj> ending;
-
   Iterator<TObj> rbeginning;
   Iterator<TObj> rending;
 
-  t_forwardIterator beginIterator;
-  t_forwardIterator endIterator;
-
-  t_reverseIterator rbeginIterator;
-  t_reverseIterator rendIterator;
+  TForwardIterator beginIterator;
+  TForwardIterator endIterator;
+  TReverseIterator rbeginIterator;
+  TReverseIterator rendIterator;
 
   // TODO --> consider making this a pointer so data doesn't have to be copied
   TObj value;
-
   uint64_t size = 0;
 
-  void IncrementPastCondition(t_forwardIterator & iterator, uint64_t & index)
-  {
-    while (index != size && !this->condition(*iterator))
-    {
-      iterator++;
-      index++;
-    }
-  }
-
-  void DecrementPastCondition(t_forwardIterator & iterator, uint64_t & index)
-  {
-    while (index >= 0 && !this->condition(*iterator))
-    {
-      iterator--;
-      index--;
-    }
-  }
-
-  void RIncrementPastCondition(t_reverseIterator & iterator, uint64_t & index)
-  {
-    while (index != size && !this->condition(*iterator))
-    {
-      iterator++;
-      index++;
-    }
-  }
-
-  void RDecrementPastCondition(t_reverseIterator & iterator, uint64_t & index)
-  {
-    while (index >= 0 && !this->condition(*iterator))
-    {
-      iterator--;
-      index--;
-    }
-  }
-
-  virtual void InitForwardBegin()
+  void InitForwardBegin()
   {
     this->beginning.Get = [&]() { return &this->beginIterator; };
-
-    this->beginning.Increment = [&](uint64_t & index)
-    {
-      ++this->beginIterator;
-      if (this->condition)
-        this->IncrementPastCondition(this->beginIterator, index);
-    };
-    this->beginning.Decrement = [&](uint64_t & index)
-    {
-      --this->beginIterator;
-      if (this->condition)
-        this->DecrementPastCondition(this->beginIterator, index);
-    };
-
+    this->beginning.Increment = [&](uint64_t & index) { ++this->beginIterator; };
+    this->beginning.Decrement = [&](uint64_t & index) { --this->beginIterator; };
     this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
-    this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
+    this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
   }
 
-  virtual void InitForwardEnd()
+  void InitForwardEnd()
   {
     this->ending.Get = [&]() { return &this->endIterator; };
-
-    this->ending.Increment = [&](uint64_t & index)
-    {
-      ++this->endIterator;
-      if (this->condition)
-        this->IncrementPastCondition(this->endIterator, index);
-    };
-    this->ending.Decrement = [&](uint64_t & index)
-    {
-      --this->endIterator;
-      if (this->condition)
-        this->DecrementPastCondition(this->endIterator, index);
-    };
-
+    this->ending.Increment = [&](uint64_t & index) { ++this->endIterator; };
+    this->ending.Decrement = [&](uint64_t & index) { --this->endIterator;};
     this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
-    this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = t_forwardIterator(*static_cast<t_forwardIterator*>(value.Get())); };
+    this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
   }
 
-  virtual void InitReverseBegin()
+  void InitReverseBegin()
   {
     this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
-
-    this->rbeginning.Increment = [&](uint64_t & index)
-    {
-      ++this->rbeginIterator;
-      if (this->condition)
-        this->RIncrementPastCondition(this->rbeginIterator, index);
-    };
-    this->rbeginning.Decrement = [&](uint64_t & index)
-    {
-      --this->rbeginIterator;
-      if (this->condition)
-        this->RDecrementPastCondition(this->rbeginIterator, index);
-    };
-
+    this->rbeginning.Increment = [&](uint64_t & index) { ++this->rbeginIterator; };
+    this->rbeginning.Decrement = [&](uint64_t & index) { --this->rbeginIterator; };
     this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
-    this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
+    this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
   }
 
-  virtual void InitReverseEnd()
+  void InitReverseEnd()
   {
     this->rending.Get = [&]() { return &this->rendIterator; };
-
-    this->rending.Increment = [&](uint64_t & index)
-    {
-      ++this->rendIterator;
-      if (this->condition)
-        this->RIncrementPastCondition(this->rendIterator, index);
-    };
-    this->rending.Decrement = [&](uint64_t & index)
-    {
-      --this->rendIterator;
-      if (this->condition)
-        this->RDecrementPastCondition(this->rendIterator, index);
-    };
-
+    this->rending.Increment = [&](uint64_t & index) { ++this->rendIterator; };
+    this->rending.Decrement = [&](uint64_t & index) { --this->rendIterator; };
     this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
-    this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = t_reverseIterator(*static_cast<t_reverseIterator*>(value.Get())); };
+    this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
   }
 
 public:
-  QueryableData(Condition<TObj> condition = Condition<TObj>())
+
+  QueryableData()
   {
-    this->condition = condition;
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
-  explicit QueryableData(
-    TIterable<TObj, TArgs...> items,
-    Condition<TObj> condition = Condition<TObj>())
-    : QueryableData<TObj, TIterable, TArgs...>(condition)
+  explicit QueryableData(TIterable<TObj, TArgs...> items)
+    : QueryableData<TObj, TIterable, TArgs...>()
   {
     this->items = items;
 
@@ -187,7 +97,7 @@ public:
     //   then fix up the child classes having a Count method
     this->size = this->items.size();
   }
-  QueryableData(const QueryableData& data)
+  QueryableData(const QueryableData<TObj, TIterable> & data)
   {
     this->items = data.items;
 
@@ -204,31 +114,37 @@ public:
     this->rendIterator = data.rendIterator;
 
     this->value = data.value;
+    this->size = data.size;
   }
   virtual ~QueryableData() { }
 
-  virtual TIterable<TObj, TArgs...> GetItems()
+  // void AddCondition(std::function<bool(const TObj &)> condition) override
+  // {
+  //   this->condition += condition;
+  // }
+  //
+  // bool PassesCondition(const TObj & obj) const override
+  // {
+  //   return this->condition(obj);
+  // }
+
+  virtual int Count() override
   {
-    return this->items;
+    return this->size;
   }
 
-  void AddCondition(std::function<bool(const TObj &)> condition) override
+  int StorageSize() override
   {
-    this->condition += condition;
+    return this->size;
   }
 
-  bool PassesCondition(const TObj & obj) const override
-  {
-    return this->condition(obj);
-  }
-
-  void Clear() override
+  virtual void Clear() override
   {
     this->items.clear();
     this->size = 0;
   }
 
-  std::vector<TObj> ToVector() override
+  virtual std::vector<TObj> ToVector() override
   {
     std::vector<TObj> objs;
 
@@ -240,31 +156,28 @@ public:
     return objs;
   }
 
-  Iterator<TObj> begin() override
+  virtual Iterator<TObj> begin() override
   {
     this->beginIterator = this->items.begin();
     this->beginning.SetIndex(0);
-    this->IncrementPastCondition(this->beginIterator, this->beginning.GetIndex());
-
     return this->beginning;
   }
 
-  Iterator<TObj> end() override
+  virtual Iterator<TObj> end() override
   {
     this->endIterator = this->items.end();
     this->ending.SetIndex(this->size);
     return this->ending;
   }
 
-  Iterator<TObj> rbegin() override
+  virtual Iterator<TObj> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    this->RIncrementPastCondition(this->rbeginIterator, this->rbeginning.GetIndex());
-
+    this->rbeginning.SetIndex(0);
     return this->rbeginning;
   }
 
-  Iterator<TObj> rend() override
+  virtual Iterator<TObj> rend() override
   {
     this->rendIterator = this->items.rend();
     this->rending.SetIndex(this->size);
