@@ -25,9 +25,9 @@ protected:
 public:
 
   WhereQueryableData(
-    IQueryableData<TOriginal> * data,
+    std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : LinkedQueryableData<TOriginal, TOriginal, TIterable, TArgs...>(data)
+    : LinkedQueryableData<TOriginal, TOriginal, TIterable, TArgs...>(std::move(data))
   {
     this->condition += condition;
   }

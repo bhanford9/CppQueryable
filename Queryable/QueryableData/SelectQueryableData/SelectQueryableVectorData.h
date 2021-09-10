@@ -11,9 +11,9 @@ class SelectQueryableVectorData : public SelectQueryableData<TOriginal, TCurrent
 {
 public:
   SelectQueryableVectorData(
-    IQueryableData<TOriginal> * data,
+    std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<TCurrent(TOriginal)> selector)
-    : SelectQueryableData<TOriginal, TCurrent, std::vector>(data, selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::vector>(std::move(data), selector)
   {
   }
 

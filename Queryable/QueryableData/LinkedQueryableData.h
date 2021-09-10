@@ -24,7 +24,8 @@ protected:
   typedef typename QueryableData<TCurrent, TIterable, TArgs...>::TForwardIterator TForwardIterator;
   typedef typename QueryableData<TCurrent, TIterable, TArgs...>::TReverseIterator TReverseIterator;
 
-  IQueryableData<TOriginal> * original;
+  // TODO --> consider trying to make this a unique_ptr instead
+  std::shared_ptr<IQueryableData<TOriginal>> original;
   Iterator<TOriginal> originalBeginning;
   Iterator<TOriginal> originalEnding;
   Iterator<TOriginal> originalRBeginning;
@@ -214,10 +215,10 @@ protected:
 
 public:
 
-  LinkedQueryableData(IQueryableData<TOriginal> * data)
+  LinkedQueryableData(std::shared_ptr<IQueryableData<TOriginal>> data)
     : QueryableData<TCurrent, TIterable, TArgs...>()
   {
-    this->original = data;
+    this->original = std::move(data);
     this->size = this->original->StorageSize();
     this->LinkedInitForwardBegin();
     this->LinkedInitForwardEnd();

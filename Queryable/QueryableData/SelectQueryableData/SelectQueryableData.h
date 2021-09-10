@@ -26,9 +26,9 @@ protected:
 public:
 
   SelectQueryableData(
-    IQueryableData<TOriginal> * data,
+    std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<TCurrent(TOriginal)> selector)
-    : LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...>(data)
+    : LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...>(std::move(data))
   {
     this->selector = selector;
   }

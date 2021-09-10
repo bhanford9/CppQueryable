@@ -1,24 +1,24 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEVECTORDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEVECTORDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_WHEREQUERYABLELISTDATA_H
+#define CPPQUERYABLE_QUERYABLE_WHEREQUERYABLELISTDATA_H
 
 #include <iostream>
-#include <vector>
+#include <list>
 
 #include "../../Utilities/Condition.h"
 #include "WhereQueryableData.h"
 
 template<typename TOriginal>
-class WhereQueryableVectorData : public WhereQueryableData<TOriginal, std::vector>
+class WhereQueryableListData : public WhereQueryableData<TOriginal, std::list>
 {
 public:
-  WhereQueryableVectorData(
+  WhereQueryableListData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::vector>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::list>(std::move(data), condition)
   {
   }
 
-  virtual ~WhereQueryableVectorData() { }
+  virtual ~WhereQueryableListData() { }
 
   void Add(TOriginal item) override
   {

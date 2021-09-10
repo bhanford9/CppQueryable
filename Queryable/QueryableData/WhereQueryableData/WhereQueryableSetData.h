@@ -1,24 +1,24 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEVECTORDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEVECTORDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_WHEREQUERYABLESETDATA_H
+#define CPPQUERYABLE_QUERYABLE_WHEREQUERYABLESETDATA_H
 
 #include <iostream>
-#include <vector>
+#include <set>
 
 #include "../../Utilities/Condition.h"
 #include "WhereQueryableData.h"
 
 template<typename TOriginal>
-class WhereQueryableVectorData : public WhereQueryableData<TOriginal, std::vector>
+class WhereQueryableSetData : public WhereQueryableData<TOriginal, std::set>
 {
 public:
-  WhereQueryableVectorData(
+  WhereQueryableSetData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::vector>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::set>(std::move(data), condition)
   {
   }
 
-  virtual ~WhereQueryableVectorData() { }
+  virtual ~WhereQueryableSetData() { }
 
   void Add(TOriginal item) override
   {
