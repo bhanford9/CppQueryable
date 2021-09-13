@@ -38,41 +38,38 @@ protected:
 TEST_F(SelectFunctionalTest, SelectUninitialized)
 {
   Queryable<Person> local;
-  Queryable<std::string> * result = local
+  Queryable<std::string> & result = local
     .Select<std::string>([](Person p) { return p.GetName(); });
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(0, result->Count());
+  ASSERT_EQ(0, result.Count());
 }
 
 TEST_F(SelectFunctionalTest, DequeDefaultOut)
 {
   Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> * result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<Gender> & result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::Deque);
+  ASSERT_EQ(local.Count(), result.Count());
+  ASSERT_TRUE(result.GetType() == QueryableType::Deque);
 
   int i = 0;
   local.ForEach([&](Person p)
   {
-    ASSERT_TRUE(p.GetGender() == result->At(i++));
+    ASSERT_TRUE(p.GetGender() == result.At(i++));
   });
 }
 
 TEST_F(SelectFunctionalTest, ListDefaultOut)
 {
   Queryable<Person> local = BuildQueryable(this->people.ToList());
-  Queryable<Gender> * result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<Gender> & result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::List);
+  ASSERT_EQ(local.Count(), result.Count());
+  ASSERT_TRUE(result.GetType() == QueryableType::List);
 
   int i = 0;
   local.ForEach([&](Person p)
   {
-    ASSERT_TRUE(p.GetGender() == result->At(i++));
+    ASSERT_TRUE(p.GetGender() == result.At(i++));
   });
 }
 
@@ -80,23 +77,22 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 {
   Queryable<Person> local1 = BuildQueryable(this->people.ToMultiSet());
   Queryable<Person> local2 = BuildQueryable(this->people.ToMultiSet());
-  Queryable<double> * ages = local1.Select<double>([](Person p) { return p.GetAge(); });
-  Queryable<std::string> * names = local2.Select<std::string>([](Person p) { return p.GetName(); });
+  Queryable<double> & ages = local1.Select<double>([](Person p) { return p.GetAge(); });
+  Queryable<std::string> & names = local2.Select<std::string>([](Person p) { return p.GetName(); });
 
-  ASSERT_TRUE(ages != NULL);
-  ASSERT_TRUE(names != NULL);
-  ASSERT_EQ(local1.Count(), ages->Count());
-  ASSERT_EQ(local1.Count(), names->Count());
-  ASSERT_TRUE(ages->GetType() == QueryableType::MultiSet);
-  ASSERT_TRUE(names->GetType() == QueryableType::MultiSet);
+  ASSERT_EQ(local1.Count(), ages.Count());
+  ASSERT_EQ(local1.Count(), names.Count());
+  ASSERT_TRUE(ages.GetType() == QueryableType::MultiSet);
+  ASSERT_TRUE(names.GetType() == QueryableType::MultiSet);
 
   int i = 0;
   double previousAge = -1;
   local1.ForEach([&](Person p)
   {
-    double currentAge = ages->At(i);
+    double currentAge = ages.At(i);
+    std::string currentName = names.At(i);
     ASSERT_TRUE(currentAge >= previousAge);
-    ASSERT_TRUE(p.GetName() == names->At(i++));
+    ASSERT_TRUE(local2.At(i++).GetName() == currentName);
     previousAge = currentAge;
   });
 }
@@ -105,112 +101,42 @@ TEST_F(SelectFunctionalTest, SetDefaultOut)
 {
   Queryable<Person> local1 = BuildQueryable(this->people.ToSet());
   Queryable<Person> local2 = BuildQueryable(this->people.ToSet());
-  Queryable<double> * ages = local1.Select<double>([](Person p) { return p.GetAge(); });
-  Queryable<std::string> * names = local2.Select<std::string>([](Person p) { return p.GetName(); });
+  Queryable<double> & ages = local1.Select<double>([](Person p) { return p.GetAge(); });
+  Queryable<std::string> & names = local2.Select<std::string>([](Person p) { return p.GetName(); });
 
-  ASSERT_TRUE(ages != NULL);
-  ASSERT_TRUE(names != NULL);
-  ASSERT_FALSE(local1.Count() == ages->Count());
-  ASSERT_TRUE(local1.Count() == names->Count());
-  ASSERT_TRUE(ages->GetType() == QueryableType::Set);
-  ASSERT_TRUE(names->GetType() == QueryableType::Set);
+  ASSERT_TRUE(local1.Count() == ages.Count());
+  ASSERT_TRUE(local2.Count() == names.Count());
+  ASSERT_FALSE(local1.Count() == names.Count());
+
+  ASSERT_TRUE(ages.GetType() == QueryableType::Set);
+  ASSERT_TRUE(names.GetType() == QueryableType::Set);
 
   double previousAge = -1;
-  ages->ForEach([&](double age)
+  ages.ForEach([&](double age)
   {
     ASSERT_TRUE(age > previousAge);
     previousAge = age;
   });
 
   int i = 0;
-  local1.ForEach([&](Person p)
+  local2.ForEach([&](Person p)
   {
-    ASSERT_TRUE(p.GetName() == names->At(i++));
+    ASSERT_TRUE(p.GetName() == names.At(i++));
   });
 }
 
 TEST_F(SelectFunctionalTest, VectorDefaultOut)
 {
   Queryable<Person> local = BuildQueryable(this->people.ToVector());
-  Queryable<Gender> * result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<Gender> & result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
-
-  int i = 0;
-  local.ForEach([&](Person p)
-  {
-    ASSERT_TRUE(p.GetGender() == result->At(i++));
-  });
-}
-
-TEST_F(SelectFunctionalTest, DequeListOut)
-{
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> * result = local
-    .Select<Gender>([](Person p) { return p.GetGender(); }, QueryableType::List);
-
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::List);
+  ASSERT_EQ(local.Count(), result.Count());
+  ASSERT_TRUE(result.GetType() == QueryableType::Vector);
 
   int i = 0;
   local.ForEach([&](Person p)
   {
-    ASSERT_TRUE(p.GetGender() == result->At(i++));
-  });
-}
-
-TEST_F(SelectFunctionalTest, DequeMultiSetOut)
-{
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> * result = local
-    .Select<Gender>([](Person p) { return p.GetGender(); }, QueryableType::MultiSet);
-
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::MultiSet);
-
-  bool foundDifferent = false;
-  int i = 0;
-  local.ForEach([&](Person p)
-  {
-    if (p.GetGender() != result->At(i++))
-    {
-      foundDifferent = true;
-    }
-  });
-
-  ASSERT_TRUE(foundDifferent);
-}
-
-TEST_F(SelectFunctionalTest, DequeSetOut)
-{
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> * result = local
-    .Select<Gender>([](Person p) { return p.GetGender(); }, QueryableType::Set);
-
-  ASSERT_TRUE(result != NULL);
-  ASSERT_FALSE(local.Count() == result->Count());
-  ASSERT_EQ(2, result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::Set);
-}
-
-TEST_F(SelectFunctionalTest, DequeVectorOut)
-{
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> * result = local
-    .Select<Gender>([](Person p) { return p.GetGender(); }, QueryableType::Vector);
-
-  ASSERT_TRUE(result != NULL);
-  ASSERT_EQ(local.Count(), result->Count());
-  ASSERT_TRUE(result->GetType() == QueryableType::Vector);
-
-  int i = 0;
-  local.ForEach([&](Person p)
-  {
-    ASSERT_TRUE(p.GetGender() == result->At(i++));
+    ASSERT_TRUE(p.GetGender() == result.At(i++));
   });
 }
 
@@ -221,15 +147,14 @@ TEST_F(SelectFunctionalTest, SelectWhere)
 
   Queryable<double> & ages1 = local1
     .Select<double>([](Person p) { return p.GetAge() / 10; })
-    ->Where([](double age) { return age > 3 && age < 8; });
-  Queryable<double> * ages2 = local2
+    .Where([](double age) { return age > 3 && age < 8; });
+  Queryable<double> & ages2 = local2
     .Where([](Person p) { return p.GetAge() > 30 && p.GetAge() < 80; })
     .Select<double>([](Person p) { return p.GetAge() / 10; });
 
-  ASSERT_TRUE(ages2 != NULL);
   ASSERT_EQ(5, ages1.Count());
-  ASSERT_EQ(ages1.Count(), ages2->Count());
+  ASSERT_EQ(ages1.Count(), ages2.Count());
 
   int i = 0;
-  ages1.ForEach([&](double age) { ASSERT_EQ(age, ages2->At(i++)); });
+  ages1.ForEach([&](double age) { ASSERT_EQ(age, ages2.At(i++)); });
 }

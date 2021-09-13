@@ -7,28 +7,25 @@
 
 #include "QueryableData.h"
 
-template<
-  typename T,
-  typename TCompare = std::less<T>,
-  typename TAllocator = std::allocator<T>>
-class QueryableSetData : public QueryableData<T, std::set, TCompare, TAllocator>
+template<typename T>
+class QueryableSetData : public QueryableData<T, std::set, std::function<bool(T, T)>>
 {
 public:
-  QueryableSetData(TCompare compare = TCompare())
-    : QueryableData<T, std::set, TCompare, TAllocator>()
+  QueryableSetData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
+    : QueryableData<T, std::set, std::function<bool(T, T)>>()
   {
-    this->items = std::set<T, TCompare>(compare);
+    this->items = std::set<T, std::function<bool(T, T)>>(compare);
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
-  QueryableSetData(std::set<T, TCompare, TAllocator> items)
-    : QueryableData<T, std::set, TCompare, TAllocator>(items)
+  QueryableSetData(std::set<T, std::function<bool(T, T)>> items)
+    : QueryableData<T, std::set, std::function<bool(T, T)>>(items)
   {
   }
   QueryableSetData(const QueryableSetData& data)
-    : QueryableData<T, std::set, TCompare, TAllocator>(data)
+    : QueryableData<T, std::set, std::function<bool(T, T)>>(data)
   {
   }
 
@@ -44,9 +41,15 @@ public:
     this->size = this->items.size();
   }
 
-  void Sort(std::function<bool(T, T)> compare) override
+  void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
   {
     // already sorted
+  }
+
+  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
+  {
+    this->items = std::set<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
+    this->size = this->items.size();
   }
 };
 

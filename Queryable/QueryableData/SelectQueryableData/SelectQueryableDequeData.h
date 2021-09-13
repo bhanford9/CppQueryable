@@ -1,13 +1,13 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEVECTORDATA_H
-#define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEVECTORDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDEQUEDATA_H
+#define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDEQUEDATA_H
 
 #include <iostream>
-#include <vector>
+#include <deque>
 
 #include "SelectQueryableData.h"
 
-template<typename TOriginal, typename TCurrent, typename ...TArgs>
-class SelectQueryableVectorData : public SelectQueryableData<TOriginal, TCurrent, std::vector, TArgs...>
+template<typename TOriginal, typename TCurrent>
+class SelectQueryableDequeData : public SelectQueryableData<TOriginal, TCurrent, std::deque>
 {
 private:
   void InitRandomAccessProperties()
@@ -26,14 +26,15 @@ private:
   }
 
 public:
-  SelectQueryableVectorData(
+  SelectQueryableDequeData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<TCurrent(TOriginal)> selector)
-    : SelectQueryableData<TOriginal, TCurrent, std::vector, TArgs...>(std::move(data), selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::deque>(std::move(data), selector)
   {
     this->InitRandomAccessProperties();
   }
-  virtual ~SelectQueryableVectorData() { }
+
+  virtual ~SelectQueryableDequeData() { }
 
   void Add(TCurrent item) override
   {

@@ -63,22 +63,22 @@ void Person::SetGender(Gender gender)
   this->gender = gender;
 }
 
-bool Person::IsGender(Gender gender)
+bool Person::IsGender(Gender gender) const
 {
   return this->gender == gender;
 }
 
-bool Person::IsMale()
+bool Person::IsMale() const
 {
   return this->gender == Gender::Male;
 }
 
-bool Person::IsFemale()
+bool Person::IsFemale() const
 {
   return this->gender == Gender::Female;
 }
 
-std::string Person::ToString()
+std::string Person::ToString() const
 {
   return
     "Name: " + this->name +
@@ -97,3 +97,15 @@ bool Person::operator==(const Person & other) const
 {
   return this->id == other.id;
 }
+
+std::ostream & Person::operator<<(std::ostream & str)
+{
+  str << this->ToString();
+  return str;
+}
+
+// std::ostream & Person::operator<<(std::ostream & str, const Person & v)
+// {
+//   str << v.ToString();
+//   return str;
+// }

@@ -27,9 +27,9 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(TOriginal, TOriginal)> compare) override
+  void Sort(std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
   {
-    // std::sort(this->begin(), this->end(), compare);
+    std::sort(this->begin(), this->end(), compare);
   }
 
 };

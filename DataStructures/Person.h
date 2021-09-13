@@ -29,14 +29,20 @@ public:
   Gender GetGender();
   void SetGender(Gender gender);
 
-  bool IsGender(Gender gender);
-  bool IsMale();
-  bool IsFemale();
+  bool IsGender(Gender gender) const;
+  bool IsMale() const;
+  bool IsFemale() const;
 
-  std::string ToString();
+  std::string ToString() const;
 
   bool operator<(const Person & other) const;
   bool operator==(const Person & other) const;
+  std::ostream & operator<<(std::ostream & str);
+  friend std::ostream & operator<<(std::ostream & str, const Person & v)
+  {
+    str << v.ToString();
+    return str;
+  }
 };
 
 #endif

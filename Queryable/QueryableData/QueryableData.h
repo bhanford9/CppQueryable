@@ -46,6 +46,11 @@ protected:
     this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
+
+    // this is the worst way to do this and should be avoided
+    // add and subtract needed to support the random access iterators
+    this->beginning.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->beginning; };
+    this->beginning.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->beginning; };
   }
 
   void InitForwardEnd()
@@ -56,6 +61,11 @@ protected:
     this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
+
+    // this is the worst way to do this and should be avoided
+    // add needed to support the random access iterators
+    this->ending.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->ending; };
+    this->ending.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->ending; };
   }
 
   void InitReverseBegin()
@@ -66,6 +76,11 @@ protected:
     this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
+
+    // this is the worst way to do this and should be avoided
+    // add needed to support the random access iterators
+    this->rbeginning.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->rbeginning; };
+    this->rbeginning.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->rbeginning; };
   }
 
   void InitReverseEnd()
@@ -76,6 +91,11 @@ protected:
     this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
+
+    // this is the worst way to do this and should be avoided
+    // add needed to support the random access iterators
+    this->rending.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->rending; };
+    this->rending.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->rending; };
   }
 
 public:
@@ -154,6 +174,12 @@ public:
     }
 
     return objs;
+  }
+
+  virtual void Update(Iterator<TObj> first, Iterator<TObj> last, std::function<bool(TObj, TObj)> compare) override
+  {
+    // TODO SFINAE require this constructor
+    this->items = TIterable<TObj, TArgs...>(first, last);
   }
 
   virtual Iterator<TObj> begin() override

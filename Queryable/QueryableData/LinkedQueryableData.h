@@ -35,11 +35,9 @@ protected:
   {
     if (this->CanSkip())
     {
-      TCurrent current = this->ToCurrent(*iterator);
-      while (index < this->size && this->DoSkip(current))
+      while (index < this->size && this->DoSkip(*iterator))
       {
         ++iterator;
-        current = this->ToCurrent(*iterator);
         index = iterator.Index;
         this->beginning.Index = index;
       }
@@ -88,6 +86,41 @@ protected:
 
     this->beginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
     this->beginning.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
+
+    // Add and Subtract are needed for sorting random access iterators
+    // (i.e. Vector, Deque, Array)
+
+    // Two iterators can be subtracted to get a scalar value and then that
+    // scalar value can be added/subtracted to the iterator to access a value
+    // at a new position in constant time.
+
+    // When subtracting two iterators, you always get the difference of the
+    // original underlying container, so for WhereQueryableData's you still
+    // have to iterate over and sort all of the underlying elements which is
+    // highly inefficient compared to what would be expected
+
+    // Documentation needs to be clear about this so that it is understood that
+    // if a Queryable that had Where or Select called on it is intended to be
+    // used more than once, then one of the copy methods should be used to ensure
+    // extra (unecessary) iterations/operations are not taking place
+    this->beginning.Add = [&](int addend, uint64_t & index)
+    {
+      while (addend > 0)
+      {
+        ++this->originalBeginning;
+        addend -= (this->originalBeginning.Index - index);
+        index = this->originalBeginning.Index;
+      }
+    };
+    this->beginning.Subtract = [&](int subtrahend, uint64_t & index)
+    {
+      while (subtrahend > 0)
+      {
+        --this->originalBeginning;
+        subtrahend -= (index - this->originalBeginning.Index);
+        index = this->originalBeginning.Index;
+      }
+    };
   }
 
   void LinkedInitForwardEnd()
@@ -129,6 +162,41 @@ protected:
 
     this->ending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalEnding); return this->value; };
     this->ending.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalEnding); return this->value; };
+
+    // Add and Subtract are needed for sorting random access iterators
+    // (i.e. Vector, Deque, Array)
+
+    // Two iterators can be subtracted to get a scalar value and then that
+    // scalar value can be added/subtracted to the iterator to access a value
+    // at a new position in constant time.
+
+    // When subtracting two iterators, you always get the difference of the
+    // original underlying container, so for WhereQueryableData's you still
+    // have to iterate over and sort all of the underlying elements which is
+    // highly inefficient compared to what would be expected
+
+    // Documentation needs to be clear about this so that it is understood that
+    // if a Queryable that had Where or Select called on it is intended to be
+    // used more than once, then one of the copy methods should be used to ensure
+    // extra (unecessary) iterations/operations are not taking place
+    this->ending.Add = [&](int addend, uint64_t & index)
+    {
+      while (addend > 0)
+      {
+        ++this->originalEnding;
+        addend -= (this->originalEnding.Index - index);
+        index = this->originalEnding.Index;
+      }
+    };
+    this->ending.Subtract = [&](int subtrahend, uint64_t & index)
+    {
+      while (subtrahend > 0)
+      {
+        --this->originalEnding;
+        subtrahend -= (index - this->originalEnding.Index);
+        index = this->originalEnding.Index;
+      }
+    };
   }
 
   void LinkedInitReverseBegin()
@@ -170,6 +238,41 @@ protected:
 
     this->rbeginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalRBeginning); return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalRBeginning); return this->value; };
+
+    // Add and Subtract are needed for sorting random access iterators
+    // (i.e. Vector, Deque, Array)
+
+    // Two iterators can be subtracted to get a scalar value and then that
+    // scalar value can be added/subtracted to the iterator to access a value
+    // at a new position in constant time.
+
+    // When subtracting two iterators, you always get the difference of the
+    // original underlying container, so for WhereQueryableData's you still
+    // have to iterate over and sort all of the underlying elements which is
+    // highly inefficient compared to what would be expected
+
+    // Documentation needs to be clear about this so that it is understood that
+    // if a Queryable that had Where or Select called on it is intended to be
+    // used more than once, then one of the copy methods should be used to ensure
+    // extra (unecessary) iterations/operations are not taking place
+    this->rbeginning.Add = [&](int addend, uint64_t & index)
+    {
+      while (addend > 0)
+      {
+        ++this->originalRBeginning;
+        addend -= (this->originalRBeginning.Index - index);
+        index = this->originalRBeginning.Index;
+      }
+    };
+    this->rbeginning.Subtract = [&](int subtrahend, uint64_t & index)
+    {
+      while (subtrahend > 0)
+      {
+        --this->originalRBeginning;
+        subtrahend -= (index - this->originalRBeginning.Index);
+        index = this->originalRBeginning.Index;
+      }
+    };
   }
 
   void LinkedInitReverseEnd()
@@ -211,6 +314,41 @@ protected:
 
     this->rending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalREnding); return this->value; };
     this->rending.ConstDereference = [&]() -> const TCurrent& { this->value = this->ToCurrent(*this->originalREnding); return this->value; };
+
+    // Add and Subtract are needed for sorting random access iterators
+    // (i.e. Vector, Deque, Array)
+
+    // Two iterators can be subtracted to get a scalar value and then that
+    // scalar value can be added/subtracted to the iterator to access a value
+    // at a new position in constant time.
+
+    // When subtracting two iterators, you always get the difference of the
+    // original underlying container, so for WhereQueryableData's you still
+    // have to iterate over and sort all of the underlying elements which is
+    // highly inefficient compared to what would be expected
+
+    // Documentation needs to be clear about this so that it is understood that
+    // if a Queryable that had Where or Select called on it is intended to be
+    // used more than once, then one of the copy methods should be used to ensure
+    // extra (unecessary) iterations/operations are not taking place
+    this->rending.Add = [&](int addend, uint64_t & index)
+    {
+      while (addend > 0)
+      {
+        ++this->originalREnding;
+        addend -= (this->originalREnding.Index - index);
+        index = this->originalREnding.Index;
+      }
+    };
+    this->rending.Subtract = [&](int subtrahend, uint64_t & index)
+    {
+      while (subtrahend > 0)
+      {
+        --this->originalREnding;
+        subtrahend -= (index - this->originalREnding.Index);
+        index = this->originalREnding.Index;
+      }
+    };
   }
 
 public:
@@ -225,11 +363,20 @@ public:
     this->LinkedInitReverseBegin();
     this->LinkedInitReverseEnd();
   }
+  LinkedQueryableData(const LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data)
+    : QueryableData<TCurrent, TIterable, TArgs...>(data)
+  {
+  }
   virtual ~LinkedQueryableData() { }
 
   virtual TCurrent ToCurrent(TOriginal original) = 0;
-  virtual bool DoSkip(TCurrent value) = 0;
   virtual bool CanSkip() = 0;
+
+  // if we ever want to evaluate this for QueryableData types that require
+  // different TOriginal and TCurrent types, will need to change signature to take
+  // a TCurrent instead of a TOriginal. Its faster in the iterator incrementing
+  // if we do not have to convert from TOriginal to TCurrent though
+  virtual bool DoSkip(TOriginal value) = 0;
 
   void Clear() override
   {
@@ -244,10 +391,9 @@ public:
 
     for (TOriginal obj : originals)
     {
-      TCurrent current = this->ToCurrent(obj);
-      if (!this->DoSkip(current))
+      if (!this->DoSkip(obj))
       {
-        objs.push_back(current);
+        objs.push_back(this->ToCurrent(obj));
       }
     }
 

@@ -7,29 +7,26 @@
 
 #include "QueryableData.h"
 
-template<
-  typename T,
-  typename TCompare = std::less<T>,
-  typename TAllocator = std::allocator<T>>
-class QueryableMultiSetData : public QueryableData<T, std::multiset, TCompare, TAllocator>
+template<typename T>
+class QueryableMultiSetData : public QueryableData<T, std::multiset, std::function<bool(T, T)>>
 {
-  typedef typename std::multiset<T>::iterator t_forwardIterator;
+  typedef typename std::multiset<T, std::function<bool(T, T)>>::iterator t_forwardIterator;
 public:
-  QueryableMultiSetData(TCompare compare = TCompare())
-    : QueryableData<T, std::multiset, TCompare, TAllocator>()
+  QueryableMultiSetData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
+    : QueryableData<T, std::multiset, std::function<bool(T, T)>>()
   {
-    this->items = std::multiset<T, TCompare>(compare);
+    this->items = std::multiset<T, std::function<bool(T, T)>>(compare);
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
-  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
-    : QueryableData<T, std::multiset, TCompare, TAllocator>(items)
+  QueryableMultiSetData(std::multiset<T, std::function<bool(T, T)>> items)
+    : QueryableData<T, std::multiset, std::function<bool(T, T)>>(items)
   {
   }
   QueryableMultiSetData(const QueryableMultiSetData& data)
-    : QueryableData<T, std::multiset, TCompare, TAllocator>(data)
+    : QueryableData<T, std::multiset, std::function<bool(T, T)>>(data)
   {
   }
 
@@ -41,9 +38,14 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(T, T)> compare) override
+  void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
   {
     // already sorted
+  }
+
+  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
+  {
+    this->items = std::multiset<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
   }
 };
 

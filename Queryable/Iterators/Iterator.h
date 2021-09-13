@@ -28,6 +28,10 @@ public:
   std::function<const T&()> ConstDereference;
   std::function<void(const Iterator<T>&)> Assign;
 
+  // random access iterators only
+  std::function<void(int addend, uint64_t & index)> Add;
+  std::function<void(int subtrahend, uint64_t & index)> Subtract;
+
   // intentionally public
   uint64_t Index = 0;
 
@@ -38,15 +42,6 @@ public:
     this->Increment(this->Index);
     return *this;
   }
-
-  // Iterator<T> operator++(int)
-  // {
-  //   this->Index++;
-  //
-  //   Iterator<T> copy = *this;
-  //   this->Increment(this->Index);
-  //   return copy;
-  // }
 
   Iterator<T>& operator--()
   {
@@ -74,6 +69,40 @@ public:
   bool operator!=(const Iterator<T>& comparison) const
   {
     return this->Index != comparison.Index;
+  }
+
+  int operator-(const Iterator<T>& subtrahend) const
+  {
+    return this->Index - subtrahend.Index;
+  }
+
+  Iterator<T>& operator+(int addend)
+  {
+    this->Add(addend, this->Index);
+    return *this;
+  }
+
+  Iterator<T>& operator+=(int addend)
+  {
+    this->Add(addend, this->Index);
+    return *this;
+  }
+
+  Iterator<T>& operator-(int subtrahend)
+  {
+    this->Subtract(subtrahend, this->Index);
+    return *this;
+  }
+
+  Iterator<T>& operator-=(int subtrahend)
+  {
+    this->Subtract(subtrahend, this->Index);
+    return *this;
+  }
+
+  bool operator<(const Iterator<T>& other) const
+  {
+    return this->Index < other.Index;
   }
 
   Iterator<T>& operator=(const Iterator<T>& value)

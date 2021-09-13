@@ -23,13 +23,18 @@ public:
   void Add(TOriginal item) override
   {
     // this wont easily or quickly work... might want to nix it
-    this->items.push_back(item);
+    this->items.insert(item);
     this->size++;
   }
 
-  void Sort(std::function<bool(TOriginal, TOriginal)> compare) override
+  void Sort(std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
   {
-    // std::sort(this->begin(), this->end(), compare);
+    // already sorted
+  }
+
+  virtual void Update(Iterator<TOriginal> first, Iterator<TOriginal> last, std::function<bool(TOriginal, TOriginal)> compare) override
+  {
+    this->original.get()->Update(first, last, compare);
   }
 
 };

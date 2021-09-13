@@ -2,6 +2,7 @@
 #define CPPQUERYABLE_QUERYABLE_QUERYBUILDER_H
 
 #include <deque>
+#include <functional>
 #include <list>
 #include <memory>
 #include <set>
@@ -26,16 +27,16 @@ namespace QueryBuilder
     return Queryable<T>(items);
   }
 
-  template<typename T, typename TCompare = std::less<T>>
-  static Queryable<T> BuildQueryable(std::set<T, TCompare> items)
+  template<typename T>
+  static Queryable<T> BuildQueryable(std::set<T, std::function<bool(T, T)>> items)
   {
-    return Queryable<T, TCompare>(items);
+    return Queryable<T>(items);
   }
 
-  template<typename T, typename TCompare = std::less<T>>
-  static Queryable<T> BuildQueryable(std::multiset<T, TCompare> items)
+  template<typename T>
+  static Queryable<T> BuildQueryable(std::multiset<T, std::function<bool(T, T)>> items)
   {
-    return Queryable<T, TCompare>(items);
+    return Queryable<T>(items);
   }
 
   template<typename T>

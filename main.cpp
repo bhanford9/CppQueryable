@@ -1,10 +1,12 @@
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "Queryable/Queryable.h"
+#include "Queryable/QueryableData/IQueryableData.h"
 #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.h"
 #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.h"
 #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.h"
@@ -15,6 +17,9 @@
 #include "DataStructures/People.h"
 #include "DataStructures/PersonLibrary.h"
 
+#include "DataStructures/Base.h"
+#include "DataStructures/Derived.h"
+
 using namespace QueryBuilder;
 
 int main()
@@ -24,9 +29,25 @@ int main()
   std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };
 
   Queryable<uint> local(numbers);
-  local.Where(conditioner).ForEach([](uint value) { std::cout << "value: " << value << std::endl; });
+  local.Where(conditioner).ForEach([](uint value) { std::cout << "where value: " << value << std::endl; });
+  local.Select<double>(selector).ForEach([](double value) { std::cout << "select value: " << value << std::endl; });
+
+  std::vector<Person> people(PersonLibrary().GetPeople());
+
+  Queryable<Person> queryablePeople(people);
+  Queryable<std::string> & queryableNames = queryablePeople
+    .Select<std::string>([](Person p) { return p.GetName(); });
+
+  queryableNames.ForEach([](std::string name) { std::cout << "name: " << name << std::endl; });
+
+  std::cout << "count: " << queryableNames.Count() << std::endl;
+
+  queryablePeople.Count();
+
 
   // QueryableVectorData<uint> queryableData(numbers);
+  // std::shared_ptr<IQueryableData<uint>> sharedData = std::make_shared<QueryableVectorData<uint, double>>(queryableData);
+  // IQueryableData<uint> * dummy = new SelectQueryableVectorData<uint, double>(sharedData, selector);
   // for (double value : queryableData)
   // {
   //   std::cout << "value as uint: " << value << std::endl;

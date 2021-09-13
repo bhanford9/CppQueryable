@@ -63,14 +63,14 @@ public:
         break;
       case QueryableType::MultiSet:
         {
-          std::multiset<TData, TDataCompare> localMultiSet(dataCompare);
-          this->data = std::make_shared<QueryableMultiSetData<TData, TDataCompare>>(localMultiSet);
+          std::multiset<TData> localMultiSet(dataCompare);
+          this->data = std::make_shared<QueryableMultiSetData<TData>>(localMultiSet);
         }
         break;
       case QueryableType::Set:
         {
-          std::set<TData, TDataCompare> localSet(dataCompare);
-          this->data = std::make_shared<QueryableSetData<TData, TDataCompare>>(localSet);
+          std::set<TData> localSet(dataCompare);
+          this->data = std::make_shared<QueryableSetData<TData>>(localSet);
         }
         break;
       case QueryableType::Vector:
