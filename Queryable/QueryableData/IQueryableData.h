@@ -9,6 +9,9 @@
 template<typename T>
 class IQueryableData
 {
+protected:
+  typedef typename std::vector<T>::iterator TVectorIterator;
+
 public:
   virtual ~IQueryableData() { }
 
@@ -23,7 +26,8 @@ public:
   virtual int StorageSize() = 0;
   virtual std::vector<T> ToVector() = 0;
   virtual void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) = 0;
-  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) = 0;
+  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) = 0;
+  virtual void Update(TVectorIterator first, TVectorIterator last) = 0;
 
   // virtual void AddCondition(std::function<bool(const T &)> condition) = 0;
   // virtual bool PassesCondition(const T & obj) const = 0;

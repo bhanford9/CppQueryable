@@ -29,17 +29,13 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(TCurrent, TCurrent)> compare = [](TCurrent a, TCurrent b) { return a < b; }) override
-  {
-    // already sorted
-  }
-
   virtual void Update(Iterator<TCurrent> first, Iterator<TCurrent> last, std::function<bool(TCurrent, TCurrent)> compare) override
   {
     std::function<bool(TOriginal, TOriginal)> originalCompare =
       [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
 
     this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), originalCompare);
+    this->size = this->original.get()->Count();
   }
 };
 

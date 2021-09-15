@@ -25,11 +25,6 @@ public:
     this->items.push_back(item);
     this->size++;
   }
-
-  void Sort(std::function<bool(TCurrent, TCurrent)> compare = [](TCurrent a, TCurrent b) { return a < b; }) override
-  {
-    std::sort(this->begin(), this->end(), compare);
-  }
 };
 
 #endif

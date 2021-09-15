@@ -26,17 +26,11 @@ public:
     this->items.insert(item);
     this->size++;
   }
-
-  void Sort(std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
-  {
-    // already sorted
-  }
-
+  
   virtual void Update(Iterator<TOriginal> first, Iterator<TOriginal> last, std::function<bool(TOriginal, TOriginal)> compare) override
   {
     this->original.get()->Update(first, last, compare);
   }
-
 };
 
 #endif

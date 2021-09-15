@@ -160,31 +160,31 @@ public:
   Queryable(const std::deque<TObj>& deque)
   {
     this->type = QueryableType::Deque;
-    this->items = std::make_shared<QueryableDequeData<TObj>>(deque);
+    this->items = std::move(std::make_shared<QueryableDequeData<TObj>>(deque));
   }
 
   Queryable(const std::list<TObj>& list)
   {
     this->type = QueryableType::List;
-    this->items = std::make_shared<QueryableListData<TObj>>(list);
+    this->items = std::move(std::make_shared<QueryableListData<TObj>>(list));
   }
 
   Queryable(const std::multiset<TObj, std::function<bool(TObj, TObj)>>& multiset)
   {
     this->type = QueryableType::MultiSet;
-    this->items = std::make_shared<QueryableMultiSetData<TObj>>(multiset);
+    this->items = std::move(std::make_shared<QueryableMultiSetData<TObj>>(multiset));
   }
 
   Queryable(const std::set<TObj, std::function<bool(TObj, TObj)>>& set)
   {
     this->type = QueryableType::Set;
-    this->items = std::make_shared<QueryableSetData<TObj>>(set);
+    this->items = std::move(std::make_shared<QueryableSetData<TObj>>(set));
   }
 
   Queryable(const std::vector<TObj>& vector)
   {
     this->type = QueryableType::Vector;
-    this->items = std::make_shared<QueryableVectorData<TObj>>(vector);
+    this->items = std::move(std::make_shared<QueryableVectorData<TObj>>(vector));
   }
   // END CONSTRUCTORS
 
@@ -1132,7 +1132,7 @@ public:
 
   // TODO --> is returing it ordered based on the given comparator okay?
   //          should having an implementation that doesn't change order be done?
-  Queryable<TObj> * Except(
+  Queryable<TObj> & Except(
     const Queryable<TObj> & collection,
     std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
@@ -1148,7 +1148,7 @@ public:
 
     if (localCount <= 0 || inputCount <= 0)
     {
-      return this;
+      return *this;
     }
 
     std::vector<TObj> result;
@@ -1184,25 +1184,19 @@ public:
     }
 
     // gather leftovers
-    while (localIndex < localCount)
+    for (; localIndex < localCount; localIndex++)
     {
       if (!equal(localSorted[localIndex], inputSorted[inputCount - 1]))
       {
-        result.push_back(localSorted[localIndex++]);
+        result.push_back(localSorted[localIndex]);
       }
     }
 
-    // create shared pointer and move it into items
+    // this is a linear update. Constant update or updating within the previous
+    // looping would be ideal
+    this->items.get()->Update(result.begin(), result.end());
 
-    // TODO --> figure out a better way to do this wrt time & memory
-    // TODO --> figure out if its better to return self or a new object
-    this->items.get()->Clear();
-    for (TObj obj : result)
-    {
-      this->items.get()->Add(obj);
-    }
-
-    return this;
+    return *this;
   }
 
   template<typename T = TObj>

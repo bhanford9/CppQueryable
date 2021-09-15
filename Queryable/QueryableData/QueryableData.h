@@ -19,6 +19,7 @@ class QueryableData : virtual public IQueryableData<TObj>
 {
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
+  typedef typename std::vector<TObj>::iterator TVectorIterator;
   typedef typename TIterable<TObj, TArgs...>::iterator TForwardIterator;
   typedef typename TIterable<TObj, TArgs...>::reverse_iterator TReverseIterator;
 
@@ -36,66 +37,66 @@ protected:
 
   // TODO --> consider making this a pointer so data doesn't have to be copied
   TObj value;
-  uint64_t size = 0;
+  int64_t size = 0;
 
   void InitForwardBegin()
   {
     this->beginning.Get = [&]() { return &this->beginIterator; };
-    this->beginning.Increment = [&](uint64_t & index) { ++this->beginIterator; };
-    this->beginning.Decrement = [&](uint64_t & index) { --this->beginIterator; };
+    this->beginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->beginIterator; };
+    this->beginning.Decrement = [&](int64_t & index) { if (index > 0) --this->beginIterator; };
     this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
 
     // this is the worst way to do this and should be avoided
     // add and subtract needed to support the random access iterators
-    this->beginning.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->beginning; };
-    this->beginning.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->beginning; };
+    this->beginning.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->beginning; };
+    this->beginning.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->beginning; };
   }
 
   void InitForwardEnd()
   {
     this->ending.Get = [&]() { return &this->endIterator; };
-    this->ending.Increment = [&](uint64_t & index) { ++this->endIterator; };
-    this->ending.Decrement = [&](uint64_t & index) { --this->endIterator;};
+    this->ending.Increment = [&](int64_t & index) { ++this->endIterator; };
+    this->ending.Decrement = [&](int64_t & index) { --this->endIterator;};
     this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
 
     // this is the worst way to do this and should be avoided
     // add needed to support the random access iterators
-    this->ending.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->ending; };
-    this->ending.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->ending; };
+    this->ending.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->ending; };
+    this->ending.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->ending; };
   }
 
   void InitReverseBegin()
   {
     this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
-    this->rbeginning.Increment = [&](uint64_t & index) { ++this->rbeginIterator; };
-    this->rbeginning.Decrement = [&](uint64_t & index) { --this->rbeginIterator; };
+    this->rbeginning.Increment = [&](int64_t & index) { ++this->rbeginIterator; };
+    this->rbeginning.Decrement = [&](int64_t & index) { --this->rbeginIterator; };
     this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
 
     // this is the worst way to do this and should be avoided
     // add needed to support the random access iterators
-    this->rbeginning.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->rbeginning; };
-    this->rbeginning.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->rbeginning; };
+    this->rbeginning.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->rbeginning; };
+    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->rbeginning; };
   }
 
   void InitReverseEnd()
   {
     this->rending.Get = [&]() { return &this->rendIterator; };
-    this->rending.Increment = [&](uint64_t & index) { ++this->rendIterator; };
-    this->rending.Decrement = [&](uint64_t & index) { --this->rendIterator; };
+    this->rending.Increment = [&](int64_t & index) { ++this->rendIterator; };
+    this->rending.Decrement = [&](int64_t & index) { --this->rendIterator; };
     this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
 
     // this is the worst way to do this and should be avoided
     // add needed to support the random access iterators
-    this->rending.Add = [&](int addend, uint64_t & index) { while (addend-- > 0) ++this->rending; };
-    this->rending.Subtract = [&](int subtrahend, uint64_t & index) { while (subtrahend-- > 0) --this->rending; };
+    this->rending.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->rending; };
+    this->rending.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->rending; };
   }
 
 public:
@@ -107,10 +108,20 @@ public:
     this->InitReverseBegin();
     this->InitReverseEnd();
   }
-  explicit QueryableData(TIterable<TObj, TArgs...> items)
+  QueryableData(TIterable<TObj, TArgs...> items)
     : QueryableData<TObj, TIterable, TArgs...>()
   {
     this->items = items;
+
+    // TODO --> almost all containers have a size method. Either require that the
+    //   items passed in have it or require the size is passed into the constructor
+    //   then fix up the child classes having a Count method
+    this->size = this->items.size();
+  }
+  QueryableData(TIterable<TObj, TArgs...> && items)
+    : QueryableData<TObj, TIterable, TArgs...>()
+  {
+    this->items = std::move(items);
 
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
@@ -176,10 +187,21 @@ public:
     return objs;
   }
 
-  virtual void Update(Iterator<TObj> first, Iterator<TObj> last, std::function<bool(TObj, TObj)> compare) override
+  virtual void Update(
+    Iterator<TObj> first,
+    Iterator<TObj> last,
+    std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) override
   {
     // TODO SFINAE require this constructor
     this->items = TIterable<TObj, TArgs...>(first, last);
+    this->size = this->items.size();
+  }
+
+  virtual void Update(TVectorIterator first, TVectorIterator last)
+  {
+    // TODO SFINAE require this constructor
+    this->items = TIterable<TObj, TArgs...>(first, last);
+    this->size = this->items.size();
   }
 
   virtual Iterator<TObj> begin() override

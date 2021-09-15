@@ -21,6 +21,8 @@ class WhereQueryableData : public LinkedQueryableData<TOriginal, TOriginal, TIte
 {
   static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
+  typedef typename std::vector<TOriginal>::iterator TVectorIterator;
+
   Condition<TOriginal> condition;
 public:
 
@@ -30,6 +32,10 @@ public:
     : LinkedQueryableData<TOriginal, TOriginal, TIterable, TArgs...>(std::move(data))
   {
     this->condition += condition;
+  }
+  WhereQueryableData(const WhereQueryableData & other)
+    : LinkedQueryableData<TOriginal, TOriginal, TIterable, TArgs...>(other)
+  {
   }
 
   virtual ~WhereQueryableData() { }
@@ -77,6 +83,23 @@ public:
   virtual bool CanSkip() override
   {
     return this->condition;
+  }
+
+  virtual void Update(
+    Iterator<TOriginal> first,
+    Iterator<TOriginal> last,
+    std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
+  {
+    // TODO SFINAE require this constructor
+    this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), compare);
+    this->size = this->original.get()->Count();
+  }
+
+  virtual void Update(TVectorIterator first, TVectorIterator last)
+  {
+    // TODO SFINAE require this constructor
+    this->original.get()->Update(first, last);
+    this->size = this->original.get()->Count();
   }
 };
 

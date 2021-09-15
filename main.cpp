@@ -24,6 +24,23 @@ using namespace QueryBuilder;
 
 int main()
 {
+  // std::vector<uint> startingInput;
+  // std::vector<uint> evens;
+  // Queryable<uint> queryable;
+  // Queryable<uint> queryableEvens;
+  // startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
+  // evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
+  // queryable = BuildQueryable(startingInput);
+  // queryableEvens = BuildQueryable(evens);
+  //
+  // Queryable<uint> local = BuildQueryable<uint>(queryable.ToList());
+  // std::cout << "local made\n\n" << std::endl;
+  // Queryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
+  // std::cout << "mevens made\n\n" << std::endl;
+  // Queryable<uint> * result = local
+  //   .Where([](uint value) { return value > 10; })
+  //   .Except(mevens);
+
   std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
   std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };
   std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };

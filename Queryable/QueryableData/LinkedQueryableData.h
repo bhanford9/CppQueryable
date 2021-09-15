@@ -31,7 +31,7 @@ protected:
   Iterator<TOriginal> originalRBeginning;
   Iterator<TOriginal> originalREnding;
 
-  void LinkedIncrementPastCondition(Iterator<TOriginal> & iterator, uint64_t & index)
+  void LinkedIncrementPastCondition(Iterator<TOriginal> & iterator, int64_t & index)
   {
     if (this->CanSkip())
     {
@@ -46,7 +46,7 @@ protected:
 
   void LinkedInitForwardBegin()
   {
-    this->beginning.Increment = [&](uint64_t & index)
+    this->beginning.Increment = [&](int64_t & index)
     {
       if (index < this->size)
       {
@@ -57,7 +57,6 @@ protected:
         {
           ++this->originalBeginning;
           index = this->originalBeginning.Index;
-
           if (index < this->size)
           {
             value = *this->originalBeginning;
@@ -66,22 +65,25 @@ protected:
         while (index < this->size && this->DoSkip(value));
       }
     };
-    this->beginning.Decrement = [&](uint64_t & index)
+    this->beginning.Decrement = [&](int64_t & index)
     {
       // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index >= 0)
       {
-        --this->originalBeginning;
-        index = this->originalBeginning.Index;
+        TOriginal value;
 
-        if (index >= 0)
+        do
         {
-          value = *this->originalBeginning;
+          --this->originalBeginning;
+          index = this->originalBeginning.Index;
+
+          if (index >= 0)
+          {
+            value = *this->originalBeginning;
+          }
         }
+        while (index >= 0 && this->DoSkip(value));
       }
-      while (index >= 0 && this->DoSkip(value));
     };
 
     this->beginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalBeginning); return this->value; };
@@ -103,7 +105,7 @@ protected:
     // if a Queryable that had Where or Select called on it is intended to be
     // used more than once, then one of the copy methods should be used to ensure
     // extra (unecessary) iterations/operations are not taking place
-    this->beginning.Add = [&](int addend, uint64_t & index)
+    this->beginning.Add = [&](int addend, int64_t & index)
     {
       while (addend > 0)
       {
@@ -112,7 +114,7 @@ protected:
         index = this->originalBeginning.Index;
       }
     };
-    this->beginning.Subtract = [&](int subtrahend, uint64_t & index)
+    this->beginning.Subtract = [&](int subtrahend, int64_t & index)
     {
       while (subtrahend > 0)
       {
@@ -125,39 +127,45 @@ protected:
 
   void LinkedInitForwardEnd()
   {
-    this->ending.Increment = [&](uint64_t & index)
+    this->ending.Increment = [&](int64_t & index)
     {
-      // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index < this->size)
       {
-        ++this->originalEnding;
-        index = this->originalEnding.Index;
+        // TOOD --> create this variable with passed in allocator
+        TOriginal value;
 
-        if (index < this->size)
+        do
         {
-          value = *this->originalEnding;
+          ++this->originalEnding;
+          index = this->originalEnding.Index;
+
+          if (index < this->size)
+          {
+            value = *this->originalEnding;
+          }
         }
+        while (index < this->size && this->DoSkip(value));
       }
-      while (index < this->size && this->DoSkip(value));
     };
-    this->ending.Decrement = [&](uint64_t & index)
+    this->ending.Decrement = [&](int64_t & index)
     {
       // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index >= 0)
       {
-        --this->originalEnding;
-        index = this->originalEnding.Index;
+        TOriginal value;
 
-        if (index >= 0)
+        do
         {
-          value = *this->originalEnding;
+          --this->originalEnding;
+          index = this->originalEnding.Index;
+
+          if (index >= 0)
+          {
+            value = *this->originalEnding;
+          }
         }
+        while (index >= 0 && this->DoSkip(value));
       }
-      while (index >= 0 && this->DoSkip(value));
     };
 
     this->ending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalEnding); return this->value; };
@@ -179,7 +187,7 @@ protected:
     // if a Queryable that had Where or Select called on it is intended to be
     // used more than once, then one of the copy methods should be used to ensure
     // extra (unecessary) iterations/operations are not taking place
-    this->ending.Add = [&](int addend, uint64_t & index)
+    this->ending.Add = [&](int addend, int64_t & index)
     {
       while (addend > 0)
       {
@@ -188,7 +196,7 @@ protected:
         index = this->originalEnding.Index;
       }
     };
-    this->ending.Subtract = [&](int subtrahend, uint64_t & index)
+    this->ending.Subtract = [&](int subtrahend, int64_t & index)
     {
       while (subtrahend > 0)
       {
@@ -201,39 +209,45 @@ protected:
 
   void LinkedInitReverseBegin()
   {
-    this->rbeginning.Increment = [&](uint64_t & index)
+    this->rbeginning.Increment = [&](int64_t & index)
     {
-      // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index < this->size)
       {
-        ++this->originalRBeginning;
-        index = this->originalRBeginning.Index;
+        // TOOD --> create this variable with passed in allocator
+        TOriginal value;
 
-        if (index < this->size)
+        do
         {
-          value = *this->originalRBeginning;
+          ++this->originalRBeginning;
+          index = this->originalRBeginning.Index;
+
+          if (index < this->size)
+          {
+            value = *this->originalRBeginning;
+          }
         }
+        while (index <= this->size && this->DoSkip(value));
       }
-      while (index <= this->size && this->DoSkip(value));
     };
-    this->rbeginning.Decrement = [&](uint64_t & index)
+    this->rbeginning.Decrement = [&](int64_t & index)
     {
-      // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index >= 0)
       {
-        --this->originalRBeginning;
-        index = this->originalRBeginning.Index;
+        // TOOD --> create this variable with passed in allocator
+        TOriginal value;
 
-        if (index >= 0)
+        do
         {
-          value = *this->originalRBeginning;
+          --this->originalRBeginning;
+          index = this->originalRBeginning.Index;
+
+          if (index >= 0)
+          {
+            value = *this->originalRBeginning;
+          }
         }
+        while (index >= 0 && this->DoSkip(value));
       }
-      while (index >= 0 && this->DoSkip(value));
     };
 
     this->rbeginning.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalRBeginning); return this->value; };
@@ -255,7 +269,7 @@ protected:
     // if a Queryable that had Where or Select called on it is intended to be
     // used more than once, then one of the copy methods should be used to ensure
     // extra (unecessary) iterations/operations are not taking place
-    this->rbeginning.Add = [&](int addend, uint64_t & index)
+    this->rbeginning.Add = [&](int addend, int64_t & index)
     {
       while (addend > 0)
       {
@@ -264,7 +278,7 @@ protected:
         index = this->originalRBeginning.Index;
       }
     };
-    this->rbeginning.Subtract = [&](int subtrahend, uint64_t & index)
+    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index)
     {
       while (subtrahend > 0)
       {
@@ -277,39 +291,45 @@ protected:
 
   void LinkedInitReverseEnd()
   {
-    this->rending.Increment = [&](uint64_t & index)
+    this->rending.Increment = [&](int64_t & index)
     {
-      // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index < this->size)
       {
-        ++this->originalREnding;
-        index = this->originalREnding.Index;
+        // TOOD --> create this variable with passed in allocator
+        TOriginal value;
 
-        if (index < this->size)
+        do
         {
-          value = *this->originalREnding;
+          ++this->originalREnding;
+          index = this->originalREnding.Index;
+
+          if (index < this->size)
+          {
+            value = *this->originalREnding;
+          }
         }
+        while (index <= this->size && this->DoSkip(value));
       }
-      while (index <= this->size && this->DoSkip(value));
     };
-    this->rending.Decrement = [&](uint64_t & index)
+    this->rending.Decrement = [&](int64_t & index)
     {
-      // TOOD --> create this variable with passed in allocator
-      TOriginal value;
-
-      do
+      if (index >= 0)
       {
-        --this->originalREnding;
-        index = this->originalREnding.Index;
+        // TOOD --> create this variable with passed in allocator
+        TOriginal value;
 
-        if (index >= 0)
+        do
         {
-          value = *this->originalREnding;
+          --this->originalREnding;
+          index = this->originalREnding.Index;
+
+          if (index >= 0)
+          {
+            value = *this->originalREnding;
+          }
         }
+        while (index >= 0 && this->DoSkip(value));
       }
-      while (index >= 0 && this->DoSkip(value));
     };
 
     this->rending.Dereference = [&]() -> TCurrent& { this->value = this->ToCurrent(*this->originalREnding); return this->value; };
@@ -331,7 +351,7 @@ protected:
     // if a Queryable that had Where or Select called on it is intended to be
     // used more than once, then one of the copy methods should be used to ensure
     // extra (unecessary) iterations/operations are not taking place
-    this->rending.Add = [&](int addend, uint64_t & index)
+    this->rending.Add = [&](int addend, int64_t & index)
     {
       while (addend > 0)
       {
@@ -340,7 +360,7 @@ protected:
         index = this->originalREnding.Index;
       }
     };
-    this->rending.Subtract = [&](int subtrahend, uint64_t & index)
+    this->rending.Subtract = [&](int subtrahend, int64_t & index)
     {
       while (subtrahend > 0)
       {
@@ -398,6 +418,16 @@ public:
     }
 
     return objs;
+  }
+
+  void Sort(std::function<bool(TCurrent, TCurrent)> compare = [](TCurrent a, TCurrent b) { return a < b; }) override
+  {
+    // would be nice to be able to use std::sort(this->begin, this->end, compare)
+    // not sure it will work, been having some troubles with it
+
+    std::function<bool(TOriginal, TOriginal)> originalCompare =
+      [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
+    this->original.get()->Sort(originalCompare);
   }
 
   Iterator<TCurrent> begin() override

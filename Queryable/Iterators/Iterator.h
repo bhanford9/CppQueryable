@@ -2,6 +2,7 @@
 #define CPPQUERYABLE_QUERYABLE_ITERATORS_LISTITERATOR_H
 
 #include <chrono>
+#include <stdexcept>
 #include <functional>
 #include <iostream>
 #include <iterator>
@@ -19,25 +20,27 @@ public:
   typedef T* pointer;
   typedef T& reference;
 
-  Iterator() : Index(0) {}
+  Iterator() {}
 
   std::function<void*()> Get;
-  std::function<void(uint64_t & index)> Increment;
-  std::function<void(uint64_t & index)> Decrement;
+  std::function<void(int64_t & index)> Increment;
+  std::function<void(int64_t & index)> Decrement;
   std::function<T&()> Dereference;
   std::function<const T&()> ConstDereference;
   std::function<void(const Iterator<T>&)> Assign;
 
   // random access iterators only
-  std::function<void(int addend, uint64_t & index)> Add;
-  std::function<void(int subtrahend, uint64_t & index)> Subtract;
+  std::function<void(int addend, int64_t & index)> Add;
+  std::function<void(int subtrahend, int64_t & index)> Subtract;
 
   // intentionally public
-  uint64_t Index = 0;
+  int64_t Index = 0;
 
   Iterator<T>& operator++()
   {
     this->Index++;
+
+    // std::cout << "++ index; " << this->Index << std::endl;
 
     this->Increment(this->Index);
     return *this;
@@ -46,6 +49,7 @@ public:
   Iterator<T>& operator--()
   {
     this->Index--;
+      // std::cout << "-- index; " << this->Index << std::endl;
 
     this->Decrement(this->Index);
     return *this;
@@ -53,66 +57,85 @@ public:
 
   T& operator*()
   {
+    // if (this->Index > 15)
+    // {
+    //   throw std::exception();
+    // }
+    // std::cout << "* index; " << this->Index << std::endl;
     return this->Dereference();
   }
 
   const T& operator*() const
   {
+    // std::cout << "c* index; " << this->Index << std::endl;
     return this->ConstDereference();
   }
 
   bool operator==(const Iterator<T>& comparison) const
   {
+    // std::cout << "== index; " << this->Index << std::endl;
     return this->Index == comparison.Index;
   }
 
   bool operator!=(const Iterator<T>& comparison) const
   {
+    // std::cout << "!= index; " << this->Index << std::endl;
     return this->Index != comparison.Index;
   }
 
   int operator-(const Iterator<T>& subtrahend) const
   {
+    // std::cout << "-o index; " << this->Index << std::endl;
     return this->Index - subtrahend.Index;
   }
 
   Iterator<T>& operator+(int addend)
   {
+    // std::cout << "+i index; " << this->Index << std::endl;
     this->Add(addend, this->Index);
     return *this;
   }
 
   Iterator<T>& operator+=(int addend)
   {
+    // std::cout << "in +=" << std::endl;
+
     this->Add(addend, this->Index);
+    // std::cout << "add complete" << std::endl;
     return *this;
   }
 
   Iterator<T>& operator-(int subtrahend)
   {
+    // std::cout << "-i index; " << this->Index << std::endl;
     this->Subtract(subtrahend, this->Index);
     return *this;
   }
 
   Iterator<T>& operator-=(int subtrahend)
   {
+    // std::cout << "-= index; " << this->Index << std::endl;
     this->Subtract(subtrahend, this->Index);
     return *this;
   }
 
   bool operator<(const Iterator<T>& other) const
   {
+    // std::cout << "< index; " << this->Index << std::endl;
     return this->Index < other.Index;
   }
 
   Iterator<T>& operator=(const Iterator<T>& value)
   {
+    // std::cout << "= index; " << this->Index << std::endl;
     this->Get = value.Get;
     this->Increment = value.Increment;
     this->Decrement = value.Decrement;
     this->Dereference = value.Dereference;
     this->ConstDereference = value.ConstDereference;
     this->Assign = value.Assign;
+    this->Add = value.Add;
+    this->Subtract = value.Subtract;
     this->Index = value.Index;
     this->Assign(value);
     return *this;

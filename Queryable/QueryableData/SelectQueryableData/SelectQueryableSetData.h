@@ -29,11 +29,6 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(TCurrent, TCurrent)> compare = [](TCurrent a, TCurrent b) { return a < b; }) override
-  {
-    // already sorted
-  }
-
   virtual void Update(Iterator<TCurrent> first, Iterator<TCurrent> last, std::function<bool(TCurrent, TCurrent)> compare) override
   {
     std::function<bool(TOriginal, TOriginal)> originalCompare =

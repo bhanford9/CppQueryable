@@ -5,28 +5,22 @@
 #include <memory>
 #include <set>
 
-#include "QueryableData.h"
+#include "SortedQueryableData.h"
 
 template<typename T>
-class QueryableMultiSetData : public QueryableData<T, std::multiset, std::function<bool(T, T)>>
+class QueryableMultiSetData : public SortedQueryableData<T, std::multiset>
 {
-  typedef typename std::multiset<T, std::function<bool(T, T)>>::iterator t_forwardIterator;
 public:
   QueryableMultiSetData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
-    : QueryableData<T, std::multiset, std::function<bool(T, T)>>()
+    : SortedQueryableData<T, std::multiset>()
   {
-    this->items = std::multiset<T, std::function<bool(T, T)>>(compare);
-    this->InitForwardBegin();
-    this->InitForwardEnd();
-    this->InitReverseBegin();
-    this->InitReverseEnd();
   }
   QueryableMultiSetData(std::multiset<T, std::function<bool(T, T)>> items)
-    : QueryableData<T, std::multiset, std::function<bool(T, T)>>(items)
+    : SortedQueryableData<T, std::multiset>(items)
   {
   }
   QueryableMultiSetData(const QueryableMultiSetData& data)
-    : QueryableData<T, std::multiset, std::function<bool(T, T)>>(data)
+    : SortedQueryableData<T, std::multiset>(data)
   {
   }
 
@@ -38,15 +32,17 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
-  {
-    // already sorted
-  }
-
-  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
-  {
-    this->items = std::multiset<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
-  }
+  // virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
+  // {
+  //   this->items = std::multiset<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
+  // }
+  //
+  // virtual void Update(TVectorIterator first, TVectorIterator last)
+  // {
+  //   // TODO SFINAE require this constructor
+  //   this->items = std::multiset<T, std::function<bool(T, T)>>(first, last, this->comparator);
+  //   this->size = this->items.size();
+  // }
 };
 
 #endif
