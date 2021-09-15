@@ -10,6 +10,7 @@
 template<typename T>
 class QueryableSetData : public SortedQueryableData<T, std::set>
 {
+  typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   QueryableSetData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
     : SortedQueryableData<T, std::set>()
@@ -21,6 +22,13 @@ public:
   }
   QueryableSetData(const QueryableSetData& data)
     : SortedQueryableData<T, std::set>(data)
+  {
+  }
+  QueryableSetData(
+    TVectorIterator first,
+    TVectorIterator last,
+    std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
+    : SortedQueryableData<T, std::set>(first, last, compare)
   {
   }
 

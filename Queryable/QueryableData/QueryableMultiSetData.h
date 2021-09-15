@@ -10,6 +10,7 @@
 template<typename T>
 class QueryableMultiSetData : public SortedQueryableData<T, std::multiset>
 {
+  typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   QueryableMultiSetData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
     : SortedQueryableData<T, std::multiset>()
@@ -23,6 +24,13 @@ public:
     : SortedQueryableData<T, std::multiset>(data)
   {
   }
+  QueryableMultiSetData(
+    TVectorIterator first,
+    TVectorIterator last,
+    std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
+    : SortedQueryableData<T, std::multiset>(first, last, compare)
+  {
+  }
 
   virtual ~QueryableMultiSetData() { }
 
@@ -31,18 +39,6 @@ public:
     this->items.insert(item);
     this->size++;
   }
-
-  // virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
-  // {
-  //   this->items = std::multiset<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
-  // }
-  //
-  // virtual void Update(TVectorIterator first, TVectorIterator last)
-  // {
-  //   // TODO SFINAE require this constructor
-  //   this->items = std::multiset<T, std::function<bool(T, T)>>(first, last, this->comparator);
-  //   this->size = this->items.size();
-  // }
 };
 
 #endif

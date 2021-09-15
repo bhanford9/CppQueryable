@@ -88,15 +88,15 @@ public:
     return this->data.get()->rend();
   }
 
-  void AddCondition(std::function<bool(const TData &)> condition) override
-  {
-    this->data.get()->AddCondition(condition);
-  }
-
-  bool PassesCondition(const TData & obj) const override
-  {
-    return this->data.get()->PassesCondition(obj);
-  }
+  // void AddCondition(std::function<bool(const TData &)> condition) override
+  // {
+  //   this->data.get()->AddCondition(condition);
+  // }
+  //
+  // bool PassesCondition(const TData & obj) const override
+  // {
+  //   return this->data.get()->PassesCondition(obj);
+  // }
 
   TKey GetKey() const
   {

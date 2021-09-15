@@ -20,7 +20,7 @@ public:
   {
     this->comparator = compare;
     this->items = TIterable<T, std::function<bool(T, T)>>(compare);
-    
+
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
@@ -34,17 +34,29 @@ public:
     : QueryableData<T, TIterable, std::function<bool(T, T)>>(data)
   {
   }
+  SortedQueryableData(
+    TVectorIterator first,
+    TVectorIterator last,
+    std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
+  {
+    // TODO SFINAE require this constructor
+    this->comparator = compare;
+    this->items = TIterable<T, std::function<bool(T, T)>>(first, last, this->comparator);
+    this->size = this->items.size();
+  }
 
   virtual ~SortedQueryableData() { }
 
   void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
   {
-    // already sorted
+    this->Update(this->begin(), this->end(), compare);
   }
 
   virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare) override
   {
-    this->items = TIterable<T, std::function<bool(T, T)>>(this->items.begin(), this->items.end(), compare);
+    this->comparator = compare;
+    this->items = TIterable<T, std::function<bool(T, T)>>(first, last, compare);
+    this->size = this->items.size();
   }
 
   virtual void Update(TVectorIterator first, TVectorIterator last)

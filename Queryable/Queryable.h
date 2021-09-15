@@ -200,10 +200,7 @@ public:
 
   void Add(TObj obj)
   {
-    if (this->items.get()->PassesCondition(obj))
-    {
-      this->items.get()->Add(obj);
-    }
+    this->items.get()->Add(obj);
   }
 
   template<typename TNewAllocator = std::allocator<TObj>>
@@ -301,26 +298,16 @@ public:
 
   Queryable<TObj> & ToQueryableMultiSet()
   {
-    std::multiset<TObj> copy = this->ToMultiSet();
-
-    this->items = std::make_shared<QueryableMultiSetData<TObj>>();
-    for (TObj item : copy)
-    {
-      this->items.get()->Add(item);
-    }
+    std::multiset<TObj, std::function<bool(TObj, TObj)>> copy = this->ToMultiSet();
+    this->items = std::make_shared<QueryableMultiSetData<TObj>>(copy);
 
     return *this;
   }
 
   Queryable<TObj> & ToQueryableSet()
   {
-    std::set<TObj> copy = this->ToSet();
-
-    this->items = std::make_shared<QueryableSetData<TObj>>();
-    for (TObj item : copy)
-    {
-      this->items.get()->Add(item);
-    }
+    std::set<TObj, std::function<bool(TObj, TObj)>> copy = this->ToSet();
+    this->items = std::make_shared<QueryableSetData<TObj>>(copy);
 
     return *this;
   }
@@ -423,19 +410,9 @@ public:
     return *this;
   }
 
-  Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition)
+  Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
   {
-    Queryable<TObj> copy(this->GetType());
-
-    this->ForEach([&](TObj obj)
-    {
-      if (condition(obj))
-      {
-        copy.Add(obj);
-      }
-    });
-
-    return copy;
+    return this->Where(condition);
   }
 
   TObj First(std::function<bool(TObj)> condition)
@@ -1076,41 +1053,11 @@ public:
   //   1. [multi]sets must use a copy of storage
   //   1.1. this is due to the sorting algorithm being type dependent within the container
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
-  //   2.1. the default comparator for [multi]sets is the type's less than comparison operator
   //   3. all other types use their built in optimized sorting algorithms
   Queryable<TObj> & Sort(
     std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   {
-    switch (this->type)
-    {
-      case QueryableType::Set:
-        {
-          std::vector<TObj> copy = this->ToVector();
-          this->items = std::make_shared<QueryableSetData<TObj>>(comparator);
-          for (TObj item : copy)
-          {
-            this->items.get()->Add(item);
-          }
-        }
-        break;
-      case QueryableType::MultiSet:
-        {
-          std::vector<TObj> copy = this->ToVector();
-          this->items = std::make_shared<QueryableMultiSetData<TObj>>(comparator);
-          for (TObj item : copy)
-          {
-            this->items.get()->Add(item);
-          }
-        }
-        break;
-      case QueryableType::Deque:
-      case QueryableType::List:
-      case QueryableType::Vector:
-      default:
-        this->items.get()->Sort(comparator);
-        break;
-    }
-
+    this->items.get()->Sort(comparator);
     return *this;
   }
 
@@ -1231,7 +1178,7 @@ public:
     typename TJoinOn,
     typename TResult>
   Queryable<TResult> & Join(
-    Queryable<TJoinObj> * collection,
+    Queryable<TJoinObj> & collection,
     std::function<TJoinOn(TObj)> getLocalJoinOn,
     std::function<TJoinOn(TJoinObj)> getInputJoinOn,
     std::function<TResult(TObj, TJoinObj)> createFrom,
@@ -1246,18 +1193,13 @@ public:
     this->persistentContainer.Set(data);
     std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
 
-    if (!collection)
-    {
-      return *result.get();
-    }
-
     // Sort each collection on passed in key getters                             ( + time complexity: nlog(n) )
     //   this allows us to only need to fully iterate over each collection once  ( + time complexity: n )
     //   and chunks of non-joinable data can be easily bypassed                  ( + non-generalizable benefit )
     // Change inner collection to vector to gaurantee constant time indexing     ( - requires extra space )
     //   may want to only do this if collection type does not have constant time indexing
     this->OrderBy(getLocalJoinOn);
-    std::vector<TJoinObj> inputSorted = collection->OrderBy(getInputJoinOn).ToVector();
+    std::vector<TJoinObj> inputSorted = collection.OrderBy(getInputJoinOn).ToVector();
     int inputSize = inputSorted.size();
 
     if (inputSize > 0)
@@ -1350,7 +1292,7 @@ public:
     typedef Queryable<TGroup> TReturn;
 
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-    TReturn * queryableGroups = NULL;
+    TReturn queryableGroups;
 
     switch (type) {
       case QueryableType::Deque:
@@ -1410,33 +1352,33 @@ public:
     {
       TKey key = getKey(item);
 
-      if (!queryableGroups->Any([&](TGroup group) { return group.GetKey() == key; }))
+      if (!queryableGroups.Any([&](TGroup group) { return group.GetKey() == key; }))
       {
         // these ugly switch statements are telling me that I am missing a
         //   layer of abstraction or a key architectural feature
         switch (type)
         {
           case QueryableType::Deque:
-            queryableGroups->Add(TGroupDeque(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(TGroupDeque(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::List:
-            queryableGroups->Add(TGroupList(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(TGroupList(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::MultiSet:
-            queryableGroups->Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Set:
-            queryableGroups->Add(TGroupSet(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(TGroupSet(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Vector:
           default:
-            queryableGroups->Add(TGroupVector(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(TGroupVector(key, type, keyCompare, dataCompare));
             break;
         }
       }
 
       queryableGroups
-        ->First([&](TGroup group)
+        .First([&](TGroup group)
         {
           TKey groupKey = group.GetKey();
           return !(keyCompare(groupKey, key) || keyCompare(key, groupKey));

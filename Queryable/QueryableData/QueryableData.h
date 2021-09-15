@@ -128,6 +128,12 @@ public:
     //   then fix up the child classes having a Count method
     this->size = this->items.size();
   }
+  QueryableData(TVectorIterator first, TVectorIterator last)
+  {
+    // TODO SFINAE require this constructor
+    this->items = TIterable<TObj, TArgs...>(first, last);
+    this->size = this->items.size();
+  }
   QueryableData(const QueryableData<TObj, TIterable> & data)
   {
     this->items = data.items;
