@@ -335,7 +335,7 @@ public:
     return this->items.get()->begin() == this->items.get()->end();
   }
 
-  TObj At(int index)
+  TObj & At(int index)
   {
     if (index < 0)
     {
@@ -377,6 +377,14 @@ public:
   void ForEach(std::function<void(TObj)> action)
   {
     for (TObj item : *this->items.get())
+    {
+      action(item);
+    }
+  }
+
+  void ForEachRef(std::function<void(TObj&)> action)
+  {
+    for (TObj & item : *this->items.get())
     {
       action(item);
     }
@@ -1272,20 +1280,20 @@ public:
 
 
   template<typename TKey, typename TData = TObj>
-  Queryable<Group<TKey, TObj>> GroupBy(
+  Queryable<Group<TKey, TObj>*> GroupBy(
     std::function<TKey(TObj)> getKey,
     QueryableType storageType = QueryableType::Default,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> dataCompare = [](TData a, TData b) { return a < b; })
   {
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-    Queryable<Group<TKey, TObj>> queryableGroups(type);
+    Queryable<Group<TKey, TObj>*> queryableGroups(type);
 
     for (TObj item : *this->items.get())
     {
       TKey key = getKey(item);
 
-      if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.HasKey(key); }))
+      if (!queryableGroups.Any([&](Group<TKey, TObj> * group) { return group->HasKey(key); }))
       {
         switch (type)
         {
@@ -1309,7 +1317,7 @@ public:
       }
 
       queryableGroups
-        .First([&](Group<TKey, TObj> group) { return group.HasKey(key); })
+        .First([&](Group<TKey, TObj> * group) { return group->HasKey(key); })
         .Add(item);
     }
 

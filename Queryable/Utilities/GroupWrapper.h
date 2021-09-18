@@ -1,26 +1,45 @@
-#ifndef CPPQUERYABLE_QUERYABLE_UTILITIES_GROUP_H
-#define CPPQUERYABLE_QUERYABLE_UTILITIES_GROUP_H
+#ifndef CPPQUERYABLE_QUERYABLE_UTILITIES_GROUPWRAPPER_H
+#define CPPQUERYABLE_QUERYABLE_UTILITIES_GROUPWRAPPER_H
 
 #include <iostream>
 #include <memory>
 
 #include "../QueryableData/IQueryableData.h"
+#include "../QueryableData/GroupQueryableData/GroupQueryableDequeData.h"
 #include "../Iterators/Iterator.h"
 #include "../QueryableType.h"
+#include "Group.h"
 
 template <typename T>
 class Queryable;
 
 template<typename TKey, typename TData>
-class Group
+class GroupWrapper : Group<TKey, TData>
 {
+private:
+  std::shared_ptr<Group<TKey, TData>> internalGroup;
+
 protected:
   virtual IQueryableData<TData> & GetData() const = 0;
 
 public:
-  Group() { }
-  Group(const Group & group) { }
-  virtual ~Group() { }
+  GroupWrapper(Group<TKey, TData> & group)
+  {
+    this->internalGroup = std::make_shared<Group<TKey, TData>>(group);
+  }
+
+  GroupWrapper(GroupQueryableDequeData<TKey, TData> & group)
+  {
+    this->internalGroup = std::make_shared<GroupQueryableDequeData<TKey, TData>>(group);
+  }
+
+  /*
+    Left todo:
+     1. create each individual group container constructor
+     2. have each of these inherited methods point to the internalGroup's corresponding method
+  */
+
+  virtual ~GroupWrapper() { }
 
   virtual bool HasKey(TKey key) const = 0;
   virtual TKey GetKey() const = 0;

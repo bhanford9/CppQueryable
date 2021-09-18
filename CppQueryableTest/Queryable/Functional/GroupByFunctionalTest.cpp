@@ -55,7 +55,7 @@ protected:
 
 TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 {
-  Queryable<TGenderPerson> & genderGroups = this->people.ToQueryableDeque()
+  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   Queryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
@@ -66,9 +66,8 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups.ForEach([&](TGenderPerson group)
+  genderGroups.ForEachRef([&](TGenderPerson & group)
   {
-
     if (group.GetKey() == Gender::Male)
     {
       ASSERT_EQ(males.Count(), group.Count());

@@ -75,7 +75,7 @@ public:
     return !(this->keyCompare(this->key, key) || this->keyCompare(key, this->key));
   }
 
-  bool operator<(const Group<TKey, TData> & other) const
+  bool operator<(const Group<TKey, TData> & other) const override
   {
     return this->keyCompare(this->key, other.key);
   }
