@@ -11,9 +11,11 @@
 #include <set>
 #include <vector>
 
-#include "Utilities/Condition.h"
-// #include "Utilities/Group.h"   --> forward declare instead
-#include "Utilities/PersistentContainer.h"
+#include "QueryableData/GroupQueryableData/GroupQueryableDequeData.h"
+#include "QueryableData/GroupQueryableData/GroupQueryableListData.h"
+#include "QueryableData/GroupQueryableData/GroupQueryableMultiSetData.h"
+#include "QueryableData/GroupQueryableData/GroupQueryableSetData.h"
+#include "QueryableData/GroupQueryableData/GroupQueryableVectorData.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableDequeData.h"
 #include "QueryableData/QueryableListData.h"
@@ -34,9 +36,9 @@
 #include "QueryableData/WhereQueryableData/WhereQueryableVectorData.h"
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
-
-template<typename TKey, typename TData>
-class Group;
+#include "Utilities/Condition.h"
+#include "Utilities/Group.h"
+#include "Utilities/PersistentContainer.h"
 
 template<typename TObj>
 class Queryable
@@ -1288,20 +1290,20 @@ public:
         switch (type)
         {
           case QueryableType::Deque:
-            queryableGroups.Add(GroupQueryableDequeData(key, type, keyCompare));
+            queryableGroups.Add(GroupQueryableDequeData<TKey, TData>(key, type, keyCompare));
             break;
           case QueryableType::List:
-            queryableGroups.Add(GroupQueryableListData(key, type, keyCompare));
+            queryableGroups.Add(GroupQueryableListData<TKey, TData>(key, type, keyCompare));
             break;
           case QueryableType::MultiSet:
-            queryableGroups.Add(GroupQueryableMultiSetData(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Set:
-            queryableGroups.Add(GroupQueryableSetData(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Vector:
           default:
-            queryableGroups.Add(GroupQueryableVectorData(key, type, keyCompare));
+            queryableGroups.Add(GroupQueryableVectorData<TKey, TData>(key, type, keyCompare));
             break;
         }
       }

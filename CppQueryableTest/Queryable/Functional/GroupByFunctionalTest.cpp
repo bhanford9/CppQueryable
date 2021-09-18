@@ -22,7 +22,6 @@
 #include "../../../Queryable/QueryBuilder.h"
 #include "../../../Queryable/QueryableType.h"
 #include "../../../Queryable/Utilities/Group.h"
-#include "../../../Queryable/Utilities/IGroup.h"
 
 using namespace QueryBuilder;
 
@@ -42,7 +41,7 @@ protected:
     [](Person a, Person b) -> bool { return a.GetId() < b.GetId(); };
   typedef decltype(comparisonId) TComparisonId;
 
-  typedef IGroup<Gender, Person> TGenderPerson;
+  typedef Group<Gender, Person> TGenderPerson;
 
   void SetUp() override
   {

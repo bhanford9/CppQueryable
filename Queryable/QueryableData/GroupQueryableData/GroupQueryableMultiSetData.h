@@ -21,7 +21,7 @@ protected:
 public:
 
   GroupQueryableMultiSetData(
-    TKey key
+    TKey key,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; })

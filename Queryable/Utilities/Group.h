@@ -1,14 +1,15 @@
 #ifndef CPPQUERYABLE_QUERYABLE_UTILITIES_GROUP_H
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_GROUP_H
 
-#include <functional>
 #include <iostream>
 #include <memory>
 
 #include "../QueryableData/IQueryableData.h"
 #include "../Iterators/Iterator.h"
-#include "../Queryable.h"
 #include "../QueryableType.h"
+
+template <typename T>
+class Queryable;
 
 template<typename TKey, typename TData>
 class Group
