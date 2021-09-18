@@ -95,7 +95,7 @@ public:
     this->size = this->original.get()->Count();
   }
 
-  virtual void Update(TVectorIterator first, TVectorIterator last)
+  virtual void Update(TVectorIterator first, TVectorIterator last) override
   {
     // TODO SFINAE require this constructor
     this->original.get()->Update(first, last);

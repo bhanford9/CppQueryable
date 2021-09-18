@@ -57,8 +57,8 @@ protected:
   void InitForwardEnd()
   {
     this->ending.Get = [&]() { return &this->endIterator; };
-    this->ending.Increment = [&](int64_t & index) { ++this->endIterator; };
-    this->ending.Decrement = [&](int64_t & index) { --this->endIterator;};
+    this->ending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->endIterator; };
+    this->ending.Decrement = [&](int64_t & index) { if (index > 0) --this->endIterator;};
     this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
@@ -72,8 +72,8 @@ protected:
   void InitReverseBegin()
   {
     this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
-    this->rbeginning.Increment = [&](int64_t & index) { ++this->rbeginIterator; };
-    this->rbeginning.Decrement = [&](int64_t & index) { --this->rbeginIterator; };
+    this->rbeginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rbeginIterator; };
+    this->rbeginning.Decrement = [&](int64_t & index) { if (index > 0) --this->rbeginIterator; };
     this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
@@ -87,8 +87,8 @@ protected:
   void InitReverseEnd()
   {
     this->rending.Get = [&]() { return &this->rendIterator; };
-    this->rending.Increment = [&](int64_t & index) { ++this->rendIterator; };
-    this->rending.Decrement = [&](int64_t & index) { --this->rendIterator; };
+    this->rending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rendIterator; };
+    this->rending.Decrement = [&](int64_t & index) { if (index > 0) --this->rendIterator; };
     this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
@@ -203,7 +203,7 @@ public:
     this->size = this->items.size();
   }
 
-  virtual void Update(TVectorIterator first, TVectorIterator last)
+  virtual void Update(TVectorIterator first, TVectorIterator last) override
   {
     // TODO SFINAE require this constructor
     this->items = TIterable<TObj, TArgs...>(first, last);

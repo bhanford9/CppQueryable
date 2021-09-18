@@ -12,8 +12,7 @@
 #include <vector>
 
 #include "Utilities/Condition.h"
-#include "Utilities/Group.h"
-#include "Utilities/IGroup.h"
+// #include "Utilities/Group.h"   --> forward declare instead
 #include "Utilities/PersistentContainer.h"
 #include "QueryableData/IQueryableData.h"
 #include "QueryableData/QueryableDequeData.h"
@@ -35,6 +34,9 @@
 #include "QueryableData/WhereQueryableData/WhereQueryableVectorData.h"
 #include "QueryableType.h"
 #include "TypeConstraintUtil.h"
+
+template<typename TKey, typename TData>
+class Group;
 
 template<typename TObj>
 class Queryable
@@ -998,7 +1000,7 @@ public:
   }
 
   template<typename T>
-  Queryable<T> & Select(
+  Queryable<T> Select(
     std::function<T(TObj)> retrieveValue,
     std::function<bool(T,T)> lessThan = [](T a, T b) { return a < b; })
   {
@@ -1029,9 +1031,11 @@ public:
       default: break;
     }
 
-    std::shared_ptr<Queryable<T>> queryable = std::make_shared<Queryable<T>>(std::move(selectable), this->type);
-    this->persistentContainer.Set(queryable);
-    return *this->persistentContainer.GetAs<Queryable<T>>().get();
+    Queryable<T> queryable(std::move(selectable), this->type);
+    return queryable;
+    // std::shared_ptr<Queryable<T>> queryable = std::make_shared<Queryable<T>>(std::move(selectable), this->type);
+    // this->persistentContainer.Set(queryable);
+    // return *this->persistentContainer.GetAs<Queryable<T>>().get();
   }
 
   bool Contains(TObj obj) const
@@ -1265,124 +1269,45 @@ public:
   }
 
 
-  template<
-    typename TKey,
-    typename TData = TObj,
-    typename TKeyCompare = std::less<TKey>,
-    typename TDataCompare = std::less<TData>>
-  Queryable<IGroup<TKey, TObj, TKeyCompare, TDataCompare>> & GroupBy(
+  template<typename TKey, typename TData = TObj>
+  Queryable<Group<TKey, TObj>> GroupBy(
     std::function<TKey(TObj)> getKey,
     QueryableType storageType = QueryableType::Default,
-    TDataCompare dataCompare = TDataCompare(),
-    TKeyCompare keyCompare = TKeyCompare()
-  )
+    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
+    std::function<bool(TData, TData)> dataCompare = [](TData a, TData b) { return a < b; })
   {
-    typedef Group<TKey, TObj, std::deque, TKeyCompare, TDataCompare> TGroupDeque;
-    typedef Group<TKey, TObj, std::list, TKeyCompare, TDataCompare> TGroupList;
-    typedef Group<TKey, TObj, std::multiset, TKeyCompare, TDataCompare> TGroupMultiSet;
-    typedef Group<TKey, TObj, std::set, TKeyCompare, TDataCompare> TGroupSet;
-    typedef Group<TKey, TObj, std::vector, TKeyCompare, TDataCompare> TGroupVector;
-    typedef Queryable<TGroupDeque> TReturnDeque;
-    typedef Queryable<TGroupList> TReturnList;
-    typedef Queryable<TGroupMultiSet> TReturnMultiSet;
-    typedef Queryable<TGroupSet> TReturnSet;
-    typedef Queryable<TGroupVector> TReturnVector;
-
-    typedef IGroup<TKey, TObj, TKeyCompare, TDataCompare> TGroup;
-    typedef Queryable<TGroup> TReturn;
-
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-    TReturn queryableGroups;
-
-    switch (type) {
-      case QueryableType::Deque:
-        {
-          std::shared_ptr<TReturnDeque> data = std::make_shared<TReturnDeque>(type);
-          this->persistentContainer.Set(data);
-          queryableGroups = this->persistentContainer
-            .GetAs<TReturnDeque>()
-            .get()
-            ->template Cast<TGroup>();
-        }
-        break;
-      case QueryableType::List:
-        {
-          std::shared_ptr<TReturnList> data = std::make_shared<TReturnList>(type);
-          this->persistentContainer.Set(data);
-          queryableGroups = this->persistentContainer
-            .GetAs<TReturnList>()
-            .get()
-            ->template Cast<TGroup>();
-        }
-        break;
-      case QueryableType::MultiSet:
-        {
-          std::shared_ptr<TReturnMultiSet> data = std::make_shared<TReturnMultiSet>(type);
-          this->persistentContainer.Set(data);
-          queryableGroups = this->persistentContainer
-            .GetAs<TReturnMultiSet>()
-            .get()
-            ->template Cast<TGroup>();
-        }
-        break;
-      case QueryableType::Set:
-        {
-          std::shared_ptr<TReturnSet> data = std::make_shared<TReturnSet>(type);
-          this->persistentContainer.Set(data);
-          queryableGroups = this->persistentContainer
-            .GetAs<TReturnSet>()
-            .get()
-            ->template Cast<TGroup>();
-        }
-        break;
-      case QueryableType::Vector:
-      default:
-        {
-          std::shared_ptr<TReturnVector> data = std::make_shared<TReturnVector>(type);
-          this->persistentContainer.Set(data);
-          queryableGroups = this->persistentContainer
-            .GetAs<TReturnVector>()
-            .get()
-            ->template Cast<TGroup>();
-        }
-        break;
-    }
+    Queryable<Group<TKey, TObj>> queryableGroups(type);
 
     for (TObj item : *this->items.get())
     {
       TKey key = getKey(item);
 
-      if (!queryableGroups.Any([&](TGroup group) { return group.GetKey() == key; }))
+      if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.HasKey(key); }))
       {
-        // these ugly switch statements are telling me that I am missing a
-        //   layer of abstraction or a key architectural feature
         switch (type)
         {
           case QueryableType::Deque:
-            queryableGroups.Add(TGroupDeque(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableDequeData(key, type, keyCompare));
             break;
           case QueryableType::List:
-            queryableGroups.Add(TGroupList(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableListData(key, type, keyCompare));
             break;
           case QueryableType::MultiSet:
-            queryableGroups.Add(TGroupMultiSet(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableMultiSetData(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Set:
-            queryableGroups.Add(TGroupSet(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableSetData(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Vector:
           default:
-            queryableGroups.Add(TGroupVector(key, type, keyCompare, dataCompare));
+            queryableGroups.Add(GroupQueryableVectorData(key, type, keyCompare));
             break;
         }
       }
 
       queryableGroups
-        .First([&](TGroup group)
-        {
-          TKey groupKey = group.GetKey();
-          return !(keyCompare(groupKey, key) || keyCompare(key, groupKey));
-        })
+        .First([&](Group<TKey, TObj> group) { return group.HasKey(key); })
         .Add(item);
     }
 

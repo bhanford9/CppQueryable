@@ -52,7 +52,7 @@ int main()
   std::vector<Person> people(PersonLibrary().GetPeople());
 
   Queryable<Person> queryablePeople(people);
-  Queryable<std::string> & queryableNames = queryablePeople
+  Queryable<std::string> queryableNames = queryablePeople
     .Select<std::string>([](Person p) { return p.GetName(); });
 
   queryableNames.ForEach([](std::string name) { std::cout << "name: " << name << std::endl; });
