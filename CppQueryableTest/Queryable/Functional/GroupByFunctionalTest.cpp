@@ -62,40 +62,30 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
   Queryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
-    std::cout << "setup" << std::endl;
-
   ASSERT_EQ(2, genderGroups.Count());
   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
-
-  std::cout << "entering foreach" << std::endl;
 
   genderGroups.ForEach([&](TGenderPerson group)
   {
     if (group.GetKey() == Gender::Male)
     {
-      std::cout << "male count check" << std::endl;
       ASSERT_EQ(males.Count(), group.Count());
     }
     else
     {
-      std::cout << "female count check" << std::endl;
       ASSERT_EQ(females.Count(), group.Count());
     }
 
     int i = 0;
-    std::cout << "gonna try the group built in foreach" << std::endl;
     for (Person person : group)
     {
-      std::cout << "inner looper" << std::endl;
       if (group.GetKey() == Gender::Male)
       {
-        std::cout << "male person check" << std::endl;
         ASSERT_TRUE(person == males.At(i++));
       }
       else
       {
-        std::cout << "female person check" << std::endl;
         ASSERT_TRUE(person == females.At(i++));
       }
     }

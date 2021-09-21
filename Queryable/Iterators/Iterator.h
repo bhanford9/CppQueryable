@@ -40,7 +40,7 @@ public:
   {
     this->Index++;
 
-    std::cout << "++ index; " << this->Index << std::endl;
+    // std::cout << "++ index; " << this->Index << std::endl;
 
     this->Increment(this->Index);
     return *this;
@@ -61,73 +61,73 @@ public:
     // {
     //   throw std::exception();
     // }
-    std::cout << "* index; " << this->Index << std::endl;
+    // std::cout << "* index; " << this->Index << std::endl;
     return this->Dereference();
   }
 
   const T& operator*() const
   {
-    std::cout << "c* index; " << this->Index << std::endl;
+    // std::cout << "c* index; " << this->Index << std::endl;
     return this->ConstDereference();
   }
 
   bool operator==(const Iterator<T>& comparison) const
   {
-    std::cout << "== index; " << this->Index << std::endl;
+    // std::cout << "== index; " << this->Index << std::endl;
     return this->Index == comparison.Index;
   }
 
   bool operator!=(const Iterator<T>& comparison) const
   {
-    std::cout << "!= index; " << this->Index << std::endl;
+    // std::cout << "!= index; " << this->Index << std::endl;
     return this->Index != comparison.Index;
   }
 
   int operator-(const Iterator<T>& subtrahend) const
   {
-    std::cout << "-o index; " << this->Index << std::endl;
+    // std::cout << "-o index; " << this->Index << std::endl;
     return this->Index - subtrahend.Index;
   }
 
   Iterator<T>& operator+(int addend)
   {
-    std::cout << "+i index; " << this->Index << std::endl;
+    // std::cout << "+i index; " << this->Index << std::endl;
     this->Add(addend, this->Index);
     return *this;
   }
 
   Iterator<T>& operator+=(int addend)
   {
-    std::cout << "in +=" << std::endl;
+    // std::cout << "in +=" << std::endl;
 
     this->Add(addend, this->Index);
-    std::cout << "add complete" << std::endl;
+    // std::cout << "add complete" << std::endl;
     return *this;
   }
 
   Iterator<T>& operator-(int subtrahend)
   {
-    std::cout << "-i index; " << this->Index << std::endl;
+    // std::cout << "-i index; " << this->Index << std::endl;
     this->Subtract(subtrahend, this->Index);
     return *this;
   }
 
   Iterator<T>& operator-=(int subtrahend)
   {
-    std::cout << "-= index; " << this->Index << std::endl;
+    // std::cout << "-= index; " << this->Index << std::endl;
     this->Subtract(subtrahend, this->Index);
     return *this;
   }
 
   bool operator<(const Iterator<T>& other) const
   {
-    std::cout << "< index; " << this->Index << std::endl;
+    // std::cout << "< index; " << this->Index << std::endl;
     return this->Index < other.Index;
   }
 
   Iterator<T>& operator=(const Iterator<T>& value)
   {
-    std::cout << "= index; " << this->Index << std::endl;
+    // std::cout << "= index; " << this->Index << std::endl;
     this->Get = value.Get;
     this->Increment = value.Increment;
     this->Decrement = value.Decrement;

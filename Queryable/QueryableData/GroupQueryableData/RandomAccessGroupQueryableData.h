@@ -62,7 +62,6 @@ public:
 
   void Add(TData item) override
   {
-    std::cout << "adding item to rand access guy" << std::endl;
     this->items.push_back(item);
     this->size++;
   }

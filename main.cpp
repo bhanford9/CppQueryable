@@ -42,7 +42,6 @@ int main()
 
   genderGroups.ForEach([&](TGenderPerson group)
   {
-    std::cout << "foreach group" <<std::endl;
     if (group.GetKey() == Gender::Male)
     {
       // ASSERT_EQ(males.Count(), group.Count());
@@ -52,12 +51,12 @@ int main()
       // ASSERT_EQ(females.Count(), group.Count());
     }
 
-    std::cout << "\n\n\npeople in group: " << group.Count() << std::endl;
+    std::cout << "new group\n\n\n" << std::endl;
 
     // int i = 0;
     for (Person person : group)
     {
-      std::cout << "foreach person" <<std::endl;
+      std::cout << person << std::endl;
       if (group.GetKey() == Gender::Male)
       {
         // ASSERT_TRUE(person == males.At(i++));

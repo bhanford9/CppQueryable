@@ -17,7 +17,7 @@ class IGroup
 protected:
 
 public:
-  virtual IQueryableData<TData> * GetData() = 0;
+  virtual IQueryableData<TData> & GetData() = 0;
   IGroup() { }
   IGroup(const IGroup & group) { }
   virtual ~IGroup() { }

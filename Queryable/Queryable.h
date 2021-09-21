@@ -1304,59 +1304,30 @@ public:
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
     Queryable<Group<TKey, TObj>> queryableGroups(type);
 
-    std::cout << "group by" << std::endl;
-
     for (TObj item : *this->items.get())
     {
       TKey key = getKey(item);
-
-      std::cout << "looping in group by" << std::endl;
 
       if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.HasKey(key); }))
       {
         switch (type)
         {
           case QueryableType::Deque:
-          {
-            std::cout << "creating new group queryable deque data" << std::endl;
-            GroupQueryableDequeData<TKey, TData> dequeData(key, type, keyCompare);
-            Group<TKey, TObj> newGroup(dequeData, key, type, keyCompare);
-            queryableGroups.Add(newGroup);
+            queryableGroups.Add(GroupQueryableDequeData<TKey, TData>(key, type, keyCompare));
             break;
-          }
           case QueryableType::List:
-          {
-            std::cout << "creating new group queryable list data" << std::endl;
-            GroupQueryableListData<TKey, TData> listData(key, type, keyCompare);
-            Group<TKey, TObj> newGroup(listData, key, type, keyCompare);
-            queryableGroups.Add(newGroup);
+            queryableGroups.Add(GroupQueryableListData<TKey, TData>(key, type, keyCompare));
             break;
-          }
           case QueryableType::MultiSet:
-          {
-            std::cout << "creating new group queryable multiset data" << std::endl;
-            GroupQueryableMultiSetData<TKey, TData> multiSetData(key, type, keyCompare);
-            Group<TKey, TObj> newGroup(multiSetData, key, type, keyCompare);
-            queryableGroups.Add(newGroup);
+            queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare));
             break;
-          }
           case QueryableType::Set:
-          {
-            std::cout << "creating new group queryable set data" << std::endl;
-            GroupQueryableSetData<TKey, TData> setData(key, type, keyCompare);
-            Group<TKey, TObj> newGroup(setData, key, type, keyCompare);
-            queryableGroups.Add(newGroup);
+            queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare));
             break;
-          }
           case QueryableType::Vector:
           default:
-          {
-            std::cout << "creating new group queryable vector data" << std::endl;
-            GroupQueryableVectorData<TKey, TData> vectorData(key, type, keyCompare);
-            Group<TKey, TObj> newGroup(vectorData, key, type, keyCompare);
-            queryableGroups.Add(newGroup);
+            queryableGroups.Add(GroupQueryableVectorData<TKey, TData>(key, type, keyCompare));
             break;
-          }
         }
       }
 
@@ -1365,7 +1336,7 @@ public:
         .Add(item);
     }
 
-    // queryableGroups.Sort([](Group<TKey, TObj> a, Group<TKey, TObj> b) { return a < b; });
+    queryableGroups.Sort([](Group<TKey, TObj> a, Group<TKey, TObj> b) { return a < b; });
 
     return queryableGroups;
   }

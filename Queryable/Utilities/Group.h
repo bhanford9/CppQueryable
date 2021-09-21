@@ -22,85 +22,38 @@ template<typename TKey, typename TData>
 class Group : public IGroup<TKey, TData>
 {
 private:
-  TKey key;
-  QueryableType type = QueryableType::Default;
-  std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; };
-  std::shared_ptr<IQueryableData<TData>> internalGroup;
+  std::shared_ptr<IGroup<TKey, TData>> internalGroup;
 
 protected:
+  virtual IQueryableData<TData> & GetData() override
+  {
+    return this->internalGroup.get()->GetData();
+  }
+
 public:
-  virtual IQueryableData<TData> * GetData() override
-  {
-    return this->internalGroup.get();
-  }
-
   Group() { }
-  Group(const Group<TKey, TData> & other)
+
+  Group(const GroupQueryableDequeData<TKey, TData> & group)
   {
-    std::cout << "copy group" << std::endl;
-    this->key = other.key;
-    this->type = other.type;
-    this->keyCompare = other.keyCompare;
-    this->internalGroup = other.internalGroup;
+    this->internalGroup = std::make_shared<GroupQueryableDequeData<TKey, TData>>(group);
   }
 
-  Group(
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-  {
-    this->key = key;
-    this->type = type;
-    this->keyCompare = keyCompare;
-  }
-
-  /// TODO --> change the internal group to be IQueryableData<TData>
-  /// TODO --> change the constructor to require everything that GroupQueryableData requires
-  ////       you have all these things within the GroupBy method any way
-
-  Group(
-    const GroupQueryableDequeData<TKey, TData> & group,
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : Group<TKey, TData>(key, type, keyCompare)
-  {
-    std::cout << "set internal group to group queryable deque data " << std::endl;
-    this->internalGroup = std::move(std::make_shared<GroupQueryableDequeData<TKey, TData>>(group));
-  }
-
-  Group(const GroupQueryableListData<TKey, TData> & group,
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : Group<TKey, TData>(key, type, keyCompare)
+  Group(const GroupQueryableListData<TKey, TData> & group)
   {
     this->internalGroup = std::make_shared<GroupQueryableListData<TKey, TData>>(group);
   }
 
-  Group(const GroupQueryableMultiSetData<TKey, TData> & group,
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : Group<TKey, TData>(key, type, keyCompare)
+  Group(const GroupQueryableMultiSetData<TKey, TData> & group)
   {
     this->internalGroup = std::make_shared<GroupQueryableMultiSetData<TKey, TData>>(group);
   }
 
-  Group(const GroupQueryableSetData<TKey, TData> & group,
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : Group<TKey, TData>(key, type, keyCompare)
+  Group(const GroupQueryableSetData<TKey, TData> & group)
   {
     this->internalGroup = std::make_shared<GroupQueryableSetData<TKey, TData>>(group);
   }
 
-  Group(const GroupQueryableVectorData<TKey, TData> & group,
-    TKey key,
-    QueryableType type,
-    std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : Group<TKey, TData>(key, type, keyCompare)
+  Group(const GroupQueryableVectorData<TKey, TData> & group)
   {
     this->internalGroup = std::make_shared<GroupQueryableVectorData<TKey, TData>>(group);
   }
@@ -109,61 +62,52 @@ public:
 
   virtual bool HasKey(TKey key) const override
   {
-    return !(this->keyCompare(this->key, key) || this->keyCompare(key, this->key));
+    return this->internalGroup.get()->HasKey(key);
   }
 
   virtual TKey GetKey() const override
   {
-    return this->key;
+    return this->internalGroup.get()->GetKey();
   }
 
   virtual QueryableType GetType() const override
   {
-    return this->type;
+    return this->internalGroup.get()->GetType();
   }
 
   virtual bool operator<(const IGroup<TKey, TData> & other) const override
   {
-    return this->keyCompare(this->key, other.GetKey());
+    return *this->internalGroup.get() < other;
   }
 
   virtual Iterator<TData> begin()
   {
-    std::cout << "group begin" << std::endl;
-
-    std::cout << "data count: " << this->GetData()->Count() << std::endl;
-
-    for (TData data : *this->GetData())
-    {
-      std::cout << "data: " << data << std::endl;
-    }
-    return this->GetData()->begin();
+    return this->GetData().begin();
   }
 
   virtual Iterator<TData> end()
   {
-    return this->GetData()->end();
+    return this->GetData().end();
   }
 
   virtual Iterator<TData> rbegin()
   {
-    return this->GetData()->rbegin();
+    return this->GetData().rbegin();
   }
 
   virtual Iterator<TData> rend()
   {
-    return this->GetData()->rend();
+    return this->GetData().rend();
   }
 
   virtual int Count()
   {
-    return this->GetData()->Count();
+    return this->GetData().Count();
   }
 
   virtual void Add(TData item)
   {
-    std::cout << "group add item: " << item << std::endl;
-    this->GetData()->Add(item);
+    this->GetData().Add(item);
   }
 
   // virtual Queryable<TData> ToQueryable()
