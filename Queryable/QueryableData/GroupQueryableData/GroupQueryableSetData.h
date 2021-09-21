@@ -7,6 +7,7 @@
 #include <memory>
 #include <set>
 
+#include "../../QueryableType.h"
 #include "SortedGroupQueryableData.h"
 
 template<

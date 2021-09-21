@@ -14,6 +14,8 @@
 #include "../Utilities/Condition.h"
 #include "IQueryableData.h"
 
+#include "../../DataStructures/Person.h"
+
 template<typename TObj, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class QueryableData : virtual public IQueryableData<TObj>
 {
@@ -44,7 +46,7 @@ protected:
     this->beginning.Get = [&]() { return &this->beginIterator; };
     this->beginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->beginIterator; };
     this->beginning.Decrement = [&](int64_t & index) { if (index > 0) --this->beginIterator; };
-    this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
+    this->beginning.Dereference = [&]() -> TObj& { std::cout <<"size: " << this->size << std::endl; std::cout << "inner deref 1, underlying type: " << typeid(this->beginIterator).name() << std::endl; this->value = *this->beginIterator; std::cout << "inner deref 2" << std::endl; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
 
@@ -103,10 +105,18 @@ public:
 
   QueryableData()
   {
+    std::cout << "default queryable data constructor" << std::endl;
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
+
+    beginIterator = this->items.begin();
+    endIterator = this->items.end();
+    rbeginIterator = this->items.rbegin();
+    rendIterator = this->items.rend();
+
+    this->size = 0;
   }
   QueryableData(TIterable<TObj, TArgs...> items)
     : QueryableData<TObj, TIterable, TArgs...>()
@@ -135,23 +145,28 @@ public:
     this->size = this->items.size();
   }
   QueryableData(const QueryableData<TObj, TIterable> & data)
+    : QueryableData<TObj, TIterable>()
   {
+    std::cout << "queryable data copy constructor" << std::endl;
     this->items = data.items;
 
-    this->beginning = data.beginning;
-    this->ending = data.ending;
+    // this->beginning = data.beginning;
+    // this->ending = data.ending;
+    //
+    // this->rbeginning = data.rbeginning;
+    // this->rending = data.rending;
 
-    this->rbeginning = data.rbeginning;
-    this->rending = data.rending;
-
-    this->beginIterator = data.beginIterator;
-    this->endIterator = data.endIterator;
-
-    this->rbeginIterator = data.rbeginIterator;
-    this->rendIterator = data.rendIterator;
+    // this->beginIterator = data.beginIterator;
+    // this->endIterator = data.endIterator;
+    //
+    // this->rbeginIterator = data.rbeginIterator;
+    // this->rendIterator = data.rendIterator;
 
     this->value = data.value;
     this->size = data.size;
+
+    // TObj value = *this->beginIterator;
+    std::cout <<" leaving queryable data copy  constructor... size: " << this->size << ", item count: " << this->items.size() << std::endl;
   }
   virtual ~QueryableData() { }
 
@@ -212,7 +227,15 @@ public:
 
   virtual Iterator<TObj> begin() override
   {
+    std::cout << "queryable data begin" << std::endl;
     this->beginIterator = this->items.begin();
+    std::cout << "items size: " << this->items.size() << std::endl;
+    std::cout << "my size: " << this->size << std::endl;
+    if (this->items.size() > 0)
+    {
+      std::cout << "first item type: " << typeid(*this->beginIterator).name() << std::endl;
+    }
+
     this->beginning.Index = 0;
     return this->beginning;
   }

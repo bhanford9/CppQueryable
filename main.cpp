@@ -24,6 +24,51 @@ using namespace QueryBuilder;
 
 int main()
 {
+
+  PersonLibrary personLibrary;
+  Queryable<Person> people = Queryable<Person>(personLibrary.GetPeople());
+
+  typedef Group<Gender, Person> TGenderPerson;
+  Queryable<TGenderPerson> genderGroups = people.ToQueryableDeque()
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+  Queryable<Person> males = people
+    .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
+  Queryable<Person> females = people
+    .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
+
+  // ASSERT_EQ(2, genderGroups.Count());
+  // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+
+  genderGroups.ForEach([&](TGenderPerson group)
+  {
+    std::cout << "foreach group" <<std::endl;
+    if (group.GetKey() == Gender::Male)
+    {
+      // ASSERT_EQ(males.Count(), group.Count());
+    }
+    else
+    {
+      // ASSERT_EQ(females.Count(), group.Count());
+    }
+
+    std::cout << "\n\n\npeople in group: " << group.Count() << std::endl;
+
+    // int i = 0;
+    for (Person person : group)
+    {
+      std::cout << "foreach person" <<std::endl;
+      if (group.GetKey() == Gender::Male)
+      {
+        // ASSERT_TRUE(person == males.At(i++));
+      }
+      else
+      {
+        // ASSERT_TRUE(person == females.At(i++));
+      }
+    }
+  });
+
   // std::vector<uint> startingInput;
   // std::vector<uint> evens;
   // Queryable<uint> queryable;
@@ -41,25 +86,25 @@ int main()
   //   .Where([](uint value) { return value > 10; })
   //   .Except(mevens);
 
-  std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
-  std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };
-  std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };
-
-  Queryable<uint> local(numbers);
-  local.Where(conditioner).ForEach([](uint value) { std::cout << "where value: " << value << std::endl; });
-  local.Select<double>(selector).ForEach([](double value) { std::cout << "select value: " << value << std::endl; });
-
-  std::vector<Person> people(PersonLibrary().GetPeople());
-
-  Queryable<Person> queryablePeople(people);
-  Queryable<std::string> queryableNames = queryablePeople
-    .Select<std::string>([](Person p) { return p.GetName(); });
-
-  queryableNames.ForEach([](std::string name) { std::cout << "name: " << name << std::endl; });
-
-  std::cout << "count: " << queryableNames.Count() << std::endl;
-
-  queryablePeople.Count();
+  // std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
+  // std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };
+  // std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };
+  //
+  // Queryable<uint> local(numbers);
+  // local.Where(conditioner).ForEach([](uint value) { std::cout << "where value: " << value << std::endl; });
+  // local.Select<double>(selector).ForEach([](double value) { std::cout << "select value: " << value << std::endl; });
+  //
+  // std::vector<Person> people(PersonLibrary().GetPeople());
+  //
+  // Queryable<Person> queryablePeople(people);
+  // Queryable<std::string> queryableNames = queryablePeople
+  //   .Select<std::string>([](Person p) { return p.GetName(); });
+  //
+  // queryableNames.ForEach([](std::string name) { std::cout << "name: " << name << std::endl; });
+  //
+  // std::cout << "count: " << queryableNames.Count() << std::endl;
+  //
+  // queryablePeople.Count();
 
 
   // QueryableVectorData<uint> queryableData(numbers);

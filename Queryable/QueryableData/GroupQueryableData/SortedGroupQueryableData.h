@@ -6,6 +6,8 @@
 #include <iostream>
 #include <memory>
 
+#include "../../QueryableType.h"
+#include "../QueryableData.h"
 #include "GroupQueryableData.h"
 
 template<
@@ -13,7 +15,7 @@ template<
   typename TData,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class SortedGroupQueryableData : public GroupQueryableData<TKey, TData, TIterable, TArgs...>
+class SortedGroupQueryableData : public GroupQueryableData<TKey, TData, TIterable, std::function<bool(TData, TData)>, TArgs...>
 {
 protected:
   typedef typename std::vector<TData>::iterator TVectorIterator;
@@ -27,7 +29,7 @@ public:
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; })
-    : GroupQueryableData<TKey, TData, TIterable, TArgs...>(key, type, keyCompare)
+    : GroupQueryableData<TKey, TData, TIterable, std::function<bool(TData, TData)>, TArgs...>(key, type, keyCompare)
   {
     this->comparator = compare;
   }
@@ -38,13 +40,13 @@ public:
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; })
-    : GroupQueryableData<TKey, TData, TIterable, TArgs...>(key, std::move(data), type, keyCompare)
+    : GroupQueryableData<TKey, TData, TIterable, std::function<bool(TData, TData)>, TArgs...>(key, std::move(data), type, keyCompare)
   {
     this->comparator = compare;
   }
 
   SortedGroupQueryableData(const SortedGroupQueryableData<TData, TKey, TIterable, TArgs...> & data)
-    : GroupQueryableData<TKey, TData, TIterable, TArgs...>(data)
+    : GroupQueryableData<TKey, TData, TIterable, std::function<bool(TData, TData)>, TArgs...>(data)
   {
     this->comparator = data.comparator;
   }
@@ -68,9 +70,12 @@ public:
 
   virtual ~SortedGroupQueryableData() { }
 
-  void Sort(std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; }) override
+  virtual void Sort(std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; }) override
   {
-    this->Update(this->begin(), this->end(), compare);
+    this->Update(
+      this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::begin(),
+      this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::end(),
+      compare);
   }
 
   virtual void Update(Iterator<TData> first, Iterator<TData> last, std::function<bool(TData, TData)> compare) override
@@ -86,6 +91,12 @@ public:
     // TODO SFINAE require this constructor
     this->items = TIterable<TData, std::function<bool(TData, TData)>>(first, last, this->comparator);
     this->size = this->items.size();
+  }
+
+  virtual void Add(TData item) override
+  {
+    this->items.insert(item);
+    this->size++;
   }
 };
 

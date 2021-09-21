@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "../../QueryableType.h"
 #include "RandomAccessGroupQueryableData.h"
 
 template<

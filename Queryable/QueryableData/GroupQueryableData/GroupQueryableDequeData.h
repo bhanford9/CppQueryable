@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 
+#include "../../QueryableType.h"
 #include "RandomAccessGroupQueryableData.h"
 
 template<
@@ -36,6 +37,7 @@ public:
   GroupQueryableDequeData(const GroupQueryableDequeData<TData, TKey, TArgs...> & data)
     : RandomAccessGroupQueryableData<TKey, TData, std::deque, TArgs...>(data)
   {
+    std::cout << "copying group queryable deque data. size: " << this->size << std::endl;
   }
 
   virtual ~GroupQueryableDequeData() { }

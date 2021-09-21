@@ -283,6 +283,7 @@ public:
       this->items.get()->Add(item);
     }
 
+    this->type = QueryableType::Deque;
     return *this;
   }
 
@@ -297,6 +298,7 @@ public:
       this->items.get()->Add(item);
     }
 
+    this->type = QueryableType::List;
     return *this;
   }
 
@@ -305,6 +307,7 @@ public:
     std::multiset<TObj, std::function<bool(TObj, TObj)>> copy = this->ToMultiSet();
     this->items = std::make_shared<QueryableMultiSetData<TObj>>(copy);
 
+    this->type = QueryableType::MultiSet;
     return *this;
   }
 
@@ -313,6 +316,7 @@ public:
     std::set<TObj, std::function<bool(TObj, TObj)>> copy = this->ToSet();
     this->items = std::make_shared<QueryableSetData<TObj>>(copy);
 
+    this->type = QueryableType::Set;
     return *this;
   }
 
@@ -327,6 +331,7 @@ public:
       this->items.get()->Add(item);
     }
 
+    this->type = QueryableType::Vector;
     return *this;
   }
 
@@ -343,7 +348,7 @@ public:
     }
 
     int i = 0;
-    for (TObj obj : *this->items.get())
+    for (TObj & obj : *this->items.get())
     {
       if (index == i++)
       {
@@ -382,13 +387,13 @@ public:
     }
   }
 
-  void ForEachRef(std::function<void(TObj&)> action)
-  {
-    for (TObj & item : *this->items.get())
-    {
-      action(item);
-    }
-  }
+  // void ForEachRef(std::function<void(TObj&)> action)
+  // {
+  //   for (TObj & item : *this->items.get())
+  //   {
+  //     action(item);
+  //   }
+  // }
 
   Queryable<TObj> & Where(std::function<bool(const TObj &)> condition, QueryableType returnType = QueryableType::Default)
   {
@@ -424,7 +429,17 @@ public:
 
   Queryable<TObj> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
   {
-    return this->Where(condition);
+    Queryable<TObj> returnValue(returnType);
+
+    for (TObj item : *this->items.get())
+    {
+      if (condition(item))
+      {
+        returnValue.Add(item);
+      }
+    }
+
+    return returnValue;
   }
 
   TObj First(std::function<bool(TObj)> condition)
@@ -1280,48 +1295,79 @@ public:
 
 
   template<typename TKey, typename TData = TObj>
-  Queryable<Group<TKey, TObj>*> GroupBy(
+  Queryable<Group<TKey, TObj>> GroupBy(
     std::function<TKey(TObj)> getKey,
     QueryableType storageType = QueryableType::Default,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> dataCompare = [](TData a, TData b) { return a < b; })
   {
     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-    Queryable<Group<TKey, TObj>*> queryableGroups(type);
+    Queryable<Group<TKey, TObj>> queryableGroups(type);
+
+    std::cout << "group by" << std::endl;
 
     for (TObj item : *this->items.get())
     {
       TKey key = getKey(item);
 
-      if (!queryableGroups.Any([&](Group<TKey, TObj> * group) { return group->HasKey(key); }))
+      std::cout << "looping in group by" << std::endl;
+
+      if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.HasKey(key); }))
       {
         switch (type)
         {
           case QueryableType::Deque:
-            queryableGroups.Add(GroupQueryableDequeData<TKey, TData>(key, type, keyCompare));
+          {
+            std::cout << "creating new group queryable deque data" << std::endl;
+            GroupQueryableDequeData<TKey, TData> dequeData(key, type, keyCompare);
+            Group<TKey, TObj> newGroup(dequeData, key, type, keyCompare);
+            queryableGroups.Add(newGroup);
             break;
+          }
           case QueryableType::List:
-            queryableGroups.Add(GroupQueryableListData<TKey, TData>(key, type, keyCompare));
+          {
+            std::cout << "creating new group queryable list data" << std::endl;
+            GroupQueryableListData<TKey, TData> listData(key, type, keyCompare);
+            Group<TKey, TObj> newGroup(listData, key, type, keyCompare);
+            queryableGroups.Add(newGroup);
             break;
+          }
           case QueryableType::MultiSet:
-            queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare, dataCompare));
+          {
+            std::cout << "creating new group queryable multiset data" << std::endl;
+            GroupQueryableMultiSetData<TKey, TData> multiSetData(key, type, keyCompare);
+            Group<TKey, TObj> newGroup(multiSetData, key, type, keyCompare);
+            queryableGroups.Add(newGroup);
             break;
+          }
           case QueryableType::Set:
-            queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare, dataCompare));
+          {
+            std::cout << "creating new group queryable set data" << std::endl;
+            GroupQueryableSetData<TKey, TData> setData(key, type, keyCompare);
+            Group<TKey, TObj> newGroup(setData, key, type, keyCompare);
+            queryableGroups.Add(newGroup);
             break;
+          }
           case QueryableType::Vector:
           default:
-            queryableGroups.Add(GroupQueryableVectorData<TKey, TData>(key, type, keyCompare));
+          {
+            std::cout << "creating new group queryable vector data" << std::endl;
+            GroupQueryableVectorData<TKey, TData> vectorData(key, type, keyCompare);
+            Group<TKey, TObj> newGroup(vectorData, key, type, keyCompare);
+            queryableGroups.Add(newGroup);
             break;
+          }
         }
       }
 
       queryableGroups
-        .First([&](Group<TKey, TObj> * group) { return group->HasKey(key); })
+        .First([&](Group<TKey, TObj> group) { return group.HasKey(key); })
         .Add(item);
     }
 
-    return queryableGroups->Sort();
+    // queryableGroups.Sort([](Group<TKey, TObj> a, Group<TKey, TObj> b) { return a < b; });
+
+    return queryableGroups;
   }
 };
 

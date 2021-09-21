@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 
+#include "../../QueryableType.h"
 #include "GroupQueryableData.h"
 
 template<
@@ -43,6 +44,11 @@ public:
   {
     this->items.push_back(item);
     this->size++;
+  }
+
+  void Sort(std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; }) override
+  {
+    this->items.sort(compare);
   }
 };
 
