@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include "../QueryableData/IQueryableData.h"
 #include "../QueryableData/GroupQueryableData/GroupQueryableData.h"
@@ -113,6 +114,11 @@ public:
   virtual void Add(TData item)
   {
     this->GetData().Add(item);
+  }
+
+  virtual std::vector<TData> ToVector()
+  {
+    return this->GetData().ToVector();
   }
 
   // virtual Queryable<TData> ToQueryable()

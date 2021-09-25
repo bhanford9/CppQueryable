@@ -26,19 +26,6 @@ public:
   virtual TKey GetKey() const = 0;
   virtual QueryableType GetType() const = 0;
   virtual bool operator<(const IGroup<TKey, TData> & other) const = 0;
-
-  // virtual Iterator<TData> begin() { return this->GetData().begin(); }
-  // virtual Iterator<TData> end() { return this->GetData().end(); }
-  // virtual Iterator<TData> rbegin() { return this->GetData().rbegin(); }
-  // virtual Iterator<TData> rend() { return this->GetData().rend(); }
-  // virtual int Count() { return this->GetData().Count(); }
-  // virtual void Add(TData item) { this->GetData().Add(item); }
-
-  // Important to document that this should not be used within looping code
-  // virtual Queryable<TData> ToQueryable()
-  // {
-  //   return Queryable<TData>(std::make_shared<IQueryableData<TData>>(this->GetData()), this->GetType());
-  // }
 };
 
 #endif
