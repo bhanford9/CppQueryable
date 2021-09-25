@@ -7,7 +7,7 @@
 #include "QueryableData.h"
 
 template<typename T, template<typename, typename ...> typename TIterable, typename ...TArgs>
-class SortedQueryableData : public QueryableData<T, TIterable, std::function<bool(T, T), TArgs...>>
+class SortedQueryableData : public QueryableData<T, TIterable, std::function<bool(T, T)>, TArgs...>
 {
 protected:
   std::function<bool(T, T)> comparator = [](T a, T b) { return a < b; };

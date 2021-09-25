@@ -18,24 +18,13 @@ private:
 public:
   Person()
   {
-    // std::cout << "enter person default constructor" << std::endl;
     this->id = 0;
     this->name = "";
     this->age = 0;
     this->heightInches = 0;
     this->gender = Gender::Male;
-    // std::cout << "exit person default constructor" << std::endl;
   }
   Person(const Person & other) = default;
-  // {
-  //   // std::cout << "enter person copy constructor" << std::endl;
-  //   this->id = other.id;
-  //   this->name = other.name;
-  //   this->age = other.age;
-  //   this->heightInches = other.heightInches;
-  //   this->gender = other.gender;
-  //   // std::cout << "exit person copy constructor" << std::endl;
-  // }
   Person(long id, std::string name, double age, int height, Gender gender);
 
   long GetId();
@@ -55,17 +44,15 @@ public:
 
   std::string ToString() const;
 
-  // Person operator=(Person other)
-  // {
-  //   std::cout << "enter person copy method" << std::endl;
-  //   this->id = other.id;
-  //   this->name = other.name;
-  //   this->age = other.age;
-  //   this->heightInches = other.heightInches;
-  //   this->gender = other.gender;
-  //   std::cout << "exit person copy method" << std::endl;
-  //   return *this;
-  // }
+  Person operator=(Person other)
+  {
+    this->id = other.id;
+    this->name = other.name;
+    this->age = other.age;
+    this->heightInches = other.heightInches;
+    this->gender = other.gender;
+    return *this;
+  }
 
   bool operator<(const Person & other) const;
   bool operator==(const Person & other) const;

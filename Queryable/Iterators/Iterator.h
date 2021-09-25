@@ -20,7 +20,24 @@ public:
   typedef T* pointer;
   typedef T& reference;
 
-  Iterator() {}
+  Iterator()
+  {
+    // std::cout << "iterator deault constructor" << std::endl;
+  }
+
+  Iterator(const Iterator<T> & other)
+  {
+    // std::cout << "\t\t\titerator copy constructor" << std::endl;
+    this->Get = other.Get;
+    this->Increment = other.Increment;
+    this->Decrement = other.Decrement;
+    this->Dereference = other.Dereference;
+    this->ConstDereference = other.ConstDereference;
+    this->Assign = other.Assign;
+    this->Add = other.Add;
+    this->Subtract = other.Subtract;
+    this->Index = other.Index;
+  }
 
   std::function<void*()> Get;
   std::function<void(int64_t & index)> Increment;
@@ -51,6 +68,9 @@ public:
     this->Index--;
       // std::cout << "-- index; " << this->Index << std::endl;
 
+
+    // std::cout << "calling Dereference: " << std::endl;
+    this->Dereference();
     this->Decrement(this->Index);
     return *this;
   }
@@ -127,7 +147,7 @@ public:
 
   Iterator<T>& operator=(const Iterator<T>& value)
   {
-    // std::cout << "= index; " << this->Index << std::endl;
+    // std::cout << "\t\t\titerator assignment.  index; " << this->Index << std::endl;
     this->Get = value.Get;
     this->Increment = value.Increment;
     this->Decrement = value.Decrement;

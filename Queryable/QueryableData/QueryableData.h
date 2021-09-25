@@ -46,7 +46,7 @@ protected:
     this->beginning.Get = [&]() { return &this->beginIterator; };
     this->beginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->beginIterator; };
     this->beginning.Decrement = [&](int64_t & index) { if (index > 0) --this->beginIterator; };
-    this->beginning.Dereference = [&]() -> TObj& { this->value = *this->beginIterator; return this->value; };
+    this->beginning.Dereference = [this]() -> TObj& { if (this->size > 0) this->value = *this->beginIterator; return this->value; };
     this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
     this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
 
@@ -61,7 +61,7 @@ protected:
     this->ending.Get = [&]() { return &this->endIterator; };
     this->ending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->endIterator; };
     this->ending.Decrement = [&](int64_t & index) { if (index > 0) --this->endIterator;};
-    this->ending.Dereference = [&]() -> TObj& { this->value = *this->endIterator; return this->value; };
+    this->ending.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->endIterator; return this->value; };
     this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
     this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
 
@@ -76,7 +76,7 @@ protected:
     this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
     this->rbeginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rbeginIterator; };
     this->rbeginning.Decrement = [&](int64_t & index) { if (index > 0) --this->rbeginIterator; };
-    this->rbeginning.Dereference = [&]() -> TObj& { this->value = *this->rbeginIterator; return this->value; };
+    this->rbeginning.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->rbeginIterator; return this->value; };
     this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
     this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
 
@@ -91,7 +91,7 @@ protected:
     this->rending.Get = [&]() { return &this->rendIterator; };
     this->rending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rendIterator; };
     this->rending.Decrement = [&](int64_t & index) { if (index > 0) --this->rendIterator; };
-    this->rending.Dereference = [&]() -> TObj& { this->value = *this->rendIterator; return this->value; };
+    this->rending.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->rendIterator; return this->value; };
     this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
     this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
 
@@ -101,26 +101,32 @@ protected:
     this->rending.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->rending; };
   }
 
-public:
-
-  QueryableData()
+  void DefaultInitialize()
   {
+    this->beginIterator = this->items.begin();
+    this->endIterator = this->items.end();
+    this->rbeginIterator = this->items.rbegin();
+    this->rendIterator = this->items.rend();
+
     this->InitForwardBegin();
     this->InitForwardEnd();
     this->InitReverseBegin();
     this->InitReverseEnd();
 
-    beginIterator = this->items.begin();
-    endIterator = this->items.end();
-    rbeginIterator = this->items.rbegin();
-    rendIterator = this->items.rend();
-
     this->size = 0;
   }
-  QueryableData(TIterable<TObj, TArgs...> items)
-    : QueryableData<TObj, TIterable, TArgs...>()
+
+public:
+
+  QueryableData()
+  {
+    this->DefaultInitialize();
+  }
+  QueryableData(const TIterable<TObj, TArgs...> & items)
   {
     this->items = items;
+
+    this->DefaultInitialize();
 
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
@@ -128,25 +134,32 @@ public:
     this->size = this->items.size();
   }
   QueryableData(TIterable<TObj, TArgs...> && items)
-    : QueryableData<TObj, TIterable, TArgs...>()
   {
     this->items = std::move(items);
+
+    this->DefaultInitialize();
 
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
+    this->value = items.value;
     this->size = this->items.size();
   }
   QueryableData(TVectorIterator first, TVectorIterator last)
   {
     // TODO SFINAE require this constructor
     this->items = TIterable<TObj, TArgs...>(first, last);
+
+    this->DefaultInitialize();
+
     this->size = this->items.size();
   }
   QueryableData(const QueryableData<TObj, TIterable> & data)
-    : QueryableData<TObj, TIterable>()
   {
     this->items = data.items;
+
+    this->DefaultInitialize();
+
     this->value = data.value;
     this->size = data.size;
   }
@@ -211,6 +224,10 @@ public:
   {
     this->beginIterator = this->items.begin();
     this->beginning.Index = 0;
+
+    // something happening when copying that causes the functors to not be properly mapped
+    // this is a lot of extra instructions and would be nice if it can be made not necessary
+    this->InitForwardBegin();
     return this->beginning;
   }
 
@@ -218,6 +235,10 @@ public:
   {
     this->endIterator = this->items.end();
     this->ending.Index = this->size;
+
+    // something happening when copying that causes the functors to not be properly mapped
+    // this is a lot of extra instructions and would be nice if it can be made not necessary
+    this->InitForwardEnd();
     return this->ending;
   }
 
@@ -225,6 +246,10 @@ public:
   {
     this->rbeginIterator = this->items.rbegin();
     this->rbeginning.Index = 0;
+
+    // something happening when copying that causes the functors to not be properly mapped
+    // this is a lot of extra instructions and would be nice if it can be made not necessary
+    this->InitReverseBegin();
     return this->rbeginning;
   }
 
@@ -232,6 +257,10 @@ public:
   {
     this->rendIterator = this->items.rend();
     this->rending.Index = this->size;
+
+    // something happening when copying that causes the functors to not be properly mapped
+    // this is a lot of extra instructions and would be nice if it can be made not necessary
+    this->InitReverseEnd();
     return this->rending;
   }
 };

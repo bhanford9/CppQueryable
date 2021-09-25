@@ -146,11 +146,7 @@ public:
   {
     this->persistentContainer = queryable.persistentContainer;
     this->type = queryable.type;
-
-    for (auto it = queryable.items.get()->begin(); it != queryable.items.get()->end(); ++it)
-    {
-      this->items.get()->Add(*it);
-    }
+    this->items = queryable.items;
   }
 
   Queryable(
@@ -1319,10 +1315,10 @@ public:
             queryableGroups.Add(GroupQueryableListData<TKey, TData>(key, type, keyCompare));
             break;
           case QueryableType::MultiSet:
-            queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare));
+            queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Set:
-            queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare));
+            queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare, dataCompare));
             break;
           case QueryableType::Vector:
           default:

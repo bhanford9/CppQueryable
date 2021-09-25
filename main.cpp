@@ -29,19 +29,28 @@ int main()
   Queryable<Person> people = Queryable<Person>(personLibrary.GetPeople());
 
   typedef Group<Gender, Person> TGenderPerson;
-  Queryable<TGenderPerson> genderGroups = people.ToQueryableDeque()
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = people
-    .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = people
-    .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
+  Queryable<TGenderPerson> genderGroups = people.ToQueryableMultiSet()
+    .GroupBy<Gender>(
+      [](Person p) { return p.GetGender(); },
+      QueryableType::MultiSet,
+      [](Gender a, Gender b) { std::cout << "custom less than" << std::endl; return a < b; });
+
+  // Queryable<Person> males = people
+  //   .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
+  //   std::cout << "males copied\n" << std::endl;
+  // Queryable<Person> females = people
+  //   .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
+  // std::cout << "femailes copied\n" << std::endl;
 
   // ASSERT_EQ(2, genderGroups.Count());
   // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
   // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
+  std::cout << "going into foreach" << std::endl;
+
   genderGroups.ForEach([&](TGenderPerson group)
   {
+    std::cout << "group in internal foreach loop" << std::endl;
     if (group.GetKey() == Gender::Male)
     {
       // ASSERT_EQ(males.Count(), group.Count());

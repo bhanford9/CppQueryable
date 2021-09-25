@@ -33,6 +33,11 @@ protected:
 public:
   Group() { }
 
+  Group(const Group<TKey, TData> & other)
+  {
+    this->internalGroup = other.internalGroup;
+  }
+
   Group(const GroupQueryableDequeData<TKey, TData> & group)
   {
     this->internalGroup = std::make_shared<GroupQueryableDequeData<TKey, TData>>(group);

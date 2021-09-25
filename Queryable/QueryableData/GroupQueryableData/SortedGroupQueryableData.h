@@ -32,6 +32,9 @@ public:
     : GroupQueryableData<TKey, TData, TIterable, std::function<bool(TData, TData)>, TArgs...>(key, type, keyCompare)
   {
     this->comparator = compare;
+    this->comparator(TData(), TData());
+
+    this->items = TIterable<TData, std::function<bool(TData, TData)>, TArgs...>(compare);
   }
 
   SortedGroupQueryableData(
