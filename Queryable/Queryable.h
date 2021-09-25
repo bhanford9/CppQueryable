@@ -181,6 +181,26 @@ public:
     this->items = std::move(std::make_shared<QueryableSetData<TObj>>(set));
   }
 
+  Queryable(const std::multiset<TObj>& multiset)
+  {
+    this->type = QueryableType::MultiSet;
+    std::multiset<TObj, std::function<bool(TObj, TObj)>> newMultiset(
+      multiset.begin(),
+      multiset.end(),
+      [](TObj a, TObj b) { return a < b; });
+    this->items = std::move(std::make_shared<QueryableMultiSetData<TObj>>(newMultiset));
+  }
+
+  Queryable(const std::set<TObj>& set)
+  {
+    this->type = QueryableType::Set;
+    std::set<TObj, std::function<bool(TObj, TObj)>> newSet(
+      set.begin(),
+      set.end(),
+      [](TObj a, TObj b) { return a < b; });
+    this->items = std::move(std::make_shared<QueryableSetData<TObj>>(newSet));
+  }
+
   Queryable(const std::vector<TObj>& vector)
   {
     this->type = QueryableType::Vector;
@@ -463,7 +483,7 @@ public:
 
   TObj Last(std::function<bool(TObj)> condition)
   {
-    for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); it++)
+    for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); ++it)
     {
       if (condition(*it))
       {
@@ -556,7 +576,7 @@ public:
     this->Clear();
 
     int i = 0;
-    for (auto it = copy.begin(); it != copy.end(); it++)
+    for (auto it = copy.begin(); it != copy.end(); ++it)
     {
       if (this->items.get()->PassesCondition(*it) && count <= i++)
       {

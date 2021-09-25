@@ -10,7 +10,7 @@ template<typename T, template<typename, typename ...> typename TIterable, typena
 class SortedQueryableData : public QueryableData<T, TIterable, std::function<bool(T, T)>, TArgs...>
 {
 protected:
-  std::function<bool(T, T)> comparator = [](T a, T b) { return a < b; };
+  std::function<bool(T, T)> comparator;// = [](T a, T b) { return a < b; };
 
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:

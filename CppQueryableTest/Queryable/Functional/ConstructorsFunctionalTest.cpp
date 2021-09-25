@@ -83,7 +83,7 @@ TEST_F(ConstructorsFunctionalTest, StandardList)
 
 TEST_F(ConstructorsFunctionalTest, StandardMultiSet)
 {
-  std::multiset<uint> localMultiset = this->queryable.ToMultiSet();
+  std::multiset<uint, std::function<bool(uint, uint)>> localMultiset = this->queryable.ToMultiSet();
   int expectedCount = localMultiset.size();
   Queryable<uint> local = localMultiset;
 
@@ -98,7 +98,7 @@ TEST_F(ConstructorsFunctionalTest, StandardMultiSet)
 
 TEST_F(ConstructorsFunctionalTest, StandardSet)
 {
-  std::set<uint> localSet = this->queryable.ToSet();
+  std::set<uint, std::function<bool(uint, uint)>> localSet = this->queryable.ToSet();
   int expectedCount = localSet.size();
   Queryable<uint> local = localSet;
 

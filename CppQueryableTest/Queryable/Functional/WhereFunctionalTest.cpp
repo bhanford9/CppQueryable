@@ -84,7 +84,7 @@ TEST_F(WhereFunctionalTest, WhereVectorFemale)
 
 TEST_F(WhereFunctionalTest, WhereSetFemale)
 {
-  std::set<Person> people = Queryable<Person>(this->queryable.ToSet())
+  std::set<Person, std::function<bool(Person, Person)>> people = Queryable<Person>(this->queryable.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToSet();
 
@@ -94,7 +94,7 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
 
 TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
-  std::multiset<Person> people = Queryable<Person>(this->queryable.ToMultiSet())
+  std::multiset<Person, std::function<bool(Person, Person)>> people = Queryable<Person>(this->queryable.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToMultiSet();
 

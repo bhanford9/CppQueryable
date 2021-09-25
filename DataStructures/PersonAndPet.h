@@ -23,10 +23,10 @@ public:
   Animal GetAnimal() { return this->pet; }
 
 
-  // bool operator<(const PersonAndPet & other) const
-  // {
-  //   return this->person < other.person;
-  // }
+  bool operator<(const PersonAndPet & other) const
+  {
+    return this->person < other.person;
+  }
 
   std::string ToString()
   {

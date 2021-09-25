@@ -85,31 +85,41 @@ $(TEST_PROGRAM): $(TEST_COMPILE_REF)
 tests: $(TEST_PROGRAM)
 	$(foreach testcase, $(TEST_PROGRAM), $(testcase);)
 
-.PHONY: ftest
-ftest: $(REFS_REF) $(SRC_COMPILE_REF)
-	directory="Queryable/Functional" $(MAKE) dtest
+.PHONY: FuncTests
+FuncTests: $(REFS_REF) $(SRC_COMPILE_REF)
+	directory="Queryable/Functional" $(MAKE) DirTests
 
 .PHONY: utest
 utest: $(REFS_REF) $(SRC_COMPILE_REF)
-	directory="Queryable/Utilities" $(MAKE) dtest
+	directory="Queryable/Utilities" $(MAKE) DirTests
 
-.PHONY: time_test
-time_test: $(REFS_REF) $(SRC_COMPILE_REF)
-	directory="Queryable/Performance/Time" $(MAKE) dtest
+.PHONY: TimeTests
+TimeTests: $(REFS_REF) $(SRC_COMPILE_REF)
+	directory="Queryable/Performance/Time" $(MAKE) DirTests
 
 # TOOD: for loop through the wildcard files specified
-.PHONY: dtest
-dtest: $(REFS_REF) $(SRC_COMPILE_REF)
-	$(CXX) -c $(CPPFLAGS) $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*.cpp) \
-		-o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+.PHONY: DirTests
+DirTests: $(REFS_REF) $(SRC_COMPILE_REF)
+	$(eval SRCS := $(wildcard $(PROGRAM_TEST_DIR)/$(directory)/*$(key)*.cpp))
+	$(eval OBJS := $(SRCS:.cpp=.o))
+	$(eval SRC_BASES := $(basename $(SRCS)))
+
+	@for i in $(SRC_BASES); do \
+		src=$$i.cpp ; \
+		obj=$$i.o ; \
+		echo "*** Compile $$src to $$obj..." ; \
+		$(CXX) -c $(CPPFLAGS) $$src -o $$obj ; \
+	done;
+
 	-$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
 		$(CPPFLAGS) \
 		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
-		$(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o \
+		$(OBJS) \
 		$(TEST_INCLUDES) \
 		$(TEST_LIBS)
 
-	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
+	/bin/rm -f $(OBJS)
+	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
