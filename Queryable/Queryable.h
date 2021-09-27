@@ -1227,7 +1227,7 @@ public:
     std::function<TJoinOn(TObj)> getLocalJoinOn,
     std::function<TJoinOn(TJoinObj)> getInputJoinOn,
     std::function<TResult(TObj, TJoinObj)> createFrom,
-    std::function<bool(TResult, TResult)> outCompare = [](TResult a, TResult b) { return a < b; },
+    std::function<bool(TResult, TResult)> outCompare,
     QueryableType returnType = QueryableType::Default)
   {
     static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");

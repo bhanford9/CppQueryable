@@ -997,7 +997,8 @@ TEST_F(JoinFunctionalTest, DefaultOutComparisonTest)
       setAnimals,
       [](Person person) { return person.GetId(); },
       [](Animal animal) { return animal.GetOwnerId(); },
-      [&](Person person, Animal animal) { return Point(expectedX, expectedY); });
+      [&](Person person, Animal animal) { return Point(expectedX, expectedY); },
+      [](Point a, Point b) { return a < b; });
 
   ASSERT_TRUE(result.Count() > 0);
 
@@ -1055,7 +1056,8 @@ TEST_F(JoinFunctionalTest, WhereJoinWhereTest)
         listAnimals,
         [](Person person) { return person.GetId(); },
         [](Animal animal) { return animal.GetOwnerId(); },
-        [](Person person, Animal animal) { return DogWalker(person, animal); })
+        [](Person person, Animal animal) { return DogWalker(person, animal); },
+        this->comparisonId)
       .Where([](DogWalker dw) { return dw.GetId() % 2 == 0; });
 
   int expectedCount = 0;
