@@ -1,11 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <array>
-#include <deque>
-#include <exception>
 #include <iostream>
-#include <list>
-#include <set>
 #include <string>
 #include <vector>
 

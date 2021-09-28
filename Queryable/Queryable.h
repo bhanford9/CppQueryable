@@ -504,108 +504,93 @@ public:
     throw std::runtime_error("Cannot get last item of empty collection.");
   }
 
-  Queryable<TObj> * Take(int count)
-  {
-    if (count < 0)
-    {
-      return this->Skip(this->Count() + count);
-    }
-
-    int eraseFromBack = this->Count() - count;
-    eraseFromBack = eraseFromBack < 0 ? 0 : eraseFromBack;
-
-    for (int i = 0; i < eraseFromBack; i++)
-    {
-      // TODO --> erase method does not have great time complexity and some containers
-      //   can do it in constant time. so it will be better to implement this per
-      //   queryable container class
-
-      // if the last item does not meet the condition, then it should not be considered in the count
-      if (!this->items.get()->PassesCondition(*this->items.get()->rbegin()))
-      {
-        i--;
-      }
-
-      // TODO --> need to figure out an optimization for deciding whether its worth
-      //    dropping from the back or creating a copy from the front
-      //    (i.e. if count > 0.5 * size then drop from back)
-      //    (i.e. if count < 16 then take from front)
-
-      // this->items.get()->RemoveLast();
-    }
-
-    return this;
-  }
-
-  Queryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
-  {
-    // consider optimization of doing this without duplicate vector
-    // may be better/worse depending on container size
-    std::vector<TObj> copy = this->ToVector();
-    this->Clear();
-
-    for (TObj item : copy)
-    {
-      if (doTake(item))
-      {
-        this->items.get()->Add(item);
-      }
-      else
-      {
-        break;
-      }
-    }
-
-    return this;
-  }
-
-  Queryable<TObj>* Skip(int count)
-  {
-    if (count < 0)
-    {
-      return this->Take(this->Count() + count);
-    }
-
-    int localSize = this->Count();
-    if (count > localSize)
-    {
-      count = localSize;
-    }
-
-    QueryableVectorData<TObj> copy = this->items.get()->ToVector();
-    this->Clear();
-
-    int i = 0;
-    for (auto it = copy.begin(); it != copy.end(); ++it)
-    {
-      if (this->items.get()->PassesCondition(*it) && count <= i++)
-      {
-        this->items.get()->Add(*it);
-      }
-    }
-
-    return this;
-  }
-
-  Queryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
-  {
-    // the skip and take methods need to be thought through
-    // to come up with better space/time complexities
-    int toDelete = 0;
-
-    for (TObj item : *this->items.get())
-    {
-      if (!doSkip(item))
-      {
-        break;
-      }
-
-      toDelete++;
-    }
-
-    Queryable<TObj>* retval = this->Skip(toDelete);
-    return retval;
-  }
+  // Need to get Take and Skip methods into deferred actions similar to the
+  // way that Where and Select work
+  // Queryable<TObj> Take(int count)
+  // {
+  //   int i = 0;
+  //   std::vector<TObj> copy = this->ToVector();
+  //   this->Clear();
+  //
+  //   for (TObj item : copy)
+  //   {
+  //     this->items.get()->Add(item);
+  //     if (i == count)
+  //     {
+  //       break;
+  //     }
+  //   }
+  // }
+  //
+  // Queryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
+  // {
+  //   // consider optimization of doing this without duplicate vector
+  //   // may be better/worse depending on container size
+  //   std::vector<TObj> copy = this->ToVector();
+  //   this->Clear();
+  //
+  //   for (TObj item : copy)
+  //   {
+  //     if (doTake(item))
+  //     {
+  //       this->items.get()->Add(item);
+  //     }
+  //     else
+  //     {
+  //       break;
+  //     }
+  //   }
+  //
+  //   return this;
+  // }
+  //
+  // Queryable<TObj>* Skip(int count)
+  // {
+  //   if (count < 0)
+  //   {
+  //     return this->Take(this->Count() + count);
+  //   }
+  //
+  //   int localSize = this->Count();
+  //   if (count > localSize)
+  //   {
+  //     count = localSize;
+  //   }
+  //
+  //   QueryableVectorData<TObj> copy = this->items.get()->ToVector();
+  //   this->Clear();
+  //
+  //   int i = 0;
+  //   for (auto it = copy.begin(); it != copy.end(); ++it)
+  //   {
+  //     if (this->items.get()->PassesCondition(*it) && count <= i++)
+  //     {
+  //       this->items.get()->Add(*it);
+  //     }
+  //   }
+  //
+  //   return this;
+  // }
+  //
+  // Queryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
+  // {
+  //   // the skip and take methods need to be thought through
+  //   // to come up with better space/time complexities
+  //   int toDelete = 0;
+  //
+  //   for (TObj item : *this->items.get())
+  //   {
+  //     if (!doSkip(item))
+  //     {
+  //       break;
+  //     }
+  //
+  //     toDelete++;
+  //   }
+  //
+  //   Queryable<TObj>* retval = this->Skip(toDelete);
+  //   return retval;
+  // }
 
   bool Equal(std::vector<TObj> collection)
   {
