@@ -40,6 +40,18 @@ namespace QueryBuilder
   }
 
   template<typename T>
+  static Queryable<T> BuildQueryable(std::set<T> items)
+  {
+    return Queryable<T>(items);
+  }
+
+  template<typename T>
+  static Queryable<T> BuildQueryable(std::multiset<T> items)
+  {
+    return Queryable<T>(items);
+  }
+
+  template<typename T>
   static Queryable<T> BuildQueryable(std::list<T> items)
   {
     return Queryable<T>(items);
