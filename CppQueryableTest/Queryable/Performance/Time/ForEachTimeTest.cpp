@@ -13,19 +13,17 @@
 
 #include "../../../../Queryable/QueryBuilder.h"
 
+#include "BaseTimeTest.h"
 #include "Utilities/TimeStats.h"
-#include "Utilities/TimeTestParams.h"
+#include "Utilities/TimeTestParams/TimeTestParams.h"
 #include "Utilities/TimingUtilities.h"
 
 using namespace QueryBuilder;
 using namespace TimingUtilities;
 
-class ForEachTimeTest : public ::testing::TestWithParam<TimeTestParams>
+class ForEachTimeTest : public BaseTimeTest
 {
 protected:
-  std::string queryableName = "QUERYABLE";
-  std::string standardName = "STANDARD";
-
   void SetUp() override
   {
   }
@@ -427,7 +425,7 @@ TEST_P(ForEachTimeTest, VectorPersonTest)
   CompareAndLog(queryableStats, standardStats);
 }
 
-TEST_P(ForEachTimeTest, VectorLongActionExecutionTest)
+TEST_P(ForEachTimeTest, VectorNumberHeavyLoadTest)
 {
   TimeTestParams params = GetParam();
 

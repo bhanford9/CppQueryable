@@ -12,10 +12,11 @@
 
 #include "../../../../Queryable/QueryBuilder.h"
 
+#include "BaseTimeTest.h"
 #include "Utilities/TimeStats.h"
-#include "Utilities/TimeTestParams.h"
+#include "Utilities/TimeTestParams/TimeTestParams.h"
+#include "Utilities/TimeTestParams/TriggerType.h"
 #include "Utilities/TimingUtilities.h"
-#include "Utilities/TriggerType.h"
 
 using namespace QueryBuilder;
 using namespace TimingUtilities;
@@ -28,11 +29,9 @@ using namespace TimingUtilities;
 //  5) last element passes
 //  6) no elements pass
 
-class AnyTimeTest : public ::testing::TestWithParam<TimeTestParams>
+class AnyTimeTest : public BaseTimeTest
 {
 protected:
-  std::string queryableName = "QUERYABLE";
-  std::string standardName = "STANDARD";
   uint triggerValue = 99999999;
   std::string nameTriggerValue = "Hello World!";
   uint64_t triggerIndex = 0;
