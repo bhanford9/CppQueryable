@@ -30,7 +30,7 @@ public:
   WhereQueryableDequeData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::deque>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::deque>(std::move(data), std::move(condition))
   {
     this->InitWhereRandomAccessProperties();
   }

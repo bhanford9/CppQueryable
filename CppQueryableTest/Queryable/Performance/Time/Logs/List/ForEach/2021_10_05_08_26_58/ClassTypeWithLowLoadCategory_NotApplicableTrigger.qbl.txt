@@ -1,0 +1,119 @@
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1
+Iterations: 30
+Standard Total Millis: 0.076148
+Standard Average Millis: 0.002538
+Standard Fastest Millis: 6.2e-05
+Standard Slowest Millis: 0.000191
+Standard Range Millis: 0.000129
+Queryable Total Millis: 0.073981
+Queryable Average Millis: 0.002466
+Queryable Fastest Millis: 0.002281
+Queryable Slowest Millis: 0.005756
+Queryable Range Millis: 0.003474
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 10
+Iterations: 30
+Standard Total Millis: 0.125438
+Standard Average Millis: 0.004181
+Standard Fastest Millis: 0.000283
+Standard Slowest Millis: 0.000539
+Standard Range Millis: 0.000256
+Queryable Total Millis: 0.11604
+Queryable Average Millis: 0.003868
+Queryable Fastest Millis: 0.003682
+Queryable Slowest Millis: 0.006583
+Queryable Range Millis: 0.002901
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 100
+Iterations: 30
+Standard Total Millis: 0.879433
+Standard Average Millis: 0.029314
+Standard Fastest Millis: 0.002431
+Standard Slowest Millis: 0.020069
+Standard Range Millis: 0.017638
+Queryable Total Millis: 0.781799
+Queryable Average Millis: 0.026059
+Queryable Fastest Millis: 0.017011
+Queryable Slowest Millis: 0.085026
+Queryable Range Millis: 0.068014
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1000
+Iterations: 30
+Standard Total Millis: 5.47452
+Standard Average Millis: 0.182483
+Standard Fastest Millis: 0.023917
+Standard Slowest Millis: 0.052194
+Standard Range Millis: 0.028277
+Queryable Total Millis: 4.67507
+Queryable Average Millis: 0.155835
+Queryable Fastest Millis: 0.147849
+Queryable Slowest Millis: 0.208603
+Queryable Range Millis: 0.060753
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 10000
+Iterations: 30
+Standard Total Millis: 56.8879
+Standard Average Millis: 1.89626
+Standard Fastest Millis: 0.243291
+Standard Slowest Millis: 0.391361
+Standard Range Millis: 0.14807
+Queryable Total Millis: 48.5027
+Queryable Average Millis: 1.61676
+Queryable Fastest Millis: 1.4752
+Queryable Slowest Millis: 2.49987
+Queryable Range Millis: 1.02466
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 100000
+Iterations: 30
+Standard Total Millis: 552.29
+Standard Average Millis: 18.4097
+Standard Fastest Millis: 2.46934
+Standard Slowest Millis: 3.53547
+Standard Range Millis: 1.06613
+Queryable Total Millis: 469.486
+Queryable Average Millis: 15.6495
+Queryable Fastest Millis: 15.3025
+Queryable Slowest Millis: 16.7915
+Queryable Range Millis: 1.48899
+
+Category: ClassTypeWithLowLoad
+Container: List
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1000000
+Iterations: 30
+Standard Total Millis: 5565.61
+Standard Average Millis: 185.52
+Standard Fastest Millis: 26.2997
+Standard Slowest Millis: 28.2969
+Standard Range Millis: 1.99727
+Queryable Total Millis: 4756.63
+Queryable Average Millis: 158.554
+Queryable Fastest Millis: 155.472
+Queryable Slowest Millis: 171.419
+Queryable Range Millis: 15.9464
+

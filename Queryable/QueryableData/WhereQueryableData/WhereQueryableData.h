@@ -70,12 +70,12 @@ public:
     return objs;
   }
 
-  virtual TOriginal ToCurrent(TOriginal original) override
+  virtual TOriginal ToCurrent(const TOriginal & original) override
   {
     return original;
   }
 
-  virtual bool DoSkip(TOriginal value) override
+  virtual bool DoSkip(const TOriginal & value) override
   {
     return this->CanSkip() && !condition(value);
   }

@@ -11,6 +11,9 @@ enum class TriggerType
   ThreeQuarter,
   End,
   Never,
+  LowFrequency,
+  MediumFrequency,
+  HighFrequency,
   NotApplicable
 };
 
@@ -24,9 +27,12 @@ static std::string GetTriggerName(TriggerType type)
     case TriggerType::ThreeQuarter: return "ThreeQuarter";
     case TriggerType::End: return "End";
     case TriggerType::Never: return "Never";
+    case TriggerType::LowFrequency: return "LowFrequency";
+    case TriggerType::MediumFrequency: return "MediumFrequency";
+    case TriggerType::HighFrequency: return "HighFrequency";
     case TriggerType::NotApplicable:
     default:
-      return "Not Applicable";
+      return "NotApplicable";
   }
 }
 

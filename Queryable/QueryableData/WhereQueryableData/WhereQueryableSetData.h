@@ -14,7 +14,7 @@ public:
   WhereQueryableSetData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::set>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::set>(std::move(data), std::move(condition))
   {
   }
 
@@ -26,7 +26,7 @@ public:
     this->items.insert(item);
     this->size++;
   }
-  
+
   virtual void Update(Iterator<TOriginal> first, Iterator<TOriginal> last, std::function<bool(TOriginal, TOriginal)> compare) override
   {
     this->original.get()->Update(first, last, compare);

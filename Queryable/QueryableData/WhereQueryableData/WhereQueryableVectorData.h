@@ -30,7 +30,7 @@ public:
   WhereQueryableVectorData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::vector>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::vector>(std::move(data), std::move(condition))
   {
     this->InitWhereRandomAccessProperties();
   }

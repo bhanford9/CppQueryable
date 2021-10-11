@@ -40,6 +40,9 @@
 #include "Utilities/Group.h"
 #include "Utilities/PersistentContainer.h"
 
+#include "../CppQueryableTest/Queryable/Performance/Time/Utilities/Duration.h"
+#include "../CppQueryableTest/Queryable/Performance/Time/Utilities/TimingTypes.h"
+
 template<typename TObj>
 class Queryable
 {
@@ -420,20 +423,21 @@ public:
 
     switch (returnType)
     {
+      // Think I need to create move constructors or each of these
       case QueryableType::Deque:
-        this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj>>(std::move(this->items), condition));
+        this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::List:
-        this->items = std::move(std::make_shared<WhereQueryableListData<TObj>>(std::move(this->items), condition));
+        this->items = std::move(std::make_shared<WhereQueryableListData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::MultiSet:
-        this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj>>(std::move(this->items), condition));
+        this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::Set:
-        this->items = std::move(std::make_shared<WhereQueryableSetData<TObj>>(std::move(this->items), condition));
+        this->items = std::move(std::make_shared<WhereQueryableSetData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::Vector:
-        this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj>>(std::move(this->items), condition));
+        this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       default: break;
     }
@@ -783,6 +787,8 @@ public:
     bool isFirst = true;
     TObj maxItem = TObj();
 
+    TTime start = THighRes::now();
+
     for (TObj item : *this->items.get())
     {
       if (isFirst)
@@ -795,6 +801,12 @@ public:
         maxItem = item;
       }
     }
+
+    TTime end = THighRes::now();
+
+    Duration duration(start, end);
+
+    std::cout << "Max Iteration Time (millis): " << duration.MillisStr() << std::endl;
 
     return maxItem;
   }

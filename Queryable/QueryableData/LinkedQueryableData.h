@@ -389,14 +389,14 @@ public:
   }
   virtual ~LinkedQueryableData() { }
 
-  virtual TCurrent ToCurrent(TOriginal original) = 0;
+  virtual TCurrent ToCurrent(const TOriginal & original) = 0;
   virtual bool CanSkip() = 0;
 
   // if we ever want to evaluate this for QueryableData types that require
   // different TOriginal and TCurrent types, will need to change signature to take
   // a TCurrent instead of a TOriginal. Its faster in the iterator incrementing
   // if we do not have to convert from TOriginal to TCurrent though
-  virtual bool DoSkip(TOriginal value) = 0;
+  virtual bool DoSkip(const TOriginal & value) = 0;
 
   void Clear() override
   {
@@ -433,7 +433,7 @@ public:
   Iterator<TCurrent> begin() override
   {
     this->originalBeginning = this->original->begin();
-    this->beginIterator = this->items.begin();
+    // this->beginIterator = this->items.begin();
     this->beginning.Index = this->originalBeginning.Index;
     this->LinkedIncrementPastCondition(this->originalBeginning, this->originalBeginning.Index);
 
@@ -443,7 +443,7 @@ public:
   Iterator<TCurrent> end() override
   {
     this->originalEnding = this->original->end();
-    this->endIterator = this->items.end();
+    // this->endIterator = this->items.end();
     this->ending.Index = this->size;
     return this->ending;
   }
@@ -451,7 +451,7 @@ public:
   Iterator<TCurrent> rbegin() override
   {
     this->originalRBeginning = this->original->rbegin();
-    this->rbeginIterator = this->items.rbegin();
+    // this->rbeginIterator = this->items.rbegin();
     this->rbeginning.Index = this->originalRBeginning.Index;
     this->LinkedIncrementPastCondition(this->originalRBeginning, this->originalRBeginning.Index);
 
@@ -461,7 +461,7 @@ public:
   Iterator<TCurrent> rend() override
   {
     this->originalREnding = this->original->rend();
-    this->rendIterator = this->items.rend();
+    // this->rendIterator = this->items.rend();
     this->rending.Index = this->size;
     return this->rending;
   }

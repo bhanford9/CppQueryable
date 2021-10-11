@@ -28,13 +28,17 @@ namespace QueryBuilder
   }
 
   template<typename T>
-  static Queryable<T> BuildQueryable(std::set<T, std::function<bool(T, T)>> items)
+  static Queryable<T> BuildQueryable(
+    std::set<T, std::function<bool(T, T)>> items,
+    std::function<bool(T, T)> = [](T a, T b) { return a < b; })
   {
     return Queryable<T>(items);
   }
 
   template<typename T>
-  static Queryable<T> BuildQueryable(std::multiset<T, std::function<bool(T, T)>> items)
+  static Queryable<T> BuildQueryable(
+    std::multiset<T, std::function<bool(T, T)>> items,
+    std::function<bool(T, T)> = [](T a, T b) { return a < b; })
   {
     return Queryable<T>(items);
   }

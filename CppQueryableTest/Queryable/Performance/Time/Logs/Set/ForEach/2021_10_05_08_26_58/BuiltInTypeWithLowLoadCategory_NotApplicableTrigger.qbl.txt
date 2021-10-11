@@ -1,0 +1,119 @@
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1
+Iterations: 30
+Standard Total Millis: 0.07011
+Standard Average Millis: 0.002337
+Standard Fastest Millis: 4.9e-05
+Standard Slowest Millis: 0.000246
+Standard Range Millis: 0.000197
+Queryable Total Millis: 0.068369
+Queryable Average Millis: 0.002278
+Queryable Fastest Millis: 0.002146
+Queryable Slowest Millis: 0.004901
+Queryable Range Millis: 0.002755
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 10
+Iterations: 30
+Standard Total Millis: 0.10631
+Standard Average Millis: 0.003543
+Standard Fastest Millis: 0.000136
+Standard Slowest Millis: 0.000441
+Standard Range Millis: 0.000305
+Queryable Total Millis: 0.101619
+Queryable Average Millis: 0.003387
+Queryable Fastest Millis: 0.002733
+Queryable Slowest Millis: 0.018223
+Queryable Range Millis: 0.01549
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 100
+Iterations: 30
+Standard Total Millis: 0.377839
+Standard Average Millis: 0.012594
+Standard Fastest Millis: 0.001125
+Standard Slowest Millis: 0.002088
+Standard Range Millis: 0.000963
+Queryable Total Millis: 0.342406
+Queryable Average Millis: 0.011413
+Queryable Fastest Millis: 0.007967
+Queryable Slowest Millis: 0.036143
+Queryable Range Millis: 0.028176
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1000
+Iterations: 30
+Standard Total Millis: 2.30668
+Standard Average Millis: 0.076889
+Standard Fastest Millis: 0.011435
+Standard Slowest Millis: 0.018784
+Standard Range Millis: 0.007348
+Queryable Total Millis: 1.95313
+Queryable Average Millis: 0.065104
+Queryable Fastest Millis: 0.061999
+Queryable Slowest Millis: 0.105646
+Queryable Range Millis: 0.043647
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 10000
+Iterations: 30
+Standard Total Millis: 25.419
+Standard Average Millis: 0.847298
+Standard Fastest Millis: 0.122555
+Standard Slowest Millis: 0.231696
+Standard Range Millis: 0.109141
+Queryable Total Millis: 21.1979
+Queryable Average Millis: 0.706595
+Queryable Fastest Millis: 0.618271
+Queryable Slowest Millis: 0.888568
+Queryable Range Millis: 0.270296
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 100000
+Iterations: 30
+Standard Total Millis: 281.884
+Standard Average Millis: 9.39614
+Standard Fastest Millis: 1.2764
+Standard Slowest Millis: 2.77299
+Standard Range Millis: 1.49659
+Queryable Total Millis: 224.486
+Queryable Average Millis: 7.48288
+Queryable Fastest Millis: 6.35144
+Queryable Slowest Millis: 9.05664
+Queryable Range Millis: 2.7052
+
+Category: BuiltInTypeWithLowLoad
+Container: Set
+Method: ForEach
+Trigger: NotApplicable
+Container Size: 1000000
+Iterations: 30
+Standard Total Millis: 3104.45
+Standard Average Millis: 103.482
+Standard Fastest Millis: 21.6147
+Standard Slowest Millis: 26.3366
+Standard Range Millis: 4.72195
+Queryable Total Millis: 2431.81
+Queryable Average Millis: 81.0602
+Queryable Fastest Millis: 79.8114
+Queryable Slowest Millis: 83.8769
+Queryable Range Millis: 4.06548
+

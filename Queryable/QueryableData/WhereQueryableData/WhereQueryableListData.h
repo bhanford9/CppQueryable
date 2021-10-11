@@ -14,7 +14,7 @@ public:
   WhereQueryableListData(
     std::shared_ptr<IQueryableData<TOriginal>> data,
     std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::list>(std::move(data), condition)
+    : WhereQueryableData<TOriginal, std::list>(std::move(data), std::move(condition))
   {
   }
 

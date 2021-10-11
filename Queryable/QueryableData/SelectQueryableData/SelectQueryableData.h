@@ -45,7 +45,7 @@ public:
     return this->original.get()->Count();
   }
 
-  virtual TCurrent ToCurrent(TOriginal original) override
+  virtual TCurrent ToCurrent(const TOriginal & original) override
   {
     return this->selector(original);
   }
@@ -53,7 +53,7 @@ public:
   // if we ever want to return true here, will need to change signature to take
   // a TCurrent instead of a TOriginal. Its faster in the iterator incrementing
   // if we do not have to convert from TOriginal to TCurrent though
-  virtual bool DoSkip(TOriginal value) override
+  virtual bool DoSkip(const TOriginal & value) override
   {
     return false;
   }

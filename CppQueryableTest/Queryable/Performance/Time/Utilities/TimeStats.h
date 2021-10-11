@@ -28,10 +28,10 @@ public:
   TimeStats(const TimeStats & other)
   {
     this->name = other.name;
-    this->count = other.GetIterations();
-    this->total = other.GetTotal();
-    this->max = other.GetMax();
-    this->min = other.GetMin();
+    this->count = other.count;
+    this->total = other.total;
+    this->max = other.max;
+    this->min = other.min;
   }
 
   void Add(const Duration & time)
@@ -118,15 +118,6 @@ public:
     result.min = this->min / other.min;
     result.max = this->max / other.max;
     return result;
-  }
-
-  TimeStats & operator= (const TimeStats & other)
-  {
-    this->name = other.name;
-    this->count = other.count;
-    this->min = other.min;
-    this->max - other.max;
-    return *this;
   }
 
 private:

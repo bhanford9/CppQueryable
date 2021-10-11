@@ -28,71 +28,23 @@ int main()
   PersonLibrary personLibrary;
   Queryable<Person> people = Queryable<Person>(personLibrary.GetPeople());
 
-  typedef Group<Gender, Person> TGenderPerson;
-  Queryable<TGenderPerson> genderGroups = people.ToQueryableMultiSet()
-    .GroupBy<Gender>(
-      [](Person p) { return p.GetGender(); },
-      QueryableType::MultiSet,
-      [](Gender a, Gender b) { std::cout << "custom less than" << std::endl; return a < b; });
 
-  // Queryable<Person> males = people
-  //   .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  //   std::cout << "males copied\n" << std::endl;
-  // Queryable<Person> females = people
-  //   .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
-  // std::cout << "femailes copied\n" << std::endl;
+  std::vector<uint> startingInput;
+  std::vector<uint> evens;
+  Queryable<uint> queryable;
+  Queryable<uint> queryableEvens;
+  startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
+  evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
+  queryable = BuildQueryable(startingInput);
+  queryableEvens = BuildQueryable(evens);
 
-  // ASSERT_EQ(2, genderGroups.Count());
-  // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+  Queryable<uint> local = BuildQueryable<uint>(queryable.ToList());
+  std::cout << "local made\n\n" << std::endl;
+  Queryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
+  std::cout << "mevens made\n\n" << std::endl;
+  Queryable<uint> result = local.Where([](uint value) { return value > 10; });
+  std::vector<uint> vectorResult = result.ToVector();
 
-  std::cout << "going into foreach" << std::endl;
-
-  genderGroups.ForEach([&](TGenderPerson group)
-  {
-    std::cout << "group in internal foreach loop" << std::endl;
-    if (group.GetKey() == Gender::Male)
-    {
-      // ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      // ASSERT_EQ(females.Count(), group.Count());
-    }
-
-    std::cout << "new group\n\n\n" << std::endl;
-
-    // int i = 0;
-    for (Person person : group)
-    {
-      std::cout << person << std::endl;
-      if (group.GetKey() == Gender::Male)
-      {
-        // ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        // ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-
-  // std::vector<uint> startingInput;
-  // std::vector<uint> evens;
-  // Queryable<uint> queryable;
-  // Queryable<uint> queryableEvens;
-  // startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
-  // evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
-  // queryable = BuildQueryable(startingInput);
-  // queryableEvens = BuildQueryable(evens);
-  //
-  // Queryable<uint> local = BuildQueryable<uint>(queryable.ToList());
-  // std::cout << "local made\n\n" << std::endl;
-  // Queryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
-  // std::cout << "mevens made\n\n" << std::endl;
-  // Queryable<uint> * result = local
-  //   .Where([](uint value) { return value > 10; })
-  //   .Except(mevens);
 
   // std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
   // std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };

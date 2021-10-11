@@ -7,6 +7,8 @@
 #include <iostream>
 #include <iterator>
 
+#include "../Utilities/Backtrace.h"
+
 template <typename T>
 class Iterator
 {
@@ -23,6 +25,20 @@ public:
   Iterator()
   {
     // std::cout << "iterator deault constructor" << std::endl;
+  }
+
+  Iterator(const Iterator<T> && other)
+  {
+    // std::cout << "\t\t\titerator move constructor" << std::endl;
+    this->Get = std::move(other.Get);
+    this->Increment = std::move(other.Increment);
+    this->Decrement = std::move(other.Decrement);
+    this->Dereference = std::move(other.Dereference);
+    this->ConstDereference = std::move(other.ConstDereference);
+    this->Assign = std::move(other.Assign);
+    this->Add = std::move(other.Add);
+    this->Subtract = std::move(other.Subtract);
+    this->Index = std::move(other.Index);
   }
 
   Iterator(const Iterator<T> & other)

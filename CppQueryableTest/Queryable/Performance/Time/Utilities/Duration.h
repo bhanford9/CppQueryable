@@ -27,7 +27,7 @@ private:
 
 public:
   Duration() { }
-  Duration(const Duration & duration) { this->duration = duration.Get(); }
+  Duration(const Duration & duration) { this->duration = duration.duration; }
   Duration(const std::chrono::duration<double> & duration) { this->duration = duration; }
   Duration(TTime start, TTime end) { this->Calculate(start, end); }
 

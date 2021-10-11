@@ -13,7 +13,7 @@
 
 namespace TimingUtilities
 {
-  static Duration RunAndTime(std::function<void()> action)
+  Duration RunAndTime(std::function<void()> action)
   {
     TTime start = THighRes::now();
     action();
@@ -23,7 +23,7 @@ namespace TimingUtilities
     return duration;
   }
 
-  static TimeStats RunAndTime(std::function<void()> action, ulong iterations, std::string name = "")
+  TimeStats RunAndTime(std::function<void()> action, ulong iterations, std::string name = "")
   {
     TimeStats stats(name);
 
@@ -36,7 +36,7 @@ namespace TimingUtilities
   }
 
   template<typename T>
-  static Duration RunAndTime(std::function<void(T*)> action, T args)
+  Duration RunAndTime(std::function<void(T*)> action, T args)
   {
     TTime start = THighRes::now();
     action(&args);
@@ -47,7 +47,7 @@ namespace TimingUtilities
   }
 
   template<typename T>
-  static TimeStats RunAndTime(std::function<void(T*)> action, ulong iterations, T args, std::string name = "")
+  TimeStats RunAndTime(std::function<void(T*)> action, ulong iterations, T args, std::string name = "")
   {
     TimeStats stats(name);
 
@@ -59,7 +59,7 @@ namespace TimingUtilities
     return stats;
   }
 
-  // static void RunTimeAndLog(std::function<void()> action, std::string name = "")
+  // void RunTimeAndLog(std::function<void()> action, std::string name = "")
   // {
   //   if (name != "")
   //   {
@@ -69,7 +69,7 @@ namespace TimingUtilities
   //   std::cout << RunAndTime(action).ToString() << std::endl;
   // }
 
-  static TimeStats RunTimeAndLog(std::function<void()> action, ulong iterations, std::string name = "")
+  TimeStats RunTimeAndLog(std::function<void()> action, ulong iterations, std::string name = "")
   {
     if (name != "")
     {
@@ -82,7 +82,7 @@ namespace TimingUtilities
   }
 
   template<typename T>
-  static void RunTimeAndLog(std::function<void(T*)> action, T args, std::string name = "")
+  void RunTimeAndLog(std::function<void(T*)> action, T args, std::string name = "")
   {
     if (name != "")
     {
@@ -93,7 +93,7 @@ namespace TimingUtilities
   }
 
   template<typename T>
-  static TimeStats RunTimeAndLog(std::function<void(T*)> action, ulong iterations, T args, std::string name = "")
+  TimeStats RunTimeAndLog(std::function<void(T*)> action, ulong iterations, T args, std::string name = "")
   {
     if (name != "")
     {
@@ -105,7 +105,7 @@ namespace TimingUtilities
     return stats;
   }
 
-  static void CompareAndLog(const TimeStats & numerator, const TimeStats & denominator)
+  void CompareAndLog(const TimeStats & numerator, const TimeStats & denominator)
   {
     std::cout << numerator.GetName() + " VS " + denominator.GetName() << std::endl;
     std::cout << numerator
