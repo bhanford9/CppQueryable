@@ -32,78 +32,62 @@ protected:
   }
 };
 
-// TEST_P(ForEachTimeTest, DequeNumberTest)
-// {
-//   this->params = GetParam();
-//   this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
-//
-//   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-//   std::deque<uint> data;
-//   for (uint64_t i = 0; i < params.GetContainerSize(); i++)
-//   {
-//     data.push_back(dataSample[i % 12]);
-//   }
-//
-//   Queryable<uint> local = BuildQueryable(data);
-//
-//   this->queryableStats = RunTimeAndLog(
-//     [&]() { local.ForEach([](uint value) { (void)value; }); },
-//     params.GetIterations(),
-//     this->queryableName
-//   );
-//
-//   std::function<void()> action = [&]()
-//   {
-//     for (uint value : data)
-//     {
-//       (void)value;
-//     }
-//   };
-//
-//   this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-//
-//   std::cout << "\nTest Data:" << std::endl;
-//   std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-//   std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-//   CompareAndLog(this->queryableStats, this->standardStats);
-// }
-//
-// TEST_P(ForEachTimeTest, ListNumberTest)
-// {
-//   this->params = GetParam();
-//   this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
-//
-//   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-//   std::list<uint> data;
-//   for (uint64_t i = 0; i < params.GetContainerSize(); i++)
-//   {
-//     data.push_back(dataSample[i % 12]);
-//   }
-//
-//   Queryable<uint> local = BuildQueryable(data);
-//
-//   this->queryableStats = RunTimeAndLog(
-//     [&]() { local.ForEach([](uint value) { (void)value; }); },
-//     params.GetIterations(),
-//     this->queryableName
-//   );
-//
-//   std::function<void()> action = [&]()
-//   {
-//     for (uint value : data)
-//     {
-//       (void)value;
-//     }
-//   };
-//
-//   this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-//
-//   std::cout << "\nTest Data:" << std::endl;
-//   std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-//   std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-//   CompareAndLog(this->queryableStats, this->standardStats);
-// }
-//
+TEST_P(ForEachTimeTest, DequeNumberTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](uint value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogAllData();
+}
+
+TEST_P(ForEachTimeTest, ListNumberTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]() { local.ForEach([](uint value) { (void)value; }); },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogAllData();
+}
+
 TEST_P(ForEachTimeTest, MultiSetNumberTest)
 {
   this->params = GetParam();
@@ -124,20 +108,12 @@ TEST_P(ForEachTimeTest, MultiSetNumberTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, SetNumberTest)
@@ -159,20 +135,12 @@ TEST_P(ForEachTimeTest, SetNumberTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, VectorNumberTest)
@@ -195,20 +163,12 @@ TEST_P(ForEachTimeTest, VectorNumberTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, DequePersonTest)
@@ -240,20 +200,12 @@ TEST_P(ForEachTimeTest, DequePersonTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (Person value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, ListPersonTest)
@@ -285,20 +237,12 @@ TEST_P(ForEachTimeTest, ListPersonTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (Person value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, MultiSetPersonTest)
@@ -330,20 +274,12 @@ TEST_P(ForEachTimeTest, MultiSetPersonTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (Person value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, SetPersonTest)
@@ -375,20 +311,12 @@ TEST_P(ForEachTimeTest, SetPersonTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (Person value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, VectorPersonTest)
@@ -420,24 +348,17 @@ TEST_P(ForEachTimeTest, VectorPersonTest)
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
-    {
-      (void)value;
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (Person value : data) { (void)value; }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 TEST_P(ForEachTimeTest, VectorNumberHeavyLoadTest)
 {
+  const uint LOAD_MAGNITUDE = 100;
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltInHeavyLoad);
 
@@ -451,46 +372,26 @@ TEST_P(ForEachTimeTest, VectorNumberHeavyLoadTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() {
-      local.ForEach([](uint value)
-      {
-        for (int i = 0; i < 10; i++)
-        {
-          value = sqrt(value * i / (value + 100));
-        }
-      });
-    },
+    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(LOAD_MAGNITUDE, value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
-    {
-      for (int i = 0; i < 10; i++)
-      {
-        value = sqrt(value * i / (value + 100));
-      }
-    }
-  };
+  this->standardStats = RunTimeAndLog(
+    [&]() { for (uint value : data) { this->ApplyLoad(LOAD_MAGNITUDE, value); }},
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogAllData();
 }
 
 INSTANTIATE_TEST_SUITE_P(
   ForEachTimeTesting,
   ForEachTimeTest,
   ::testing::Values(
-    TimeTestParams(30, 1),
     TimeTestParams(30, 10),
-    TimeTestParams(30, 100),
+    TimeTestParams(30, 30),
     TimeTestParams(30, 1000),
-    TimeTestParams(30, 10000),
-    TimeTestParams(30, 100000),
-    TimeTestParams(30, 1000000)));
+    TimeTestParams(30, 10000)));
+    // TimeTestParams(30, 100000),
+    // TimeTestParams(30, 1000000)));

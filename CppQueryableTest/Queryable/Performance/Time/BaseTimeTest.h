@@ -12,6 +12,7 @@
 #include "Utilities/TimeTestParams/TimeTestCategory.h"
 #include "Utilities/TimeTestParams/TimeTestParams.h"
 #include "Utilities/TimeTestParams/TriggerType.h"
+#include "Utilities/TimingUtilities.h"
 
 class BaseTimeTest : public ::testing::TestWithParam<TimeTestParams>
 {
@@ -32,6 +33,15 @@ public:
   TimeStats queryableStats;
   TimeTestParams params;
   static std::string suiteStartTime;
+
+  BaseTimeTest() :
+    methodName(""),
+    containerName(""),
+    standardStats(TimeStats()),
+    queryableStats(TimeStats()),
+    params({})
+  {
+  }
 
   static void SetUpTestSuite()
   {
@@ -87,6 +97,25 @@ public:
     this->params.SetStandardStats(this->standardStats);
     this->params.SetQueryableStats(this->queryableStats);
     this->ProcessResults(this->params);
+  }
+
+  void LogAllData()//const TimeStats & queryableStats, const TimeStats & standardStats)
+  {
+    std::cout << "\nTest Data:" << std::endl;
+    std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
+    std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
+    TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
+  }
+
+  template<typename T = uint>
+  void ApplyLoad(uint magnitude, T useDummy)
+  {
+    (void)useDummy;
+    double value = 0.0;
+    for (uint i = 0; i < magnitude; i++)
+    {
+      value = sqrt(value * i / (value + 100));
+    }
   }
 
   void ProcessResults(const TimeTestParams & params)

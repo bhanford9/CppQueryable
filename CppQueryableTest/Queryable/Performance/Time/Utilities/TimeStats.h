@@ -13,19 +13,28 @@
 class TimeStats
 {
 private:
-  std::string name = "";
-  ulong count = 0;
+  std::string name;
+  ulong count;
   Duration total;
-  Duration max = Duration::Min();
-  Duration min = Duration::Max();
+  Duration max;
+  Duration min;
 
 public:
-  TimeStats() {}
-  explicit TimeStats(std::string name)
+  TimeStats() :
+    name(""),
+    count(0),
+    total(0.0),
+    max(Duration::Min()),
+    min(Duration::Max())
+  {
+  }
+
+  explicit TimeStats(std::string name) : TimeStats()
   {
     this->name = name;
   }
-  TimeStats(const TimeStats & other)
+
+  TimeStats(const TimeStats & other) : TimeStats()
   {
     this->name = other.name;
     this->count = other.count;
@@ -50,6 +59,7 @@ public:
   Duration GetMax() const { return this->max; }
   Duration GetMin() const { return this->min; }
   Duration GetRange() const { return this->max - this->min; }
+  ulong GetCount() const { return this->count; }
 
   std::string ToString()
   {

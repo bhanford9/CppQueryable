@@ -27,8 +27,22 @@ private:
   std::string statsFilePath = "";
 
 public:
-  TimeTestParams() { }
-  TimeTestParams(const TimeTestParams & other)
+  TimeTestParams() :
+    id(""),
+    category(TimeTestCategory::Other),
+    containerType(""),
+    methodName(""),
+    triggerType(TriggerType::NotApplicable),
+    containerSize(0),
+    iterations(0),
+    standardStats(TimeStats()),
+    queryableStats(TimeStats()),
+    doLog(true),
+    doRecordStats(false),
+    statsFilePath("")
+  {
+  }
+  TimeTestParams(const TimeTestParams & other) : TimeTestParams()
   {
     this->id = other.id;
     this->category = other.category;
@@ -51,7 +65,7 @@ public:
     uint64_t containerSize,
     TriggerType triggerType = TriggerType::NotApplicable,
     bool doLog = true,
-    bool doRecordStats = false)
+    bool doRecordStats = false) : TimeTestParams()
   {
     this->iterations = iterations;
     this->containerSize = containerSize;

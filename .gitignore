@@ -4,3 +4,5 @@ Makefile.dep
 **/*.o
 **/*.gch
 *_testcases
+
+CppQueryableTest/Queryable/Performance/Time/Logs/*
