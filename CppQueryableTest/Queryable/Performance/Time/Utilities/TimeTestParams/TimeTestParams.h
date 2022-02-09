@@ -18,6 +18,7 @@ private:
 
   uint64_t containerSize = 0;
   uint64_t iterations = 0;
+  uint16_t load = 1;
 
   TimeStats standardStats;
   TimeStats queryableStats;
@@ -35,6 +36,7 @@ public:
     triggerType(TriggerType::NotApplicable),
     containerSize(0),
     iterations(0),
+    load(1),
     standardStats(TimeStats()),
     queryableStats(TimeStats()),
     doLog(true),
@@ -52,6 +54,7 @@ public:
 
     this->containerSize = other.containerSize;
     this->iterations = other.iterations;
+    this->load = other.load;
 
     this->standardStats = other.standardStats;
     this->queryableStats = other.queryableStats;
@@ -63,12 +66,14 @@ public:
   TimeTestParams(
     uint64_t iterations,
     uint64_t containerSize,
+    uint16_t load = 1,
     TriggerType triggerType = TriggerType::NotApplicable,
     bool doLog = true,
     bool doRecordStats = false) : TimeTestParams()
   {
     this->iterations = iterations;
     this->containerSize = containerSize;
+    this->load = load;
     this->triggerType = triggerType;
     this->doLog = doLog;
     this->doRecordStats = doRecordStats;
@@ -82,6 +87,7 @@ public:
 
   uint64_t GetContainerSize() const { return this->containerSize; }
   uint64_t GetIterations() const { return this->iterations; }
+  uint16_t GetLoad() const { return this->load; }
 
   TimeStats GetStandardStats() const { return this->standardStats; }
   TimeStats GetQueryableStats() const { return this->queryableStats; }
@@ -98,6 +104,7 @@ public:
 
   void SetContainerSize(uint64_t containerSize) { this->containerSize = containerSize; }
   void SetIterations(uint64_t iterations) { this->iterations = iterations; }
+  void SetLOod(uint16_t load) { this->load = load; }
 
   void SetStandardStats(TimeStats stats) { this->standardStats = stats; }
   void SetQueryableStats(TimeStats stats) { this->queryableStats = stats; }

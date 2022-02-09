@@ -35,7 +35,7 @@ protected:
 TEST_P(WhereTimeTest, VectorTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
 
   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::vector<uint> data;
@@ -72,7 +72,7 @@ TEST_P(WhereTimeTest, VectorTest)
 TEST_P(WhereTimeTest, VectorHeavyLoadTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInHeavyLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
 
   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::vector<uint> data;

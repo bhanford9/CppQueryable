@@ -99,11 +99,12 @@ public:
     this->ProcessResults(this->params);
   }
 
-  void LogAllData()//const TimeStats & queryableStats, const TimeStats & standardStats)
+  void LogAllData()
   {
-    std::cout << "\nTest Data:" << std::endl;
-    std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-    std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
+    std::cout << "\nTest Data:" << std::endl
+      << "\tSize: " << this->params.GetContainerSize() << std::endl
+      << "\tIterations: " << this->params.GetIterations() << std::endl
+      << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl;
     TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
   }
 
@@ -145,13 +146,6 @@ public:
       //   ------ YYYY-MM-DD-HH-MM-SS
       //   -------- Category_Trigger_Id
 
-      // Workbook Structure:
-      //   Workbook Name: Container Type
-      //   Sheet Name: Method Name
-      //   Columns: Executer, Category, Trigger, Container Size, Iterations, Total, Average, Fastest, Slowest, Range
-      //   Row Counts: 2 Executer, 7 Category, 10 Triggers, 7 Sizes, 1 Iteration, 1 Total, 1 Average, 1 Fastest, 1 Slowest, 1 Range
-      //   Total Rows: 2 x 7 x 10 x 7 x 1 = 980   (per container, per method, but not all combinations are valid)
-
       system(("mkdir -p " + logFileDirectory).c_str());
       std::ofstream fileStream;
       fileStream.open(logFilePath, std::ios_base::app);
@@ -162,6 +156,7 @@ public:
                  << "\nTrigger: " << GetTriggerName(params.GetTriggerType())
                  << "\nContainer Size: " << params.GetContainerSize()
                  << "\nIterations: " << params.GetIterations()
+                 << "\nLoad Magnitude: " << params.GetLoad()
                  << "\nStandard Total Millis: " << params.GetStandardStats().GetTotal().Millis()
                  << "\nStandard Average Millis: " << params.GetStandardStats().GetAverage().Millis()
                  << "\nStandard Fastest Millis: " << params.GetStandardStats().GetMin().Millis()

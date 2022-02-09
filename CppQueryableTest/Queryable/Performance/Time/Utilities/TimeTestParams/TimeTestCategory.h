@@ -5,12 +5,8 @@
 
 enum class TimeTestCategory
 {
-  BuiltInLowLoad,
-  BuiltInMediumLoad,
-  BuiltInHeavyLoad,
-  ClassLowLoad,
-  ClassMediumLoad,
-  ClassHeavyLoad,
+  BuiltIn,
+  Class,
   Other
 };
 
@@ -18,12 +14,8 @@ static std::string GetCategoryName(TimeTestCategory category)
 {
   switch (category)
   {
-    case TimeTestCategory::BuiltInLowLoad: return "BuiltInTypeWithLowLoad";
-    case TimeTestCategory::BuiltInMediumLoad: return "BuiltInTypeWithMediumLoad";
-    case TimeTestCategory::BuiltInHeavyLoad: return "BuiltInTypeWithHeavyLoad";
-    case TimeTestCategory::ClassLowLoad: return "ClassTypeWithLowLoad";
-    case TimeTestCategory::ClassMediumLoad: return "ClassTypeWithMediumLoad";
-    case TimeTestCategory::ClassHeavyLoad: return "ClassTypeWithHeavyLoad";
+    case TimeTestCategory::BuiltIn: return "BuiltIn";
+    case TimeTestCategory::Class: return "Class";
     case TimeTestCategory::Other:
     default:
       return "Other";

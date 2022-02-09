@@ -76,7 +76,7 @@ protected:
 TEST_P(AnyTimeTest, DequeNumberTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
@@ -119,7 +119,7 @@ TEST_P(AnyTimeTest, DequeNumberTest)
 TEST_P(AnyTimeTest, ListNumberTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
@@ -162,7 +162,7 @@ TEST_P(AnyTimeTest, ListNumberTest)
 TEST_P(AnyTimeTest, MultiSetNumberTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
   std::set<uint> data;
@@ -209,7 +209,7 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
 TEST_P(AnyTimeTest, SetNumberTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
   std::set<uint> data;
@@ -256,7 +256,7 @@ TEST_P(AnyTimeTest, SetNumberTest)
 TEST_P(AnyTimeTest, VectorNumberTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::BuiltInLowLoad);
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
   std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
@@ -299,7 +299,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 TEST_P(AnyTimeTest, DequePersonTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::ClassLowLoad);
+  this->params.SetCategory(TimeTestCategory::Class);
   this->Init();
 
   Person personTriggerValue(0, this->nameTriggerValue, 0, 0, Gender::Male);
@@ -354,7 +354,7 @@ TEST_P(AnyTimeTest, DequePersonTest)
 TEST_P(AnyTimeTest, ListPersonTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::ClassLowLoad);
+  this->params.SetCategory(TimeTestCategory::Class);
   this->Init();
 
   Person personTriggerValue(0, this->nameTriggerValue, 0, 0, Gender::Male);
@@ -409,7 +409,7 @@ TEST_P(AnyTimeTest, ListPersonTest)
 TEST_P(AnyTimeTest, MultiSetPersonTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::ClassLowLoad);
+  this->params.SetCategory(TimeTestCategory::Class);
   this->Init();
 
   std::multiset<Person> data;
@@ -459,7 +459,7 @@ TEST_P(AnyTimeTest, MultiSetPersonTest)
 TEST_P(AnyTimeTest, SetPersonTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::ClassLowLoad);
+  this->params.SetCategory(TimeTestCategory::Class);
   this->Init();
 
   std::set<Person> data;
@@ -509,7 +509,7 @@ TEST_P(AnyTimeTest, SetPersonTest)
 TEST_P(AnyTimeTest, VectorPersonTest)
 {
   this->params = GetParam();
-  this->params.SetCategory(TimeTestCategory::ClassLowLoad);
+  this->params.SetCategory(TimeTestCategory::Class);
   this->Init();
 
   Person personTriggerValue(0, this->nameTriggerValue, 0, 0, Gender::Male);
