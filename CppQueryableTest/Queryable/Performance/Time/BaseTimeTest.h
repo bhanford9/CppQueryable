@@ -99,12 +99,13 @@ public:
     this->ProcessResults(this->params);
   }
 
-  void LogAllData()
+  void LogBaseData(std::string preCompareInfo = "")
   {
     std::cout << "\nTest Data:" << std::endl
       << "\tSize: " << this->params.GetContainerSize() << std::endl
       << "\tIterations: " << this->params.GetIterations() << std::endl
-      << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl;
+      << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl
+      << preCompareInfo;
     TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
   }
 

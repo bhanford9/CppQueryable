@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "../../../../DataStructures/Animal.h"
@@ -35,7 +36,6 @@ protected:
   uint triggerValue = 99999999;
   std::string nameTriggerValue = "Hello World!";
   uint64_t triggerIndex = 0;
-  TimeTestParams params;
 
   void SetUp() override
   {
@@ -71,6 +71,15 @@ protected:
         break;
     }
   }
+
+  void LogBaseWithTriggerData()
+  {
+    std::stringstream preCompareInfo;
+    preCompareInfo
+      << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl
+      << "\tTrigger Index: " << this->triggerIndex << std::endl;
+    this->LogBaseData(preCompareInfo.str());
+  }
 };
 
 TEST_P(AnyTimeTest, DequeNumberTest)
@@ -89,31 +98,36 @@ TEST_P(AnyTimeTest, DequeNumberTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](uint value) { return value == this->triggerValue; }); },
+    [&]()
+    {
+      local.Any([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value == this->triggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value == this->triggerValue)
+      for (uint value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value == this->triggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, ListNumberTest)
@@ -132,31 +146,36 @@ TEST_P(AnyTimeTest, ListNumberTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](uint value) { return value == this->triggerValue; }); },
+    [&]()
+    {
+      local.Any([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value == this->triggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value == this->triggerValue)
+      for (uint value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value == this->triggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, MultiSetNumberTest)
@@ -179,31 +198,36 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](uint value) { return value == this->triggerValue; }); },
+    [&]()
+    {
+      local.Any([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value == this->triggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value == this->triggerValue)
+      for (uint value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value == this->triggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, SetNumberTest)
@@ -226,31 +250,36 @@ TEST_P(AnyTimeTest, SetNumberTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](uint value) { return value == this->triggerValue; }); },
+    [&]()
+    {
+      local.Any([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value == this->triggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value == this->triggerValue)
+      for (uint value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value == this->triggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, VectorNumberTest)
@@ -269,31 +298,36 @@ TEST_P(AnyTimeTest, VectorNumberTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](uint value) { return value == this->triggerValue; }); },
+    [&]()
+    {
+      local.Any([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value == this->triggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value == this->triggerValue)
+      for (uint value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value == this->triggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, DequePersonTest)
@@ -320,35 +354,39 @@ TEST_P(AnyTimeTest, DequePersonTest)
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
 
-
   Queryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](Person value) { return value.GetName() == this->nameTriggerValue; }); },
+    [&]()
+    {
+      local.Any([&](Person value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value.GetName() == this->nameTriggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value.GetName() == this->nameTriggerValue)
+      for (Person value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value.GetName() == this->nameTriggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, ListPersonTest)
@@ -379,31 +417,36 @@ TEST_P(AnyTimeTest, ListPersonTest)
   Queryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](Person value) { return value.GetName() == this->nameTriggerValue; }); },
+    [&]()
+    {
+      local.Any([&](Person value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value.GetName() == this->nameTriggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value.GetName() == this->nameTriggerValue)
+      for (Person value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value.GetName() == this->nameTriggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, MultiSetPersonTest)
@@ -429,31 +472,36 @@ TEST_P(AnyTimeTest, MultiSetPersonTest)
   Queryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](Person value) { return value.GetName() == this->nameTriggerValue; }); },
+    [&]()
+    {
+      local.Any([&](Person value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value.GetName() == this->nameTriggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value.GetName() == this->nameTriggerValue)
+      for (Person value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value.GetName() == this->nameTriggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, SetPersonTest)
@@ -479,31 +527,36 @@ TEST_P(AnyTimeTest, SetPersonTest)
   Queryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](Person value) { return value.GetName() == this->nameTriggerValue; }); },
+    [&]()
+    {
+      local.Any([&](Person value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value.GetName() == this->nameTriggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value.GetName() == this->nameTriggerValue)
+      for (Person value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value.GetName() == this->nameTriggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 TEST_P(AnyTimeTest, VectorPersonTest)
@@ -530,80 +583,114 @@ TEST_P(AnyTimeTest, VectorPersonTest)
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
 
-
   Queryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Any([&](Person value) { return value.GetName() == this->nameTriggerValue; }); },
+    [&]()
+    {
+      local.Any([&](Person value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return value.GetName() == this->nameTriggerValue;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    for (Person value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if (value.GetName() == this->nameTriggerValue)
+      for (Person value : data)
       {
-        break;
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if (value.GetName() == this->nameTriggerValue)
+        {
+          return true;
+        }
       }
-    }
-  };
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
+      return false;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  std::cout << "\nTest Data:" << std::endl;
-  std::cout << "\tSize: " << this->params.GetContainerSize() << std::endl;
-  std::cout << "\tIterations: " << this->params.GetIterations() << std::endl;
-  std::cout << "\tTrigger Type: " << GetTriggerName(this->params.GetTriggerType()) << std::endl;
-  std::cout << "\tTrigger Index: " << this->triggerIndex << std::endl;
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseWithTriggerData();
 }
 
 INSTANTIATE_TEST_SUITE_P(
   AnyTimeTesting,
   AnyTimeTest,
   ::testing::Values(
-    TimeTestParams(30, 1, TriggerType::Begin),
-    TimeTestParams(30, 1, TriggerType::Quarter),
-    TimeTestParams(30, 1, TriggerType::Half),
-    TimeTestParams(30, 1, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 1, TriggerType::End),
-    TimeTestParams(30, 1, TriggerType::Never),
-    TimeTestParams(30, 10, TriggerType::Begin),
-    TimeTestParams(30, 10, TriggerType::Quarter),
-    TimeTestParams(30, 10, TriggerType::Half),
-    TimeTestParams(30, 10, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 10, TriggerType::End),
-    TimeTestParams(30, 10, TriggerType::Never),
-    TimeTestParams(30, 100, TriggerType::Begin),
-    TimeTestParams(30, 100, TriggerType::Quarter),
-    TimeTestParams(30, 100, TriggerType::Half),
-    TimeTestParams(30, 100, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 100, TriggerType::End),
-    TimeTestParams(30, 100, TriggerType::Never),
-    TimeTestParams(30, 1000, TriggerType::Begin),
-    TimeTestParams(30, 1000, TriggerType::Quarter),
-    TimeTestParams(30, 1000, TriggerType::Half),
-    TimeTestParams(30, 1000, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 1000, TriggerType::End),
-    TimeTestParams(30, 1000, TriggerType::Never),
-    TimeTestParams(30, 10000, TriggerType::Begin),
-    TimeTestParams(30, 10000, TriggerType::Quarter),
-    TimeTestParams(30, 10000, TriggerType::Half),
-    TimeTestParams(30, 10000, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 10000, TriggerType::End),
-    TimeTestParams(30, 10000, TriggerType::Never),
-    TimeTestParams(30, 100000, TriggerType::Begin),
-    TimeTestParams(30, 100000, TriggerType::Quarter),
-    TimeTestParams(30, 100000, TriggerType::Half),
-    TimeTestParams(30, 100000, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 100000, TriggerType::End),
-    TimeTestParams(30, 100000, TriggerType::Never),
-    TimeTestParams(30, 1000000, TriggerType::Begin),
-    TimeTestParams(30, 1000000, TriggerType::Quarter),
-    TimeTestParams(30, 1000000, TriggerType::Half),
-    TimeTestParams(30, 1000000, TriggerType::ThreeQuarter),
-    TimeTestParams(30, 1000000, TriggerType::End),
-    TimeTestParams(30, 1000000, TriggerType::Never)));
+    TimeTestParams(30, 10, 10, TriggerType::Begin),
+    TimeTestParams(30, 10, 10, TriggerType::Quarter),
+    TimeTestParams(30, 10, 10, TriggerType::Half),
+    TimeTestParams(30, 10, 10, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10, 10, TriggerType::End),
+    TimeTestParams(30, 10, 10, TriggerType::Never),
+    TimeTestParams(30, 10, 50, TriggerType::Begin),
+    TimeTestParams(30, 10, 50, TriggerType::Quarter),
+    TimeTestParams(30, 10, 50, TriggerType::Half),
+    TimeTestParams(30, 10, 50, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10, 50, TriggerType::End),
+    TimeTestParams(30, 10, 50, TriggerType::Never),
+    TimeTestParams(30, 10, 100, TriggerType::Begin),
+    TimeTestParams(30, 10, 100, TriggerType::Quarter),
+    TimeTestParams(30, 10, 100, TriggerType::Half),
+    TimeTestParams(30, 10, 100, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10, 100, TriggerType::End),
+    TimeTestParams(30, 10, 100, TriggerType::Never),
+    TimeTestParams(30, 100, 10, TriggerType::Begin),
+    TimeTestParams(30, 100, 10, TriggerType::Quarter),
+    TimeTestParams(30, 100, 10, TriggerType::Half),
+    TimeTestParams(30, 100, 10, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 100, 10, TriggerType::End),
+    TimeTestParams(30, 100, 10, TriggerType::Never),
+    TimeTestParams(30, 100, 50, TriggerType::Begin),
+    TimeTestParams(30, 100, 50, TriggerType::Quarter),
+    TimeTestParams(30, 100, 50, TriggerType::Half),
+    TimeTestParams(30, 100, 50, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 100, 50, TriggerType::End),
+    TimeTestParams(30, 100, 50, TriggerType::Never),
+    TimeTestParams(30, 100, 100, TriggerType::Begin),
+    TimeTestParams(30, 100, 100, TriggerType::Quarter),
+    TimeTestParams(30, 100, 100, TriggerType::Half),
+    TimeTestParams(30, 100, 100, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 100, 100, TriggerType::End),
+    TimeTestParams(30, 100, 100, TriggerType::Never),
+    TimeTestParams(30, 1000, 10, TriggerType::Begin),
+    TimeTestParams(30, 1000, 10, TriggerType::Quarter),
+    TimeTestParams(30, 1000, 10, TriggerType::Half),
+    TimeTestParams(30, 1000, 10, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 1000, 10, TriggerType::End),
+    TimeTestParams(30, 1000, 10, TriggerType::Never),
+    TimeTestParams(30, 1000, 50, TriggerType::Begin),
+    TimeTestParams(30, 1000, 50, TriggerType::Quarter),
+    TimeTestParams(30, 1000, 50, TriggerType::Half),
+    TimeTestParams(30, 1000, 50, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 1000, 50, TriggerType::End),
+    TimeTestParams(30, 1000, 50, TriggerType::Never),
+    TimeTestParams(30, 1000, 100, TriggerType::Begin),
+    TimeTestParams(30, 1000, 100, TriggerType::Quarter),
+    TimeTestParams(30, 1000, 100, TriggerType::Half),
+    TimeTestParams(30, 1000, 100, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 1000, 100, TriggerType::End),
+    TimeTestParams(30, 1000, 100, TriggerType::Never),
+    TimeTestParams(30, 10000, 10, TriggerType::Begin),
+    TimeTestParams(30, 10000, 10, TriggerType::Quarter),
+    TimeTestParams(30, 10000, 10, TriggerType::Half),
+    TimeTestParams(30, 10000, 10, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10000, 10, TriggerType::End),
+    TimeTestParams(30, 10000, 10, TriggerType::Never),
+    TimeTestParams(30, 10000, 50, TriggerType::Begin),
+    TimeTestParams(30, 10000, 50, TriggerType::Quarter),
+    TimeTestParams(30, 10000, 50, TriggerType::Half),
+    TimeTestParams(30, 10000, 50, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10000, 50, TriggerType::End),
+    TimeTestParams(30, 10000, 50, TriggerType::Never),
+    TimeTestParams(30, 10000, 100, TriggerType::Begin),
+    TimeTestParams(30, 10000, 100, TriggerType::Quarter),
+    TimeTestParams(30, 10000, 100, TriggerType::Half),
+    TimeTestParams(30, 10000, 100, TriggerType::ThreeQuarter),
+    TimeTestParams(30, 10000, 100, TriggerType::End),
+    TimeTestParams(30, 10000, 100, TriggerType::Never)));

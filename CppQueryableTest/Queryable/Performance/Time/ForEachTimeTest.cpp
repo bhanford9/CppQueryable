@@ -57,7 +57,7 @@ TEST_P(ForEachTimeTest, DequeNumberTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, ListNumberTest)
@@ -85,7 +85,7 @@ TEST_P(ForEachTimeTest, ListNumberTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, MultiSetNumberTest)
@@ -113,7 +113,7 @@ TEST_P(ForEachTimeTest, MultiSetNumberTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, SetNumberTest)
@@ -140,7 +140,7 @@ TEST_P(ForEachTimeTest, SetNumberTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, VectorNumberTest)
@@ -168,7 +168,7 @@ TEST_P(ForEachTimeTest, VectorNumberTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, DequePersonTest)
@@ -205,7 +205,7 @@ TEST_P(ForEachTimeTest, DequePersonTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, ListPersonTest)
@@ -242,7 +242,7 @@ TEST_P(ForEachTimeTest, ListPersonTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, MultiSetPersonTest)
@@ -279,7 +279,7 @@ TEST_P(ForEachTimeTest, MultiSetPersonTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, SetPersonTest)
@@ -316,7 +316,7 @@ TEST_P(ForEachTimeTest, SetPersonTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 TEST_P(ForEachTimeTest, VectorPersonTest)
@@ -353,7 +353,7 @@ TEST_P(ForEachTimeTest, VectorPersonTest)
     params.GetIterations(),
     this->standardName);
 
-  this->LogAllData();
+  this->LogBaseData();
 }
 
 INSTANTIATE_TEST_SUITE_P(
