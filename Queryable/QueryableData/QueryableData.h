@@ -10,6 +10,8 @@
 #include <set>
 #include <vector>
 
+#include "../Iterators/Iterator.h"
+#include "../Iterators/QueryableIterator.h"
 #include "../TypeConstraintUtil.h"
 #include "../Utilities/Condition.h"
 #include "IQueryableData.h"

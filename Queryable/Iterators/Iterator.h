@@ -8,6 +8,7 @@
 #include <iterator>
 
 #include "../Utilities/Backtrace.h"
+#include "QueryableIterator.h"
 
 template <typename T>
 class Iterator

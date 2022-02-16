@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../Iterators/Iterator.h"
+#include "../Iterators/QueryableIterator.h"
 
 template<typename T>
 class IQueryableData
