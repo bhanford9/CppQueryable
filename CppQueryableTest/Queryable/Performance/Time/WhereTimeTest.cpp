@@ -32,7 +32,439 @@ protected:
   }
 };
 
-TEST_P(WhereTimeTest, VectorTest)
+TEST_P(WhereTimeTest, DequeNumberTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      });
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::deque<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, DequeNumberCopyToQueryableDequeTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToQueryableDeque();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::deque<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, DequeNumberCopyToDequeTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      std::deque<uint> newData = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToDeque();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::deque<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+
+
+TEST_P(WhereTimeTest, ListNumberTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      });
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::list<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, ListNumberCopyToQueryableListTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToQueryableList();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::list<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, ListNumberCopyToListTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      std::list<uint> newData = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToList();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::list<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+
+
+TEST_P(WhereTimeTest, MultiSetNumberTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.insert(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      });
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::multiset<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.insert(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, MultiSetNumberCopyToQueryableMultiSetTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.insert(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      local = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToQueryableMultiSet();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::multiset<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.insert(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+TEST_P(WhereTimeTest, MultiSetNumberCopyToMultiSetTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.insert(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      std::multiset<uint, std::function<bool(uint, uint)>> newData = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToMultiSet();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::multiset<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.insert(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
+
+
+
+
+
+
+TEST_P(WhereTimeTest, VectorNumberTest)
 {
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
@@ -47,29 +479,39 @@ TEST_P(WhereTimeTest, VectorTest)
   Queryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.Where([](uint value) { return (value % 2) == 0; }); },
+    [&]()
+    {
+      local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      });
+    },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    std::vector<uint> standardWhered;
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      if ((value % 2) == 0)
+      std::vector<uint> standardWhered;
+      for (uint value : data)
       {
-        standardWhered.push_back(value);
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
       }
-    }
-  };
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseData();
 }
 
-TEST_P(WhereTimeTest, VectorHeavyLoadTest)
+TEST_P(WhereTimeTest, VectorNumberCopyToQueryableVectorTest)
 {
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
@@ -81,117 +523,105 @@ TEST_P(WhereTimeTest, VectorHeavyLoadTest)
     data.push_back(dataSample[i % 12]);
   }
 
+  Queryable<uint> local = BuildQueryable(data);
+
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      Queryable<uint> local = BuildQueryable(data);
-
-      local.Where([](uint value)
+      local = local.Where([&](uint value)
       {
-        for (int i = 0; i < 100; i++)
-        {
-          value = sqrt(value * i / (value + 100));
-        }
-
+        this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
-      });
-
-      local.ToVector();
+      }).ToQueryableVector();
     },
     params.GetIterations(),
     this->queryableName
   );
 
-  std::function<void()> action = [&]()
-  {
-    std::vector<uint> standardWhered;
-    for (uint value : data)
+  this->standardStats = RunTimeAndLog(
+    [&]()
     {
-      for (int i = 0; i < 100; i++)
+      std::vector<uint> standardWhered;
+      for (uint value : data)
       {
-        value = sqrt(value * i / (value + 100));
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
       }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
 
-      if ((value % 2) == 0)
-      {
-        standardWhered.push_back(value);
-      }
-    }
-  };
-
-  this->standardStats = RunTimeAndLog(action, params.GetIterations(), this->standardName);
-
-  CompareAndLog(this->queryableStats, this->standardStats);
+  this->LogBaseData();
 }
 
-// just an example for now. Won't actually care about naive approaches for timed tests
-// TEST_P(WhereTimeTest, VectorWhereMaxNaiveTest)
-// {
-//   this->params = GetParam();
-//   uint expected = params.GetContainerSize() >= 10 ? 76 : 4;
-//
-//   std::vector<uint> dataSample = { 4, 7, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-//   std::vector<uint> data;
-//   for (uint64_t i = 0; i < params.GetContainerSize(); i++)
-//   {
-//     data.push_back(dataSample[i % 12]);
-//   }
-//
-//   Queryable<uint> local = BuildQueryable(data);
-//
-//   std::function<void(Queryable<uint>*)> queryableAction = [&](Queryable<uint>* q)
-//   {
-//     uint max = q->Where([](uint value) { return (value % 2) == 0; }).Max();
-//     ASSERT_EQ(expected, max);
-//   };
-//
-//   TimeStats queryableStats = RunTimeAndLog(queryableAction, params.GetIterations(), local, this->queryableName);
-//
-//   std::function<void(std::vector<uint>*)> action = [&](std::vector<uint>* q)
-//   {
-//     std::vector<uint> standardWhered;
-//     for (uint value : *q)
-//     {
-//       if ((value % 2) == 0)
-//       {
-//         standardWhered.push_back(value);
-//       }
-//     }
-//
-//     uint max = 0;
-//     for (uint value : standardWhered)
-//     {
-//       if (value > max)
-//       {
-//         max = value;
-//       }
-//     }
-//
-//     ASSERT_EQ(expected, max);
-//   };
-//
-//   TimeStats standardStats = RunTimeAndLog(action, params.GetIterations(), data, this->standardName);
-//
-//   std::cout << "\nTest Data:" << std::endl;
-//   std::cout << "\tSize: " << params.GetContainerSize() << std::endl;
-//   std::cout << "\tIterations: " << params.GetIterations() << std::endl;
-//   CompareAndLog(queryableStats, standardStats);
-// }
+TEST_P(WhereTimeTest, VectorNumberCopyToVectorTest)
+{
+  this->params = GetParam();
+  this->params.SetCategory(TimeTestCategory::BuiltIn);
+
+  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<uint> data;
+  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  {
+    data.push_back(dataSample[i % 12]);
+  }
+
+  Queryable<uint> local = BuildQueryable(data);
+
+  this->queryableStats = RunTimeAndLog(
+    [&]()
+    {
+      std::vector<uint> newData = local.Where([&](uint value)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        return (value % 2) == 0;
+      }).ToVector();
+    },
+    params.GetIterations(),
+    this->queryableName
+  );
+
+  this->standardStats = RunTimeAndLog(
+    [&]()
+    {
+      std::vector<uint> standardWhered;
+      for (uint value : data)
+      {
+        this->ApplyLoad(this->params.GetLoad(), value);
+        if ((value % 2) == 0)
+        {
+          standardWhered.push_back(value);
+        }
+      }
+      return standardWhered;
+    },
+    params.GetIterations(),
+    this->standardName);
+
+  this->LogBaseData();
+}
 
 INSTANTIATE_TEST_SUITE_P(
-  ForEachTimeTesting,
+  WhereTimeTesting,
   WhereTimeTest,
   ::testing::Values(
-    TimeTestParams(30, 100)));
-
-// INSTANTIATE_TEST_SUITE_P(
-//   ForEachTimeTesting,
-//   WhereTimeTest,
-//   ::testing::Values(
-//     TimeTestParams(30, 1),
-//     TimeTestParams(30, 10),
-//     TimeTestParams(30, 100),
-//     TimeTestParams(30, 1000),
-//     TimeTestParams(30, 10000),
-//     TimeTestParams(30, 100000),
-//     TimeTestParams(30, 1000000)));
+    TimeTestParams(30, 10, 1),
+    TimeTestParams(30, 10, 10),
+    TimeTestParams(30, 10, 50),
+    TimeTestParams(30, 10, 100),
+    TimeTestParams(30, 30, 1),
+    TimeTestParams(30, 30, 10),
+    TimeTestParams(30, 30, 50),
+    TimeTestParams(30, 30, 100),
+    TimeTestParams(30, 1000, 1),
+    TimeTestParams(30, 1000, 10),
+    TimeTestParams(30, 1000, 50),
+    TimeTestParams(30, 1000, 100),
+    TimeTestParams(30, 10000, 1),
+    TimeTestParams(30, 10000, 10),
+    TimeTestParams(30, 10000, 50),
+    TimeTestParams(30, 10000, 100)));
