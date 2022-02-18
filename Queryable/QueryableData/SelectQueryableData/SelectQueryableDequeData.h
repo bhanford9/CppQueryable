@@ -9,25 +9,9 @@
 template<typename TOriginal, typename TCurrent>
 class SelectQueryableDequeData : public SelectQueryableData<TOriginal, TCurrent, std::deque>
 {
-private:
-  void InitRandomAccessProperties()
-  {
-    this->beginning.Add = [&](int addend, int64_t & index) { this->originalBeginning += addend; index += addend; };
-    this->beginning.Subtract = [&](int subtrahend, int64_t & index) { this->originalBeginning -= subtrahend; index -= subtrahend; };
-
-    this->ending.Add = [&](int addend, int64_t & index) { this->originalEnding += addend; index += addend; };
-    this->ending.Subtract = [&](int subtrahend, int64_t & index) { this->originalEnding -= subtrahend; index -= subtrahend; };
-
-    this->rbeginning.Add = [&](int addend, int64_t & index) { this->originalBeginning += addend; index += addend; };
-    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index) { this->originalBeginning -= subtrahend; index -= subtrahend; };
-
-    this->rending.Add = [&](int addend, int64_t & index) { this->originalREnding += addend; index += addend; };
-    this->rending.Subtract = [&](int subtrahend, int64_t & index) { this->originalREnding -= subtrahend; index -= subtrahend; };
-  }
-
 public:
   SelectQueryableDequeData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
+    std::shared_ptr<IQueryableData<TOriginal, TOriginal>> data,
     std::function<TCurrent(TOriginal)> selector)
     : SelectQueryableData<TOriginal, TCurrent, std::deque>(std::move(data), selector)
   {
@@ -35,6 +19,59 @@ public:
   }
 
   virtual ~SelectQueryableDequeData() { }
+
+  inline virtual QueryableIterator<TCurrent> & operator+(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TCurrent> & operator+=(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TCurrent> & operator-(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TCurrent> & operator-=(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
 
   void Add(TCurrent item) override
   {

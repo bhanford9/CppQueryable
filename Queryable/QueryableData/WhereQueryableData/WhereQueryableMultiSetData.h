@@ -7,30 +7,34 @@
 #include "../../Utilities/Condition.h"
 #include "WhereQueryableData.h"
 
-template<typename TOriginal>
-class WhereQueryableMultiSetData : public WhereQueryableData<TOriginal, std::multiset>
+template<typename TObj>
+class WhereQueryableMultiSetData : public WhereQueryableData<TObj, std::multiset>
 {
 public:
   WhereQueryableMultiSetData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
-    std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::multiset>(std::move(data), std::move(condition))
+    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::function<bool(TObj)> condition)
+    : WhereQueryableData<TObj, std::multiset>(std::move(data), std::move(condition))
+  {
+  }
+  WhereQueryableMultiSetData(const WhereQueryableMultiSetData<TObj> & other)
+    : WhereQueryableData<TObj, std::multiset>(other)
   {
   }
 
   virtual ~WhereQueryableMultiSetData() { }
 
-  void Add(TOriginal item) override
+  void Add(TObj item) override
   {
     // this wont easily or quickly work... might want to nix it
     this->items.insert(item);
     this->size++;
   }
 
-  virtual void Update(Iterator<TOriginal> first, Iterator<TOriginal> last, std::function<bool(TOriginal, TOriginal)> compare) override
-  {
-    this->original.get()->Update(first, last, compare);
-  }
+  // virtual void Update(QueryableIterator<TObj> first, QueryableIterator<TObj> last, std::function<bool(TObj, TObj)> compare) override
+  // {
+  //   this->original.get()->Update(first, last, compare);
+  // }
 };
 
 #endif

@@ -7,101 +7,35 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <set>
 #include <vector>
 
 #include "../Iterators/Iterator.h"
+#include "../Iterators/IteratorType.h"
 #include "../Iterators/QueryableIterator.h"
+#include "../Iterators/QueryableDataIterator.h"
 #include "../TypeConstraintUtil.h"
 #include "../Utilities/Condition.h"
 #include "IQueryableData.h"
 
 #include "../../DataStructures/Person.h"
 
-template<typename TObj, template<typename, typename ...> typename TIterable, typename ...TArgs>
-class QueryableData : virtual public IQueryableData<TObj>
+template<typename TObj, typename TIterator, template<typename, typename ...> typename TIterable, typename ...TArgs>
+class QueryableData :
+  protected QueryableDataIterator<TIterator, TIterable, TArgs...>, // I think I want this protected so it cannot be used directly as an iterator by anyone other than children
+  virtual public IQueryableData<TObj, TIterator>
 {
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
-  typedef typename TIterable<TObj, TArgs...>::iterator TForwardIterator;
-  typedef typename TIterable<TObj, TArgs...>::reverse_iterator TReverseIterator;
-
-  TIterable<TObj, TArgs...> items;
-
-  Iterator<TObj> beginning;
-  Iterator<TObj> ending;
-  Iterator<TObj> rbeginning;
-  Iterator<TObj> rending;
-
-  TForwardIterator beginIterator;
-  TForwardIterator endIterator;
-  TReverseIterator rbeginIterator;
-  TReverseIterator rendIterator;
+  // using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
+  // using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
 
   // TODO --> consider making this a pointer so data doesn't have to be copied
   TObj value;
   int64_t size = 0;
 
-  void InitForwardBegin()
-  {
-    this->beginning.Get = [&]() { return &this->beginIterator; };
-    this->beginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->beginIterator; };
-    this->beginning.Decrement = [&](int64_t & index) { if (index > 0) --this->beginIterator; };
-    this->beginning.Dereference = [this]() -> TObj& { if (this->size > 0) this->value = *this->beginIterator; return this->value; };
-    this->beginning.ConstDereference = [&]() -> const TObj& { return *this->beginIterator; };
-    this->beginning.Assign = [&](const Iterator<TObj> & value) { this->beginIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
-
-    // this is the worst way to do this and should be avoided
-    // add and subtract needed to support the random access iterators
-    this->beginning.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->beginning; };
-    this->beginning.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->beginning; };
-  }
-
-  void InitForwardEnd()
-  {
-    this->ending.Get = [&]() { return &this->endIterator; };
-    this->ending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->endIterator; };
-    this->ending.Decrement = [&](int64_t & index) { if (index > 0) --this->endIterator;};
-    this->ending.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->endIterator; return this->value; };
-    this->ending.ConstDereference = [&]() -> const TObj& { return *this->endIterator; };
-    this->ending.Assign = [&](const Iterator<TObj> & value) { this->endIterator = TForwardIterator(*static_cast<TForwardIterator*>(value.Get())); };
-
-    // this is the worst way to do this and should be avoided
-    // add needed to support the random access iterators
-    this->ending.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->ending; };
-    this->ending.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->ending; };
-  }
-
-  void InitReverseBegin()
-  {
-    this->rbeginning.Get = [&]() { return &this->rbeginIterator; };
-    this->rbeginning.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rbeginIterator; };
-    this->rbeginning.Decrement = [&](int64_t & index) { if (index > 0) --this->rbeginIterator; };
-    this->rbeginning.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->rbeginIterator; return this->value; };
-    this->rbeginning.ConstDereference = [&]() -> const TObj& { return *this->rbeginIterator; };
-    this->rbeginning.Assign = [&](const Iterator<TObj> & value) { this->rbeginIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
-
-    // this is the worst way to do this and should be avoided
-    // add needed to support the random access iterators
-    this->rbeginning.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->rbeginning; };
-    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->rbeginning; };
-  }
-
-  void InitReverseEnd()
-  {
-    this->rending.Get = [&]() { return &this->rendIterator; };
-    this->rending.Increment = [&](int64_t & index) { if (index <= this->size) ++this->rendIterator; };
-    this->rending.Decrement = [&](int64_t & index) { if (index > 0) --this->rendIterator; };
-    this->rending.Dereference = [&]() -> TObj& { if (this->size > 0) this->value = *this->rendIterator; return this->value; };
-    this->rending.ConstDereference = [&]() -> const TObj& { return *this->rendIterator; };
-    this->rending.Assign = [&](const Iterator<TObj> & value) { this->rendIterator = TReverseIterator(*static_cast<TReverseIterator*>(value.Get())); };
-
-    // this is the worst way to do this and should be avoided
-    // add needed to support the random access iterators
-    this->rending.Add = [&](int addend, int64_t & index) { while (addend-- > 0) ++this->rending; };
-    this->rending.Subtract = [&](int subtrahend, int64_t & index) { while (subtrahend-- > 0) --this->rending; };
-  }
 
   void DefaultInitialize()
   {
@@ -109,16 +43,189 @@ protected:
     this->endIterator = this->items.end();
     this->rbeginIterator = this->items.rbegin();
     this->rendIterator = this->items.rend();
-
-    this->InitForwardBegin();
-    this->InitForwardEnd();
-    this->InitReverseBegin();
-    this->InitReverseEnd();
-
     this->size = 0;
+    this->index = 0;
+  }
+
+  inline QueryableIterator<TIterator> AsCopiedIterator()
+  {
+    return *static_cast<QueryableIterator<TIterator>*>(this);
+  }
+
+  inline QueryableIterator<TIterator> & AsReferenceIterator()
+  {
+    return *static_cast<QueryableIterator<TIterator>*>(this);
+  }
+
+  inline QueryableIterator<TIterator> * AsIterator()
+  {
+    return static_cast<QueryableIterator<TIterator>*>(this);
   }
 
 public:
+
+  // for each of these inline virtual overriden methods, there is usually something dangerous and/or unorthodox going on
+  // compared to what you would expect to see within a normal iterator. All of these methods are intended to be
+  // hidden from external users and only _respectfully_ used by the Queryable library. Because of this,
+  // the methods are implemented in such a way that they expect the user of the method to be using it in a very specific
+  // way that will prevent it from executing the dangerous and/or unorthodox path.
+
+  // inline virtual bool operator<(const QueryableIterator<TIterator>& other) const override
+  // {
+  //   switch (this->type)
+  //   {
+  //     case IteratorType::BeginForward: return this->beginIterator < other.beginIterator;
+  //     case IteratorType::EndForward: return this->endIterator < other.endIterator;
+  //     case IteratorType::BeginReverse: return this->rbeginIterator < other.rbeginIterator;
+  //     case IteratorType::EndReverse: default: return this->rendIterator < other.rendIterator;
+  //   }
+  // }
+
+  inline virtual QueryableIterator<TIterator> & operator++() override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: ++this->beginIterator; break;
+      case IteratorType::EndForward: ++this->endIterator; break;
+      case IteratorType::BeginReverse: ++this->rbeginIterator; break;
+      case IteratorType::EndReverse: ++this->rendIterator; break;
+    }
+
+    this->index++;
+
+    // not sure if a cast is needed or not
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator--() override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: --this->beginIterator; break;
+      case IteratorType::EndForward: --this->endIterator; break;
+      case IteratorType::BeginReverse: --this->rbeginIterator; break;
+      case IteratorType::EndReverse: --this->rendIterator; break;
+    }
+
+    this->index--;
+
+    // not sure if a cast is needed or not
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual const TIterator & operator*() override
+  {
+    std::cout << "within real deref 1" << std::endl;
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: return *this->beginIterator;
+      case IteratorType::EndForward: return *this->endIterator;
+      case IteratorType::BeginReverse: return *this->rbeginIterator;
+      case IteratorType::EndReverse: default: return *this->rendIterator;
+    }
+  }
+
+  inline virtual const TIterator & operator*() const override
+  {
+    std::cout << "within real deref 2" << std::endl;
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: return *this->beginIterator;
+      case IteratorType::EndForward: return *this->endIterator;
+      case IteratorType::BeginReverse: return *this->rbeginIterator;
+      case IteratorType::EndReverse: default: return *this->rendIterator;
+    }
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator+(int addend) override
+  {
+    // this is the worse possible way to implement this and should be overriden for random access iterators
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: while (addend--) ++this->beginIterator; break;
+      case IteratorType::EndForward: while (addend--) ++this->endIterator; break;
+      case IteratorType::BeginReverse: while (addend--) ++this->rbeginIterator; break;
+      case IteratorType::EndReverse: while (addend--) ++this->rendIterator; break;
+    }
+
+    // TODO --> might be dangerous
+    this->index += addend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator+=(int addend) override
+  {
+    // this is the worse possible way to implement this and should be overriden for random access iterators
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: while (addend--) ++this->beginIterator; break;
+      case IteratorType::EndForward: while (addend--) ++this->endIterator; break;
+      case IteratorType::BeginReverse: while (addend--) ++this->rbeginIterator; break;
+      case IteratorType::EndReverse: while (addend--) ++this->rendIterator; break;
+    }
+
+    // TODO --> might be dangerous
+    this->index += addend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator-(int subtrahend) override
+  {
+    // this is the worse possible way to implement this and should be overriden for random access iterators
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: while (subtrahend--) --this->beginIterator; break;
+      case IteratorType::EndForward: while (subtrahend--) --this->endIterator; break;
+      case IteratorType::BeginReverse: while (subtrahend--) --this->rbeginIterator; break;
+      case IteratorType::EndReverse: while (subtrahend--) --this->rendIterator; break;
+    }
+
+    // TODO --> might be dangerous
+    this->index -= subtrahend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator-=(int subtrahend) override
+  {
+    // this is the worse possible way to implement this and should be overriden for random access iterators
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: while (subtrahend--) --this->beginIterator; break;
+      case IteratorType::EndForward: while (subtrahend--) --this->endIterator; break;
+      case IteratorType::BeginReverse: while (subtrahend--) --this->rbeginIterator; break;
+      case IteratorType::EndReverse: while (subtrahend--) --this->rendIterator; break;
+    }
+
+    // TODO --> might be dangerous
+    this->index -= subtrahend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TIterator> & operator=(const QueryableIterator<TIterator> & value) override
+  {
+    // TODO --> figure out if we should assign all iterators or just the type-specific iterator
+    // switch (this->type)
+    // {
+    //   case IteratorType::BeginForward: this->beginIterator = value.beginIterator; this->index = 0;break;
+    //   case IteratorType::EndForward: this->endIterator = value.endIterator; this->index = this->size; break;
+    //   case IteratorType::BeginReverse: this->rbeginIterator = value.rbeginIterator; this->index = 0; break;
+    //   case IteratorType::EndReverse: this->rendIterator = value.rendIterator; this->index = this->size; break;
+    // }
+
+    // not sure of a good way to do this yet
+    this->Clear();
+    QueryableIterator<TIterator> cpy = value;
+    for (auto val : cpy)
+    {
+      this->Add(val);
+    }
+
+    return this->AsReferenceIterator();
+  }
 
   QueryableData()
   {
@@ -127,7 +234,7 @@ public:
   QueryableData(const TIterable<TObj, TArgs...> & items)
   {
     this->items = items;
-
+    this->index = 0;
     this->DefaultInitialize();
 
     // TODO --> almost all containers have a size method. Either require that the
@@ -140,7 +247,7 @@ public:
     this->items = std::move(items);
 
     this->DefaultInitialize();
-
+    this->index = 0;
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
@@ -153,17 +260,25 @@ public:
     this->items = TIterable<TObj, TArgs...>(first, last);
 
     this->DefaultInitialize();
-
+    this->index = 0;
     this->size = this->items.size();
   }
-  QueryableData(const QueryableData<TObj, TIterable> & data)
+  QueryableData(const QueryableData<TObj, TIterator, TIterable> & data)
   {
     this->items = data.items;
 
     this->DefaultInitialize();
 
+    this->index = 0;
     this->value = data.value;
     this->size = data.size;
+  }
+  QueryableData(std::shared_ptr<IQueryableData<TObj, TIterator>> && data)
+  {
+    this->DefaultInitialize();
+
+    this->index = 0;
+    // TODO --> not sure how to handle this yet, might need to iterate over incoming data
   }
   virtual ~QueryableData() { }
 
@@ -195,75 +310,98 @@ public:
 
   virtual std::vector<TObj> ToVector() override
   {
-    std::vector<TObj> objs;
-
-    for (TObj item : this->items)
+    std::vector<TObj> returnVector;
+    for (const TObj & obj : *this)
     {
-      objs.push_back(item);
+      returnVector.push_back(obj);
     }
-
-    return objs;
+    return returnVector;
   }
 
-  virtual void Update(
-    Iterator<TObj> first,
-    Iterator<TObj> last,
-    std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) override
-  {
-    // TODO SFINAE require this constructor
-    this->items = TIterable<TObj, TArgs...>(first, last);
-    this->size = this->items.size();
-  }
+  // virtual void Update(
+  //   QueryableIterator<TIterator> first,
+  //   QueryableIterator<TIterator> last,
+  //   std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) override
+  // {
+  //   // TODO SFINAE require this constructor
+  //   this->items = TIterable<TObj, TArgs...>(first, last);
+  //   this->size = this->items.size();
+  // }
+  //
+  // virtual void Update(TVectorIterator first, TVectorIterator last) override
+  // {
+  //   // TODO SFINAE require this constructor
+  //   this->items = TIterable<TObj, TArgs...>(first, last);
+  //   this->size = this->items.size();
+  // }
 
-  virtual void Update(TVectorIterator first, TVectorIterator last) override
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TIterator> begin() override
   {
-    // TODO SFINAE require this constructor
-    this->items = TIterable<TObj, TArgs...>(first, last);
-    this->size = this->items.size();
-  }
 
-  virtual Iterator<TObj> begin() override
-  {
+
+
+
+
+
+
+
+
+
+   // This class has to be the iterator... inheritance won't work because you copy the parent on return which has no data and its own bad implementations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     this->beginIterator = this->items.begin();
-    this->beginning.Index = 0;
-
-    // something happening when copying that causes the functors to not be properly mapped
-    // this is a lot of extra instructions and would be nice if it can be made not necessary
-    this->InitForwardBegin();
-    return this->beginning;
+    this->index = 0;
+    this->type = IteratorType::BeginForward;
+    return this->AsCopiedIterator();
   }
 
-  virtual Iterator<TObj> end() override
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TIterator> end() override
   {
     this->endIterator = this->items.end();
-    this->ending.Index = this->size;
-
-    // something happening when copying that causes the functors to not be properly mapped
-    // this is a lot of extra instructions and would be nice if it can be made not necessary
-    this->InitForwardEnd();
-    return this->ending;
+    this->index = this->size;
+    this->type = IteratorType::EndForward;
+    return this->AsCopiedIterator();
   }
 
-  virtual Iterator<TObj> rbegin() override
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TIterator> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    this->rbeginning.Index = 0;
-
-    // something happening when copying that causes the functors to not be properly mapped
-    // this is a lot of extra instructions and would be nice if it can be made not necessary
-    this->InitReverseBegin();
-    return this->rbeginning;
+    this->index = 0;
+    this->type = IteratorType::BeginReverse;
+    return this->AsCopiedIterator();
   }
 
-  virtual Iterator<TObj> rend() override
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TIterator> rend() override
   {
     this->rendIterator = this->items.rend();
-    this->rending.Index = this->size;
-
-    // something happening when copying that causes the functors to not be properly mapped
-    // this is a lot of extra instructions and would be nice if it can be made not necessary
-    this->InitReverseEnd();
-    return this->rending;
+    this->index = this->size;
+    this->type = IteratorType::EndReverse;
+    return this->AsCopiedIterator();
   }
 };
 

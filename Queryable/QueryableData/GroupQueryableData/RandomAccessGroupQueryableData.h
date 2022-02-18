@@ -44,7 +44,7 @@ public:
 
   RandomAccessGroupQueryableData(
     TKey key,
-    std::shared_ptr<IQueryableData<TData>> data,
+    std::shared_ptr<IQueryableData<TData, TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
     : GroupQueryableData<TKey, TData, TIterable, TArgs...>(key, std::move(data), type, keyCompare)

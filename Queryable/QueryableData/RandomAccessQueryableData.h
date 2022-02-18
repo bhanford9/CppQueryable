@@ -8,45 +8,87 @@
 #include "QueryableData.h"
 
 template<typename T, template<typename, typename ...> typename TIterable, typename ...TArgs>
-class RandomAccessQueryableData : public QueryableData<T, TIterable, TArgs...>
+class RandomAccessQueryableData : public QueryableData<T, T, TIterable, TArgs...>
 {
-private:
-  void InitRandomAccessProperties()
-  {
-    this->beginning.Add = [&](int addend, int64_t & index) { this->beginIterator += addend; index += addend; };
-    this->beginning.Subtract = [&](int subtrahend, int64_t & index) { this->beginIterator -= subtrahend; index -= subtrahend; };
-
-    this->ending.Add = [&](int addend, int64_t & index) { this->endIterator += addend; index += addend; };
-    this->ending.Subtract = [&](int subtrahend, int64_t & index) { this->endIterator -= subtrahend; index -= subtrahend; };
-
-    this->rbeginning.Add = [&](int addend, int64_t & index) { this->rbeginIterator += addend; index += addend; };
-    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index) { this->rbeginIterator -= subtrahend; index -= subtrahend; };
-
-    this->rending.Add = [&](int addend, int64_t & index) { this->rendIterator += addend; index += addend; };
-    this->rending.Subtract = [&](int subtrahend, int64_t & index) { this->rendIterator -= subtrahend; index -= subtrahend; };
-  }
 
 public:
-  RandomAccessQueryableData() : QueryableData<T, TIterable, TArgs...>()
+  RandomAccessQueryableData() : QueryableData<T, T, TIterable, TArgs...>()
   {
-    this->InitRandomAccessProperties();
   }
   RandomAccessQueryableData(TIterable<T, TArgs...> items)
-    : QueryableData<T, TIterable, TArgs...>(items)
+    : QueryableData<T, T, TIterable, TArgs...>(items)
   {
-    this->InitRandomAccessProperties();
   }
   RandomAccessQueryableData(const RandomAccessQueryableData& data)
-    : QueryableData<T, TIterable, TArgs...>(data)
+    : QueryableData<T, T, TIterable, TArgs...>(data)
   {
-    this->InitRandomAccessProperties();
   }
   RandomAccessQueryableData(RandomAccessQueryableData && data)
-    : QueryableData<T, TIterable, TArgs...>(data)
+    : QueryableData<T, T, TIterable, TArgs...>(data)
   {
   }
 
   virtual ~RandomAccessQueryableData() { }
+
+  inline virtual QueryableIterator<T> & operator+(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    this->index += addend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<T> & operator+=(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    this->index += addend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<T> & operator-(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    this->index -= subtrahend;
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<T> & operator-=(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    this->index -= subtrahend;
+
+    return this->AsReferenceIterator();
+  }
 
   void Add(T item) override
   {
@@ -56,7 +98,6 @@ public:
 
   void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
   {
-    // todo figure out how to get this to work with this->begin instead o this->items.begin()
     std::sort(this->items.begin(), this->items.end(), compare);
   }
 };

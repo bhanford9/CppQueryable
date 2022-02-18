@@ -38,6 +38,10 @@ int main()
   queryable = BuildQueryable(startingInput);
   queryableEvens = BuildQueryable(evens);
 
+  std::cout << "attempting foreach" << std::endl;
+  queryable.ForEach([](uint value) { std::cout << value << ", "; });
+  std::cout << std::endl;
+
   Queryable<uint> local = BuildQueryable<uint>(queryable.ToList());
   std::cout << "local made\n\n" << std::endl;
   Queryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());

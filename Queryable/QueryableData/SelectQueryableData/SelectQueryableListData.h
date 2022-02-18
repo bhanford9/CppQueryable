@@ -11,7 +11,7 @@ class SelectQueryableListData : public SelectQueryableData<TOriginal, TCurrent, 
 {
 public:
   SelectQueryableListData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
+    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
     std::function<TCurrent(TOriginal)> selector)
     : SelectQueryableData<TOriginal, TCurrent, std::list>(std::move(data), selector)
   {

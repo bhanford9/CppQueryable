@@ -7,20 +7,24 @@
 #include "../../Utilities/Condition.h"
 #include "WhereQueryableData.h"
 
-template<typename TOriginal>
-class WhereQueryableListData : public WhereQueryableData<TOriginal, std::list>
+template<typename TObj>
+class WhereQueryableListData : public WhereQueryableData<TObj, std::list>
 {
 public:
   WhereQueryableListData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
-    std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::list>(std::move(data), std::move(condition))
+    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::function<bool(TObj)> condition)
+    : WhereQueryableData<TObj, std::list>(std::move(data), std::move(condition))
+  {
+  }
+  WhereQueryableListData(const WhereQueryableListData<TObj> & other)
+    : WhereQueryableData<TObj, std::list>(other)
   {
   }
 
   virtual ~WhereQueryableListData() { }
 
-  void Add(TOriginal item) override
+  void Add(TObj item) override
   {
     // this wont easily or quickly work... might want to nix it
     this->items.push_back(item);

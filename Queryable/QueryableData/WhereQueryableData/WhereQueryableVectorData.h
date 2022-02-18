@@ -7,37 +7,78 @@
 #include "../../Utilities/Condition.h"
 #include "WhereQueryableData.h"
 
-template<typename TOriginal>
-class WhereQueryableVectorData : public WhereQueryableData<TOriginal, std::vector>
+template<typename TObj>
+class WhereQueryableVectorData : public WhereQueryableData<TObj, std::vector>
 {
 private:
-  void InitWhereRandomAccessProperties()
-  {
-    this->beginning.Add = [&](int addend, int64_t & index) { this->originalBeginning += addend; index += addend; };
-    this->beginning.Subtract = [&](int subtrahend, int64_t & index) { this->originalBeginning -= subtrahend; index -= subtrahend; };
-
-    this->ending.Add = [&](int addend, int64_t & index) { this->originalEnding += addend; index += addend; };
-    this->ending.Subtract = [&](int subtrahend, int64_t & index) { this->originalEnding -= subtrahend; index -= subtrahend; };
-
-    this->rbeginning.Add = [&](int addend, int64_t & index) { this->originalBeginning += addend; index += addend; };
-    this->rbeginning.Subtract = [&](int subtrahend, int64_t & index) { this->originalBeginning -= subtrahend; index -= subtrahend; };
-
-    this->rending.Add = [&](int addend, int64_t & index) { this->originalREnding += addend; index += addend; };
-    this->rending.Subtract = [&](int subtrahend, int64_t & index) { this->originalREnding -= subtrahend; index -= subtrahend; };
-  }
 
 public:
   WhereQueryableVectorData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
-    std::function<bool(TOriginal)> condition)
-    : WhereQueryableData<TOriginal, std::vector>(std::move(data), std::move(condition))
+    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::function<bool(TObj)> condition)
+    : WhereQueryableData<TObj, std::vector>(std::move(data), std::move(condition))
   {
-    this->InitWhereRandomAccessProperties();
+  }
+  WhereQueryableVectorData(const WhereQueryableVectorData<TObj> & other)
+    : WhereQueryableData<TObj, std::vector>(other)
+  {
   }
 
   virtual ~WhereQueryableVectorData() { }
 
-  void Add(TOriginal item) override
+  inline virtual QueryableIterator<TObj> & operator+(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TObj> & operator+=(int addend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator += addend; break;
+      case IteratorType::EndForward: this->endIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TObj> & operator-(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  inline virtual QueryableIterator<TObj> & operator-=(int subtrahend) override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
+      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+    }
+
+    return this->AsReferenceIterator();
+  }
+
+  void Add(TObj item) override
   {
     // this wont easily or quickly work... might want to nix it
     this->items.push_back(item);

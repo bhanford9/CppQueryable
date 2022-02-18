@@ -11,12 +11,12 @@ class SelectQueryableSetData : public SelectQueryableData<TOriginal, TCurrent, s
 {
 public:
   SelectQueryableSetData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
+    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
     std::function<TCurrent(TOriginal)> selector,
     std::function<bool(TCurrent, TCurrent)> compare = [](TCurrent a, TCurrent b) { return a < b; })
     : SelectQueryableData<TOriginal, TCurrent, std::set>(std::move(data), selector)
   {
-    Iterator<TCurrent> dummy;
+    QueryableIterator<TCurrent> dummy;
     this->Update(dummy, dummy, compare);
   }
 
@@ -29,14 +29,17 @@ public:
     this->size++;
   }
 
-  virtual void Update(Iterator<TCurrent> first, Iterator<TCurrent> last, std::function<bool(TCurrent, TCurrent)> compare) override
-  {
-    std::function<bool(TOriginal, TOriginal)> originalCompare =
-      [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
-
-    this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), originalCompare);
-    this->size = this->original.get()->Count();
-  }
+  // virtual void Update(
+  //   QueryableIterator<TCurrent, std::set> first,
+  //   QueryableIterator<TCurrent, std::set> last,
+  //   std::function<bool(TCurrent, TCurrent)> compare) override
+  // {
+  //   std::function<bool(TOriginal, TOriginal)> originalCompare =
+  //     [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
+  //
+  //   this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), originalCompare);
+  //   this->size = this->original.get()->Count();
+  // }
 };
 
 #endif

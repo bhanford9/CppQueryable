@@ -8,7 +8,7 @@
 #include "../Iterators/Iterator.h"
 #include "../QueryableType.h"
 
-template <typename T>
+template<typename TObj>
 class Queryable;
 
 template<typename TKey, typename TData>
@@ -17,7 +17,7 @@ class IGroup
 protected:
 
 public:
-  virtual IQueryableData<TData> & GetData() = 0;
+  virtual IQueryableData<TData, TData> & GetData() = 0;
   IGroup() { }
   IGroup(const IGroup & group) { }
   virtual ~IGroup() { }

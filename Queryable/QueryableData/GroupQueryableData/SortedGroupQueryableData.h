@@ -39,7 +39,7 @@ public:
 
   SortedGroupQueryableData(
     TKey key,
-    std::shared_ptr<IQueryableData<TData>> data,
+    std::shared_ptr<IQueryableData<TData, TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; })
@@ -75,26 +75,26 @@ public:
 
   virtual void Sort(std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; }) override
   {
-    this->Update(
-      this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::begin(),
-      this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::end(),
-      compare);
+    // this->Update(
+    //   this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::begin(),
+    //   this->QueryableData<TData, TIterable, std::function<bool(TData, TData)>, TArgs...>::end(),
+    //   compare);
   }
 
-  virtual void Update(Iterator<TData> first, Iterator<TData> last, std::function<bool(TData, TData)> compare) override
-  {
-    // TODO SFINAE require this constructor
-    this->comparator = compare;
-    this->items = TIterable<TData, std::function<bool(TData, TData)>>(first, last, compare);
-    this->size = this->items.size();
-  }
-
-  virtual void Update(TVectorIterator first, TVectorIterator last) override
-  {
-    // TODO SFINAE require this constructor
-    this->items = TIterable<TData, std::function<bool(TData, TData)>>(first, last, this->comparator);
-    this->size = this->items.size();
-  }
+  // virtual void Update(QueryableIterator<TData> first, QueryableIterator<TData> last, std::function<bool(TData, TData)> compare) override
+  // {
+  //   // TODO SFINAE require this constructor
+  //   this->comparator = compare;
+  //   this->items = TIterable<TData, std::function<bool(TData, TData)>>(first, last, compare);
+  //   this->size = this->items.size();
+  // }
+  //
+  // virtual void Update(TVectorIterator first, TVectorIterator last) override
+  // {
+  //   // TODO SFINAE require this constructor
+  //   this->items = TIterable<TData, std::function<bool(TData, TData)>>(first, last, this->comparator);
+  //   this->size = this->items.size();
+  // }
 
   virtual void Add(TData item) override
   {

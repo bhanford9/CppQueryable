@@ -15,53 +15,74 @@
 #include "../../Utilities/Condition.h"
 #include "../IQueryableData.h"
 #include "../QueryableData.h"
-#include "../LinkedQueryableData.h"
 
 template<typename TOriginal, typename TCurrent, template<typename, typename ...> typename TIterable, typename ...TArgs>
-class SelectQueryableData : public LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...>
+class SelectQueryableData : public QueryableData<TOriginal, TCurrent, TIterable, TArgs...>
 {
-  static_assert(can_iterate<TIterable<TCurrent, TArgs...>>::value, "Class must be able to be iterated over");
+  static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   std::function<TCurrent(TOriginal)> selector;
 public:
 
   SelectQueryableData(
-    std::shared_ptr<IQueryableData<TOriginal>> data,
+    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
     std::function<TCurrent(TOriginal)> selector)
-    : LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...>(std::move(data))
+    : QueryableData<TOriginal, TCurrent, TIterable, TArgs...>(std::move(data))
   {
     this->selector = selector;
   }
 
   SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data)
-    : LinkedQueryableData<TOriginal, TCurrent, TIterable, TArgs...>(data)
+    : QueryableData<TOriginal, TCurrent, TIterable, TArgs...>(data)
   {
   }
 
   virtual ~SelectQueryableData() { }
 
-  virtual int Count() override
-  {
-    return this->original.get()->Count();
-  }
-
-  virtual TCurrent ToCurrent(const TOriginal & original) override
+  inline virtual TCurrent ToCurrent(const TOriginal & original) override
   {
     return this->selector(original);
+  }
+
+  inline virtual TCurrent & operator*() override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: return this->selector(*this->beginIterator);
+      case IteratorType::EndForward: return this->selector(*this->endIterator);
+      case IteratorType::BeginReverse: return this->selector(*this->rbeginIterator);
+      case IteratorType::EndReverse: default: return this->selector(*this->rendIterator);
+    }
+  }
+
+  inline virtual const TCurrent & operator*() const override
+  {
+    switch (this->type)
+    {
+      case IteratorType::BeginForward: return this->selector(*this->beginIterator);
+      case IteratorType::EndForward: return this->selector(*this->endIterator);
+      case IteratorType::BeginReverse: return this->selector(*this->rbeginIterator);
+      case IteratorType::EndReverse: default: return this->selector(*this->rendIterator);
+    }
+  }
+
+  virtual void Sort(std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
+  {
+    // TODO
   }
 
   // if we ever want to return true here, will need to change signature to take
   // a TCurrent instead of a TOriginal. Its faster in the iterator incrementing
   // if we do not have to convert from TOriginal to TCurrent though
-  virtual bool DoSkip(const TOriginal & value) override
-  {
-    return false;
-  }
-
-  virtual bool CanSkip() override
-  {
-    return false;
-  }
+  // virtual bool DoSkip(const TOriginal & value) override
+  // {
+  //   return false;
+  // }
+  //
+  // virtual bool CanSkip() override
+  // {
+  //   return false;
+  // }
 };
 
 #endif

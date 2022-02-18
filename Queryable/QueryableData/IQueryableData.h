@@ -4,34 +4,24 @@
 #include <functional>
 #include <vector>
 
-#include "../Iterators/Iterator.h"
 #include "../Iterators/QueryableIterator.h"
 
-template<typename T>
-class IQueryableData
+template<typename TObj, typename TIterator>
+class IQueryableData : virtual public QueryableIterator<TObj>
 {
 protected:
-  typedef typename std::vector<T>::iterator TVectorIterator;
+  typedef typename std::vector<TObj>::iterator TVectorIterator;
 
 public:
   virtual ~IQueryableData() { }
 
-  virtual Iterator<T> begin() = 0;
-  virtual Iterator<T> end() = 0;
-  virtual Iterator<T> rbegin() = 0;
-  virtual Iterator<T> rend() = 0;
-
   virtual void Clear() = 0;
-  virtual void Add(T obj) = 0;
+  virtual void Add(TObj obj) = 0;
   virtual int Count() = 0;
   virtual int StorageSize() = 0;
-  virtual std::vector<T> ToVector() = 0;
-  virtual void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) = 0;
-  virtual void Update(Iterator<T> first, Iterator<T> last, std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) = 0;
-  virtual void Update(TVectorIterator first, TVectorIterator last) = 0;
-
-  // virtual void AddCondition(std::function<bool(const T &)> condition) = 0;
-  // virtual bool PassesCondition(const T & obj) const = 0;
+  virtual std::vector<TIterator> ToVector() = 0;
+  virtual void Sort(std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
+  // virtual void Update(QueryableIterator<TIterator, TIterable, TArgs...> first, QueryableIterator<TIterator, TIterable, TArgs...> last, std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
 };
 
 #endif

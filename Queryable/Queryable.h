@@ -49,7 +49,7 @@ class Queryable
 protected:
   // TODO --> consider making this unique and having all of the
   //   QueryableData's implement their own clones
-  std::shared_ptr<IQueryableData<TObj>> items;
+  std::shared_ptr<IQueryableData<TObj, TObj>> items;
   PersistentContainer persistentContainer;
   QueryableType type;
 
@@ -110,24 +110,28 @@ public:
     {
       case QueryableType::Deque:
         {
+          std::cout << "[TRACE:Queryable] init wiht deque" << std::endl;
           std::deque<TObj> localDeque;
           this->items = std::make_shared<QueryableDequeData<TObj>>(localDeque);
         }
         break;
       case QueryableType::List:
         {
+          std::cout << "[TRACE:Queryable] init wiht list" << std::endl;
           std::list<TObj> localList;
           this->items = std::make_shared<QueryableListData<TObj>>(localList);
         }
         break;
       case QueryableType::MultiSet:
         {
+          std::cout << "[TRACE:Queryable] init wiht multisaet" << std::endl;
           std::multiset<TObj, std::function<bool(TObj, TObj)>> localMultiSet(compare);
           this->items = std::make_shared<QueryableMultiSetData<TObj>>(localMultiSet);
         }
         break;
       case QueryableType::Set:
         {
+          std::cout << "[TRACE:Queryable] init wiht set" << std::endl;
           std::set<TObj, std::function<bool(TObj, TObj)>> localSet(compare);
           this->items = std::make_shared<QueryableSetData<TObj>>(localSet);
         }
@@ -135,8 +139,11 @@ public:
       case QueryableType::Vector:
       default:
         {
+          std::cout << "[TRACE:Queryable] init wiht vector" << std::endl;
           std::vector<TObj> localVector;
           this->items = std::make_shared<QueryableVectorData<TObj>>(localVector);
+          std::cout << "size of vector: " << localVector.size() << std::endl;
+          std::cout << "own size: " << this->Count() << std::endl;
         }
         break;
     }
@@ -153,7 +160,7 @@ public:
   }
 
   Queryable(
-    std::shared_ptr<IQueryableData<TObj>> queryableData,
+    std::shared_ptr<IQueryableData<TObj, TObj>> queryableData,
     QueryableType type)
   {
     this->items = std::move(queryableData);
@@ -208,6 +215,8 @@ public:
   {
     this->type = QueryableType::Vector;
     this->items = std::move(std::make_shared<QueryableVectorData<TObj>>(vector));
+    std::cout << "size of vector in: " << vector.size() << std::endl;
+    std::cout << "own size: " << this->Count() << std::endl;
   }
   // END CONSTRUCTORS
 
@@ -1042,12 +1051,12 @@ public:
     std::function<T(TObj)> retrieveValue,
     std::function<bool(T,T)> lessThan = [](T a, T b) { return a < b; })
   {
-    std::shared_ptr<IQueryableData<T>> selectable;
+    std::shared_ptr<IQueryableData<T, T>> selectable;
 
     // copy of shared reference must be made so the original container can still
     // be used. assigning shared pointers can be slower than moving them by hundreds
     // of clock cycles, so this needs to be avoided when possible
-    std::shared_ptr<IQueryableData<TObj>> itemCopy = this->items;
+    std::shared_ptr<IQueryableData<TObj, TObj>> itemCopy = this->items;
 
     switch (this->type)
     {

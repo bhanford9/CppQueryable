@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <functional>
+#include <iostream>
 #include <list>
 #include <memory>
 #include <set>
@@ -24,6 +25,7 @@ namespace QueryBuilder
   template<typename T>
   static Queryable<T> BuildQueryable(std::vector<T> items)
   {
+    std::cout << "BuildQueryable 1" << std::endl;
     return Queryable<T>(items);
   }
 

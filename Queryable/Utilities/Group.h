@@ -16,7 +16,7 @@
 #include "../QueryableType.h"
 #include "IGroup.h"
 
-template <typename T>
+template<typename TObj>
 class Queryable;
 
 template<typename TKey, typename TData>
@@ -26,7 +26,7 @@ private:
   std::shared_ptr<IGroup<TKey, TData>> internalGroup;
 
 protected:
-  virtual IQueryableData<TData> & GetData() override
+  virtual IQueryableData<TData, TData> & GetData() override
   {
     return this->internalGroup.get()->GetData();
   }
