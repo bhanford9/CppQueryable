@@ -5,16 +5,20 @@
 #include <memory>
 
 #include "IteratorType.h"
+#include "IIterable.h"
+#include "../QueryableData/IQueryableIteratorData.h"
+
+template<typename T>
+class IIterable;
 
 template <typename T>
-class QueryableIterator
+class QueryableIterator// : public IIterable<T>
 {
+private:
+  IQueryableIteratorData<T> * queryableData;
+  // std::shared_ptr<IQueryableIteratorData<T>> queryableData;
 public:
-  IteratorType type;
-
-  // only way to compare two iterators is going to be by their index
   uint64_t index;
-
   // these seem to be needed by the std library
   typedef std::bidirectional_iterator_tag iterator_category;
   typedef T value_type;
@@ -22,33 +26,22 @@ public:
   typedef T* pointer;
   typedef T& reference;
 
-  QueryableIterator() :
-    type(IteratorType::BeginForward)
+  QueryableIterator() : index(0) {}
+
+  QueryableIterator(IQueryableIteratorData<T> * queryableData) : QueryableIterator()
   {
+    this->queryableData = queryableData;
   }
 
-
-  // These methods are all intended to be overriden, but be inilned for speed optimization
-  // Making them pure virtual would make the class abstract and would not work with the begin/end methods
-  // I am hoping that I can inherit from CppQueryableData and cast itself to return a copy
-  //   if this does not work, then the begin/end methods will have to be pushed all the way down to the lowest children
-  inline virtual QueryableIterator<T> begin()
+  QueryableIterator(IQueryableIteratorData<T> * queryableData, int startingIndex)
   {
-    return *this;
+    this->queryableData = queryableData;
+    this->index = startingIndex;
   }
 
-  inline virtual QueryableIterator<T> end()
+  inline QueryableIterator<T> & operator=(IQueryableIteratorData<T> * queryableData)
   {
-    return *this;
-  }
-
-  inline virtual QueryableIterator<T> rbegin()
-  {
-    return *this;
-  }
-
-  inline virtual QueryableIterator<T> rend()
-  {
+    this->queryableData = queryableData;
     return *this;
   }
 
@@ -67,58 +60,63 @@ public:
     return this->index - subtrahend.index;
   }
 
-  // inline virtual bool operator<(const QueryableIterator<T>& other) const
-  // {
-  //   return false;
-  // }
+  inline virtual QueryableIterator<T>& operator=(const QueryableIterator<T>& value)
+  {
+    this->queryableData = value.queryableData;
+    this->index = value.index;
+    return *this;
+  }
 
   inline virtual QueryableIterator<T>& operator++()
   {
+    this->queryableData->Next();
+    this->index++;
     return *this;
   }
 
   inline virtual QueryableIterator<T>& operator--()
   {
+    this->queryableData->Prev();
+    this->index--;
     return *this;
   }
 
 
-  inline virtual const T& operator*()
+  inline virtual T& operator*()
   {
-    std::cout << "within fake deref 1" << std::endl;
-    std::shared_ptr<T> fake;
-    return *fake;
+    return this->queryableData->Get();
   }
 
   inline virtual const T& operator*() const
   {
-    std::cout << "within fake deref 2" << std::endl;
-    std::shared_ptr<T> fake;
-    return *fake;
+    return this->queryableData->ConstGet();
   }
 
-  inline virtual QueryableIterator<T>& operator+(int addend)
+  inline virtual QueryableIterator<T> operator+(int addend)
   {
+    this->queryableData->Add(addend);
+    this->index += addend;
     return *this;
   }
 
   inline virtual QueryableIterator<T>& operator+=(int addend)
   {
+    this->queryableData->Add(addend);
+    this->index += addend;
     return *this;
   }
 
-  inline virtual QueryableIterator<T>& operator-(int subtrahend)
+  inline virtual QueryableIterator<T> operator-(int subtrahend)
   {
+    this->queryableData->Subtract(subtrahend);
+    this->index -= subtrahend;
     return *this;
   }
 
   inline virtual QueryableIterator<T>& operator-=(int subtrahend)
   {
-    return *this;
-  }
-
-  inline virtual QueryableIterator<T>& operator=(const QueryableIterator<T>& value)
-  {
+    this->queryableData->Subtract(subtrahend);
+    this->index -= subtrahend;
     return *this;
   }
 };

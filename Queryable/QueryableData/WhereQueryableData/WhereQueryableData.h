@@ -28,10 +28,10 @@ protected:
 
   void IncrementBeginForwardPastFalseConditions()
   {
+    std::cout << "passing" << std::endl;
     while (condition && this->beginIterator != this->items.end() && !condition(*this->beginIterator))
     {
       ++this->beginIterator;
-      this->index++;
     }
   }
 
@@ -40,7 +40,6 @@ protected:
     while (condition && this->endIterator != this->items.end() && !condition(*this->endIterator))
     {
       ++this->endIterator;
-      this->index++;
     }
   }
 
@@ -49,7 +48,6 @@ protected:
     while (condition && this->rbeginIterator != this->items.rend() && !condition(*this->rbeginIterator))
     {
       ++this->rbeginIterator;
-      this->index++;
     }
   }
 
@@ -58,7 +56,6 @@ protected:
     while (condition && this->rendIterator != this->items.rend() && !condition(*this->rendIterator))
     {
       ++this->rendIterator;
-      this->index++;
     }
   }
 
@@ -67,7 +64,6 @@ protected:
     while (condition && this->beginIterator != this->items.begin() && !condition(*this->beginIterator))
     {
       --this->beginIterator;
-      this->index--;
     }
   }
 
@@ -76,7 +72,6 @@ protected:
     while (condition && this->endIterator != this->items.begin() && !condition(*this->endIterator))
     {
       --this->endIterator;
-      this->index--;
     }
   }
 
@@ -85,7 +80,6 @@ protected:
     while (condition && this->rbeginIterator != this->items.rbegin() && !condition(*this->rbeginIterator))
     {
       --this->rbeginIterator;
-      this->index--;
     }
   }
 
@@ -94,7 +88,6 @@ protected:
     while (condition && this->rendIterator != this->items.rbegin() && !condition(*this->rendIterator))
     {
       --this->rendIterator;
-      this->index--;
     }
   }
 
@@ -105,18 +98,19 @@ public:
     : QueryableData<TObj, TObj, TIterable, TArgs...>(std::move(data))
   {
     this->condition += condition;
+      std::cout << "WhereQueryableData Constructor 1" << std::endl;
+      std::cout << "incoming data size: " << data->Count() << std::endl;
   }
   WhereQueryableData(const WhereQueryableData & other)
     : QueryableData<TObj, TObj, TIterable, TArgs...>(other)
   {
+    std::cout << "WhereQueryableData Constructor 2" << std::endl;
   }
 
   virtual ~WhereQueryableData() { }
 
-  inline virtual QueryableIterator<TObj> & operator++() override
+  inline virtual IQueryableIteratorData<TObj> & Next() override
   {
-    this->index++;
-
     switch (this->type)
     {
       case IteratorType::BeginForward: ++this->beginIterator; this->IncrementBeginForwardPastFalseConditions(); break;
@@ -125,14 +119,11 @@ public:
       case IteratorType::EndReverse: default: ++this->rendIterator; this->IncrementEndReversePastFalseConditions(); break;
     }
 
-    // not sure if a cast is needed or not
-    return this->AsReferenceIterator();
+    return *this;
   }
 
-  inline virtual QueryableIterator<TObj> & operator--() override
+  inline virtual IQueryableIteratorData<TObj> & Prev() override
   {
-    this->index--;
-
     switch (this->type)
     {
       case IteratorType::BeginForward: --this->beginIterator; this->DecrementBeginForwardPastFalseConditions(); break;
@@ -141,14 +132,13 @@ public:
       case IteratorType::EndReverse: default: --this->rendIterator; this->DecrementEndReversePastFalseConditions(); break;
     }
 
-    // not sure if a cast is needed or not
-    return this->AsReferenceIterator();
+    return *this;
   }
 
-  inline virtual QueryableIterator<TObj> & operator+(int addend) override
+  inline virtual IQueryableIteratorData<TObj> & Add(int addend) override
   {
+    std::cout << "[Where+]" << std::endl;
     // this is the worse possible way to implement this and should be overriden for random access iterators
-    this->index += addend; // potentially dangerous, but being lazy for now
     switch (this->type)
     {
       case IteratorType::BeginForward:
@@ -181,53 +171,13 @@ public:
         break;
     }
 
-    return this->AsReferenceIterator();
+    return *this;
   }
 
-  inline virtual QueryableIterator<TObj> & operator+=(int addend) override
-  {
-    // this is the worse possible way to implement this and should be overriden for random access iterators
-    this->index += addend; // potentially dangerous, but being lazy for now
-    switch (this->type)
-    {
-      case IteratorType::BeginForward:
-        while (this->beginIterator != this->items.end() && addend-- > 0)
-        {
-          ++this->beginIterator;
-          this->IncrementBeginForwardPastFalseConditions();
-        }
-        break;
-      case IteratorType::EndForward:
-        while (this->endIterator != this->items.end() && addend-- > 0)
-        {
-          ++this->endIterator;
-          this->IncrementEndForwardPastFalseConditions();
-        }
-        break;
-      case IteratorType::BeginReverse:
-        while (this->rbeginIterator != this->items.rend() && addend-- > 0)
-        {
-          ++this->rbeginIterator;
-          this->IncrementBeginReversePastFalseConditions();
-        }
-        break;
-      case IteratorType::EndReverse: default:
-        while (this->rendIterator != this->items.rend() && addend-- > 0)
-        {
-          ++this->rendIterator;
-          this->IncrementBeginReversePastFalseConditions();
-        }
-        break;
-    }
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<TObj> & operator-(int subtrahend) override
+  inline virtual IQueryableIteratorData<TObj> & Subtract(int subtrahend) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     bool isFirst = false;
-    this->index -= subtrahend; // potentially dangerous, but being lazy for now
 
     switch (this->type)
     {
@@ -273,60 +223,57 @@ public:
         break;
     }
 
-    return this->AsReferenceIterator();
+    return *this;
   }
 
-  inline virtual QueryableIterator<TObj> & operator-=(int subtrahend) override
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TObj> begin() override
   {
-    // this is the worse possible way to implement this and should be overriden for random access iterators
-    bool isFirst = false;
-    this->index -= subtrahend; // potentially dangerous, but being lazy for now
+    std::cout << "where begin" << std::endl;
+    this->beginIterator = this->items.begin();
+    this->type = IteratorType::BeginForward;
 
-    switch (this->type)
-    {
-      case IteratorType::BeginForward:
-        while (subtrahend-- > 0)
-        {
-          isFirst = this->beginIterator == this->items.begin();
-          --this->beginIterator;
-          this->DecrementBeginForwardPastFalseConditions();
+    this->IncrementBeginForwardPastFalseConditions();
+    QueryableIterator<TObj> retVal(this, 0);
+    return retVal;
+  }
 
-          if (isFirst) break;
-        }
-        break;
-      case IteratorType::EndForward:
-        while (subtrahend-- > 0)
-        {
-          isFirst = this->endIterator == this->items.begin();
-          --this->endIterator;
-          this->DecrementEndForwardPastFalseConditions();
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TObj> end() override
+  {
+    std::cout << "where end" << std::endl;
+    this->endIterator = this->items.end();
+    this->type = IteratorType::EndForward;
 
-          if (isFirst) break;
-        }
-        break;
-      case IteratorType::BeginReverse:
-        while (subtrahend-- > 0)
-        {
-          isFirst = this->rbeginIterator == this->items.rbegin();
-          --this->rbeginIterator;
-          this->DecrementBeginReversePastFalseConditions();
+    this->DecrementEndForwardPastFalseConditions();
+    QueryableIterator<TObj> retVal(this, this->size);
+    return retVal;
+  }
 
-          if (isFirst) break;
-        }
-        break;
-      case IteratorType::EndReverse:
-        while (subtrahend-- > 0)
-        {
-          isFirst = this->rendIterator == this->items.rbegin();
-          --this->rendIterator;
-          this->DecrementBeginReversePastFalseConditions();
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TObj> rbegin() override
+  {
+    this->rbeginIterator = this->items.rbegin();
+    this->type = IteratorType::BeginReverse;
+    QueryableIterator<TObj> retVal(this, 0);
+    return retVal;
+  }
 
-          if (isFirst) break;
-        }
-        break;
-    }
-
-    return this->AsReferenceIterator();
+  // we return a copy of ourself, so we need to make sure to set our type
+  // so that the next time its used, the correct underlying iterator is used
+  // may want to consider copy, then set, then move out
+  virtual QueryableIterator<TObj> rend() override
+  {
+    this->rendIterator = this->items.rend();
+    this->type = IteratorType::EndReverse;
+    QueryableIterator<TObj> retVal(this, this->size);
+    return retVal;
   }
 
   virtual int Count() override

@@ -110,28 +110,24 @@ public:
     {
       case QueryableType::Deque:
         {
-          std::cout << "[TRACE:Queryable] init wiht deque" << std::endl;
           std::deque<TObj> localDeque;
           this->items = std::make_shared<QueryableDequeData<TObj>>(localDeque);
         }
         break;
       case QueryableType::List:
         {
-          std::cout << "[TRACE:Queryable] init wiht list" << std::endl;
           std::list<TObj> localList;
           this->items = std::make_shared<QueryableListData<TObj>>(localList);
         }
         break;
       case QueryableType::MultiSet:
         {
-          std::cout << "[TRACE:Queryable] init wiht multisaet" << std::endl;
           std::multiset<TObj, std::function<bool(TObj, TObj)>> localMultiSet(compare);
           this->items = std::make_shared<QueryableMultiSetData<TObj>>(localMultiSet);
         }
         break;
       case QueryableType::Set:
         {
-          std::cout << "[TRACE:Queryable] init wiht set" << std::endl;
           std::set<TObj, std::function<bool(TObj, TObj)>> localSet(compare);
           this->items = std::make_shared<QueryableSetData<TObj>>(localSet);
         }
@@ -139,11 +135,8 @@ public:
       case QueryableType::Vector:
       default:
         {
-          std::cout << "[TRACE:Queryable] init wiht vector" << std::endl;
           std::vector<TObj> localVector;
           this->items = std::make_shared<QueryableVectorData<TObj>>(localVector);
-          std::cout << "size of vector: " << localVector.size() << std::endl;
-          std::cout << "own size: " << this->Count() << std::endl;
         }
         break;
     }
@@ -446,6 +439,7 @@ public:
         this->items = std::move(std::make_shared<WhereQueryableSetData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::Vector:
+        std::cout << "[Where] creating new where from vector" << std::endl;
         this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       default: break;

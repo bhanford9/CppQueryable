@@ -10,6 +10,12 @@
 template<typename T, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class RandomAccessQueryableData : public QueryableData<T, T, TIterable, TArgs...>
 {
+protected:
+
+  inline virtual void Add(TIterable<T, TArgs...> items, T item) const
+  {
+    items.push_back(item);
+  }
 
 public:
   RandomAccessQueryableData() : QueryableData<T, T, TIterable, TArgs...>()
@@ -30,8 +36,9 @@ public:
 
   virtual ~RandomAccessQueryableData() { }
 
-  inline virtual QueryableIterator<T> & operator+(int addend) override
+  inline virtual IQueryableIteratorData<T> & Add(int addend) override
   {
+    std::cout << "Random Access + Operator" << std::endl;
     switch (this->type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
@@ -40,27 +47,10 @@ public:
       case IteratorType::EndReverse: this->rendIterator += addend; break;
     }
 
-    this->index += addend;
-
-    return this->AsReferenceIterator();
+    return *this;
   }
 
-  inline virtual QueryableIterator<T> & operator+=(int addend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator += addend; break;
-      case IteratorType::EndForward: this->endIterator += addend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-      case IteratorType::EndReverse: this->rendIterator += addend; break;
-    }
-
-    this->index += addend;
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<T> & operator-(int subtrahend) override
+  inline virtual IQueryableIteratorData<T> & Subtract(int subtrahend) override
   {
     switch (this->type)
     {
@@ -70,24 +60,7 @@ public:
       case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
     }
 
-    this->index -= subtrahend;
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<T> & operator-=(int subtrahend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
-      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
-    }
-
-    this->index -= subtrahend;
-
-    return this->AsReferenceIterator();
+    return *this;
   }
 
   void Add(T item) override

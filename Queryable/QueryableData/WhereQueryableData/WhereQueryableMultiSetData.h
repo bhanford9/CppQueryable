@@ -10,6 +10,12 @@
 template<typename TObj>
 class WhereQueryableMultiSetData : public WhereQueryableData<TObj, std::multiset>
 {
+protected:
+
+  inline virtual void Add(std::multiset<TObj> items, TObj item) const
+  {
+    items.insert(item);
+  }
 public:
   WhereQueryableMultiSetData(
     std::shared_ptr<IQueryableData<TObj, TObj>> data,

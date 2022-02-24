@@ -21,12 +21,12 @@ class SelectQueryableData : public QueryableData<TOriginal, TCurrent, TIterable,
 {
   static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  std::function<TCurrent(TOriginal)> selector;
+  std::function<TCurrent&(TOriginal) const> selector;
 public:
 
   SelectQueryableData(
     std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
-    std::function<TCurrent(TOriginal)> selector)
+    std::function<TCurrent&(TOriginal) const> selector)
     : QueryableData<TOriginal, TCurrent, TIterable, TArgs...>(std::move(data))
   {
     this->selector = selector;
@@ -39,12 +39,17 @@ public:
 
   virtual ~SelectQueryableData() { }
 
-  inline virtual TCurrent ToCurrent(const TOriginal & original) override
+  inline virtual TCurrent & ToOutput(const TOriginal & original) const
   {
     return this->selector(original);
   }
 
-  inline virtual TCurrent & operator*() override
+  inline virtual const TCurrent & ToOutputConst(const TOriginal & original) const override
+  {
+    return this->selector(original);
+  }
+
+  inline virtual TCurrent & Get() override
   {
     switch (this->type)
     {
@@ -55,7 +60,7 @@ public:
     }
   }
 
-  inline virtual const TCurrent & operator*() const override
+  inline virtual const TCurrent & ConstGet() const override
   {
     switch (this->type)
     {

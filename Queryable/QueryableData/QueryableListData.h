@@ -9,6 +9,12 @@
 template<typename T, typename TAllocator = std::allocator<T>>
 class QueryableListData : public QueryableData<T, T, std::list, TAllocator>
 {
+protected:
+
+  inline virtual void Add(std::list<T, TAllocator> items, T item) const
+  {
+    items.push_back(item);
+  }
 public:
   QueryableListData() : QueryableData<T, T, std::list, TAllocator>() { }
   QueryableListData(std::list<T, TAllocator> items)

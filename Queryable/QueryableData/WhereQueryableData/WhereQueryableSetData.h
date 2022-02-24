@@ -10,6 +10,12 @@
 template<typename TObj>
 class WhereQueryableSetData : public WhereQueryableData<TObj, std::set>
 {
+protected:
+
+  inline virtual void Add(std::set<TObj> items, TObj item) const
+  {
+    items.insert(item);
+  }
 public:
   WhereQueryableSetData(
     std::shared_ptr<IQueryableData<TObj, TObj>> data,

@@ -10,8 +10,12 @@
 template<typename TObj>
 class WhereQueryableDequeData : public WhereQueryableData<TObj, std::deque>
 {
-private:
+protected:
 
+  inline virtual void Add(std::deque<TObj> items, TObj item) const
+  {
+    items.push_back(item);
+  }
 public:
   WhereQueryableDequeData(
     std::shared_ptr<IQueryableData<TObj, TObj>> data,

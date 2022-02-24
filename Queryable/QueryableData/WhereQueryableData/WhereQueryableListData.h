@@ -10,6 +10,12 @@
 template<typename TObj>
 class WhereQueryableListData : public WhereQueryableData<TObj, std::list>
 {
+protected:
+
+  inline virtual void Add(std::list<TObj> items, TObj item) const
+  {
+    items.push_back(item);
+  }
 public:
   WhereQueryableListData(
     std::shared_ptr<IQueryableData<TObj, TObj>> data,

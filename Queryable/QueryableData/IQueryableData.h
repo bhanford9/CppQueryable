@@ -5,9 +5,11 @@
 #include <vector>
 
 #include "../Iterators/QueryableIterator.h"
+#include "../Iterators/IIterable.h"
+#include "IQueryableIteratorData.h"
 
 template<typename TObj, typename TIterator>
-class IQueryableData : virtual public QueryableIterator<TObj>
+class IQueryableData : public IQueryableIteratorData<TIterator>
 {
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
@@ -19,7 +21,6 @@ public:
   virtual void Add(TObj obj) = 0;
   virtual int Count() = 0;
   virtual int StorageSize() = 0;
-  virtual std::vector<TIterator> ToVector() = 0;
   virtual void Sort(std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
   // virtual void Update(QueryableIterator<TIterator, TIterable, TArgs...> first, QueryableIterator<TIterator, TIterable, TArgs...> last, std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
 };
