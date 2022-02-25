@@ -8,9 +8,6 @@
 #include "../Iterators/Iterator.h"
 #include "../QueryableType.h"
 
-template<typename TObj>
-class Queryable;
-
 template<typename TKey, typename TData>
 class IGroup
 {

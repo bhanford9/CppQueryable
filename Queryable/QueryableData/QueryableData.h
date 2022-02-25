@@ -24,16 +24,16 @@
 template<typename TObj, typename TIterator, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class QueryableData : public IQueryableData<TObj, TIterator>
 {
+public:
+  using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
+  using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
-  using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
-  using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
 
   // TODO --> consider making this a pointer so data doesn't have to be copied
-  TObj value;
+  TIterator value;
   int64_t size = 0;
-  IteratorType type;
 
   TIterable<TObj, TArgs...> items;
 
@@ -74,15 +74,13 @@ protected:
     return original;
   }
 
-  inline virtual void Add(TIterable<TObj, TArgs...> & items, TObj item) const
-  {
-    std::cout << "bad add" << std::endl;
-    // throw
-  }
-
 public:
 
 
+  virtual void * GetData()
+  {
+    return &this->items;
+  }
   // for each of these inline virtual overriden methods, there is usually something dangerous and/or unorthodox going on
   // compared to what you would expect to see within a normal iterator. All of these methods are intended to be
   // hidden from external users and only _respectfully_ used by the Queryable library. Because of this,
@@ -100,9 +98,9 @@ public:
   //   }
   // }
 
-  inline virtual IQueryableIteratorData<TIterator> & Next() override
+  inline virtual IQueryableIteratorData<TIterator> & Next(IteratorType type, uint64_t & iterated) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: ++this->beginIterator; break;
       case IteratorType::EndForward: ++this->endIterator; break;
@@ -110,12 +108,13 @@ public:
       case IteratorType::EndReverse: ++this->rendIterator; break;
     }
 
+    iterated = 1;
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TIterator> & Prev() override
+  inline virtual IQueryableIteratorData<TIterator> & Prev(IteratorType type, uint64_t & iterated) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: --this->beginIterator; break;
       case IteratorType::EndForward: --this->endIterator; break;
@@ -123,35 +122,36 @@ public:
       case IteratorType::EndReverse: --this->rendIterator; break;
     }
 
+    iterated = 1;
     return *this;
   }
 
-  inline virtual TIterator & Get() override
+  inline virtual TIterator & Get(IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
-      case IteratorType::BeginForward: { TObj value1 = *this->beginIterator; return this->ToOutput(value1); }
-      case IteratorType::EndForward: { TObj value2 = *this->endIterator; return this->ToOutput(value2); }
-      case IteratorType::BeginReverse: { TObj value3 = *this->rbeginIterator; return this->ToOutput(value3); }
-      case IteratorType::EndReverse: default: { TObj value4 = *this->rendIterator; return this->ToOutput(value4); }
+        case IteratorType::BeginForward: { TObj value1 = *this->beginIterator; this->value = this->ToOutput(value1); return this->value; }
+        case IteratorType::EndForward: { TObj value2 = *this->endIterator; this->value = this->ToOutput(value2); return this->value; }
+        case IteratorType::BeginReverse: { TObj value3 = *this->rbeginIterator; this->value = this->ToOutput(value3); return this->value; }
+        case IteratorType::EndReverse: default: { TObj value4 = *this->rendIterator; this->value = this->ToOutput(value4); return this->value; }
     }
   }
 
-  inline virtual const TIterator & ConstGet() const override
+  inline virtual const TIterator & ConstGet(IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
-      case IteratorType::BeginForward: return this->ToOutputConst(*this->beginIterator);
-      case IteratorType::EndForward: return this->ToOutputConst(*this->endIterator);
-      case IteratorType::BeginReverse: return this->ToOutputConst(*this->rbeginIterator);
-      case IteratorType::EndReverse: default: return this->ToOutputConst(*this->rendIterator);
+      case IteratorType::BeginForward: this->value = this->ToOutputConst(*this->beginIterator); return this->value;
+      case IteratorType::EndForward: this->value = this->ToOutputConst(*this->endIterator); return this->value;
+      case IteratorType::BeginReverse: this->value = this->ToOutputConst(*this->rbeginIterator); return this->value;
+      case IteratorType::EndReverse: default: this->value = this->ToOutputConst(*this->rendIterator); return this->value;
     }
   }
 
-  inline virtual IQueryableIteratorData<TIterator> & Add(int addend) override
+  inline virtual IQueryableIteratorData<TIterator> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: while (addend--) ++this->beginIterator; break;
       case IteratorType::EndForward: while (addend--) ++this->endIterator; break;
@@ -162,10 +162,10 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TIterator> & Subtract(int subtrahend) override
+  inline virtual IQueryableIteratorData<TIterator> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: while (subtrahend--) --this->beginIterator; break;
       case IteratorType::EndForward: while (subtrahend--) --this->endIterator; break;
@@ -177,7 +177,6 @@ public:
   }
 
   QueryableData()
-    // internalReference(this->GetSharedPointerToSelf())
   {
     std::cout << "\nQueryableData Constructor 1" << std::endl;
     this->DefaultInitialize();
@@ -185,9 +184,7 @@ public:
   QueryableData(const TIterable<TObj, TArgs...> & items)
   {
     std::cout << "\nQueryableData Constructor 2" << std::endl;
-    std::cout << "incoming items count: " << items.size() << std::endl;
     this->items = items;
-    //this->index = 0;
     this->DefaultInitialize();
 
     // TODO --> almost all containers have a size method. Either require that the
@@ -201,7 +198,6 @@ public:
     this->items = std::move(items);
 
     this->DefaultInitialize();
-    //this->index = 0;
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
@@ -215,7 +211,6 @@ public:
     this->items = TIterable<TObj, TArgs...>(first, last);
 
     this->DefaultInitialize();
-    //this->index = 0;
     this->size = this->items.size();
   }
   QueryableData(const QueryableData<TObj, TIterator, TIterable, TArgs...> & data)
@@ -225,30 +220,21 @@ public:
 
     this->DefaultInitialize();
 
-    //this->index = data.index;
     this->value = data.value;
     this->size = data.size;
   }
   QueryableData(std::shared_ptr<IQueryableData<TObj, TIterator>> && data)
   {
-    QueryableIterator<TIterator> start = data->begin();
-    QueryableIterator<TIterator> stop = data->end();
-    std::cout << "start index: " << start.index << ", stop index: " << stop.index << std::endl;
-
-    for (TObj & obj : *data.get())
-    {
-      std::cout << "adding object: " << obj << std::endl;
-      this->Add(this->items, obj);
-    }
-
-    std::cout << "after foreach loop" << std::endl;
+    std::cout << "\nQueryableData Constructor 6" << std::endl;
+    std::cout << "incoming data is null: " << (data.get() ? "no" : "yes") << std::endl;
+    std::cout << "incoming data size: " << data->Count() << std::endl;
+    // THIS WOULD BE MUCH BETTER IF WE CAN MOVE IT INSTEAD OF COPY
+    this->items = *static_cast<TIterable<TObj, TArgs...>*>(data->GetData());
+    std::cout << "after setting items" << std::endl;
 
     this->DefaultInitialize();
-
-    //this->index = data->index;
-    // this->value = data->value;
-    // this->size = data->size;
-    // TODO --> not sure how to handle this yet, might need to iterate over incoming data
+    this->size = data->Count();
+    std::cout << "leaving constructor 6" << std::endl;
   }
   virtual ~QueryableData() { }
 
@@ -320,9 +306,7 @@ public:
   virtual QueryableIterator<TIterator> begin() override
   {
     this->beginIterator = this->items.begin();
-    this->type = IteratorType::BeginForward;
-
-    QueryableIterator<TIterator> retVal(this, 0);
+    QueryableIterator<TIterator> retVal(this, 0, IteratorType::BeginForward);
     return retVal;
   }
 
@@ -332,9 +316,7 @@ public:
   virtual QueryableIterator<TIterator> end() override
   {
     this->endIterator = this->items.end();
-    this->type = IteratorType::EndForward;
-
-    QueryableIterator<TIterator> retVal(this, this->size);
+    QueryableIterator<TIterator> retVal(this, this->size, IteratorType::EndForward);
     return retVal;
   }
 
@@ -344,9 +326,7 @@ public:
   virtual QueryableIterator<TIterator> rbegin() override
   {
     this->rbeginIterator = this->items.rbegin();
-    this->type = IteratorType::BeginReverse;
-
-    QueryableIterator<TIterator> retVal(this, 0);
+    QueryableIterator<TIterator> retVal(this, 0, IteratorType::BeginReverse);
     return retVal;
   }
 
@@ -356,9 +336,7 @@ public:
   virtual QueryableIterator<TIterator> rend() override
   {
     this->rendIterator = this->items.rend();
-    this->type = IteratorType::EndReverse;
-
-    QueryableIterator<TIterator> retVal(this, this->size);
+    QueryableIterator<TIterator> retVal(this, this->size, IteratorType::EndReverse);
     return retVal;
   }
 };

@@ -19,8 +19,8 @@ protected:
 
 public:
   WhereQueryableVectorData(
-    std::shared_ptr<IQueryableData<TObj, TObj>> data,
-    std::function<bool(TObj)> condition)
+    std::shared_ptr<IQueryableData<TObj, TObj>> && data,
+    std::function<bool(TObj)> && condition)
     : WhereQueryableData<TObj, std::vector>(std::move(data), std::move(condition))
   {
     std::cout << "WhereQueryable Vector Data Constructor 1" << std::endl;
@@ -33,10 +33,10 @@ public:
 
   virtual ~WhereQueryableVectorData() { }
 
-  inline virtual IQueryableIteratorData<TObj> & Add(int addend) override
+  inline virtual IQueryableIteratorData<TObj> & Add(int addend, IteratorType type) override
   {
     std::cout << "[VectorWhere+]" << std::endl;
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
       case IteratorType::EndForward: this->endIterator += addend; break;
@@ -47,9 +47,9 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Subtract(int subtrahend) override
+  inline virtual IQueryableIteratorData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
       case IteratorType::EndForward: this->endIterator -= subtrahend; break;

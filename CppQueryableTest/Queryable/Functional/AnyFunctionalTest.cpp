@@ -22,7 +22,8 @@ protected:
   void SetUp() override
   {
     this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
-    this->queryableStrings = BuildQueryable(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"}));
+    std::vector<std::string> networks({ "nbc", "fox", "abc", "cbs", "the cw"});
+    this->queryableStrings = BuildQueryable(networks);
   }
 
   void TearDown() override {}

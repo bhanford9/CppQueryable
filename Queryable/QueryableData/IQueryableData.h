@@ -14,9 +14,11 @@ class IQueryableData : public IQueryableIteratorData<TIterator>
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
 
+
 public:
   virtual ~IQueryableData() { }
 
+  virtual void * GetData() = 0;
   virtual void Clear() = 0;
   virtual void Add(TObj obj) = 0;
   virtual int Count() = 0;

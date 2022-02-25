@@ -16,8 +16,8 @@
 #include "../QueryableType.h"
 #include "IGroup.h"
 
-template<typename TObj>
-class Queryable;
+// template<typename TObj, typename ...TArgs>
+// class Queryable;
 
 template<typename TKey, typename TData>
 class Group : public IGroup<TKey, TData>

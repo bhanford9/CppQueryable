@@ -49,9 +49,9 @@ public:
     return this->selector(original);
   }
 
-  inline virtual TCurrent & Get() override
+  inline virtual TCurrent & Get(IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: return this->selector(*this->beginIterator);
       case IteratorType::EndForward: return this->selector(*this->endIterator);
@@ -60,9 +60,9 @@ public:
     }
   }
 
-  inline virtual const TCurrent & ConstGet() const override
+  inline virtual const TCurrent & ConstGet(IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: return this->selector(*this->beginIterator);
       case IteratorType::EndForward: return this->selector(*this->endIterator);

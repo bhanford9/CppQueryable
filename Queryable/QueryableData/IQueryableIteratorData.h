@@ -3,7 +3,8 @@
 
 #include <vector>
 
-#include "../Iterators/IIterable.h"
+#include "../Iterators/IteratorType.h"
+#include "../Iterators/QueryableIterator.h"
 
 template<typename T>
 class IQueryableIteratorData// : public IIterable<T>
@@ -15,14 +16,14 @@ public:
   virtual QueryableIterator<T> rend() = 0;
   virtual std::vector<T> ToVector() = 0;
 
-  inline virtual IQueryableIteratorData<T>& Next() = 0;
-  inline virtual IQueryableIteratorData<T>& Prev() = 0;
-  inline virtual T& Get() = 0;
-  inline virtual const T& ConstGet() const = 0;
+  inline virtual IQueryableIteratorData<T>& Next(IteratorType type, uint64_t & iterated) = 0;
+  inline virtual IQueryableIteratorData<T>& Prev(IteratorType type, uint64_t & iterated) = 0;
+  inline virtual T& Get(IteratorType type) = 0;
+  inline virtual const T& ConstGet(IteratorType type) = 0;
   // inline virtual IQueryableIteratorData<T>& operator+(int addend) = 0;
-  inline virtual IQueryableIteratorData<T>& Add(int addend) = 0;
+  inline virtual IQueryableIteratorData<T>& Add(int addend, IteratorType type) = 0;
   // inline virtual IQueryableIteratorData<T>& operator-(int subtrahend) = 0;
-  inline virtual IQueryableIteratorData<T>& Subtract(int subtrahend) = 0;
+  inline virtual IQueryableIteratorData<T>& Subtract(int subtrahend, IteratorType type) = 0;
 };
 
 #endif

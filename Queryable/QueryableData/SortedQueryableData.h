@@ -13,11 +13,6 @@ protected:
   std::function<bool(T, T)> comparator;// = [](T a, T b) { return a < b; };
 
   typedef typename std::vector<T>::iterator TVectorIterator;
-
-  inline virtual void Add(TIterable<T, std::function<bool(T, T)>, TArgs...> items, T item) const
-  {
-    items.insert(item);
-  }
 public:
   SortedQueryableData(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; })
     : QueryableData<T, T, TIterable, std::function<bool(T, T)>>()

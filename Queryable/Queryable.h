@@ -208,8 +208,6 @@ public:
   {
     this->type = QueryableType::Vector;
     this->items = std::move(std::make_shared<QueryableVectorData<TObj>>(vector));
-    std::cout << "size of vector in: " << vector.size() << std::endl;
-    std::cout << "own size: " << this->Count() << std::endl;
   }
   // END CONSTRUCTORS
 
@@ -267,10 +265,10 @@ public:
     return newItems;
   }
 
-  std::set<TObj, std::function<bool(TObj, TObj)>> ToSet(
-    std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) const
+  template<typename ...TSetArgs>
+  std::set<TObj, TSetArgs...> ToSet(TSetArgs... args) const
   {
-    std::set<TObj, std::function<bool(TObj, TObj)>> newItems(compare);
+    std::set<TObj, TSetArgs...> newItems(args...);
 
     for (TObj item : *this->items.get())
     {
@@ -285,8 +283,10 @@ public:
   {
     std::vector<TObj, TNewAllocator> newItems;
 
+    std::cout << "entering ToVector" << std::endl;
     for (TObj item : *this->items.get())
     {
+      std::cout << "Add to vector:\n" << item << std::endl;
       newItems.push_back(item);
     }
 
@@ -439,8 +439,9 @@ public:
         this->items = std::move(std::make_shared<WhereQueryableSetData<TObj>>(std::move(this->items), std::move(condition)));
         break;
       case QueryableType::Vector:
-        std::cout << "[Where] creating new where from vector" << std::endl;
+        std::cout << "into where, items count: " << this->Count() << std::endl;
         this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj>>(std::move(this->items), std::move(condition)));
+        // std::cout << "out where, items count: " << this->Count() << std::endl;
         break;
       default: break;
     }

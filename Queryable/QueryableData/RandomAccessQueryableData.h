@@ -10,13 +10,6 @@
 template<typename T, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class RandomAccessQueryableData : public QueryableData<T, T, TIterable, TArgs...>
 {
-protected:
-
-  inline virtual void Add(TIterable<T, TArgs...> items, T item) const
-  {
-    items.push_back(item);
-  }
-
 public:
   RandomAccessQueryableData() : QueryableData<T, T, TIterable, TArgs...>()
   {
@@ -36,10 +29,10 @@ public:
 
   virtual ~RandomAccessQueryableData() { }
 
-  inline virtual IQueryableIteratorData<T> & Add(int addend) override
+  inline virtual IQueryableIteratorData<T> & Add(int addend, IteratorType type) override
   {
     std::cout << "Random Access + Operator" << std::endl;
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
       case IteratorType::EndForward: this->endIterator += addend; break;
@@ -50,9 +43,9 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<T> & Subtract(int subtrahend) override
+  inline virtual IQueryableIteratorData<T> & Subtract(int subtrahend, IteratorType type) override
   {
-    switch (this->type)
+    switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
       case IteratorType::EndForward: this->endIterator -= subtrahend; break;
