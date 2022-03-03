@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 
-#include "Gender.h"
-#include "Person.h"
-#include "PersonLibrary.h"
+#include "Gender.hpp"
+#include "Person.hpp"
+#include "PersonLibrary.hpp"
 
 PersonLibrary::PersonLibrary()
 {

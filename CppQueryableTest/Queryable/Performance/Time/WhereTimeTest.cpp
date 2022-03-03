@@ -3,21 +3,21 @@
 #include <iostream>
 #include <string>
 
-#include "../../../../DataStructures/Animal.h"
-#include "../../../../DataStructures/Person.h"
-#include "../../../../DataStructures/People.h"
+#include "../../../../DataStructures/Animal.hpp"
+#include "../../../../DataStructures/Person.hpp"
+#include "../../../../DataStructures/People.hpp"
 
-#include "../../../../Queryable/Queryable.h"
+#include "../../../../Queryable/Queryable.hpp"
 
-#include "../../../../Queryable/QueryBuilder.h"
+#include "../../../../Queryable/QueryBuilder.hpp"
 
-#include "BaseTimeTest.h"
-#include "Utilities/TimeStats.h"
-#include "Utilities/TimeTestParams/TimeTestParams.h"
-#include "Utilities/TimingUtilities.h"
+#include "BaseTimeTest.hpp"
+#include "Utilities/TimeStats.hpp"
+#include "Utilities/TimeTestParams/TimeTestParams.hpp"
+#include "Utilities/TimingUtilities.hpp"
 
-#include "Utilities/Duration.h"
-#include "Utilities/TimingTypes.h"
+#include "Utilities/Duration.hpp"
+#include "Utilities/TimingTypes.hpp"
 
 using namespace QueryBuilder;
 using namespace TimingUtilities;

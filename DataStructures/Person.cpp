@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "Gender.h"
-#include "Person.h"
+#include "Gender.hpp"
+#include "Person.hpp"
 
 
 Person::Person(long id, std::string name, double age, int height, Gender gender)

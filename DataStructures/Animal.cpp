@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Gender.h"
-#include "Animal.h"
+#include "Gender.hpp"
+#include "Animal.hpp"
 
 
 Animal::Animal(long id, long ownerId, std::string name, double age, Gender gender)

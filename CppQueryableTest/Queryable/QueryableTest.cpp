@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../../Queryable/Queryable.h"
+#include "../../Queryable/Queryable.hpp"
 
 class QueryableTest : public ::testing::Test
 {

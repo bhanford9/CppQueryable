@@ -2,11 +2,11 @@
 #include <memory>
 #include <vector>
 
-#include "Gender.h"
-#include "Person.h"
-#include "Animal.h"
-#include "PersonAndPet.h"
-#include "PersonAndPetLibrary.h"
+#include "Gender.hpp"
+#include "Person.hpp"
+#include "Animal.hpp"
+#include "PersonAndPet.hpp"
+#include "PersonAndPetLibrary.hpp"
 
 PersonAndPetLibrary::PersonAndPetLibrary()
 {

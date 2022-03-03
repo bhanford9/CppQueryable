@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.h"
-#include "../../../DataStructures/Person.h"
-#include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Gender.hpp"
+#include "../../../DataStructures/Person.hpp"
+#include "../../../DataStructures/PersonLibrary.hpp"
 
-#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryBuilder.hpp"
 
 
 using namespace QueryBuilder;
@@ -20,7 +20,7 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  Queryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -32,7 +32,7 @@ protected:
 
 TEST_F(AtFunctionalTest, AtVectorUninitialized)
 {
-  Queryable<Person> emptyQueryable;
+  VectorQueryable<Person> emptyQueryable;
 
   try
   {

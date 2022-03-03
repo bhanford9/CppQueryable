@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.h"
-#include "../../../DataStructures/Person.h"
-#include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Gender.hpp"
+#include "../../../DataStructures/Person.hpp"
+#include "../../../DataStructures/PersonLibrary.hpp"
 
-#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryBuilder.hpp"
 
 
 using namespace QueryBuilder;
@@ -18,7 +18,7 @@ class CountFunctionalTest : public ::testing::Test
 protected:
   uint expectedWithDuplicates = 12;
   uint expectedWithoutDuplicates = 8;
-  Queryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {

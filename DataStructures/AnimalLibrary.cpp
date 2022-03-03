@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 
-#include "Gender.h"
-#include "Animal.h"
-#include "AnimalLibrary.h"
+#include "Gender.hpp"
+#include "Animal.hpp"
+#include "AnimalLibrary.hpp"
 
 AnimalLibrary::AnimalLibrary()
 {

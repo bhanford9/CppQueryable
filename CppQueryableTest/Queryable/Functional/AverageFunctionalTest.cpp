@@ -4,12 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.h"
-#include "../../../DataStructures/Person.h"
-#include "../../../DataStructures/PersonLibrary.h"
-#include "../../../DataStructures/Point.h"
+#include "../../../DataStructures/Gender.hpp"
+#include "../../../DataStructures/Person.hpp"
+#include "../../../DataStructures/PersonLibrary.hpp"
+#include "../../../DataStructures/Point.hpp"
 
-#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryBuilder.hpp"
 
 
 using namespace QueryBuilder;
@@ -24,7 +24,7 @@ protected:
   uint expectedNoDupsSum = 1057;
   uint expectedNoDupsCount = 10;
   uint expectedNoDupsAverage = expectedNoDupsSum / expectedNoDupsCount;
-  Queryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -36,7 +36,7 @@ protected:
 
 TEST_F(AverageFunctionalTest, AverageUninitialized)
 {
-  Queryable<Person> emptyQueryable;
+  VectorQueryable<Person> emptyQueryable;
   double average = emptyQueryable.Average<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0, average);
 }
@@ -44,7 +44,7 @@ TEST_F(AverageFunctionalTest, AverageUninitialized)
 TEST_F(AverageFunctionalTest, AverageUninitializedCustomDivisor)
 {
   Point expected(0, 0);
-  Queryable<Point> emptyQueryable;
+  VectorQueryable<Point> emptyQueryable;
   Point average = emptyQueryable.Average([](const Point & sum, ulong count) { return count > 0 ? Point(sum.X / count, sum.Y / count) : Point(0,0); });
   ASSERT_EQ(expected.X, average.X);
   ASSERT_EQ(expected.Y, average.Y);
@@ -52,7 +52,7 @@ TEST_F(AverageFunctionalTest, AverageUninitializedCustomDivisor)
 
 TEST_F(AverageFunctionalTest, AverageUninitializedDefault)
 {
-  Queryable<uint> emptyQueryable;
+  VectorQueryable<uint> emptyQueryable;
   uint average = emptyQueryable.Average();
   ASSERT_EQ(0, average);
 }
@@ -60,7 +60,7 @@ TEST_F(AverageFunctionalTest, AverageUninitializedDefault)
 TEST_F(AverageFunctionalTest, AverageOperatorOverload)
 {
   Point expected(5, 2.5);
-  Queryable<Point> points = BuildQueryable(std::vector<Point>({
+  VectorQueryable<Point> points = BuildQueryable(std::vector<Point>({
     Point(2, 4),
     Point(3, 5),
     Point(7, 1),
@@ -92,56 +92,56 @@ TEST_F(AverageFunctionalTest, AverageVectorDefault)
 
 TEST_F(AverageFunctionalTest, AverageDeque)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   uint average = local.Average<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageDequeDefault)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   uint average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageList)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   uint average = local.Average<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageListDefault)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   uint average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageMultiSet)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   uint average = local.Average<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageMultiSetDefault)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   uint average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageSet)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   uint average = local.Average<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedNoDupsAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageSetDefault)
 {
-  Queryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   uint average = local.Average();
   ASSERT_EQ(this->expectedNoDupsAverage, average);
 }

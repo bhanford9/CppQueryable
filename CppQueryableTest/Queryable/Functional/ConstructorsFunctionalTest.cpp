@@ -9,11 +9,11 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.h"
-#include "../../../DataStructures/Person.h"
-#include "../../../DataStructures/PersonLibrary.h"
+#include "../../../DataStructures/Gender.hpp"
+#include "../../../DataStructures/Person.hpp"
+#include "../../../DataStructures/PersonLibrary.hpp"
 
-#include "../../../Queryable/QueryBuilder.h"
+#include "../../../Queryable/QueryBuilder.hpp"
 
 
 using namespace QueryBuilder;
@@ -21,7 +21,7 @@ using namespace QueryBuilder;
 class ConstructorsFunctionalTest : public ::testing::Test
 {
 protected:
-  Queryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -35,12 +35,12 @@ TEST_F(ConstructorsFunctionalTest, StandardDeque)
 {
   std::deque<uint> localDeque = this->queryable.ToDeque();
   int expectedCount = localDeque.size();
-  Queryable<uint> local = localDeque;
+  DequeQueryable<uint> local = localDeque;
 
   ASSERT_TRUE(local.GetType() == QueryableType::Deque);
   ASSERT_EQ(expectedCount, local.Count());
 
-  Queryable<uint> local2(localDeque);
+  DequeQueryable<uint> local2(localDeque);
 
   ASSERT_TRUE(local2.GetType() == QueryableType::Deque);
   ASSERT_EQ(expectedCount, local2.Count());
@@ -60,12 +60,12 @@ TEST_F(ConstructorsFunctionalTest, StandardList)
 {
   std::list<uint> localList = this->queryable.ToList();
   int expectedCount = localList.size();
-  Queryable<uint> local = localList;
+  ListQueryable<uint> local = localList;
 
   ASSERT_TRUE(local.GetType() == QueryableType::List);
   ASSERT_EQ(expectedCount, local.Count());
 
-  Queryable<uint> local2(localList);
+  ListQueryable<uint> local2(localList);
 
   ASSERT_TRUE(local2.GetType() == QueryableType::List);
   ASSERT_EQ(expectedCount, local2.Count());
@@ -83,14 +83,14 @@ TEST_F(ConstructorsFunctionalTest, StandardList)
 
 TEST_F(ConstructorsFunctionalTest, StandardMultiSet)
 {
-  std::multiset<uint, std::function<bool(uint, uint)>> localMultiset = this->queryable.ToMultiSet();
+  std::multiset<uint> localMultiset = this->queryable.ToMultiSet();
   int expectedCount = localMultiset.size();
-  Queryable<uint> local = localMultiset;
+  MultiSetQueryable<uint> local = localMultiset;
 
   ASSERT_TRUE(local.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(expectedCount, local.Count());
 
-  Queryable<uint> local2(localMultiset);
+  MultiSetQueryable<uint> local2(localMultiset);
 
   ASSERT_TRUE(local2.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(expectedCount, local2.Count());
@@ -98,14 +98,14 @@ TEST_F(ConstructorsFunctionalTest, StandardMultiSet)
 
 TEST_F(ConstructorsFunctionalTest, StandardSet)
 {
-  std::set<uint, std::function<bool(uint, uint)>> localSet = this->queryable.ToSet();
+  std::set<uint> localSet = this->queryable.ToSet();
   int expectedCount = localSet.size();
-  Queryable<uint> local = localSet;
+  SetQueryable<uint> local = localSet;
 
   ASSERT_TRUE(local.GetType() == QueryableType::Set);
   ASSERT_EQ(expectedCount, local.Count());
 
-  Queryable<uint> local2(localSet);
+  SetQueryable<uint> local2(localSet);
 
   ASSERT_TRUE(local2.GetType() == QueryableType::Set);
   ASSERT_EQ(expectedCount, local2.Count());
@@ -115,12 +115,12 @@ TEST_F(ConstructorsFunctionalTest, StandardVector)
 {
   std::vector<uint> localVector = this->queryable.ToVector();
   int expectedCount = localVector.size();
-  Queryable<uint> local = localVector;
+  VectorQueryable<uint> local = localVector;
 
   ASSERT_TRUE(local.GetType() == QueryableType::Vector);
   ASSERT_EQ(expectedCount, local.Count());
 
-  Queryable<uint> local2(localVector);
+  VectorQueryable<uint> local2(localVector);
 
   ASSERT_TRUE(local2.GetType() == QueryableType::Vector);
   ASSERT_EQ(expectedCount, local2.Count());

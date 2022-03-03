@@ -32,7 +32,7 @@ DEPEND_REF = $(REFS_PATH)/.dependRef
 REFS_REF = $(REFS_PATH)/.refsRef
 
 PROGRAM_SRCS_PATHS = $(shell find $(PROJECT_PATH) -not \( -path $(PROGRAM_TEST_DIR) -prune \) -name "*.cpp")
-PROGRAM_HDRS_PATHS = $(shell find $(PROJECT_PATH) -not \( -path $(PROGRAM_TEST_DIR) -prune \) -name "*.h")
+PROGRAM_HDRS_PATHS = $(shell find $(PROJECT_PATH) -not \( -path $(PROGRAM_TEST_DIR) -prune \) -name "*.hpp")
 
 PROGRAM_OBJS = $(PROGRAM_SRCS_PATHS:.cpp=.o)
 

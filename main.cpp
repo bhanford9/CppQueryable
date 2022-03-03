@@ -5,20 +5,21 @@
 #include <string>
 #include <vector>
 
-#include "Queryable/Queryable.h"
-#include "Queryable/QueryableData/IQueryableData.h"
-#include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.h"
-#include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.h"
-#include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.h"
-#include "Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.h"
-#include "Queryable/QueryableData/QueryableData.h"
-#include "Queryable/QueryBuilder.h"
-#include "Queryable/QueryableType.h"
-#include "DataStructures/People.h"
-#include "DataStructures/PersonLibrary.h"
+#include "Queryable/Queryable.hpp"
+#include "Queryable/Queryables/VectorQueryable.hpp"
+#include "Queryable/QueryableData/IQueryableData.hpp"
+// #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.hpp"
+// #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
+// #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.hpp"
+// #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
+#include "Queryable/QueryableData/QueryableData.hpp"
+#include "Queryable/QueryBuilder.hpp"
+#include "Queryable/QueryableType.hpp"
+#include "DataStructures/People.hpp"
+#include "DataStructures/PersonLibrary.hpp"
 
-#include "DataStructures/Base.h"
-#include "DataStructures/Derived.h"
+#include "DataStructures/Base.hpp"
+#include "DataStructures/Derived.hpp"
 
 using namespace QueryBuilder;
 
@@ -26,13 +27,13 @@ int main()
 {
 
   PersonLibrary personLibrary;
-  Queryable<Person> people = Queryable<Person>(personLibrary.GetPeople());
+  VectorQueryable<Person> people = VectorQueryable<Person>(personLibrary.GetPeople());
 
 
   std::vector<uint> startingInput;
   std::vector<uint> evens;
-  Queryable<uint> queryable;
-  Queryable<uint> queryableEvens;
+  VectorQueryable<uint> queryable;
+  VectorQueryable<uint> queryableEvens;
   startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
   evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
   queryable = BuildQueryable(startingInput);
@@ -42,12 +43,12 @@ int main()
   queryable.ForEach([](uint value) { std::cout << value << ", "; });
   std::cout << std::endl;
 
-  Queryable<uint> local = BuildQueryable<uint>(queryable.ToList());
-  std::cout << "local made\n\n" << std::endl;
-  Queryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
-  std::cout << "mevens made\n\n" << std::endl;
-  Queryable<uint> result = local.Where([](uint value) { return value > 10; });
-  std::vector<uint> vectorResult = result.ToVector();
+  // ListQueryable<uint> local = BuildQueryable<uint>(queryable.ToList());
+  // std::cout << "local made\n\n" << std::endl;
+  // ListQueryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
+  // std::cout << "mevens made\n\n" << std::endl;
+  // auto result = local.Where([](uint value) { return value > 10; });
+  // std::vector<uint> vectorResult = result.ToVector();
 
 
   // std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });

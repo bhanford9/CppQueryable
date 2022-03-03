@@ -9,8 +9,8 @@
 #include <vector>
 
 
-#include "../../../Queryable/QueryableType.h"
-#include "../../../Queryable/Utilities/Group.h"
+#include "../../../Queryable/QueryableType.hpp"
+#include "../../../Queryable/Utilities/Group.hpp"
 
 class GroupTest : public ::testing::Test
 {

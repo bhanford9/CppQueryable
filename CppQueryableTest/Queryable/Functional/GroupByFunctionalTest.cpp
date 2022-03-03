@@ -9,19 +9,19 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Animal.h"
-#include "../../../DataStructures/AnimalLibrary.h"
-#include "../../../DataStructures/DogWalker.h"
-#include "../../../DataStructures/Gender.h"
-#include "../../../DataStructures/Person.h"
-#include "../../../DataStructures/PersonAndPet.h"
-#include "../../../DataStructures/PersonAndPetLibrary.h"
-#include "../../../DataStructures/PersonLibrary.h"
-#include "../../../DataStructures/Point.h"
+#include "../../../DataStructures/Animal.hpp"
+#include "../../../DataStructures/AnimalLibrary.hpp"
+#include "../../../DataStructures/DogWalker.hpp"
+#include "../../../DataStructures/Gender.hpp"
+#include "../../../DataStructures/Person.hpp"
+#include "../../../DataStructures/PersonAndPet.hpp"
+#include "../../../DataStructures/PersonAndPetLibrary.hpp"
+#include "../../../DataStructures/PersonLibrary.hpp"
+#include "../../../DataStructures/Point.hpp"
 
-#include "../../../Queryable/QueryBuilder.h"
-#include "../../../Queryable/QueryableType.h"
-#include "../../../Queryable/Utilities/Group.h"
+#include "../../../Queryable/QueryBuilder.hpp"
+#include "../../../Queryable/QueryableType.hpp"
+#include "../../../Queryable/Utilities/Group.hpp"
 
 using namespace QueryBuilder;
 

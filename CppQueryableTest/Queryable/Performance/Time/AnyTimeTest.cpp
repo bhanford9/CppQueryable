@@ -4,20 +4,20 @@
 #include <sstream>
 #include <string>
 
-#include "../../../../DataStructures/Animal.h"
-#include "../../../../DataStructures/Person.h"
-#include "../../../../DataStructures/People.h"
-#include "../../../../DataStructures/PersonLibrary.h"
+#include "../../../../DataStructures/Animal.hpp"
+#include "../../../../DataStructures/Person.hpp"
+#include "../../../../DataStructures/People.hpp"
+#include "../../../../DataStructures/PersonLibrary.hpp"
 
-#include "../../../../Queryable/Queryable.h"
+#include "../../../../Queryable/Queryable.hpp"
 
-#include "../../../../Queryable/QueryBuilder.h"
+#include "../../../../Queryable/QueryBuilder.hpp"
 
-#include "BaseTimeTest.h"
-#include "Utilities/TimeStats.h"
-#include "Utilities/TimeTestParams/TimeTestParams.h"
-#include "Utilities/TimeTestParams/TriggerType.h"
-#include "Utilities/TimingUtilities.h"
+#include "BaseTimeTest.hpp"
+#include "Utilities/TimeStats.hpp"
+#include "Utilities/TimeTestParams/TimeTestParams.hpp"
+#include "Utilities/TimeTestParams/TriggerType.hpp"
+#include "Utilities/TimingUtilities.hpp"
 
 using namespace QueryBuilder;
 using namespace TimingUtilities;
