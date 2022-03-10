@@ -1060,29 +1060,32 @@ public:
   }
 
   template<typename TLessThan, typename TAllocator>
-  SortedQueryable<TObj, TIterable, TLessThan, TAllocator, TObjOut> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
+  SortedQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator, TObjOut> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
   {
+    std::shared_ptr<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>> sorter;
+
     switch (this->type)
     {
       case QueryableType::MultiSet:
       {
-        // multiset should pass in the original sorting comparison with TArgs
-        // Then, for the output, it should specify that it changed to the passed in sorting comparison, TLessThan
-        MultiSetSorter<TObj, TArgs...> multiSetSorter;
-        SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> multiSetOutput = this->items->Sort(multiSetSorter);
-        return { multiSetOutput.Get() };
+        MultiSetSorter<TObj, TLessThan, TAllocator> multiSetSorter;
+        sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(multiSetSorter);
       }
       case QueryableType::Set:
       {
-        // set should pass in the original sorting comparison with TArgs
-        // Then, for the output, it should specify that it changed to the passed in sorting comparison, TLessThan
-        SetSorter<TObj, TArgs...> setSorter;
-        SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(setSorter);
-        return { setOutput.Get() };
+        SetSorter<TObj, TLessThan, TAllocator> setSorter;
+        sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(setSorter);
       }
+      default:
+        throw std::runtime_error("ReOrderBy, ReOrderByDescending and ReSort are only meant for containers that are ordered by default. For all other containers use OrderBy, OrderByDescending or Sort");
+        break;
     }
 
-    throw std::runtime_error("ReOrderBy, ReOrderByDescending and ReSort are only meant for containers that are ordered by default. For all other containers use OrderBy, OrderByDescending or Sort");
+    SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(*sorter);
+    // This return does not work due to the SortedQueryable being abstract.
+    // I could have the SortedQueryable implement all abstract methods and pass the execution to child virtual methods,
+    // but I don't like needing the Re-Sort method anyway, so might try to find another way to handle this instead.
+    return { setOutput.Get() };
   }
 
   template<

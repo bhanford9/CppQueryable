@@ -14,12 +14,12 @@ template<
 class WhereQueryableMultiSetData : public WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>
 {
 public:
-  WhereQueryableMultiSetData(
-    std::shared_ptr<IQueryableData<TObj, TObj>> data,
-    std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
-  {
-  }
+  // WhereQueryableMultiSetData(
+  //   std::shared_ptr<IQueryableData<TObj, TObj>> data,
+  //   std::function<bool(TObj)> condition)
+  //   : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+  // {
+  // }
   WhereQueryableMultiSetData(
     std::shared_ptr<QueryableData<TObj, TObj, std::multiset, TCompare, TAllocator>> && data,
     std::function<bool(TObj)> condition)

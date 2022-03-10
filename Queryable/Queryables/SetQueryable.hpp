@@ -14,7 +14,7 @@ template<
   typename TLessThan,
   typename TAllocator,
   typename TObjOut>
-class SetQueryable : public SortedQueryable<TObj, std::set, TObjOut, TLessThan, TAllocator>
+class SetQueryable : public SortedQueryable<TObj, std::set, TLessThan, TAllocator, TObjOut>
 {
 public:
   SetQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
@@ -29,6 +29,13 @@ public:
     this->type = QueryableType::Set;
     this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(set));
   }
+
+  // SetQueryable(const std::set<TObj, TLessThan, TAllocator> & set, TLessThan lessThan = {}, TAllocator allocator = {})
+  // {
+  //   this->type = QueryableType::Set;
+  //   std::set<TObj, TLessThan, TAllocator> localSet(set.begin(), set.end(), lessThan, allocator);
+  //   this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(localSet));
+  // }
 
   SetQueryable(const SetQueryable<TObj, TLessThan, TAllocator, TObjOut> & other)
   {

@@ -8,27 +8,21 @@
 
 template<
   typename TObj,
-  typename ...TArgs>
-  // typename TLessThan = std::less<TObj>,
-  // typename TAllocator = std::allocator<TObj>,
-  // typename TOriginalLessThan = std::less<TObj>>
+  typename TLessThan = std::less<TObj>,
+  typename TAllocator = std::allocator<TObj>>
 class MultiSetSorter :
   public Sorter<
     TObj,
     std::multiset,
     SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>>>
-    // TLessThan,
-    // TOriginalLessThan,  // First TArgs... used by sort input parameter
-    // TAllocator>         // Second TArgs... used by sort input parameter
 {
 public:
   virtual SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>> Sort(
-    std::multiset<TObj, TArgs...> & iterable,
+    std::multiset<TObj, TLessThan, TAllocator> & iterable,
     std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
   {
-    SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>> newlySorted(iterable.begin(), iterable.end(), lessThan);
-
-    // SortOutput move constructor will be used by default
+    std::multiset<TObj, std::function<bool(TObj, TObj)>, TAllocator> newMultiSet(iterable.begin(), iterable.end(), lessThan);
+    SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>> newlySorted(newMultiSet);
     return newlySorted;
   }
 };

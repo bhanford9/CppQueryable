@@ -8,25 +8,20 @@
 
 template<
   typename TObj,
-  // typename TLessThan = std::less<TObj>,
-  typename ...TArgs>
-  // typename TAllocator = std::allocator<TObj>>
+  typename TAllocator = std::allocator<TObj>>
 class ListSorter :
   public Sorter<
     TObj,
     std::list,
-    SortOutput<TObj, std::list, TArgs...>,
-    // TLessThan,
-    TArgs...>  // First TArgs... used by sort input parameter
+    SortOutput<TObj, std::list, TAllocator>,
+    TAllocator>
 {
 public:
-  virtual SortOutput<TObj, std::list, TArgs...> Sort(
-    std::list<TObj, TArgs...> & iterable,
+  virtual SortOutput<TObj, std::list, TAllocator> Sort(
+    std::list<TObj, TAllocator> & iterable,
     std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
   {
     iterable.sort(lessThan);
-
-    // list move constructor will be used by default, so it costs little extra to return it
     return iterable;
   }
 };

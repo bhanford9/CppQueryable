@@ -14,7 +14,7 @@ template<
   typename TLessThan,
   typename TAllocator,
   typename TObjOut>
-class MultiSetQueryable : public SortedQueryable<TObj, std::multiset, TObjOut, TLessThan, TAllocator>
+class MultiSetQueryable : public SortedQueryable<TObj, std::multiset, TLessThan, TAllocator, TObjOut>
 {
 public:
   MultiSetQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :

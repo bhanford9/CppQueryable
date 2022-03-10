@@ -39,7 +39,7 @@ protected:
 TEST_F(OrderByDescendingFunctionalTest, OrderByDescendingUninitialized)
 {
   VectorQueryable<Person> emptyQueryable;
-  const VectorQueryable<Person> & result = emptyQueryable.OrderByDescending();
+  VectorQueryable<Person> result = emptyQueryable.OrderByDescending();
   result.ToList();
 }
 
@@ -75,8 +75,8 @@ TEST_F(OrderByDescendingFunctionalTest, ListDefault)
 
 // TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 // {
-//   Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
-//   local.OrderByDescending();
+//   MultiSetQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
+//   local.ReOrderByDescending();
 //
 //   ASSERT_EQ(this->queryable.Count(), local.Count());
 //
@@ -87,7 +87,7 @@ TEST_F(OrderByDescendingFunctionalTest, ListDefault)
 //     previous = value;
 //   });
 // }
-//
+
 // TEST_F(OrderByDescendingFunctionalTest, SetDefault)
 // {
 //   Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToSet());
@@ -263,7 +263,6 @@ TEST_F(OrderByDescendingFunctionalTest, WhereOrderByDescending)
     uint previous = 999999;
     local.ForEach([&](uint value)
     {
-      std::cout << "value; " << value << std::endl;
       ASSERT_TRUE((value % 2) == 0);
       ASSERT_TRUE(previous >= value);
       previous = value;

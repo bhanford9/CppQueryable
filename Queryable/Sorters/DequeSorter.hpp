@@ -8,27 +8,21 @@
 
 template<
   typename TObj,
-  // typename TLessThan = std::less<TObj>,
-  typename ...TArgs>
-  // typename TAllocator = std::allocator<TObj>>
+  typename TAllocator = std::allocator<TObj>>
 class DequeSorter :
   public Sorter<
     TObj,
     std::deque,
-    SortOutput<TObj, std::deque, TArgs...>,
-    // TLessThan,
-    TArgs...>  // First TArgs... used by sort input parameter
+    SortOutput<TObj, std::deque, TAllocator>,
+    TAllocator>
 {
 public:
-  virtual SortOutput<TObj, std::deque, TArgs...> Sort(
-    std::deque<TObj, TArgs...> & iterable,
+  virtual SortOutput<TObj, std::deque, TAllocator> Sort(
+    std::deque<TObj, TAllocator> & iterable,
     std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
   {
     std::sort(iterable.begin(), iterable.end(), lessThan);
-
-    // deque move constructor will be used by default, so it costs little extra to return it
-    SortOutput<TObj, std::deque, TArgs...> retValue(iterable);
-    return retValue;
+    return iterable;
   }
 };
 

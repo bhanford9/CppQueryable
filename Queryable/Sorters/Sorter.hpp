@@ -10,7 +10,6 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename TOutput,
-  // typename TLessThan = std::less<TObj>,
   typename ...TArgs>
 class Sorter
 {
