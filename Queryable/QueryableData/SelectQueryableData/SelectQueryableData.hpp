@@ -24,7 +24,7 @@ template<
   typename ...TArgs>
 class SelectQueryableData : public QueryableData<TOriginal, TCurrent, TIterable, TArgs...>
 {
-  static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
+  // static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   std::function<TCurrent&(TOriginal) const> selector;
 public:
@@ -74,11 +74,6 @@ public:
       case IteratorType::BeginReverse: return this->selector(*this->rbeginIterator);
       case IteratorType::EndReverse: default: return this->selector(*this->rendIterator);
     }
-  }
-
-  virtual void Sort(std::function<bool(TOriginal, TOriginal)> compare = [](TOriginal a, TOriginal b) { return a < b; }) override
-  {
-    // TODO
   }
 
   // if we ever want to return true here, will need to change signature to take

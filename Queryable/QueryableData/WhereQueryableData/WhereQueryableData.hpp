@@ -16,13 +16,14 @@
 #include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
 
+// TODO --> add TOut template argument
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
 class WhereQueryableData : public QueryableData<TObj, TObj, TIterable, TArgs...>
 {
-  static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
+  // static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   // TODO --> use parent's by changing it to a using
   typedef typename std::vector<TObj>::iterator TVectorIterator;
@@ -139,8 +140,15 @@ protected:
   }
 
 public:
+  // WhereQueryableData(
+  //   std::shared_ptr<IQueryableData<TObj, TObj>> && data,
+  //   std::function<bool(TObj)> && condition)
+  //   : QueryableData<TObj, TObj, TIterable, TArgs...>(std::move(data))
+  // {
+  //   this->condition += condition;
+  // }
   WhereQueryableData(
-    std::shared_ptr<IQueryableData<TObj, TObj>> && data,
+    std::shared_ptr<QueryableData<TObj, TObj, TIterable, TArgs...>> && data,
     std::function<bool(TObj)> && condition)
     : QueryableData<TObj, TObj, TIterable, TArgs...>(std::move(data))
   {
@@ -336,25 +344,20 @@ public:
   }
 
   // might need to template the allocator here
-  virtual std::vector<TObj> ToVector() override
-  {
-    std::vector<TObj> objs;
-
-    for (TObj item : this->items)
-    {
-      if (this->condition(item))
-      {
-        objs.push_back(item);
-      }
-    }
-
-    return objs;
-  }
-
-  virtual void Sort(std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) override
-  {
-    // TODO
-  }
+  // virtual std::vector<TObj> ToVector() override
+  // {
+  //   std::vector<TObj> objs;
+  //
+  //   for (TObj item : this->items)
+  //   {
+  //     if (this->condition(item))
+  //     {
+  //       objs.push_back(item);
+  //     }
+  //   }
+  //
+  //   return objs;
+  // }
 
   // virtual void Update(
   //   QueryableIterator<TObj> first,

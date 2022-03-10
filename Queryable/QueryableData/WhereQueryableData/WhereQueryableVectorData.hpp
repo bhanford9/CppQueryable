@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../../QueryableType.hpp"
 #include "../../Utilities/Condition.hpp"
 #include "WhereQueryableData.hpp"
 
@@ -13,6 +14,13 @@ class WhereQueryableVectorData : public WhereQueryableData<TObj, std::vector, TA
 public:
   WhereQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj, TObj>> && data,
+    std::function<bool(TObj)> && condition)
+    : WhereQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+  {
+    // std::cout << "WhereQueryable Vector Data Constructor 1" << std::endl;
+  }
+  WhereQueryableVectorData(
+    std::shared_ptr<QueryableData<TObj, TObj, std::vector, TAllocator>> && data,
     std::function<bool(TObj)> && condition)
     : WhereQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
   {

@@ -19,7 +19,7 @@
 template<typename TOriginal, typename TCurrent, template<typename, typename ...> typename TIterable, typename ...TArgs>
 class LinkedQueryableData : public QueryableData<TCurrent, TIterable, TArgs...>
 {
-  static_assert(can_iterate<TIterable<TCurrent, TArgs...>>::value, "Class must be able to be iterated over");
+  // static_assert(can_iterate<TIterable<TCurrent, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   typedef typename QueryableData<TCurrent, TIterable, TArgs...>::TForwardIterator TForwardIterator;
   typedef typename QueryableData<TCurrent, TIterable, TArgs...>::TReverseIterator TReverseIterator;

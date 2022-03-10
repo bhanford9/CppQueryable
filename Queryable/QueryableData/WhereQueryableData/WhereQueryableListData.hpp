@@ -23,6 +23,12 @@ public:
     : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
   {
   }
+  WhereQueryableListData(
+    std::shared_ptr<QueryableData<TObj, TObj, std::list, TAllocator>> && data,
+    std::function<bool(TObj)> && condition)
+    : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+  {
+  }
   WhereQueryableListData(const WhereQueryableListData<TObj, TAllocator> & other)
     : WhereQueryableData<TObj, std::list, TAllocator>(other)
   {

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <set>
 #include "QueryableForwardDeclare.hpp"
+#include "SortedQueryable.hpp"
 #include "../Queryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableSetData.hpp"
@@ -11,12 +12,13 @@
 template<
   typename TObj,
   typename TLessThan,
-  typename TAllocator>
-class SetQueryable : public Queryable<TObj, std::set, TAllocator, TLessThan>
+  typename TAllocator,
+  typename TObjOut>
+class SetQueryable : public SortedQueryable<TObj, std::set, TObjOut, TLessThan, TAllocator>
 {
 public:
   SetQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    Queryable<TObj, std::set, TAllocator, TLessThan>(QueryableType::Set)
+    SortedQueryable<TObj, std::set, TObjOut, TLessThan, TAllocator>(QueryableType::Set)
   {
     std::set<TObj, TLessThan, TAllocator> localSet(lessThan, allocator);
     this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(localSet);
@@ -28,10 +30,16 @@ public:
     this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(set));
   }
 
-  SetQueryable(const SetQueryable<TObj, TAllocator, TLessThan> & other)
+  SetQueryable(const SetQueryable<TObj, TLessThan, TAllocator, TObjOut> & other)
   {
     this->type = QueryableType::Set;
     this->items = other.items;
+  }
+
+  virtual Queryable<TObj, std::set, TObjOut, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  {
+    this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
+    return *this;
   }
 };
 

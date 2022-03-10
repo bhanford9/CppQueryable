@@ -14,7 +14,6 @@ public:
   virtual QueryableIterator<T> end() = 0;
   virtual QueryableIterator<T> rbegin() = 0;
   virtual QueryableIterator<T> rend() = 0;
-  virtual std::vector<T> ToVector() = 0;
 
   inline virtual IQueryableIteratorData<T>& Next(IteratorType type, uint64_t & iterated) = 0;
   inline virtual IQueryableIteratorData<T>& Prev(IteratorType type, uint64_t & iterated) = 0;

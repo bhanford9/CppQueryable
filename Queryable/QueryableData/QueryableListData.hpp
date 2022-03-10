@@ -34,10 +34,10 @@ public:
     this->size++;
   }
 
-  void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
-  {
-    this->items.sort(compare);
-  }
+  // void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
+  // {
+  //   this->items.sort(compare);
+  // }
 };
 
 #endif

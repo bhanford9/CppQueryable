@@ -6,6 +6,7 @@
 
 #include "../Iterators/QueryableIterator.hpp"
 #include "../Iterators/IIterable.hpp"
+#include "../Sorters/Sorter.hpp"
 #include "IQueryableIteratorData.hpp"
 
 template<typename TObj, typename TIterator>
@@ -20,8 +21,6 @@ public:
   virtual int Count() = 0;
   virtual int StorageSize() = 0;
 
-  // TODO --> passing a std::function is slower than templating this, but can template a pure virtual method
-  virtual void Sort(std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
   // virtual void Update(QueryableIterator<TIterator, TIterable, TArgs...> first, QueryableIterator<TIterator, TIterable, TArgs...> last, std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
 };
 

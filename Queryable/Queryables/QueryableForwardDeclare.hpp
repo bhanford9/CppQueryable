@@ -6,7 +6,7 @@
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
-  typename TAllocator = std::allocator<TObj>,
+  typename TObjOut = TObj,
   typename ...TArgs>
 class Queryable;
 

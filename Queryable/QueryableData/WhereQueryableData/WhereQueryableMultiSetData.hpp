@@ -20,6 +20,12 @@ public:
     : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
+  WhereQueryableMultiSetData(
+    std::shared_ptr<QueryableData<TObj, TObj, std::multiset, TCompare, TAllocator>> && data,
+    std::function<bool(TObj)> condition)
+    : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+  {
+  }
   WhereQueryableMultiSetData(const WhereQueryableMultiSetData<TObj, TCompare, TAllocator> & other)
     : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(other)
   {

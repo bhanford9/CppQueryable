@@ -27,10 +27,10 @@
 
 namespace QueryBuilder
 {
-  template<typename T, typename TAllocator = std::allocator<T>>
-  static VectorQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
+  template<typename T, typename TAllocator = std::allocator<T>, typename TOut = T>
+  static VectorQueryable<T, TAllocator, TOut> BuildQueryable(std::vector<T, TAllocator> items)
   {
-    return VectorQueryable<T, TAllocator>(items);
+    return VectorQueryable<T, TAllocator, TOut>(items);
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>

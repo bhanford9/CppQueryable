@@ -27,7 +27,7 @@ int main()
 {
 
   PersonLibrary personLibrary;
-  VectorQueryable<Person> people = VectorQueryable<Person>(personLibrary.GetPeople());
+  VectorQueryable<Person> people(personLibrary.GetPeople());
 
 
   std::vector<uint> startingInput;
