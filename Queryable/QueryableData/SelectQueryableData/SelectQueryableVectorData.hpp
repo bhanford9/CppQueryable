@@ -9,19 +9,19 @@
 template<
   typename TOriginal,
   typename TCurrent,
-  typename TCompare = std::less<TCurrent>,
-  typename TAllocator = std::allocator<TOriginal>>
-class SelectQueryableVectorData : public SelectQueryableData<TOriginal, TCurrent, std::vector, TCompare, TAllocator>
+  typename TAllocator = std::allocator<TCurrent>>
+class SelectQueryableVectorData : public SelectQueryableData<TOriginal, TCurrent, std::vector, TAllocator>
 {
 private:
 
 public:
   SelectQueryableVectorData(
-    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
+    std::shared_ptr<QueryableData<TOriginal, std::vector, TAllocator>> && data,
     std::function<TCurrent(TOriginal)> selector)
-    : SelectQueryableData<TOriginal, TCurrent, std::vector, TCompare, TAllocator>(std::move(data), selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::vector, TAllocator>(std::move(data), selector)
   {
-    this->InitRandomAccessProperties();
+    std::cout << "\n\nin SelectQueryableVectorData" << std::endl;
+    for (TOriginal orig : *this->original) std::cout << "orig: " << orig << std::endl;
   }
   virtual ~SelectQueryableVectorData() { }
 

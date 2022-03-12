@@ -10,13 +10,12 @@
 
 template<
   typename TObj,
-  typename TAllocator,
-  typename TObjOut>
-class DequeQueryable : public Queryable<TObj, std::deque, TObjOut, TAllocator>
+  typename TAllocator>
+class DequeQueryable : public Queryable<TObj, std::deque, TAllocator>
 {
 public:
   DequeQueryable(TAllocator allocator = {}) :
-    Queryable<TObj, std::deque, TObjOut, TAllocator>(QueryableType::Deque)
+    Queryable<TObj, std::deque, TAllocator>(QueryableType::Deque)
   {
     std::deque<TObj> localDeque(allocator);
     this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>(localDeque);
@@ -28,19 +27,19 @@ public:
     this->items = std::move(std::make_shared<QueryableDequeData<TObj, TAllocator>>(deque));
   }
 
-  DequeQueryable(const DequeQueryable<TObj, TAllocator, TObjOut> & other)
+  DequeQueryable(const DequeQueryable<TObj, TAllocator> & other)
   {
     this->type = QueryableType::Deque;
     this->items = other.items;
   }
 
-  virtual Queryable<TObj, std::deque, TObjOut, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  virtual Queryable<TObj, std::deque, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
     return *this;
   }
 
-  virtual Queryable<TObj, std::deque, TObjOut, TAllocator> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) override
+  virtual Queryable<TObj, std::deque, TAllocator> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) override
   {
     // don't think anything special needs done other than just calling sort
     DequeSorter<TObj, TAllocator> sorter;

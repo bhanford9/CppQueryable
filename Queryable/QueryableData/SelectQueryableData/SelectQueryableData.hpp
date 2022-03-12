@@ -20,74 +20,103 @@ template<
   typename TOriginal,
   typename TCurrent,
   template<typename, typename ...> typename TIterable,
-  typename TCompare = std::less<TCurrent>, // TODO: can be used for sort (might need to pass this into parent, not sure how this works)
   typename ...TArgs>
-class SelectQueryableData : public QueryableData<TOriginal, TCurrent, TIterable, TArgs...>
+class SelectQueryableData : public QueryableData<TCurrent, TIterable, TArgs...>
 {
   // static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  std::function<TCurrent&(TOriginal) const> selector;
-public:
+  std::function<TCurrent(TOriginal) > selector;
+  std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> original;
 
+public:
   SelectQueryableData(
-    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
-    std::function<TCurrent&(TOriginal) const> selector)
-    : QueryableData<TOriginal, TCurrent, TIterable, TArgs...>(std::move(data))
+    std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> && data,
+    std::function<TCurrent(TOriginal) > selector) :
+      original(std::move(data))
   {
+    std::cout << "\n\nin SelectQueryableData" << std::endl;
+    for (TOriginal orig : *original) std::cout << "orig: " << orig << std::endl;
     this->selector = selector;
   }
-
-  SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data)
-    : QueryableData<TOriginal, TCurrent, TIterable, TArgs...>(data)
+  SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
+    original(data.original),
+    selector(data.selector)
   {
   }
 
-  virtual ~SelectQueryableData() { }
-
-  inline virtual TCurrent & ToOutput(const TOriginal & original) const
-  {
-    return this->selector(original);
-  }
-
-  inline virtual const TCurrent & ToOutputConst(const TOriginal & original) const override
-  {
-    return this->selector(original);
-  }
+  virtual ~SelectQueryableData() { std::cout << "destroying select data" << std::endl; }
 
   inline virtual TCurrent & Get(IteratorType type) override
   {
-    switch (type)
-    {
-      case IteratorType::BeginForward: return this->selector(*this->beginIterator);
-      case IteratorType::EndForward: return this->selector(*this->endIterator);
-      case IteratorType::BeginReverse: return this->selector(*this->rbeginIterator);
-      case IteratorType::EndReverse: default: return this->selector(*this->rendIterator);
-    }
+    std::cout << "Select Data Get" << std::endl;
+    this->value = this->selector(this->original->Get(type));
+    return this->value;
   }
 
   inline virtual const TCurrent & ConstGet(IteratorType type) override
   {
-    switch (type)
-    {
-      case IteratorType::BeginForward: return this->selector(*this->beginIterator);
-      case IteratorType::EndForward: return this->selector(*this->endIterator);
-      case IteratorType::BeginReverse: return this->selector(*this->rbeginIterator);
-      case IteratorType::EndReverse: default: return this->selector(*this->rendIterator);
-    }
+    std::cout << "Select Data ConstGet" << std::endl;
+    this->value = this->selector(this->original->ConstGet(type));
+    return this->value;
   }
 
-  // if we ever want to return true here, will need to change signature to take
-  // a TCurrent instead of a TOriginal. Its faster in the iterator incrementing
-  // if we do not have to convert from TOriginal to TCurrent though
-  // virtual bool DoSkip(const TOriginal & value) override
-  // {
-  //   return false;
-  // }
-  //
-  // virtual bool CanSkip() override
-  // {
-  //   return false;
-  // }
+  inline virtual IQueryableIteratorData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
+  {
+    std::cout << "Select Data Next" << std::endl;
+    this->original->Next(type, iterated);
+    return *this;
+  }
+
+  inline virtual IQueryableIteratorData<TCurrent> & Prev(IteratorType type, uint64_t & iterated) override
+  {
+    std::cout << "Select Data Prev" << std::endl;
+    this->original->Prev(type, iterated);
+    return *this;
+  }
+
+  inline virtual IQueryableIteratorData<TCurrent> & Add(int addend, IteratorType type) override
+  {
+    std::cout << "Select Data Add" << std::endl;
+    this->original->Add(addend, type);
+    return *this;
+  }
+
+  inline virtual IQueryableIteratorData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
+  {
+    std::cout << "Select Data Subtract" << std::endl;
+    this->original->Add(subtrahend, type);
+    return *this;
+  }
+
+  virtual QueryableIterator<TCurrent> begin() override
+  {
+    std::cout << "Select Data begin" << std::endl;
+    this->original->begin();
+    QueryableIterator<TCurrent> retVal(this, 0, IteratorType::BeginForward);
+    return retVal;
+  }
+
+  virtual QueryableIterator<TCurrent> end() override
+  {
+    std::cout << "Select Data end" << std::endl;
+    this->original->end();
+    QueryableIterator<TCurrent> retVal(this, this->original->Count(), IteratorType::EndForward);
+    return retVal;
+  }
+
+  virtual QueryableIterator<TCurrent> rbegin() override
+  {
+    this->original->rbegin();
+    QueryableIterator<TCurrent> retVal(this, 0, IteratorType::BeginReverse);
+    return retVal;
+  }
+
+  virtual QueryableIterator<TCurrent> rend() override
+  {
+    this->original->rend();
+    QueryableIterator<TCurrent> retVal(this, this->original->Count(), IteratorType::EndReverse);
+    return retVal;
+  }
 };
 
 #endif

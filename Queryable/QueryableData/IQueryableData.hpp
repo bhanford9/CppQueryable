@@ -15,7 +15,6 @@ class IQueryableData : public IQueryableIteratorData<TIterator>
 public:
   virtual ~IQueryableData() { }
 
-  virtual void * GetData() = 0;
   virtual void Clear() = 0;
   virtual void Add(TObj obj) = 0;
   virtual int Count() = 0;

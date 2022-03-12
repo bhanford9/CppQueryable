@@ -15,24 +15,19 @@ template<
   typename TData,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class GroupQueryableData : public QueryableData<TData, TData, TIterable, TArgs...>, public IGroup<TKey, TData>
+class GroupQueryableData : public QueryableData<TData, TIterable, TArgs...>, public IGroup<TKey, TData>
 {
 protected:
   TKey key;
   QueryableType type = QueryableType::Default;
   std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; };
 
-  virtual IQueryableData<TData, TData> & GetData() override
-  {
-    return *this;
-  }
-
 public:
   GroupQueryableData(
     TKey key,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : QueryableData<TData, TData, TIterable, TArgs...>()
+    : QueryableData<TData, TIterable, TArgs...>()
   {
     this->key = key;
     this->type = type;
@@ -44,7 +39,7 @@ public:
     std::shared_ptr<IQueryableData<TData, TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
-    : QueryableData<TData, TData, TIterable, TArgs...>(std::move(data))
+    : QueryableData<TData, TIterable, TArgs...>(std::move(data))
   {
     this->key = key;
     this->type = type;
@@ -52,7 +47,7 @@ public:
   }
 
   GroupQueryableData(const GroupQueryableData<TData, TKey, TIterable, TArgs...> & data)
-    : QueryableData<TData, TData, TIterable, TArgs...>(data)
+    : QueryableData<TData, TIterable, TArgs...>(data)
   {
     this->key = data.key;
     this->type = data.type;

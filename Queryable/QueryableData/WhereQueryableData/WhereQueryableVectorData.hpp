@@ -20,7 +20,7 @@ public:
     // std::cout << "WhereQueryable Vector Data Constructor 1" << std::endl;
   }
   WhereQueryableVectorData(
-    std::shared_ptr<QueryableData<TObj, TObj, std::vector, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && data,
     std::function<bool(TObj)> && condition)
     : WhereQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
   {

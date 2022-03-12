@@ -16,13 +16,11 @@ class SelectQueryableMultiSetData : public SelectQueryableData<TOriginal, TCurre
 {
 public:
   SelectQueryableMultiSetData(
-    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
+    std::shared_ptr<QueryableData<TOriginal, std::multiset, TCompare, TAllocator>> && data,
     std::function<TCurrent(TOriginal)> selector,
     TCompare comparator = {})
     : SelectQueryableData<TOriginal, TCurrent, std::multiset, TCompare, TAllocator>(std::move(data), selector)
   {
-    // QueryableIterator<TCurrent> dummy;
-    // this->Update(dummy, dummy, compare);
   }
 
   virtual ~SelectQueryableMultiSetData() { }
@@ -33,18 +31,6 @@ public:
     this->items.insert(item);
     this->size++;
   }
-
-  // virtual void Update(
-  //   QueryableIterator<TCurrent, std::multiset> first,
-  //   QueryableIterator<TCurrent, std::multiset> last,
-  //   std::function<bool(TCurrent, TCurrent)> compare) override
-  // {
-  //   std::function<bool(TOriginal, TOriginal)> originalCompare =
-  //     [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
-  //
-  //   this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), originalCompare);
-  //   this->size = this->original.get()->Count();
-  // }
 };
 
 #endif

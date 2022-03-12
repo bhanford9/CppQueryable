@@ -21,7 +21,7 @@ public:
   {
   }
   WhereQueryableSetData(
-    std::shared_ptr<QueryableData<TObj, TObj, std::set, TCompare, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::set, TCompare, TAllocator>> && data,
     std::function<bool(TObj)> condition)
     : WhereQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
   {

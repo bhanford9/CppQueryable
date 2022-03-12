@@ -11,24 +11,23 @@ template<
   typename T,
   template<typename, typename ...> typename TIterable,
   typename TAllocator = std::allocator<T>,
-  typename TOut = T,
   typename ...TArgs>
-class RandomAccessQueryableData : public QueryableData<T, TOut, TIterable, TAllocator, TArgs...>
+class RandomAccessQueryableData : public QueryableData<T, TIterable, TAllocator, TArgs...>
 {
 public:
-  RandomAccessQueryableData() : QueryableData<T, TOut, TIterable, TAllocator, TArgs...>()
+  RandomAccessQueryableData() : QueryableData<T, TIterable, TAllocator, TArgs...>()
   {
   }
   RandomAccessQueryableData(TIterable<T, TAllocator, TArgs...> items)
-    : QueryableData<T, TOut, TIterable, TAllocator, TArgs...>(items)
+    : QueryableData<T, TIterable, TAllocator, TArgs...>(items)
   {
   }
   RandomAccessQueryableData(const RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> & data)
-    : QueryableData<T, TOut, TIterable, TAllocator, TArgs...>(data)
+    : QueryableData<T, TIterable, TAllocator, TArgs...>(data)
   {
   }
   RandomAccessQueryableData(RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> && data)
-    : QueryableData<T, TOut, TIterable, TAllocator, TArgs...>(std::move(data))
+    : QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(data))
   {
   }
 
@@ -66,11 +65,6 @@ public:
     this->items.push_back(item);
     this->size++;
   }
-
-  // void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
-  // {
-  //   std::sort(this->items.begin(), this->items.end(), compare);
-  // }
 };
 
 #endif

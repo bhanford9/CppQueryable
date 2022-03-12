@@ -19,7 +19,7 @@ public:
   {
   }
   WhereQueryableDequeData(
-    std::shared_ptr<QueryableData<TObj, TObj, std::deque, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && data,
     std::function<bool(TObj)> condition)
     : WhereQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
   {

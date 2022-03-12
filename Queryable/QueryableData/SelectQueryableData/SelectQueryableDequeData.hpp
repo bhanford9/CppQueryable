@@ -9,72 +9,18 @@
 template<
   typename TOriginal,
   typename TCurrent,
-  typename TCompare = std::less<TCurrent>,
-  typename TAllocator = std::less<TOriginal>>
-class SelectQueryableDequeData : public SelectQueryableData<TOriginal, TCurrent, std::deque, TCompare, TAllocator>
+  typename TAllocator = std::allocator<TCurrent>>
+class SelectQueryableDequeData : public SelectQueryableData<TOriginal, TCurrent, std::deque, TAllocator>
 {
 public:
   SelectQueryableDequeData(
-    std::shared_ptr<IQueryableData<TOriginal, TOriginal>> data,
+    std::shared_ptr<QueryableData<TOriginal, std::deque, TAllocator>> && data,
     std::function<TCurrent(TOriginal)> selector)
-    : SelectQueryableData<TOriginal, TCurrent, std::deque, TCompare, TAllocator>(std::move(data), selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::deque, TAllocator>(std::move(data), selector)
   {
-    this->InitRandomAccessProperties();
   }
 
   virtual ~SelectQueryableDequeData() { }
-
-  inline virtual QueryableIterator<TCurrent> & operator+(int addend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator += addend; break;
-      case IteratorType::EndForward: this->endIterator += addend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-      case IteratorType::EndReverse: this->rendIterator += addend; break;
-    }
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<TCurrent> & operator+=(int addend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator += addend; break;
-      case IteratorType::EndForward: this->endIterator += addend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-      case IteratorType::EndReverse: this->rendIterator += addend; break;
-    }
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<TCurrent> & operator-(int subtrahend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
-      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
-    }
-
-    return this->AsReferenceIterator();
-  }
-
-  inline virtual QueryableIterator<TCurrent> & operator-=(int subtrahend) override
-  {
-    switch (this->type)
-    {
-      case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
-      case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
-    }
-
-    return this->AsReferenceIterator();
-  }
 
 
   void Add(TCurrent item) override

@@ -8,21 +8,20 @@
 
 template<
   typename T,
-  typename TAllocator = std::allocator<T>,
-  typename TOut = T>
-class QueryableVectorData : public RandomAccessQueryableData<T, std::vector, TAllocator, TOut>
+  typename TAllocator = std::allocator<T>>
+class QueryableVectorData : public RandomAccessQueryableData<T, std::vector, TAllocator>
 {
 public:
-  QueryableVectorData() : RandomAccessQueryableData<T, std::vector, TAllocator, TOut>() { }
+  QueryableVectorData() : RandomAccessQueryableData<T, std::vector, TAllocator>() { }
 
   QueryableVectorData(std::vector<T, TAllocator> items)
-    : RandomAccessQueryableData<T, std::vector, TAllocator, TOut>(items) { }
+    : RandomAccessQueryableData<T, std::vector, TAllocator>(items) { }
 
   QueryableVectorData(const QueryableVectorData & data)
-    : RandomAccessQueryableData<T, std::vector, TAllocator, TOut>(data) { }
+    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
 
   QueryableVectorData(QueryableVectorData && data)
-    : RandomAccessQueryableData<T, std::vector, TAllocator, TOut>(data) { }
+    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
 
   virtual ~QueryableVectorData() { }
 };

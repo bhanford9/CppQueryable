@@ -21,15 +21,15 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class WhereQueryableData : public QueryableData<TObj, TObj, TIterable, TArgs...>
+class WhereQueryableData : public QueryableData<TObj, TIterable, TArgs...>
 {
   // static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   // TODO --> use parent's by changing it to a using
   typedef typename std::vector<TObj>::iterator TVectorIterator;
 
-  using TForwardIterator = typename QueryableData<TObj, TObj, TIterable, TArgs...>::TForwardIterator;
-  using TReverseIterator = typename QueryableData<TObj, TObj, TIterable, TArgs...>::TReverseIterator;
+  using TForwardIterator = typename QueryableData<TObj, TIterable, TArgs...>::TForwardIterator;
+  using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
 
   Condition<TObj> condition;
 
@@ -143,19 +143,19 @@ public:
   // WhereQueryableData(
   //   std::shared_ptr<IQueryableData<TObj, TObj>> && data,
   //   std::function<bool(TObj)> && condition)
-  //   : QueryableData<TObj, TObj, TIterable, TArgs...>(std::move(data))
+  //   : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
   // {
   //   this->condition += condition;
   // }
   WhereQueryableData(
-    std::shared_ptr<QueryableData<TObj, TObj, TIterable, TArgs...>> && data,
+    std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
     std::function<bool(TObj)> && condition)
-    : QueryableData<TObj, TObj, TIterable, TArgs...>(std::move(data))
+    : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
   {
     this->condition += condition;
   }
   WhereQueryableData(const WhereQueryableData<TObj, TIterable, TArgs...> & other)
-    : QueryableData<TObj, TObj, TIterable, TArgs...>(other)
+    : QueryableData<TObj, TIterable, TArgs...>(other)
   {
   }
 
@@ -342,39 +342,6 @@ public:
 
     return count;
   }
-
-  // might need to template the allocator here
-  // virtual std::vector<TObj> ToVector() override
-  // {
-  //   std::vector<TObj> objs;
-  //
-  //   for (TObj item : this->items)
-  //   {
-  //     if (this->condition(item))
-  //     {
-  //       objs.push_back(item);
-  //     }
-  //   }
-  //
-  //   return objs;
-  // }
-
-  // virtual void Update(
-  //   QueryableIterator<TObj> first,
-  //   QueryableIterator<TObj> last,
-  //   std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) override
-  // {
-  //   // TODO SFINAE require this constructor
-  //   this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), compare);
-  //   this->size = this->original.get()->Count();
-  // }
-  //
-  // virtual void Update(TVectorIterator first, TVectorIterator last) override
-  // {
-  //   // TODO SFINAE require this constructor
-  //   this->original.get()->Update(first, last);
-  //   this->size = this->original.get()->Count();
-  // }
 };
 
 #endif

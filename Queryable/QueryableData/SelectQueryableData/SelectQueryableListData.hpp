@@ -9,15 +9,14 @@
 template<
   typename TOriginal,
   typename TCurrent,
-  typename TCompare = std::less<TCurrent>,
-  typename TAllocator = std::allocator<TOriginal>>
-class SelectQueryableListData : public SelectQueryableData<TOriginal, TCurrent, std::list, TCompare, TAllocator>
+  typename TAllocator = std::allocator<TCurrent>>
+class SelectQueryableListData : public SelectQueryableData<TOriginal, TCurrent, std::list, TAllocator>
 {
 public:
   SelectQueryableListData(
-    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
+    std::shared_ptr<QueryableData<TOriginal, std::list, TAllocator>> && data,
     std::function<TCurrent(TOriginal)> selector)
-    : SelectQueryableData<TOriginal, TCurrent, std::list, TCompare, TAllocator>(std::move(data), selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::list, TAllocator>(std::move(data), selector)
   {
   }
 

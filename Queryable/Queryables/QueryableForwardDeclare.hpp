@@ -6,7 +6,6 @@
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
-  typename TObjOut = TObj,
   typename ...TArgs>
 class Queryable;
 

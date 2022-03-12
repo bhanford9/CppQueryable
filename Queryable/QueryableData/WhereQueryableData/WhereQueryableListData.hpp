@@ -7,7 +7,9 @@
 #include "../../Utilities/Condition.hpp"
 #include "WhereQueryableData.hpp"
 
-template<typename TObj, typename TAllocator = std::allocator<TObj>>
+template<
+  typename TObj,
+  typename TAllocator = std::allocator<TObj>>
 class WhereQueryableListData : public WhereQueryableData<TObj, std::list, TAllocator>
 {
 protected:
@@ -24,7 +26,7 @@ public:
   {
   }
   WhereQueryableListData(
-    std::shared_ptr<QueryableData<TObj, TObj, std::list, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && data,
     std::function<bool(TObj)> && condition)
     : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
   {

@@ -15,13 +15,11 @@ class SelectQueryableSetData : public SelectQueryableData<TOriginal, TCurrent, s
 {
 public:
   SelectQueryableSetData(
-    std::shared_ptr<IQueryableData<TOriginal, TCurrent>> data,
+    std::shared_ptr<QueryableData<TOriginal, std::set, TCompare, TAllocator>> && data,
     std::function<TCurrent(TOriginal)> selector,
     TCompare comparator = {})
     : SelectQueryableData<TOriginal, TCurrent, std::set, TCompare, TAllocator>(std::move(data), selector)
   {
-    // QueryableIterator<TCurrent> dummy;
-    // this->Update(dummy, dummy, compare);
   }
 
   virtual ~SelectQueryableSetData() { }
@@ -32,18 +30,6 @@ public:
     this->items.insert(item);
     this->size++;
   }
-
-  // virtual void Update(
-  //   QueryableIterator<TCurrent, std::set> first,
-  //   QueryableIterator<TCurrent, std::set> last,
-  //   std::function<bool(TCurrent, TCurrent)> compare) override
-  // {
-  //   std::function<bool(TOriginal, TOriginal)> originalCompare =
-  //     [&](TOriginal a, TOriginal b) { return compare(this->ToCurrent(a), this->ToCurrent(b)); };
-  //
-  //   this->original.get()->Update(this->original.get()->begin(), this->original.get()->end(), originalCompare);
-  //   this->size = this->original.get()->Count();
-  // }
 };
 
 #endif

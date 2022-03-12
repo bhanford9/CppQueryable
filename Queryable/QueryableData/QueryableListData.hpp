@@ -6,8 +6,10 @@
 
 #include "QueryableData.hpp"
 
-template<typename T, typename TAllocator = std::allocator<T>>
-class QueryableListData : public QueryableData<T, T, std::list, TAllocator>
+template<
+  typename T,
+  typename TAllocator = std::allocator<T>>
+class QueryableListData : public QueryableData<T, std::list, TAllocator>
 {
 protected:
 
@@ -16,13 +18,13 @@ protected:
     items.push_back(item);
   }
 public:
-  QueryableListData() : QueryableData<T, T, std::list, TAllocator>() { }
+  QueryableListData() : QueryableData<T, std::list, TAllocator>() { }
   QueryableListData(std::list<T, TAllocator> items)
-    : QueryableData<T, T, std::list, TAllocator>(items)
+    : QueryableData<T, std::list, TAllocator>(items)
   {
   }
   QueryableListData(const QueryableListData& data)
-    : QueryableData<T, T, std::list, TAllocator>(data)
+    : QueryableData<T, std::list, TAllocator>(data)
   {
   }
 
@@ -33,11 +35,6 @@ public:
     this->items.push_back(item);
     this->size++;
   }
-
-  // void Sort(std::function<bool(T, T)> compare = [](T a, T b) { return a < b; }) override
-  // {
-  //   this->items.sort(compare);
-  // }
 };
 
 #endif

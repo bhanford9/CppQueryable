@@ -12,13 +12,12 @@
 template<
   typename TObj,
   typename TLessThan,
-  typename TAllocator,
-  typename TObjOut>
-class MultiSetQueryable : public SortedQueryable<TObj, std::multiset, TLessThan, TAllocator, TObjOut>
+  typename TAllocator>
+class MultiSetQueryable : public SortedQueryable<TObj, std::multiset, TLessThan, TAllocator>
 {
 public:
   MultiSetQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    SortedQueryable<TObj, std::multiset, TObjOut, TLessThan, TAllocator>(QueryableType::MultiSet)
+    SortedQueryable<TObj, std::multiset, TLessThan, TAllocator>(QueryableType::MultiSet)
   {
     std::multiset<TObj, TLessThan, TAllocator> localMultiSet(lessThan, allocator);
     this->items = std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(localMultiSet);
@@ -30,13 +29,13 @@ public:
     this->items = std::move(std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(multiset));
   }
 
-  MultiSetQueryable(const MultiSetQueryable<TObj, TLessThan, TAllocator, TObjOut> & other)
+  MultiSetQueryable(const MultiSetQueryable<TObj, TLessThan, TAllocator> & other)
   {
     this->type = QueryableType::MultiSet;
     this->items = other.items;
   }
 
-  virtual Queryable<TObj, std::multiset, TObjOut, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  virtual Queryable<TObj, std::multiset, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
     return *this;

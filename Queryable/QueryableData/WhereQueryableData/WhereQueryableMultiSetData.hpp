@@ -14,14 +14,14 @@ template<
 class WhereQueryableMultiSetData : public WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>
 {
 public:
-  // WhereQueryableMultiSetData(
-  //   std::shared_ptr<IQueryableData<TObj, TObj>> data,
-  //   std::function<bool(TObj)> condition)
-  //   : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
-  // {
-  // }
   WhereQueryableMultiSetData(
-    std::shared_ptr<QueryableData<TObj, TObj, std::multiset, TCompare, TAllocator>> && data,
+    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::function<bool(TObj)> condition)
+    : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+  {
+  }
+  WhereQueryableMultiSetData(
+    std::shared_ptr<QueryableData<TObj, std::multiset, TCompare, TAllocator>> && data,
     std::function<bool(TObj)> condition)
     : WhereQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
@@ -39,11 +39,6 @@ public:
     this->items.insert(item);
     this->size++;
   }
-
-  // virtual void Update(QueryableIterator<TObj> first, QueryableIterator<TObj> last, std::function<bool(TObj, TObj)> compare) override
-  // {
-  //   this->original.get()->Update(first, last, compare);
-  // }
 };
 
 #endif

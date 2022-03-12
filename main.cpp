@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -15,6 +16,7 @@
 #include "Queryable/QueryableData/QueryableData.hpp"
 #include "Queryable/QueryBuilder.hpp"
 #include "Queryable/QueryableType.hpp"
+#include "Queryable/QueryableWrapper.hpp"
 #include "DataStructures/People.hpp"
 #include "DataStructures/PersonLibrary.hpp"
 
@@ -26,6 +28,7 @@ using namespace QueryBuilder;
 int main()
 {
 
+
   PersonLibrary personLibrary;
   VectorQueryable<Person> people(personLibrary.GetPeople());
 
@@ -36,12 +39,19 @@ int main()
   VectorQueryable<uint> queryableEvens;
   startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
   evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
+
   queryable = BuildQueryable(startingInput);
   queryableEvens = BuildQueryable(evens);
 
-  std::cout << "attempting foreach" << std::endl;
-  queryable.ForEach([](uint value) { std::cout << value << ", "; });
-  std::cout << std::endl;
+  // Queryable<uint, std::vector> * meh = reinterpret_cast<Queryable<uint, std::vector>*>(&queryable);
+
+  // std::shared_ptr<Queryable<uint, std::vector>> ptr = std::make_shared<Queryable<uint, std::vector>>(*meh);
+  QueryableWrapper<uint, std::vector> blah(std::move(queryable));
+  blah.Select<std::string>([](uint num) { return "Number: " + std::to_string(num); });
+
+  // std::cout << "attempting foreach" << std::endl;
+  // queryable.ForEach([](uint value) { std::cout << value << ", "; });
+  // std::cout << std::endl;
 
   // ListQueryable<uint> local = BuildQueryable<uint>(queryable.ToList());
   // std::cout << "local made\n\n" << std::endl;
