@@ -35,7 +35,7 @@ public:
       original(std::move(data))
   {
     this->selector = selector;
-    this->size = original->Count();
+    this->size = original->StorageSize();
   }
   SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
     original(data.original),

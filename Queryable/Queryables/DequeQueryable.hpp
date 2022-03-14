@@ -33,6 +33,18 @@ public:
     this->items = other.items;
   }
 
+  DequeQueryable(const Queryable<TObj, std::deque, TAllocator> & other)
+    : Queryable<TObj, std::deque, TAllocator>(other)
+  {
+    this->type = QueryableType::Deque;
+  }
+  DequeQueryable(
+    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && queryableData,
+    QueryableType type)
+      : Queryable<TObj, std::deque, TAllocator>(std::move(queryableData), type)
+  {
+  }
+
   virtual Queryable<TObj, std::deque, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));

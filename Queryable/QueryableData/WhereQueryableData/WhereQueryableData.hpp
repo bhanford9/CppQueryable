@@ -327,21 +327,6 @@ public:
     QueryableIterator<TObj> retVal(this, this->size, IteratorType::EndReverse);
     return retVal;
   }
-
-  virtual int Count() override
-  {
-    int count = 0;
-
-    for (const TObj & item : this->items)
-    {
-      if (this->condition(item))
-      {
-        count++;
-      }
-    }
-
-    return count;
-  }
 };
 
 #endif

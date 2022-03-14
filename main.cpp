@@ -46,8 +46,11 @@ int main()
   // Queryable<uint, std::vector> * meh = reinterpret_cast<Queryable<uint, std::vector>*>(&queryable);
 
   // std::shared_ptr<Queryable<uint, std::vector>> ptr = std::make_shared<Queryable<uint, std::vector>>(*meh);
-  QueryableWrapper<uint, std::vector> blah(std::move(queryable));
+  std::set<uint> setItems = queryable.ToSet();
+  QueryableWrapper<uint, std::set> blah(std::move(setItems));
+  std::cout << "starting test. set size: " << setItems.size() << std::endl;
   blah
+    .Where([](uint num) { return num % 2; })
     .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
     .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
   std::cout << "done with select\n\n" << std::endl;

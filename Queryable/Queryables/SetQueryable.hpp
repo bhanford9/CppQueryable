@@ -42,6 +42,18 @@ public:
     this->items = other.items;
   }
 
+  SetQueryable(const Queryable<TObj, std::set, TLessThan, TAllocator> & other)
+    : SortedQueryable<TObj, std::set, TLessThan, TAllocator>(other)
+  {
+    this->type = QueryableType::Set;
+  }
+  SetQueryable(
+    std::shared_ptr<QueryableData<TObj, std::set, TLessThan, TAllocator>> && queryableData,
+    QueryableType type)
+      : SortedQueryable<TObj, std::set, TLessThan, TAllocator>(std::move(queryableData), type)
+  {
+  }
+
   virtual Queryable<TObj, std::set, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));

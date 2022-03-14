@@ -22,14 +22,14 @@ using namespace QueryBuilder;
 class SelectFunctionalTest : public ::testing::Test
 {
 protected:
-  Queryable<uint> queryable;
-  Queryable<Person> people;
+  VectorQueryable<uint> queryable;
+  VectorQueryable<Person> people;
   PersonLibrary personLibrary;
 
   void SetUp() override
   {
     this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }));
-    this->people = Queryable<Person>(this->personLibrary.GetPeople());
+    this->people = VectorQueryable<Person>(this->personLibrary.GetPeople());
   }
 
   void TearDown() override {}
@@ -37,16 +37,16 @@ protected:
 
 TEST_F(SelectFunctionalTest, SelectUninitialized)
 {
-  Queryable<Person> local;
-  Queryable<std::string> result = local
+  VectorQueryable<Person> local;
+  VectorQueryable<std::string> result = local
     .Select<std::string>([](Person p) { return p.GetName(); });
   ASSERT_EQ(0, result.Count());
 }
 
 TEST_F(SelectFunctionalTest, DequeDefaultOut)
 {
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
-  Queryable<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  DequeQueryable<Person> local = BuildQueryable(this->people.ToDeque());
+  DequeQueryable<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
