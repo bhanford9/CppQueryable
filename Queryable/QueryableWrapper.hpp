@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEWRAPPER_H
-#define CPPQUERYABLE_QUERYABLE_QUERYABLEWRAPPER_H
+#ifndef CPPQUERYABLE_QUERYABLE_Queryable_H
+#define CPPQUERYABLE_QUERYABLE_Queryable_H
 
 #include <iostream>
 #include <memory>
@@ -16,34 +16,34 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class QueryableWrapper
+class Queryable
 {
 private:
-  std::shared_ptr<Queryable<TObj, TIterable, TArgs...>> queryable;
+  std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> queryable;
 
 public:
-  QueryableWrapper() { }
-  QueryableWrapper(const std::shared_ptr<Queryable<TObj, TIterable, TArgs...>> && other)
+  Queryable() { }
+  Queryable(const std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> && other)
     : queryable(other)
   {
   }
-  // QueryableWrapper(const Queryable<TObj, TIterable, TArgs...> & other)
-  //   : queryable(std::make_shared<Queryable<TObj, TIterable, TArgs...>>(other))
+  // Queryable(const InternalQueryable<TObj, TIterable, TArgs...> & other)
+  //   : queryable(std::make_shared<InternalQueryable<TObj, TIterable, TArgs...>>(other))
   // {
   // }
-  QueryableWrapper(const VectorQueryable<TObj, TArgs...> && other)
+  Queryable(const VectorInternalQueryable<TObj, TArgs...> && other)
   {
     std::cout << "vector constructor" << std::endl;
-    queryable = FutureStd::reinterpret_pointer_cast<Queryable<TObj, TIterable, TArgs...>>(std::make_shared<VectorQueryable<TObj, TArgs...>>(other));
+    queryable = FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TArgs...>>(std::make_shared<VectorInternalQueryable<TObj, TArgs...>>(other));
   }
-  QueryableWrapper(const SetQueryable<TObj, TArgs...> && other)
+  Queryable(const SetInternalQueryable<TObj, TArgs...> && other)
   {
     std::cout << "set constructor" << std::endl;
-    queryable = FutureStd::reinterpret_pointer_cast<Queryable<TObj, TIterable, TArgs...>>(std::make_shared<SetQueryable<TObj, TArgs...>>(other));
+    queryable = FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TArgs...>>(std::make_shared<SetInternalQueryable<TObj, TArgs...>>(other));
   }
 
   template<typename T, typename ...TNewArgs>
-  QueryableWrapper<T, TIterable, TNewArgs...> Select(
+  Queryable<T, TIterable, TNewArgs...> Select(
     std::function<T(TObj)> retrieveValue,
     TNewArgs... iterableParameters)
   {
@@ -60,15 +60,15 @@ public:
           reinterpret_cast<SelectBuilder<TObj, T, TIterable, TNewArgs...>*>(&selectBuilder),
           iterableParameters...);
 
-        std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<Queryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
+        std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
         // move constructor so no new memory is created
-        QueryableWrapper<T, TIterable, TNewArgs...> newQueryableWrapper(std::move(newQueryble));
+        Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newQueryble));
 
         // TODO --> determine if reseting is undesireable
         this->queryable.reset();
 
         // return uses move constructor so no new memory is created
-        return newQueryableWrapper;
+        return newQueryable;
         break;
       }
       case QueryableType::Set:
@@ -81,15 +81,15 @@ public:
           reinterpret_cast<SelectBuilder<TObj, T, TIterable, TNewArgs...>*>(&setSelectBuilder),
           iterableParameters...);
 
-        std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<Queryable<T, TIterable, TNewArgs...>>(setSelectBuilder.Get()));
+        std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(setSelectBuilder.Get()));
         // move constructor so no new memory is created
-        QueryableWrapper<T, TIterable, TNewArgs...> newQueryableWrapper(std::move(newQueryble));
+        Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newQueryble));
 
         // TODO --> determine if reseting is undesireable
         this->queryable.reset();
 
         // return uses move constructor so no new memory is created
-        return newQueryableWrapper;
+        return newQueryable;
         break;
       }
       case QueryableType::Vector:
@@ -102,26 +102,25 @@ public:
           reinterpret_cast<SelectBuilder<TObj, T, TIterable, TNewArgs...>*>(&selectBuilder),
           iterableParameters...);
 
-        std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<Queryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
+        std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
         // move constructor so no new memory is created
-        QueryableWrapper<T, TIterable, TNewArgs...> newQueryableWrapper(std::move(newQueryble));
+        Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newQueryble));
 
         // TODO --> determine if reseting is undesireable
         this->queryable.reset();
 
         // return uses move constructor so no new memory is created
-        return newQueryableWrapper;
+        return newQueryable;
         break;
       }
       default:
         break;
     }
 
-
     return {};
   }
 
-  inline QueryableWrapper<TObj, TIterable, TArgs...> Where(std::function<bool(const TObj &)> condition)
+  inline Queryable<TObj, TIterable, TArgs...> Where(std::function<bool(const TObj &)> condition)
   {
     this->queryable->Where(condition);
     return *this;

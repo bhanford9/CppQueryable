@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "Queryable/Queryable.hpp"
 #include "Queryable/Queryables/VectorQueryable.hpp"
 #include "Queryable/QueryableData/IQueryableData.hpp"
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.hpp"
@@ -16,6 +15,7 @@
 #include "Queryable/QueryableData/QueryableData.hpp"
 #include "Queryable/QueryBuilder.hpp"
 #include "Queryable/QueryableType.hpp"
+#include "Queryable/Queryable.hpp"
 #include "Queryable/QueryableWrapper.hpp"
 #include "DataStructures/People.hpp"
 #include "DataStructures/PersonLibrary.hpp"
@@ -30,24 +30,24 @@ int main()
 
 
   PersonLibrary personLibrary;
-  VectorQueryable<Person> people(personLibrary.GetPeople());
+  VectorInternalQueryable<Person> people(personLibrary.GetPeople());
 
 
   std::vector<uint> startingInput;
   std::vector<uint> evens;
-  VectorQueryable<uint> queryable;
-  VectorQueryable<uint> queryableEvens;
+  VectorInternalQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryableEvens;
   startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
   evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
 
   queryable = BuildQueryable(startingInput);
   queryableEvens = BuildQueryable(evens);
 
-  // Queryable<uint, std::vector> * meh = reinterpret_cast<Queryable<uint, std::vector>*>(&queryable);
+  // InternalQueryable<uint, std::vector> * meh = reinterpret_cast<InternalQueryable<uint, std::vector>*>(&queryable);
 
-  // std::shared_ptr<Queryable<uint, std::vector>> ptr = std::make_shared<Queryable<uint, std::vector>>(*meh);
+  // std::shared_ptr<InternalQueryable<uint, std::vector>> ptr = std::make_shared<InternalQueryable<uint, std::vector>>(*meh);
   std::set<uint> setItems = queryable.ToSet();
-  QueryableWrapper<uint, std::set> blah(std::move(setItems));
+  Queryable<uint, std::set> blah(std::move(setItems));
   std::cout << "starting test. set size: " << setItems.size() << std::endl;
   blah
     .Where([](uint num) { return num % 2; })
@@ -60,9 +60,9 @@ int main()
   // queryable.ForEach([](uint value) { std::cout << value << ", "; });
   // std::cout << std::endl;
 
-  // ListQueryable<uint> local = BuildQueryable<uint>(queryable.ToList());
+  // ListInternalQueryable<uint> local = BuildInternalQueryable<uint>(queryable.ToList());
   // std::cout << "local made\n\n" << std::endl;
-  // ListQueryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
+  // ListInternalQueryable<uint> mevens = BuildInternalQueryable<uint>(queryableEvens.ToList());
   // std::cout << "mevens made\n\n" << std::endl;
   // auto result = local.Where([](uint value) { return value > 10; });
   // std::vector<uint> vectorResult = result.ToVector();
@@ -72,14 +72,14 @@ int main()
   // std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };
   // std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };
   //
-  // Queryable<uint> local(numbers);
+  // InternalQueryable<uint> local(numbers);
   // local.Where(conditioner).ForEach([](uint value) { std::cout << "where value: " << value << std::endl; });
   // local.Select<double>(selector).ForEach([](double value) { std::cout << "select value: " << value << std::endl; });
   //
   // std::vector<Person> people(PersonLibrary().GetPeople());
   //
-  // Queryable<Person> queryablePeople(people);
-  // Queryable<std::string> queryableNames = queryablePeople
+  // InternalQueryable<Person> queryablePeople(people);
+  // InternalQueryable<std::string> queryableNames = queryablePeople
   //   .Select<std::string>([](Person p) { return p.GetName(); });
   //
   // queryableNames.ForEach([](std::string name) { std::cout << "name: " << name << std::endl; });

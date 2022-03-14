@@ -23,8 +23,8 @@ class ExceptFunctionalTest : public ::testing::Test
 protected:
   std::vector<uint> startingInput;
   std::vector<uint> evens;
-  Queryable<uint> queryable;
-  Queryable<uint> queryableEvens;
+  InternalQueryable<uint> queryable;
+  InternalQueryable<uint> queryableEvens;
   int oddCount = 5;
 
   void SetUp() override
@@ -40,33 +40,33 @@ protected:
 
 TEST_F(ExceptFunctionalTest, ExceptLocalEmptyInputEmpty)
 {
-  Queryable<Person> local;
-  Queryable<Person> & result = local.Except(local);
+  InternalQueryable<Person> local;
+  InternalQueryable<Person> & result = local.Except(local);
 
   ASSERT_EQ(0, result.Count());
 }
 
 TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmpty)
 {
-  Queryable<uint> local;
-  Queryable<uint> & result = this->queryable.Except(local);
+  InternalQueryable<uint> local;
+  InternalQueryable<uint> & result = this->queryable.Except(local);
 
   ASSERT_EQ(this->startingInput.size(), result.Count());
 }
 
 TEST_F(ExceptFunctionalTest, ExceptLocalEmptyInputFull)
 {
-  Queryable<uint> local;
-  Queryable<uint> & result = local.Except(this->queryable);
+  InternalQueryable<uint> local;
+  InternalQueryable<uint> & result = local.Except(this->queryable);
 
   ASSERT_EQ(0, result.Count());
 }
 
 TEST_F(ExceptFunctionalTest, ExceptAllSame)
 {
-  Queryable<uint> a = BuildQueryable<uint>(std::vector<uint>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
-  Queryable<uint> b = BuildQueryable<uint>(std::vector<uint>({ 2, 5 }));
-  Queryable<uint> & result = a.Except(b);
+  InternalQueryable<uint> a = BuildInternalQueryable<uint>(std::vector<uint>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
+  InternalQueryable<uint> b = BuildInternalQueryable<uint>(std::vector<uint>({ 2, 5 }));
+  InternalQueryable<uint> & result = a.Except(b);
 
   ASSERT_EQ(0, result.Count());
 }
@@ -74,8 +74,8 @@ TEST_F(ExceptFunctionalTest, ExceptAllSame)
 TEST_F(ExceptFunctionalTest, ExceptCustomCompare)
 {
   PersonLibrary personLibrary;
-  Queryable<Person> local = BuildQueryable<Person>(personLibrary.GetPeople());
-  Queryable<Person> exceptions = BuildQueryable<Person>(std::vector<Person>({
+  InternalQueryable<Person> local = BuildInternalQueryable<Person>(personLibrary.GetPeople());
+  InternalQueryable<Person> exceptions = BuildInternalQueryable<Person>(std::vector<Person>({
     Person(33, "Person 4", 12, 60, Gender::Male),
     Person(99, "Person 6", 14, 62, Gender::Female)
   }));
@@ -83,7 +83,7 @@ TEST_F(ExceptFunctionalTest, ExceptCustomCompare)
   int originalLength = local.Count();
   int afterExceptLength = originalLength - exceptions.Count();
 
-  Queryable<Person> & result = local.Except(
+  InternalQueryable<Person> & result = local.Except(
     exceptions,
     [](Person a, Person b) { return a.GetName() < b.GetName(); });
 
@@ -97,9 +97,9 @@ TEST_F(ExceptFunctionalTest, ExceptCustomCompare)
 
 TEST_F(ExceptFunctionalTest, ExceptDequeDequeDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -107,9 +107,9 @@ TEST_F(ExceptFunctionalTest, ExceptDequeDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptDequeListDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToList());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToList());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -117,9 +117,9 @@ TEST_F(ExceptFunctionalTest, ExceptDequeListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptDequeMultiSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToMultiSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToMultiSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -127,9 +127,9 @@ TEST_F(ExceptFunctionalTest, ExceptDequeMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptDequeSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -137,9 +137,9 @@ TEST_F(ExceptFunctionalTest, ExceptDequeSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptDequeVectorDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToVector());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToVector());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -147,9 +147,9 @@ TEST_F(ExceptFunctionalTest, ExceptDequeVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptListDequeDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::List);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -157,9 +157,9 @@ TEST_F(ExceptFunctionalTest, ExceptListDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptListMultiSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToMultiSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToMultiSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::List);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -167,9 +167,9 @@ TEST_F(ExceptFunctionalTest, ExceptListMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptListSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::List);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -177,9 +177,9 @@ TEST_F(ExceptFunctionalTest, ExceptListSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptListVectorDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToVector());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToVector());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::List);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -187,9 +187,9 @@ TEST_F(ExceptFunctionalTest, ExceptListVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptMultiSetDequeDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -197,9 +197,9 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptMultiSetListDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToList());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToList());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -207,9 +207,9 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptMultiSetSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -217,9 +217,9 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptMultiSetVectorDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToVector());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToVector());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::MultiSet);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -227,9 +227,9 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptVectorDequeDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Vector);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -237,9 +237,9 @@ TEST_F(ExceptFunctionalTest, ExceptVectorDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptVectorListDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToList());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToList());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Vector);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -247,9 +247,9 @@ TEST_F(ExceptFunctionalTest, ExceptVectorListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptVectorMultiSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToMultiSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToMultiSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Vector);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -257,9 +257,9 @@ TEST_F(ExceptFunctionalTest, ExceptVectorMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptVectorSetDefault)
 {
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToSet());
-  Queryable<uint> & result = local.Except(evens);
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToSet());
+  InternalQueryable<uint> & result = local.Except(evens);
 
   ASSERT_TRUE(result.GetType() == QueryableType::Vector);
   ASSERT_EQ(this->oddCount, result.Count());
@@ -268,9 +268,9 @@ TEST_F(ExceptFunctionalTest, ExceptVectorSetDefault)
 TEST_F(ExceptFunctionalTest, WhereExcept)
 {
   int oddsOverTen = 2;
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local
     .Where([](uint value) { return value > 10; })
     .Except(evens);
 
@@ -282,9 +282,9 @@ TEST_F(ExceptFunctionalTest, WhereExcept)
 TEST_F(ExceptFunctionalTest, ExceptWhere)
 {
   int oddsUnderTen = 3;
-  Queryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
-  Queryable<uint> evens = BuildQueryable<uint>(this->queryableEvens.ToDeque());
-  Queryable<uint> & result = local
+  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> evens = BuildInternalQueryable<uint>(this->queryableEvens.ToDeque());
+  InternalQueryable<uint> & result = local
     .Except(evens)
     .Where([](uint value) { return value < 10; });
 

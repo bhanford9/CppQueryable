@@ -8,33 +8,33 @@ template<
   template<typename, typename ...> typename TIterable,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class SortedQueryable;
+class SortedInternalQueryable;
 
 template<
   typename TObj,
   typename TAllocator = std::allocator<TObj>>
-class DequeQueryable;
+class DequeInternalQueryable;
 
 template<
   typename TObj,
   typename TAllocator = std::allocator<TObj>>
-class ListQueryable;
-
-template<
-  typename TObj,
-  typename TLessThan = std::less<TObj>,
-  typename TAllocator = std::allocator<TObj>>
-class MultiSetQueryable;
+class ListInternalQueryable;
 
 template<
   typename TObj,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class SetQueryable;
+class MultiSetInternalQueryable;
+
+template<
+  typename TObj,
+  typename TLessThan = std::less<TObj>,
+  typename TAllocator = std::allocator<TObj>>
+class SetInternalQueryable;
 
 template<
   typename TObj,
   typename TAllocator = std::allocator<TObj>>
-class VectorQueryable;
+class VectorInternalQueryable;
 
 #endif

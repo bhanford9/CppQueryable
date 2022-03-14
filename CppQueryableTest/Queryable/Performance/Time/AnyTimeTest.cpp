@@ -95,7 +95,7 @@ TEST_P(AnyTimeTest, DequeNumberTest)
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -143,7 +143,7 @@ TEST_P(AnyTimeTest, ListNumberTest)
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -195,7 +195,7 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
     data.insert(i);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -247,7 +247,7 @@ TEST_P(AnyTimeTest, SetNumberTest)
     data.insert(i);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -295,7 +295,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -354,7 +354,7 @@ TEST_P(AnyTimeTest, DequePersonTest)
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
 
-  Queryable<Person> local = BuildQueryable(data);
+  InternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -414,7 +414,7 @@ TEST_P(AnyTimeTest, ListPersonTest)
   }
 
 
-  Queryable<Person> local = BuildQueryable(data);
+  InternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -469,7 +469,7 @@ TEST_P(AnyTimeTest, MultiSetPersonTest)
     data.insert(person);
   }
 
-  Queryable<Person> local = BuildQueryable(data);
+  InternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -524,7 +524,7 @@ TEST_P(AnyTimeTest, SetPersonTest)
     data.insert(person);
   }
 
-  Queryable<Person> local = BuildQueryable(data);
+  InternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -583,7 +583,7 @@ TEST_P(AnyTimeTest, VectorPersonTest)
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
 
-  Queryable<Person> local = BuildQueryable(data);
+  InternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()

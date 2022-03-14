@@ -23,7 +23,7 @@ class RangeFunctionalTest : public ::testing::Test
 {
 protected:
   uint expectedRange = 866;
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -35,14 +35,14 @@ protected:
 
 TEST_F(RangeFunctionalTest, RangeUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
   double range = emptyQueryable.Range<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0.0, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeUninitializedDefault)
 {
-  VectorQueryable<Point> emptyQueryable;
+  VectorInternalQueryable<Point> emptyQueryable;
   Point range = emptyQueryable.Range();
   ASSERT_EQ(0.0, range.X);
   ASSERT_EQ(0.0, range.Y);
@@ -51,7 +51,7 @@ TEST_F(RangeFunctionalTest, RangeUninitializedDefault)
 TEST_F(RangeFunctionalTest, RangePoint)
 {
   Point expected(6, -4);
-  VectorQueryable<Point> points = BuildQueryable(std::vector<Point>({
+  VectorInternalQueryable<Point> points = BuildQueryable(std::vector<Point>({
     Point(2, 4),
     Point(3, 5),
     Point(7, 1),
@@ -67,7 +67,7 @@ TEST_F(RangeFunctionalTest, RangePoint)
 TEST_F(RangeFunctionalTest, RangePointDefault)
 {
   Point expected(6, -4);
-  VectorQueryable<Point> points = BuildQueryable(std::vector<Point>({
+  VectorInternalQueryable<Point> points = BuildQueryable(std::vector<Point>({
     Point(2, 4),
     Point(3, 5),
     Point(7, 1),
@@ -82,56 +82,56 @@ TEST_F(RangeFunctionalTest, RangePointDefault)
 
 TEST_F(RangeFunctionalTest, RangeDeque)
 {
-  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   uint range = local.Range<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeDequeDefault)
 {
-  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeList)
 {
-  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   uint range = local.Range<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeListDefault)
 {
-  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeMultiSet)
 {
-  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   uint range = local.Range<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeMultiSetDefault)
 {
-  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeSet)
 {
-  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   uint range = local.Range<uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeSetDefault)
 {
-  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }

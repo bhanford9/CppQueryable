@@ -17,8 +17,8 @@ using namespace QueryBuilder;
 class AllFunctionalTest : public ::testing::Test
 {
 protected:
-  VectorQueryable<uint> queryable;
-  VectorQueryable<std::string> queryableStrings;
+  VectorInternalQueryable<uint> queryable;
+  VectorInternalQueryable<std::string> queryableStrings;
 
   void SetUp() override
   {
@@ -31,7 +31,7 @@ protected:
 
 TEST_F(AllFunctionalTest, AllUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
   bool all = emptyQueryable.All([](Person p) { return p.GetAge() > 10; });
   ASSERT_TRUE(all);
 }
@@ -50,56 +50,56 @@ TEST_F(AllFunctionalTest, AllStringTrue)
 
 TEST_F(AllFunctionalTest, AllDequeFalse)
 {
-  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllDequeTrue)
 {
-  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }
 
 TEST_F(AllFunctionalTest, AllListFalse)
 {
-  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllListTrue)
 {
-  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }
 
 TEST_F(AllFunctionalTest, AllMultiSetFalse)
 {
-  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllMultiSetTrue)
 {
-  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }
 
 TEST_F(AllFunctionalTest, AllSetFalse)
 {
-  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllSetTrue)
 {
-  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }

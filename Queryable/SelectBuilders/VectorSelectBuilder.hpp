@@ -22,10 +22,10 @@ public:
     std::shared_ptr<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>> selectData =
       std::make_shared<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>>(std::move(data), selector);
 
-    std::shared_ptr<VectorQueryable<TCurrent, TAllocator>> vectorQueryable =
-      std::make_shared<VectorQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::Vector);
+    std::shared_ptr<VectorInternalQueryable<TCurrent, TAllocator>> vectorQueryable =
+      std::make_shared<VectorInternalQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::Vector);
 
-    this->selectedQuery = FutureStd::reinterpret_pointer_cast<Queryable<TCurrent, std::vector, TAllocator>>(vectorQueryable);
+    this->selectedQuery = FutureStd::reinterpret_pointer_cast<InternalQueryable<TCurrent, std::vector, TAllocator>>(vectorQueryable);
   }
 };
 

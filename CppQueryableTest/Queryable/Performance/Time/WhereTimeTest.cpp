@@ -44,7 +44,7 @@ TEST_P(WhereTimeTest, DequeNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -91,7 +91,7 @@ TEST_P(WhereTimeTest, DequeNumberCopyToQueryableDequeTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -138,7 +138,7 @@ TEST_P(WhereTimeTest, DequeNumberCopyToDequeTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -187,7 +187,7 @@ TEST_P(WhereTimeTest, ListNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -234,7 +234,7 @@ TEST_P(WhereTimeTest, ListNumberCopyToQueryableListTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -281,7 +281,7 @@ TEST_P(WhereTimeTest, ListNumberCopyToListTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -330,7 +330,7 @@ TEST_P(WhereTimeTest, MultiSetNumberTest)
     data.insert(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -377,7 +377,7 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToQueryableMultiSetTest)
     data.insert(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -424,7 +424,7 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToMultiSetTest)
     data.insert(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -476,7 +476,7 @@ TEST_P(WhereTimeTest, VectorNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -523,7 +523,7 @@ TEST_P(WhereTimeTest, VectorNumberCopyToQueryableVectorTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -570,7 +570,7 @@ TEST_P(WhereTimeTest, VectorNumberCopyToVectorTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  Queryable<uint> local = BuildQueryable(data);
+  InternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()

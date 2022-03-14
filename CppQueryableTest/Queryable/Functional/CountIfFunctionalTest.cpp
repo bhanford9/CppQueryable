@@ -18,7 +18,7 @@ class CountIfFunctionalTest : public ::testing::Test
 protected:
   int expectedEvensWithDuplicates = 7;
   int expectedEvensWithoutDuplicates = 4;
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -35,7 +35,7 @@ protected:
 
 TEST_F(CountIfFunctionalTest, CountIfVectorUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
   ASSERT_EQ(0, emptyQueryable.CountIf([](Person p) { return true; }));
 }
 

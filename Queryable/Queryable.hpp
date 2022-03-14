@@ -63,7 +63,7 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class Queryable
+class InternalQueryable
 {
 protected:
   // TODO --> consider making this unique and having all of the
@@ -121,20 +121,20 @@ protected:
 public:
 
   // BEGIN CONSTRUCTORS
-  Queryable(QueryableType type = QueryableType::Vector)
+  InternalQueryable(QueryableType type = QueryableType::Vector)
   {
     this->type = type;
   }
 
-  Queryable(const Queryable<TObj, TIterable, TArgs...>& queryable)
-    : Queryable(queryable.type)
+  InternalQueryable(const InternalQueryable<TObj, TIterable, TArgs...>& queryable)
+    : InternalQueryable(queryable.type)
   {
     this->persistentContainer = queryable.persistentContainer;
     this->type = queryable.type;
     this->items = queryable.items;
   }
 
-  Queryable(
+  InternalQueryable(
     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && queryableData,
     QueryableType type)
   {
@@ -142,7 +142,7 @@ public:
     this->type = type;
   }
 
-  Queryable(const TIterable<TObj, TArgs...> & iterable);
+  InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
   // END CONSTRUCTORS
 
   QueryableType GetType()
@@ -227,7 +227,7 @@ public:
 
   // TODO --> determine best way to return
   template<typename TAllocator = std::allocator<TObj>>
-  DequeQueryable<TObj, TAllocator> & ToQueryableDeque()
+  DequeInternalQueryable<TObj, TAllocator> & ToQueryableDeque()
   {
     std::deque<TObj, TAllocator> copy = this->ToDeque();
 
@@ -242,7 +242,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  Queryable<TObj, std::list, TAllocator> & ToQueryableList()
+  InternalQueryable<TObj, std::list, TAllocator> & ToQueryableList()
   {
     std::list<TObj, TAllocator> copy = this->ToList();
 
@@ -257,7 +257,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  Queryable<TObj, std::multiset, TLessThan, TAllocator> & ToQueryableMultiSet()
+  InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & ToQueryableMultiSet()
   {
     std::multiset<TObj, TLessThan, TAllocator> copy = this->ToMultiSet();
     this->items = std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(copy);
@@ -267,7 +267,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  Queryable<TObj, std::set, TLessThan, TAllocator> & ToQueryableSet()
+  InternalQueryable<TObj, std::set, TLessThan, TAllocator> & ToQueryableSet()
   {
     std::set<TObj, std::function<bool(TObj, TObj)>> copy = this->ToSet();
     this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(copy);
@@ -277,7 +277,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  Queryable<TObj, std::vector, TAllocator> & ToQueryableVector()
+  InternalQueryable<TObj, std::vector, TAllocator> & ToQueryableVector()
   {
     std::vector<TObj> copy = this->ToVector();
 
@@ -352,7 +352,7 @@ public:
   // }
 
   // TODO --> drop this down to child classes
-  virtual Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition) = 0;
+  virtual InternalQueryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition) = 0;
   // {
   //   switch (this->type)
   //   {
@@ -380,9 +380,9 @@ public:
   //   return *this;
   // }
 
-  // Queryable<TObj, TIterable, TArgs...> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
+  // InternalQueryable<TObj, TIterable, TArgs...> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
   // {
-  //   Queryable<TObj, TIterable, TArgs...> returnValue(returnType);
+  //   InternalQueryable<TObj, TIterable, TArgs...> returnValue(returnType);
   //
   //   for (TObj item : *this->items.get())
   //   {
@@ -443,7 +443,7 @@ public:
 
   // Need to get Take and Skip methods into deferred actions similar to the
   // way that Where and Select work
-  // Queryable<TObj> Take(int count)
+  // InternalQueryable<TObj> Take(int count)
   // {
   //   int i = 0;
   //   std::vector<TObj> copy = this->ToVector();
@@ -459,7 +459,7 @@ public:
   //   }
   // }
   //
-  // Queryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
+  // InternalQueryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
   // {
   //   // consider optimization of doing this without duplicate vector
   //   // may be better/worse depending on container size
@@ -481,7 +481,7 @@ public:
   //   return this;
   // }
   //
-  // Queryable<TObj>* Skip(int count)
+  // InternalQueryable<TObj>* Skip(int count)
   // {
   //   if (count < 0)
   //   {
@@ -509,7 +509,7 @@ public:
   //   return this;
   // }
   //
-  // Queryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
+  // InternalQueryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
   // {
   //   // the skip and take methods need to be thought through
   //   // to come up with better space/time complexities
@@ -525,7 +525,7 @@ public:
   //     toDelete++;
   //   }
   //
-  //   Queryable<TObj>* retval = this->Skip(toDelete);
+  //   InternalQueryable<TObj>* retval = this->Skip(toDelete);
   //   return retval;
   // }
 
@@ -587,7 +587,7 @@ public:
   // unwanted items from being added without needing to immediately apply the
   // where condition to the rest of the inital collection
   // template<template<typename...> typename TContainer>
-  // Queryable<TObj, TContainer>* Concat(TContainer<TObj> collection, bool preserveFilter = false)
+  // InternalQueryable<TObj, TContainer>* Concat(TContainer<TObj> collection, bool preserveFilter = false)
   // {
   //   for (TObj obj : collection)
   //   {
@@ -1001,7 +1001,7 @@ public:
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   3. all other types use their built in optimized sorting algorithms
   //   4. need to verify that the Queryable move constructor is always used for returning
-  virtual Queryable<TObj, TIterable, TArgs...> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) = 0;
+  virtual InternalQueryable<TObj, TIterable, TArgs...> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) = 0;
 
   // TODO --> using a template instead of std::function is probably faster
   // These are dangerous methods due to not having an Allocator specified at the
@@ -1009,7 +1009,7 @@ public:
   template<
     typename T = TObj,
     typename TLessThan = std::less<T>>
-  Queryable<TObj, TIterable, TArgs...> & OrderBy(
+  InternalQueryable<TObj, TIterable, TArgs...> & OrderBy(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
@@ -1019,17 +1019,17 @@ public:
   template<
     typename T = TObj,
     typename TLessThan = std::less<T>>
-  Queryable<TObj, TIterable, TArgs...> & OrderByDescending(
+  InternalQueryable<TObj, TIterable, TArgs...> & OrderByDescending(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
-    Queryable<TObj, TIterable, TArgs...> & retVal =
+    InternalQueryable<TObj, TIterable, TArgs...> & retVal =
       this->Sort([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); });
     return retVal;
   }
 
   template<typename TLessThan, typename TAllocator>
-  SortedQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
+  SortedInternalQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
   {
     std::shared_ptr<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>> sorter;
 
@@ -1061,7 +1061,7 @@ public:
     typename T = TObj,
     typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<TObj>>
-  SortedQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderBy(
+  SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderBy(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
@@ -1072,7 +1072,7 @@ public:
     typename T = TObj,
     typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<TObj>>
-  SortedQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderByDescending(
+  SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderByDescending(
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
@@ -1081,8 +1081,8 @@ public:
 
   // TODO --> is returing it ordered based on the given comparator okay?
   //          should having an implementation that doesn't change order be done?
-  // Queryable<TObj> & Except(
-  //   const Queryable<TObj> & collection,
+  // InternalQueryable<TObj> & Except(
+  //   const InternalQueryable<TObj> & collection,
   //   std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
   // {
   //   // TODO --> if  nXm < max(nlog(n), mlog(m)) then sorting is not worth it
@@ -1179,8 +1179,8 @@ public:
   //   typename TJoinObj,
   //   typename TJoinOn,
   //   typename TResult>
-  // Queryable<TResult> & Join(
-  //   Queryable<TJoinObj> & collection,
+  // InternalQueryable<TResult> & Join(
+  //   InternalQueryable<TJoinObj> & collection,
   //   std::function<TJoinOn(TObj)> getLocalJoinOn,
   //   std::function<TJoinOn(TJoinObj)> getInputJoinOn,
   //   std::function<TResult(TObj, TJoinObj)> createFrom,
@@ -1188,7 +1188,7 @@ public:
   //   QueryableType returnType = QueryableType::Default)
   // {
   //   static_assert(is_less_comparable<TJoinOn>::value, "Type must be 'less than' comparable");
-  //   typedef Queryable<TResult> TReturn;
+  //   typedef InternalQueryable<TResult> TReturn;
   //
   //   QueryableType type = returnType == QueryableType::Default ? this->type : returnType;
   //   std::shared_ptr<TReturn> data = std::make_shared<TReturn>(type, outCompare);
@@ -1250,10 +1250,10 @@ public:
   // }
 
   // template<typename TOut>
-  // Queryable<TOut>* Cast()
+  // InternalQueryable<TOut>* Cast()
   // {
   //   // TODO --> make this a deferred action
-  //   typedef Queryable<TOut> TReturn;
+  //   typedef InternalQueryable<TOut> TReturn;
   //   std::shared_ptr<TReturn> data = std::make_shared<TReturn>(this->type);
   //   this->persistentContainer.Set(data);
   //   std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
@@ -1268,14 +1268,14 @@ public:
 
 
 //   template<typename TKey, typename TData = TObj>
-//   Queryable<Group<TKey, TObj>> GroupBy(
+//   InternalQueryable<Group<TKey, TObj>> GroupBy(
 //     std::function<TKey(TObj)> getKey,
 //     QueryableType storageType = QueryableType::Default,
 //     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
 //     std::function<bool(TData, TData)> dataCompare = [](TData a, TData b) { return a < b; })
 //   {
 //     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-//     Queryable<Group<TKey, TObj>> queryableGroups(type);
+//     InternalQueryable<Group<TKey, TObj>> queryableGroups(type);
 //
 //     for (TObj item : *this->items.get())
 //     {

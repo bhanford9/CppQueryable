@@ -17,11 +17,11 @@ class AggregateFunctionalTest : public ::testing::Test
 {
 protected:
   PersonLibrary personLibrary;
-  Queryable<Person> people;
+  InternalQueryable<Person> people;
 
   void SetUp() override
   {
-    this->people = Queryable<Person>(this->personLibrary.GetPeople());
+    this->people = InternalQueryable<Person>(this->personLibrary.GetPeople());
   }
 
   void TearDown() override {}
@@ -29,7 +29,7 @@ protected:
 
 TEST_F(AggregateFunctionalTest, AggregateUninitialized)
 {
-  Queryable<Person> local;
+  InternalQueryable<Person> local;
   std::string result = local.Aggregate<std::string>([](std::string s, Person p)
   {
     return s + ", " + p.GetName();
@@ -41,7 +41,7 @@ TEST_F(AggregateFunctionalTest, AggregateUninitialized)
 TEST_F(AggregateFunctionalTest, AggregateSeededUninitialized)
 {
   std::string expected = "Hello World!";
-  Queryable<Person> local;
+  InternalQueryable<Person> local;
   std::string result = local.Aggregate<std::string>([](std::string s, Person p)
   {
     return s + ", " + p.GetName();
@@ -54,7 +54,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededUninitialized)
 TEST_F(AggregateFunctionalTest, AggregateFinalizerUninitialized)
 {
   std::string expected = "Names: ";
-  Queryable<Person> local;
+  InternalQueryable<Person> local;
   std::string result = local.Aggregate<std::string, std::string>(
     [](std::string s, Person p) { return s + ", " + p.GetName(); },
     [&](std::string output) -> std::string { return expected + output; });
@@ -67,7 +67,7 @@ TEST_F(AggregateFunctionalTest, AggregateFinalizerSeededUninitialized)
   std::string expected = "Names: Hello World!";
   std::string finalizer = "Names: ";
   std::string seed = "Hello World!";
-  Queryable<Person> local;
+  InternalQueryable<Person> local;
   std::string result = local.Aggregate<std::string, std::string>(
     [](std::string s, Person p) { return s + ", " + p.GetName(); },
     [&](std::string output) -> std::string { return finalizer + seed; },
@@ -79,7 +79,7 @@ TEST_F(AggregateFunctionalTest, AggregateFinalizerSeededUninitialized)
 TEST_F(AggregateFunctionalTest, AggregateDeque)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToDeque());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string>([](std::string s, Person p)
@@ -96,7 +96,7 @@ TEST_F(AggregateFunctionalTest, AggregateDeque)
 TEST_F(AggregateFunctionalTest, AggregateList)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
-  Queryable<Person> local = BuildQueryable(this->people.ToList());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToList());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string>([](std::string s, Person p)
@@ -113,7 +113,7 @@ TEST_F(AggregateFunctionalTest, AggregateList)
 TEST_F(AggregateFunctionalTest, AggregateMultiSet)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
-  Queryable<Person> local = BuildQueryable(this->people.ToMultiSet());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToMultiSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string>([](std::string s, Person p)
@@ -130,7 +130,7 @@ TEST_F(AggregateFunctionalTest, AggregateMultiSet)
 TEST_F(AggregateFunctionalTest, AggregateSet)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
-  Queryable<Person> local = BuildQueryable(this->people.ToSet());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string>([](std::string s, Person p)
@@ -147,7 +147,7 @@ TEST_F(AggregateFunctionalTest, AggregateSet)
 TEST_F(AggregateFunctionalTest, AggregateVector)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
-  Queryable<Person> local = BuildQueryable(this->people.ToVector());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToVector());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string>([](std::string s, Person p)
@@ -166,7 +166,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerDeque)
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
-  Queryable<Person> local = BuildQueryable(this->people.ToDeque());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToDeque());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string, std::string>(
@@ -191,7 +191,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerList)
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
-  Queryable<Person> local = BuildQueryable(this->people.ToList());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToList());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string, std::string>([](std::string s, Person p)
@@ -215,7 +215,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerMultiSet)
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
-  Queryable<Person> local = BuildQueryable(this->people.ToMultiSet());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToMultiSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string, std::string>([](std::string s, Person p)
@@ -239,7 +239,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerSet)
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
-  Queryable<Person> local = BuildQueryable(this->people.ToSet());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToSet());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string, std::string>([](std::string s, Person p)
@@ -263,7 +263,7 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerVector)
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
-  Queryable<Person> local = BuildQueryable(this->people.ToVector());
+  InternalQueryable<Person> local = BuildQueryable(this->people.ToVector());
   std::string result = local
     .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
     .Aggregate<std::string, std::string>([](std::string s, Person p)

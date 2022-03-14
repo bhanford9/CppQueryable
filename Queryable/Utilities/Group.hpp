@@ -121,7 +121,7 @@ public:
     return this->GetData().ToVector();
   }
 
-  // virtual Queryable<TData> ToQueryable()
+  // virtual InternalQueryable<TData> ToQueryable()
   // {
   //   return this->internalGroup.get()->ToQueryable();
   // }

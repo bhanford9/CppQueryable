@@ -7,6 +7,6 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class Queryable;
+class InternalQueryable;
 
 #endif

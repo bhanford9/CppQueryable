@@ -28,33 +28,33 @@
 namespace QueryBuilder
 {
   template<typename T, typename TAllocator = std::allocator<T>>
-  static VectorQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
+  static VectorInternalQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
   {
-    return VectorQueryable<T, TAllocator>(items);
+    return VectorInternalQueryable<T, TAllocator>(items);
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  static SetQueryable<T, TLessThan, TAllocator> BuildQueryable(std::set<T, TLessThan, TAllocator> items)
+  static SetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::set<T, TLessThan, TAllocator> items)
   {
-    return SetQueryable<T, TLessThan, TAllocator>(items);
+    return SetInternalQueryable<T, TLessThan, TAllocator>(items);
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  static MultiSetQueryable<T, TLessThan, TAllocator> BuildQueryable(std::multiset<T, TLessThan, TAllocator> items)
+  static MultiSetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::multiset<T, TLessThan, TAllocator> items)
   {
-    return MultiSetQueryable<T, TLessThan, TAllocator>(items);
+    return MultiSetInternalQueryable<T, TLessThan, TAllocator>(items);
   }
 
   template<typename T, typename TAllocator = std::allocator<T>>
-  static ListQueryable<T, TAllocator> BuildQueryable(std::list<T, TAllocator> items)
+  static ListInternalQueryable<T, TAllocator> BuildQueryable(std::list<T, TAllocator> items)
   {
-    return ListQueryable<T, TAllocator>(items);
+    return ListInternalQueryable<T, TAllocator>(items);
   }
 
   template<typename T, typename TAllocator = std::allocator<T>>
-  static DequeQueryable<T, TAllocator> BuildQueryable(std::deque<T, TAllocator> items)
+  static DequeInternalQueryable<T, TAllocator> BuildQueryable(std::deque<T, TAllocator> items)
   {
-    return DequeQueryable<T, TAllocator>(items);
+    return DequeInternalQueryable<T, TAllocator>(items);
   }
 };
 

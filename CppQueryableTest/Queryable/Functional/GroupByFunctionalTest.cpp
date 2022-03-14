@@ -30,8 +30,8 @@ class GroupByFunctionalTest : public ::testing::Test
 protected:
   PersonLibrary personLibrary;
   AnimalLibrary animalLibrary;
-  Queryable<Person> people;
-  Queryable<Animal> animals;
+  InternalQueryable<Person> people;
+  InternalQueryable<Animal> animals;
   std::vector<PersonAndPet> petOwners;
 
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
@@ -45,8 +45,8 @@ protected:
 
   void SetUp() override
   {
-    this->people = Queryable<Person>(this->personLibrary.GetPeople());
-    this->animals = Queryable<Animal>(this->animalLibrary.GetAnimals());
+    this->people = InternalQueryable<Person>(this->personLibrary.GetPeople());
+    this->animals = InternalQueryable<Animal>(this->animalLibrary.GetAnimals());
     this->petOwners = PersonAndPetLibrary().GetPetOwners();
   }
 
@@ -55,11 +55,11 @@ protected:
 
 TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
+  InternalQueryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -94,11 +94,11 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableList()
+  InternalQueryable<TGenderPerson> genderGroups = this->people.ToQueryableList()
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -133,12 +133,12 @@ TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 {
-  Queryable<TGenderPerson>  genderGroups = this->people.ToQueryableMultiSet()
+  InternalQueryable<TGenderPerson>  genderGroups = this->people.ToQueryableMultiSet()
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males.Sort();
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females.Sort();
 
@@ -174,12 +174,12 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 {
-  Queryable<TGenderPerson>  genderGroups = this->people.ToQueryableSet()
+  InternalQueryable<TGenderPerson>  genderGroups = this->people.ToQueryableSet()
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males = males.ToQueryableSet();
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females = females.ToQueryableSet();
 
@@ -215,11 +215,11 @@ TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 {
-  Queryable<TGenderPerson>  genderGroups = this->people
+  InternalQueryable<TGenderPerson>  genderGroups = this->people
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -254,16 +254,16 @@ TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people
+  InternalQueryable<TGenderPerson> genderGroups = this->people
     .GroupBy<Gender, Person>(
         [](Person p) { return p.GetGender(); },
         QueryableType::Vector,
         [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; },
         [](Person a, Person b) { return a < b;});
 
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -300,7 +300,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 {
   typedef Group<void*, Person> TVoidGroup;
-  Queryable<TVoidGroup> voidGroups = this->people
+  InternalQueryable<TVoidGroup> voidGroups = this->people
     .GroupBy<void*>([](Person p) { return (void*)NULL; });
 
   ASSERT_EQ(1, voidGroups.Count());
@@ -320,13 +320,13 @@ TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 
 TEST_F(GroupByFunctionalTest, DequeToListStorageTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
+  InternalQueryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
     .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::List);
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -362,14 +362,14 @@ TEST_F(GroupByFunctionalTest, DequeToListStorageTest)
 
 TEST_F(GroupByFunctionalTest, DequeToMultiSetStorageTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
+  InternalQueryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
     .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::MultiSet);
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males.Sort();
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females.Sort();
 
@@ -406,14 +406,14 @@ TEST_F(GroupByFunctionalTest, DequeToMultiSetStorageTest)
 
 TEST_F(GroupByFunctionalTest, DequeToSetStorageTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
+  InternalQueryable<TGenderPerson> genderGroups = this->people.ToQueryableDeque()
     .GroupBy<Gender>(
       [](Person p) { return p.GetGender(); },
       QueryableType::Set);
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males = males.ToQueryableSet();
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   females = females.ToQueryableSet();
 
@@ -450,17 +450,17 @@ TEST_F(GroupByFunctionalTest, DequeToSetStorageTest)
 
 TEST_F(GroupByFunctionalTest, CustomDataCompareTest)
 {
-  Queryable<TGenderPerson> genderGroups = this->people
+  InternalQueryable<TGenderPerson> genderGroups = this->people
     .GroupBy<Gender, Person>(
         [](Person p) { return p.GetGender(); },
         QueryableType::MultiSet,
         [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; },
         [](Person a, Person b) { return a.GetAge() < b.GetAge(); });
 
-  Queryable<Person> males = this->people
+  InternalQueryable<Person> males = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Male; });
   males.OrderBy<double>([](Person p) { return p.GetAge(); });
-  Queryable<Person> females = this->people
+  InternalQueryable<Person> females = this->people
     .WhereCopy([](Person p) { return p.GetGender() == Gender::Female; });
   males.OrderBy<double>([](Person p) { return p.GetAge(); });
 
@@ -502,12 +502,12 @@ TEST_F(GroupByFunctionalTest, CustomDataCompareTest)
 TEST_F(GroupByFunctionalTest, GroupByWhereTest)
 {
   typedef Group<double, Person> TAgePerson;
-  Queryable<TAgePerson> ageGroupsOverThirty = this->people
+  InternalQueryable<TAgePerson> ageGroupsOverThirty = this->people
     .GroupBy<double>([](Person p) { return p.GetAge(); })
     .WhereCopy([](TAgePerson group) { return group.GetKey() > 30; });
 
-  Queryable<Person> people2 = BuildQueryable(this->people.ToVector());
-  Queryable<TAgePerson> overThirtyAgeGroups = people2
+  InternalQueryable<Person> people2 = BuildQueryable(this->people.ToVector());
+  InternalQueryable<TAgePerson> overThirtyAgeGroups = people2
     .Where([](Person person) { return person.GetAge() > 30; })
     .GroupBy<double>([](Person p) { return p.GetAge(); });
 

@@ -18,7 +18,7 @@ class CountFunctionalTest : public ::testing::Test
 protected:
   uint expectedWithDuplicates = 12;
   uint expectedWithoutDuplicates = 8;
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -30,7 +30,7 @@ protected:
 
 TEST_F(CountFunctionalTest, CountVectorUninitialized)
 {
-  // Queryable<Person> emptyQueryable;
+  // InternalQueryable<Person> emptyQueryable;
   // ASSERT_EQ(0, emptyQueryable.Count());
 }
 

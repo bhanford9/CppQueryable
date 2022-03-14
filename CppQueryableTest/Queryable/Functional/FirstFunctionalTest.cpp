@@ -26,7 +26,7 @@ protected:
   uint expectedUnorderedOver40 = 76;
   uint expectedOrderedOver40 = 45;
   uint threshold = 40;
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -38,7 +38,7 @@ protected:
 
 TEST_F(FirstFunctionalTest, FirstVectorUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
 
   try
   {
@@ -58,31 +58,31 @@ TEST_F(FirstFunctionalTest, FirstVector)
 
 TEST_F(FirstFunctionalTest, FirstSet)
 {
-  uint value = SetQueryable<uint>(this->queryable.ToSet()).First();
+  uint value = SetInternalQueryable<uint>(this->queryable.ToSet()).First();
   ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstMultiSet)
 {
-  uint value = MultiSetQueryable<uint>(this->queryable.ToMultiSet()).First();
+  uint value = MultiSetInternalQueryable<uint>(this->queryable.ToMultiSet()).First();
   ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstDeque)
 {
-  uint value = DequeQueryable<uint>(this->queryable.ToDeque()).First();
+  uint value = DequeInternalQueryable<uint>(this->queryable.ToDeque()).First();
   ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstList)
 {
-  uint value = ListQueryable<uint>(this->queryable.ToList()).First();
+  uint value = ListInternalQueryable<uint>(this->queryable.ToList()).First();
   ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereVectorUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
 
   try
   {
@@ -114,28 +114,28 @@ TEST_F(FirstFunctionalTest, FirstWhereVector)
 
 TEST_F(FirstFunctionalTest, FirstWhereSet)
 {
-  uint value = SetQueryable<uint>(this->queryable.ToSet())
+  uint value = SetInternalQueryable<uint>(this->queryable.ToSet())
     .First([&](uint value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereMultiSet)
 {
-  uint value = MultiSetQueryable<uint>(this->queryable.ToMultiSet())
+  uint value = MultiSetInternalQueryable<uint>(this->queryable.ToMultiSet())
     .First([&](uint value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereDeque)
 {
-  uint value = DequeQueryable<uint>(this->queryable.ToDeque())
+  uint value = DequeInternalQueryable<uint>(this->queryable.ToDeque())
     .First([&](uint value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereList)
 {
-  uint value = ListQueryable<uint>(this->queryable.ToList())
+  uint value = ListInternalQueryable<uint>(this->queryable.ToList())
     .First([&](uint value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
 }

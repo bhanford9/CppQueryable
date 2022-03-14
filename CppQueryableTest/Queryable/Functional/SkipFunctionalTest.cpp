@@ -22,15 +22,15 @@
 // {
 // protected:
 //   int SkipCount = 5;
-//   Queryable<uint> queryable;
+//   InternalQueryable<uint> queryable;
 //
 //   void SetUp() override
 //   {
-//     this->queryable = Queryable<uint>(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
+//     this->queryable = InternalQueryable<uint>(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
 //   }
 //
 //   template<typename TObj>
-//   void TestSkip(Queryable<TObj> * localQueryable, int toSkip)
+//   void TestSkip(InternalQueryable<TObj> * localQueryable, int toSkip)
 //   {
 //     std::vector<uint> expected;
 //     for (int i = toSkip; i < localQueryable->Count(); i++)
@@ -38,7 +38,7 @@
 //       expected.push_back(localQueryable->At(i));
 //     }
 //
-//     Queryable<uint> * result = localQueryable->Skip(toSkip);
+//     InternalQueryable<uint> * result = localQueryable->Skip(toSkip);
 //
 //     ASSERT_EQ(expected.size(), result->Count());
 //
@@ -49,7 +49,7 @@
 //   }
 //
 //   template<typename TObj>
-//   void TestSkipNegative(Queryable<TObj> * localQueryable, int toSkip)
+//   void TestSkipNegative(InternalQueryable<TObj> * localQueryable, int toSkip)
 //   {
 //     std::vector<uint> expected;
 //     int endIndex = localQueryable->Count() + toSkip;
@@ -58,7 +58,7 @@
 //       expected.push_back(localQueryable->At(i));
 //     }
 //
-//     Queryable<uint>* result = localQueryable->Skip(toSkip);
+//     InternalQueryable<uint>* result = localQueryable->Skip(toSkip);
 //
 //     ASSERT_EQ(expected.size(), result->Count());
 //
@@ -73,8 +73,8 @@
 //
 // TEST_F(SkipFunctionalTest, SkipVectorUninitialized)
 // {
-//   Queryable<Person> emptyQueryable;
-//   Queryable<Person> * result = emptyQueryable.Skip(this->SkipCount);
+//   InternalQueryable<Person> emptyQueryable;
+//   InternalQueryable<Person> * result = emptyQueryable.Skip(this->SkipCount);
 //
 //   ASSERT_EQ(0, result->Count());
 // }
@@ -91,25 +91,25 @@
 //
 // TEST_F(SkipFunctionalTest, SkipSet)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToSet());
 //   this->TestSkip(&localQueryable, this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipMultiSet)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToMultiSet());
 //   this->TestSkip(&localQueryable, this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipDeque)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToDeque());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToDeque());
 //   this->TestSkip(&localQueryable, this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipList)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToList());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToList());
 //   this->TestSkip(&localQueryable, this->SkipCount);
 // }
 //
@@ -120,25 +120,25 @@
 //
 // TEST_F(SkipFunctionalTest, SkipSetNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToSet());
 //   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipMultiSetNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToMultiSet());
 //   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipDequeNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToDeque());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToDeque());
 //   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 // }
 //
 // TEST_F(SkipFunctionalTest, SkipListNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToList());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToList());
 //   this->TestSkipNegative(&localQueryable, -this->SkipCount);
 // }
 //
@@ -146,8 +146,8 @@
 // {
 //   int skipCount = 3;
 //   int expectedCount = 3;
-//   Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-//   Queryable<uint> * result = queryableVector
+//   InternalQueryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+//   InternalQueryable<uint> * result = queryableVector
 //     .Where([](uint value) { return value % 2 == 0; })
 //     .Skip(skipCount);
 //

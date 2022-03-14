@@ -22,15 +22,15 @@
 // {
 // protected:
 //   int takeCount = 5;
-//   Queryable<uint> queryable;
+//   InternalQueryable<uint> queryable;
 //
 //   void SetUp() override
 //   {
-//     this->queryable = Queryable<uint>(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
+//     this->queryable = InternalQueryable<uint>(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
 //   }
 //
 //   template<typename TObj>
-//   void TestTake(Queryable<TObj> * localQueryable, int toTake)
+//   void TestTake(InternalQueryable<TObj> * localQueryable, int toTake)
 //   {
 //     std::vector<uint> expected;
 //     for (int i = 0; i < toTake; i++)
@@ -43,7 +43,7 @@
 //       expected.push_back(localQueryable->At(i));
 //     }
 //
-//     Queryable<uint> * result = localQueryable->Take(toTake);
+//     InternalQueryable<uint> * result = localQueryable->Take(toTake);
 //
 //     ASSERT_EQ(toTake > result->Count() ? result->Count() : toTake, result->Count());
 //     ASSERT_EQ(expected.size(), result->Count());
@@ -55,7 +55,7 @@
 //   }
 //
 //   template<typename TObj>
-//   void TestTakeNegative(Queryable<TObj> * localQueryable, int toTake)
+//   void TestTakeNegative(InternalQueryable<TObj> * localQueryable, int toTake)
 //   {
 //     std::vector<uint> expected;
 //     int startIndex = localQueryable->Count() + toTake;
@@ -64,7 +64,7 @@
 //       expected.push_back(localQueryable->At(i));
 //     }
 //
-//     Queryable<uint>* result = localQueryable->Take(toTake);
+//     InternalQueryable<uint>* result = localQueryable->Take(toTake);
 //
 //     ASSERT_EQ(-toTake, result->Count());
 //     ASSERT_EQ(expected.size(), result->Count());
@@ -80,8 +80,8 @@
 //
 // TEST_F(TakeFunctionalTest, TakeVectorUninitialized)
 // {
-//   Queryable<Person> emptyQueryable;
-//   Queryable<Person> * result = emptyQueryable.Take(this->takeCount);
+//   InternalQueryable<Person> emptyQueryable;
+//   InternalQueryable<Person> * result = emptyQueryable.Take(this->takeCount);
 //
 //   ASSERT_EQ(0, result->Count());
 // }
@@ -98,25 +98,25 @@
 //
 // TEST_F(TakeFunctionalTest, TakeSet)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToSet());
 //   this->TestTake(&localQueryable, this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeMultiSet)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToMultiSet());
 //   this->TestTake(&localQueryable, this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeDeque)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToDeque());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToDeque());
 //   this->TestTake(&localQueryable, this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeList)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToList());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToList());
 //   this->TestTake(&localQueryable, this->takeCount);
 // }
 //
@@ -127,25 +127,25 @@
 //
 // TEST_F(TakeFunctionalTest, TakeSetNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToSet());
 //   this->TestTakeNegative(&localQueryable, -this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeMultiSetNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToMultiSet());
 //   this->TestTakeNegative(&localQueryable, -this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeDequeNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToDeque());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToDeque());
 //   this->TestTakeNegative(&localQueryable, -this->takeCount);
 // }
 //
 // TEST_F(TakeFunctionalTest, TakeListNegative)
 // {
-//   Queryable<uint> localQueryable(this->queryable.ToList());
+//   InternalQueryable<uint> localQueryable(this->queryable.ToList());
 //   this->TestTakeNegative(&localQueryable, -this->takeCount);
 // }
 //
@@ -153,8 +153,8 @@
 // {
 //   int takeCount = 3;
 //   int expectedCount = 3;
-//   Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-//   Queryable<uint> * result = queryableVector
+//   InternalQueryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+//   InternalQueryable<uint> * result = queryableVector
 //     .Where([](uint value) { return value % 2 == 0; })
 //     .Take(takeCount);
 //

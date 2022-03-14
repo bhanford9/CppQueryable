@@ -6,12 +6,12 @@
 #include "Person.hpp"
 #include "../Queryable/Queryables/VectorQueryable.hpp"
 
-// class People : public VectorQueryable<Person>
+// class People : public VectorInternalQueryable<Person>
 // {
 // public:
 //   People() { }
 //   People(std::vector<Person> people)
-//     : VectorQueryable<Person>(people)
+//     : VectorInternalQueryable<Person>(people)
 //   {
 //   }
 //

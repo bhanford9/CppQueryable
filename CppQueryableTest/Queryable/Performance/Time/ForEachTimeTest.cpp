@@ -44,7 +44,7 @@ TEST_P(ForEachTimeTest, DequeNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  DequeQueryable<uint> local = BuildQueryable(data);
+  DequeInternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
@@ -72,7 +72,7 @@ TEST_P(ForEachTimeTest, ListNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  ListQueryable<uint> local = BuildQueryable(data);
+  ListInternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
@@ -100,7 +100,7 @@ TEST_P(ForEachTimeTest, MultiSetNumberTest)
     data.insert(dataSample[i % 12]);
   }
 
-  MultiSetQueryable<uint> local = BuildQueryable(data);
+  MultiSetInternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
@@ -127,7 +127,7 @@ TEST_P(ForEachTimeTest, SetNumberTest)
     data.insert(i);
   }
 
-  SetQueryable<uint> local = BuildQueryable(data);
+  SetInternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
@@ -155,7 +155,7 @@ TEST_P(ForEachTimeTest, VectorNumberTest)
     data.push_back(dataSample[i % 12]);
   }
 
-  VectorQueryable<uint> local = BuildQueryable(data);
+  VectorInternalQueryable<uint> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
@@ -192,7 +192,7 @@ TEST_P(ForEachTimeTest, DequePersonTest)
     data.push_back(dataSample[i % 6]);
   }
 
-  DequeQueryable<Person> local = BuildQueryable(data);
+  DequeInternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(this->params.GetLoad(), value); }); },
@@ -229,7 +229,7 @@ TEST_P(ForEachTimeTest, ListPersonTest)
     data.push_back(dataSample[i % 6]);
   }
 
-  ListQueryable<Person> local = BuildQueryable(data);
+  ListInternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(this->params.GetLoad(), value); }); },
@@ -266,7 +266,7 @@ TEST_P(ForEachTimeTest, MultiSetPersonTest)
     data.insert(dataSample[i % 6]);
   }
 
-  MultiSetQueryable<Person> local = BuildQueryable(data);
+  MultiSetInternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(this->params.GetLoad(), value); }); },
@@ -303,7 +303,7 @@ TEST_P(ForEachTimeTest, SetPersonTest)
     data.insert(dataSample[i % 6]);
   }
 
-  SetQueryable<Person> local = BuildQueryable(data);
+  SetInternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(this->params.GetLoad(), value); }); },
@@ -340,7 +340,7 @@ TEST_P(ForEachTimeTest, VectorPersonTest)
     data.push_back(dataSample[i % 6]);
   }
 
-  VectorQueryable<Person> local = BuildQueryable(data);
+  VectorInternalQueryable<Person> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(this->params.GetLoad(), value); }); },

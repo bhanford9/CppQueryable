@@ -13,48 +13,48 @@ template<
   typename TObj,
   typename TLessThan,
   typename TAllocator>
-class SetQueryable : public SortedQueryable<TObj, std::set, TLessThan, TAllocator>
+class SetInternalQueryable : public SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>
 {
 public:
-  SetQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    SortedQueryable<TObj, std::set, TLessThan, TAllocator>(QueryableType::Set)
+  SetInternalQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
+    SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(QueryableType::Set)
   {
     std::set<TObj, TLessThan, TAllocator> localSet(lessThan, allocator);
     this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(localSet);
   }
 
-  SetQueryable(const std::set<TObj, TLessThan, TAllocator> & set)
+  SetInternalQueryable(const std::set<TObj, TLessThan, TAllocator> & set)
   {
     this->type = QueryableType::Set;
     this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(set));
   }
 
-  // SetQueryable(const std::set<TObj, TLessThan, TAllocator> & set, TLessThan lessThan = {}, TAllocator allocator = {})
+  // SetInternalQueryable(const std::set<TObj, TLessThan, TAllocator> & set, TLessThan lessThan = {}, TAllocator allocator = {})
   // {
   //   this->type = QueryableType::Set;
   //   std::set<TObj, TLessThan, TAllocator> localSet(set.begin(), set.end(), lessThan, allocator);
   //   this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(localSet));
   // }
 
-  SetQueryable(const SetQueryable<TObj, TLessThan, TAllocator> & other)
+  SetInternalQueryable(const SetInternalQueryable<TObj, TLessThan, TAllocator> & other)
   {
     this->type = QueryableType::Set;
     this->items = other.items;
   }
 
-  SetQueryable(const Queryable<TObj, std::set, TLessThan, TAllocator> & other)
-    : SortedQueryable<TObj, std::set, TLessThan, TAllocator>(other)
+  SetInternalQueryable(const InternalQueryable<TObj, std::set, TLessThan, TAllocator> & other)
+    : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(other)
   {
     this->type = QueryableType::Set;
   }
-  SetQueryable(
+  SetInternalQueryable(
     std::shared_ptr<QueryableData<TObj, std::set, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
-      : SortedQueryable<TObj, std::set, TLessThan, TAllocator>(std::move(queryableData), type)
+      : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(std::move(queryableData), type)
   {
   }
 
-  virtual Queryable<TObj, std::set, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  virtual InternalQueryable<TObj, std::set, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
     return *this;

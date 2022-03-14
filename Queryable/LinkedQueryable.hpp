@@ -33,10 +33,10 @@
 //   typename TLinkObj,
 //   typename TSelfCompare = std::less<TSelfObj>,
 //   typename TLinkCompare = std::less<TLinkObj>>
-// class LinkedQueryable : public Queryable<TSelfObj, TSelfCompare>
+// class LinkedQueryable : public InternalQueryable<TSelfObj, TSelfCompare>
 // {
 // protected:
-//   Queryable<TLinkObj, TLinkCompare> * link;
+//   InternalQueryable<TLinkObj, TLinkCompare> * link;
 //   Selection<TLinkObj, TSelfObj> selection;
 //
 //   virtual bool IsLinked() override
@@ -46,11 +46,11 @@
 //
 // public:
 //   LinkedQueryable(
-//     Queryable<TLinkObj, TLinkCompare> link,
+//     InternalQueryable<TLinkObj, TLinkCompare> link,
 //     std::function<TSelfObj(TLinkObj)> selector,
 //     QueryableType type = QueryableType::Vector,
 //     TSelfCompare compare = TSelfCompare())
-//     : Queryable<TSelfObj, TSelfCompare>(type, compare)
+//     : InternalQueryable<TSelfObj, TSelfCompare>(type, compare)
 //   {
 //     this->link = link;
 //     this->selection.SetSelector(selector);
@@ -58,7 +58,7 @@
 //
 //   virtual ~LinkedQueryable() { }
 //
-//   Queryable<TLinkObj, TLinkCompare> * AppliedLink()
+//   InternalQueryable<TLinkObj, TLinkCompare> * AppliedLink()
 //   {
 //     if (this->link->IsLinked())
 //     {
@@ -68,7 +68,7 @@
 //     return this->link->Applied();
 //   }
 //
-//   Queryable<TSelfObj, TSelfCompare> * AppliedSelf()
+//   InternalQueryable<TSelfObj, TSelfCompare> * AppliedSelf()
 //   {
 //     this->items.get()->Clear();
 //

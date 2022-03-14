@@ -16,7 +16,7 @@ using namespace QueryBuilder;
 class ContainsFunctionalTest : public ::testing::Test
 {
 protected:
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -28,14 +28,14 @@ protected:
 
 TEST_F(ContainsFunctionalTest, ContainsUninitialized)
 {
-  VectorQueryable<uint> emptyQueryable;
+  VectorInternalQueryable<uint> emptyQueryable;
   bool contains = emptyQueryable.Contains(12);
   ASSERT_FALSE(contains);
 }
 
 TEST_F(ContainsFunctionalTest, ContainsObjectCompare)
 {
-  VectorQueryable<Person> people = PersonLibrary().GetPeople();
+  VectorInternalQueryable<Person> people = PersonLibrary().GetPeople();
 
   // Person equality is based off of the ID (first param)
   Person goodPerson(7, "Person 4", 51, 55, Gender::Female);
@@ -47,7 +47,7 @@ TEST_F(ContainsFunctionalTest, ContainsObjectCompare)
 TEST_F(ContainsFunctionalTest, DequeContains)
 {
   int count = this->queryable.Count();
-  DequeQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable(this->queryable.ToDeque());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
@@ -56,7 +56,7 @@ TEST_F(ContainsFunctionalTest, DequeContains)
 TEST_F(ContainsFunctionalTest, ListContains)
 {
   int count = this->queryable.Count();
-  ListQueryable<uint> local = BuildQueryable(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable(this->queryable.ToList());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
@@ -65,7 +65,7 @@ TEST_F(ContainsFunctionalTest, ListContains)
 TEST_F(ContainsFunctionalTest, MultiSetContains)
 {
   int count = this->queryable.Count();
-  MultiSetQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
+  MultiSetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToMultiSet());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
@@ -74,7 +74,7 @@ TEST_F(ContainsFunctionalTest, MultiSetContains)
 TEST_F(ContainsFunctionalTest, SetContains)
 {
   int count = this->queryable.Count();
-  SetQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
+  SetInternalQueryable<uint> local = BuildQueryable(this->queryable.ToSet());
   ASSERT_TRUE(count > local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
@@ -83,7 +83,7 @@ TEST_F(ContainsFunctionalTest, SetContains)
 TEST_F(ContainsFunctionalTest, VectorContains)
 {
   int count = this->queryable.Count();
-  VectorQueryable<uint> local = BuildQueryable(this->queryable.ToVector());
+  VectorInternalQueryable<uint> local = BuildQueryable(this->queryable.ToVector());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));

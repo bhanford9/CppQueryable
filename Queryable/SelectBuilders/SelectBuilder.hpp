@@ -14,7 +14,7 @@ template<
 class SelectBuilder
 {
 protected:
-  std::shared_ptr<Queryable<TCurrent, TIterable, TArgs...>> selectedQuery;
+  std::shared_ptr<InternalQueryable<TCurrent, TIterable, TArgs...>> selectedQuery;
 
 public:
   virtual void Build(
@@ -22,7 +22,7 @@ public:
     std::function<TCurrent(TOriginal)> & selector,
     TArgs... iterableArgs) = 0;
 
-  std::shared_ptr<Queryable<TCurrent, TIterable, TArgs...>> Get()
+  std::shared_ptr<InternalQueryable<TCurrent, TIterable, TArgs...>> Get()
   {
     return this->selectedQuery;
   }

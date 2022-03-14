@@ -20,7 +20,7 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  VectorQueryable<uint> queryable;
+  VectorInternalQueryable<uint> queryable;
 
   void SetUp() override
   {
@@ -32,7 +32,7 @@ protected:
 
 TEST_F(AtFunctionalTest, AtVectorUninitialized)
 {
-  VectorQueryable<Person> emptyQueryable;
+  VectorInternalQueryable<Person> emptyQueryable;
 
   try
   {

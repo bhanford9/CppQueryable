@@ -29,8 +29,8 @@ class JoinFunctionalTest : public ::testing::Test
 protected:
   PersonLibrary personLibrary;
   AnimalLibrary animalLibrary;
-  Queryable<Person> people;
-  Queryable<Animal> animals;
+  InternalQueryable<Person> people;
+  InternalQueryable<Animal> animals;
   std::vector<PersonAndPet> petOwners;
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
     [](PersonAndPet a, PersonAndPet b) -> bool { return a.GetPerson() < b.GetPerson(); };
@@ -41,8 +41,8 @@ protected:
 
   void SetUp() override
   {
-    this->people = Queryable<Person>(this->personLibrary.GetPeople());
-    this->animals = Queryable<Animal>(this->animalLibrary.GetAnimals());
+    this->people = InternalQueryable<Person>(this->personLibrary.GetPeople());
+    this->animals = InternalQueryable<Animal>(this->animalLibrary.GetAnimals());
     this->petOwners = PersonAndPetLibrary().GetPetOwners();
   }
 
@@ -132,9 +132,9 @@ protected:
 
 TEST_F(JoinFunctionalTest, JoinUninitializedDequeTest)
 {
-  Queryable<Person> people(QueryableType::Deque);
-  Queryable<Animal> animals(QueryableType::Deque);
-  Queryable<PersonAndPet> & petOwners =
+  InternalQueryable<Person> people(QueryableType::Deque);
+  InternalQueryable<Animal> animals(QueryableType::Deque);
+  InternalQueryable<PersonAndPet> & petOwners =
     people.Join<Animal, long, PersonAndPet>(
       animals,
       [](Person person) { return person.GetId(); },
@@ -148,9 +148,9 @@ TEST_F(JoinFunctionalTest, JoinUninitializedDequeTest)
 
 TEST_F(JoinFunctionalTest, JoinUninitializedListTest)
 {
-  Queryable<Person> people(QueryableType::List);
-  Queryable<Animal> animals(QueryableType::List);
-  Queryable<PersonAndPet> & petOwners =
+  InternalQueryable<Person> people(QueryableType::List);
+  InternalQueryable<Animal> animals(QueryableType::List);
+  InternalQueryable<PersonAndPet> & petOwners =
     people.Join<Animal, long, PersonAndPet>(
       animals,
       [](Person person) { return person.GetId(); },
@@ -164,9 +164,9 @@ TEST_F(JoinFunctionalTest, JoinUninitializedListTest)
 
 TEST_F(JoinFunctionalTest, JoinUninitializedMultiSetTest)
 {
-  Queryable<Person> people(QueryableType::MultiSet);
-  Queryable<Animal> animals(QueryableType::MultiSet);
-  Queryable<PersonAndPet> & petOwners =
+  InternalQueryable<Person> people(QueryableType::MultiSet);
+  InternalQueryable<Animal> animals(QueryableType::MultiSet);
+  InternalQueryable<PersonAndPet> & petOwners =
     people.Join<Animal, long, PersonAndPet>(
       animals,
       [](Person person) { return person.GetId(); },
@@ -180,9 +180,9 @@ TEST_F(JoinFunctionalTest, JoinUninitializedMultiSetTest)
 
 TEST_F(JoinFunctionalTest, JoinUninitializedSetTest)
 {
-  Queryable<Person> people(QueryableType::Set);
-  Queryable<Animal> animals(QueryableType::Set);
-  Queryable<PersonAndPet> & petOwners =
+  InternalQueryable<Person> people(QueryableType::Set);
+  InternalQueryable<Animal> animals(QueryableType::Set);
+  InternalQueryable<PersonAndPet> & petOwners =
     people.Join<Animal, long, PersonAndPet>(
       animals,
       [](Person person) { return person.GetId(); },
@@ -196,9 +196,9 @@ TEST_F(JoinFunctionalTest, JoinUninitializedSetTest)
 
 TEST_F(JoinFunctionalTest, JoinUninitializedVectorTest)
 {
-  Queryable<Person> people(QueryableType::Vector);
-  Queryable<Animal> animals(QueryableType::Vector);
-  Queryable<PersonAndPet> & petOwners =
+  InternalQueryable<Person> people(QueryableType::Vector);
+  InternalQueryable<Animal> animals(QueryableType::Vector);
+  InternalQueryable<PersonAndPet> & petOwners =
     people.Join<Animal, long, PersonAndPet>(
       animals,
       [](Person person) { return person.GetId(); },
@@ -212,7 +212,7 @@ TEST_F(JoinFunctionalTest, JoinUninitializedVectorTest)
 
 TEST_F(JoinFunctionalTest, JoinFullVectorVectorDefaultOutTest)
 {
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     this->people.Join<Animal, long, PersonAndPet>(
       this->animals,
       [](Person person) { return person.GetId(); },
@@ -231,10 +231,10 @@ TEST_F(JoinFunctionalTest, JoinFullVectorVectorDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeListDefaultOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -253,10 +253,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeListDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeMultiSetDefaultOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       multiSetAnimals,
       [](Person person) { return person.GetId(); },
@@ -289,10 +289,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeMultiSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeSetDefaultOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> setAnimals(this->animals.ToSet());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> setAnimals(this->animals.ToSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       setAnimals,
       [](Person person) { return person.GetId(); },
@@ -328,10 +328,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeVectorDefaultOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> vectorAnimals(this->animals.ToVector());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> vectorAnimals(this->animals.ToVector());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       vectorAnimals,
       [](Person person) { return person.GetId(); },
@@ -351,10 +351,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeVectorDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullListDequeDefaultOutTest)
 {
-  Queryable<Person> listPeople(this->people.ToList());
-  Queryable<Animal> dequeAnimals(this->animals.ToDeque());
+  InternalQueryable<Person> listPeople(this->people.ToList());
+  InternalQueryable<Animal> dequeAnimals(this->animals.ToDeque());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     listPeople.Join<Animal, long, PersonAndPet>(
       dequeAnimals,
       [](Person person) { return person.GetId(); },
@@ -374,10 +374,10 @@ TEST_F(JoinFunctionalTest, JoinFullListDequeDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullListMultiSetDefaultOutTest)
 {
-  Queryable<Person> listPeople(this->people.ToList());
-  Queryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
+  InternalQueryable<Person> listPeople(this->people.ToList());
+  InternalQueryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     listPeople.Join<Animal, long, PersonAndPet>(
       multiSetAnimals,
       [](Person person) { return person.GetId(); },
@@ -410,10 +410,10 @@ TEST_F(JoinFunctionalTest, JoinFullListMultiSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullListSetDefaultOutTest)
 {
-  Queryable<Person> listPeople(this->people.ToList());
-  Queryable<Animal> setAnimals(this->animals.ToSet());
+  InternalQueryable<Person> listPeople(this->people.ToList());
+  InternalQueryable<Animal> setAnimals(this->animals.ToSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     listPeople.Join<Animal, long, PersonAndPet>(
       setAnimals,
       [](Person person) { return person.GetId(); },
@@ -449,10 +449,10 @@ TEST_F(JoinFunctionalTest, JoinFullListSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullListVectorDefaultOutTest)
 {
-  Queryable<Person> listPeople(this->people.ToList());
-  Queryable<Animal> vectorAnimals(this->animals.ToVector());
+  InternalQueryable<Person> listPeople(this->people.ToList());
+  InternalQueryable<Animal> vectorAnimals(this->animals.ToVector());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     listPeople.Join<Animal, long, PersonAndPet>(
       vectorAnimals,
       [](Person person) { return person.GetId(); },
@@ -472,10 +472,10 @@ TEST_F(JoinFunctionalTest, JoinFullListVectorDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullMultiSetDequeDefaultOutTest)
 {
-  Queryable<Person> multiSetPeople(this->people.ToMultiSet());
-  Queryable<Animal> dequeAnimals(this->animals.ToDeque());
+  InternalQueryable<Person> multiSetPeople(this->people.ToMultiSet());
+  InternalQueryable<Animal> dequeAnimals(this->animals.ToDeque());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     multiSetPeople.Join<Animal, long, PersonAndPet>(
       dequeAnimals,
       [](Person person) { return person.GetId(); },
@@ -506,10 +506,10 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetDequeDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullMultiSetListDefaultOutTest)
 {
-  Queryable<Person> multiSetPeople(this->people.ToMultiSet());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> multiSetPeople(this->people.ToMultiSet());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     multiSetPeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -540,10 +540,10 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetListDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullMultiSetSetDefaultOutTest)
 {
-  Queryable<Person> multiSetPeople(this->people.ToMultiSet());
-  Queryable<Animal> setAnimals(this->animals.ToSet());
+  InternalQueryable<Person> multiSetPeople(this->people.ToMultiSet());
+  InternalQueryable<Animal> setAnimals(this->animals.ToSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     multiSetPeople.Join<Animal, long, PersonAndPet>(
       setAnimals,
       [](Person person) { return person.GetId(); },
@@ -580,10 +580,10 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullMultiSetVectorDefaultOutTest)
 {
-  Queryable<Person> multiSetPeople(this->people.ToMultiSet());
-  Queryable<Animal> vectorAnimals(this->animals.ToVector());
+  InternalQueryable<Person> multiSetPeople(this->people.ToMultiSet());
+  InternalQueryable<Animal> vectorAnimals(this->animals.ToVector());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     multiSetPeople.Join<Animal, long, PersonAndPet>(
       vectorAnimals,
       [](Person person) { return person.GetId(); },
@@ -614,10 +614,10 @@ TEST_F(JoinFunctionalTest, JoinFullMultiSetVectorDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullSetDequeDefaultOutTest)
 {
-  Queryable<Person> setPeople(this->people.ToSet());
-  Queryable<Animal> dequeAnimals(this->animals.ToDeque());
+  InternalQueryable<Person> setPeople(this->people.ToSet());
+  InternalQueryable<Animal> dequeAnimals(this->animals.ToDeque());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     setPeople.Join<Animal, long, PersonAndPet>(
       dequeAnimals,
       [](Person person) { return person.GetId(); },
@@ -652,10 +652,10 @@ TEST_F(JoinFunctionalTest, JoinFullSetDequeDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullSetListDefaultOutTest)
 {
-  Queryable<Person> setPeople(this->people.ToSet());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> setPeople(this->people.ToSet());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     setPeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -690,10 +690,10 @@ TEST_F(JoinFunctionalTest, JoinFullSetListDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullSetMultiSetDefaultOutTest)
 {
-  Queryable<Person> setPeople(this->people.ToSet());
-  Queryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
+  InternalQueryable<Person> setPeople(this->people.ToSet());
+  InternalQueryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     setPeople.Join<Animal, long, PersonAndPet>(
       multiSetAnimals,
       [](Person person) { return person.GetId(); },
@@ -732,10 +732,10 @@ TEST_F(JoinFunctionalTest, JoinFullSetMultiSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullSetVectorDefaultOutTest)
 {
-  Queryable<Person> setPeople(this->people.ToSet());
-  Queryable<Animal> vectorAnimals(this->animals.ToVector());
+  InternalQueryable<Person> setPeople(this->people.ToSet());
+  InternalQueryable<Animal> vectorAnimals(this->animals.ToVector());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     setPeople.Join<Animal, long, PersonAndPet>(
       vectorAnimals,
       [](Person person) { return person.GetId(); },
@@ -770,10 +770,10 @@ TEST_F(JoinFunctionalTest, JoinFullSetVectorDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullVectorDequeDefaultOutTest)
 {
-  Queryable<Person> vectorPeople(this->people.ToVector());
-  Queryable<Animal> dequeAnimals(this->animals.ToDeque());
+  InternalQueryable<Person> vectorPeople(this->people.ToVector());
+  InternalQueryable<Animal> dequeAnimals(this->animals.ToDeque());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     vectorPeople.Join<Animal, long, PersonAndPet>(
       dequeAnimals,
       [](Person person) { return person.GetId(); },
@@ -793,10 +793,10 @@ TEST_F(JoinFunctionalTest, JoinFullVectorDequeDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullVectorListDefaultOutTest)
 {
-  Queryable<Person> vectorPeople(this->people.ToVector());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> vectorPeople(this->people.ToVector());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     vectorPeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -816,10 +816,10 @@ TEST_F(JoinFunctionalTest, JoinFullVectorListDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullVectorMultiSetDefaultOutTest)
 {
-  Queryable<Person> vectorPeople(this->people.ToVector());
-  Queryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
+  InternalQueryable<Person> vectorPeople(this->people.ToVector());
+  InternalQueryable<Animal> multiSetAnimals(this->animals.ToMultiSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     vectorPeople.Join<Animal, long, PersonAndPet>(
       multiSetAnimals,
       [](Person person) { return person.GetId(); },
@@ -852,10 +852,10 @@ TEST_F(JoinFunctionalTest, JoinFullVectorMultiSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullVectorSetDefaultOutTest)
 {
-  Queryable<Person> vectorPeople(this->people.ToVector());
-  Queryable<Animal> setAnimals(this->animals.ToSet());
+  InternalQueryable<Person> vectorPeople(this->people.ToVector());
+  InternalQueryable<Animal> setAnimals(this->animals.ToSet());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     vectorPeople.Join<Animal, long, PersonAndPet>(
       setAnimals,
       [](Person person) { return person.GetId(); },
@@ -891,10 +891,10 @@ TEST_F(JoinFunctionalTest, JoinFullVectorSetDefaultOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeListListOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -915,10 +915,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeListListOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeListMultiSetOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -947,10 +947,10 @@ TEST_F(JoinFunctionalTest, JoinFullDequeListMultiSetOutTest)
 
 TEST_F(JoinFunctionalTest, JoinFullDequeListSetOutTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<PersonAndPet> & result =
+  InternalQueryable<PersonAndPet> & result =
     dequePeople.Join<Animal, long, PersonAndPet>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -985,14 +985,14 @@ TEST_F(JoinFunctionalTest, DefaultOutComparisonTest)
   double expectedX = 9;
   double expectedY = 10;
 
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> setAnimals(this->animals.ToSet());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> setAnimals(this->animals.ToSet());
 
   // Testing that supplying the comparison type is not necessary when the default
   //   comparison for a class can be used.
   // This is more likely the common use case and it is much more convecient to
   //   only have to deal with 3 type parameters and 4 variable parameters
-  Queryable<Point> & result =
+  InternalQueryable<Point> & result =
     dequePeople.Join<Animal, long, Point>(
       setAnimals,
       [](Person person) { return person.GetId(); },
@@ -1013,10 +1013,10 @@ TEST_F(JoinFunctionalTest, PassedInCompareOverwritesDefaultTest)
 {
   // person is ordered by name by default
   // passing in an ID comparison should overwrite this
-  Queryable<Person> setPeople(this->people.ToSet());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> setPeople(this->people.ToSet());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<Person> & result =
+  InternalQueryable<Person> & result =
     setPeople.Join<Animal, long, Person>(
       listAnimals,
       [](Person person) { return person.GetId(); },
@@ -1046,10 +1046,10 @@ TEST_F(JoinFunctionalTest, PassedInCompareOverwritesDefaultTest)
 
 TEST_F(JoinFunctionalTest, WhereJoinWhereTest)
 {
-  Queryable<Person> dequePeople(this->people.ToDeque());
-  Queryable<Animal> listAnimals(this->animals.ToList());
+  InternalQueryable<Person> dequePeople(this->people.ToDeque());
+  InternalQueryable<Animal> listAnimals(this->animals.ToList());
 
-  Queryable<DogWalker> & result =
+  InternalQueryable<DogWalker> & result =
     dequePeople
       .Where([](Person p) { return p.GetId() >= 2 && p.GetId() <= 5; })
       .Join<Animal, long, DogWalker>(

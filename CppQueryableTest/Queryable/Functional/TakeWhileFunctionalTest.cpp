@@ -25,11 +25,11 @@
 //   int expectedCountUnordered = 6;
 //   int expectedCountOrdered = 8;
 //   int expectedCountOrderedSet = 5;
-//   Queryable<uint> queryable;
+//   InternalQueryable<uint> queryable;
 //
 //   void SetUp() override
 //   {
-//     this->queryable = Queryable<uint>(std::vector<uint>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
+//     this->queryable = InternalQueryable<uint>(std::vector<uint>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
 //   }
 //
 //   void TearDown() override {}
@@ -37,15 +37,15 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileVectorUninitialized)
 // {
-//   Queryable<Person> emptyQueryable;
-//   Queryable<Person> * result = emptyQueryable.TakeWhile([](Person p) { return true; });
+//   InternalQueryable<Person> emptyQueryable;
+//   InternalQueryable<Person> * result = emptyQueryable.TakeWhile([](Person p) { return true; });
 //
 //   ASSERT_EQ(0, result->Count());
 // }
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileVectorAlwaysTrue)
 // {
-//   Queryable<uint> * result = this->queryable.TakeWhile([](uint value) { return true; });
+//   InternalQueryable<uint> * result = this->queryable.TakeWhile([](uint value) { return true; });
 //
 //   ASSERT_EQ(this->queryable.Count(), result->Count());
 //
@@ -57,7 +57,7 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileVector)
 // {
-//   Queryable<uint> * result = this->queryable
+//   InternalQueryable<uint> * result = this->queryable
 //     .TakeWhile([&](uint value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
@@ -70,8 +70,8 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileSet)
 // {
-//   Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
-//   Queryable<uint>* result = queryableSet
+//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
+//   InternalQueryable<uint>* result = queryableSet
 //     .TakeWhile([&](uint value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountOrderedSet, result->Count());
@@ -84,8 +84,8 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 // {
-//   Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
-//   Queryable<uint>* result = queryableSet
+//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<uint>* result = queryableSet
 //     .TakeWhile([&](uint value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountOrdered, result->Count());
@@ -98,8 +98,8 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileDeque)
 // {
-//   Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
-//   Queryable<uint>* result = queryableSet
+//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
+//   InternalQueryable<uint>* result = queryableSet
 //     .TakeWhile([&](uint value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
@@ -112,8 +112,8 @@
 //
 // TEST_F(TakeWhileFunctionalTest, TakeWhileList)
 // {
-//   Queryable<uint> queryableSet = BuildQueryable(this->queryable.ToList());
-//   Queryable<uint>* result = queryableSet
+//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToList());
+//   InternalQueryable<uint>* result = queryableSet
 //     .TakeWhile([&](uint value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
@@ -128,8 +128,8 @@
 // {
 //   int takeCount = 0;
 //   int expectedCount = 4;
-//   Queryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-//   Queryable<uint> * result = queryableVector
+//   InternalQueryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+//   InternalQueryable<uint> * result = queryableVector
 //     .Where([](uint value) { return value % 2 == 0; })
 //     .TakeWhile([](uint value) { return value < 8; });
 //
