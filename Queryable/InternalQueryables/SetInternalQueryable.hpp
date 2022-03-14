@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SETQUERYABLE_H
-#define CPPQUERYABLE_QUERYABLE_SETQUERYABLE_H
+#ifndef CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_SETINTERNALQUERYABLE_H
+#define CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_SETINTERNALQUERYABLE_H
 
 #include <iostream>
 #include <set>
@@ -43,9 +43,8 @@ public:
   }
 
   SetInternalQueryable(const InternalQueryable<TObj, std::set, TLessThan, TAllocator> & other)
-    : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(other)
+    : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(other, QueryableType::Set)
   {
-    this->type = QueryableType::Set;
   }
   SetInternalQueryable(
     std::shared_ptr<QueryableData<TObj, std::set, TLessThan, TAllocator>> && queryableData,

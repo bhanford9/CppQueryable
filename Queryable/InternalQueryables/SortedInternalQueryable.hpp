@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SORTEDQUERYABLE_H
-#define CPPQUERYABLE_QUERYABLE_SORTEDQUERYABLE_H
+#ifndef CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_SORTEDINTERNALQUERYABLE_H
+#define CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_SORTEDINTERNALQUERYABLE_H
 
 #include <iostream>
 #include <set>
@@ -21,15 +21,17 @@ public:
   {
   }
 
-  SortedInternalQueryable(const InternalQueryable<TObj, std::set, TLessThan, TAllocator> & other)
-    : InternalQueryable<TObj, std::set, TLessThan, TAllocator>(other)
+  SortedInternalQueryable(
+    const InternalQueryable<TObj, TIterable, TLessThan, TAllocator> & other,
+    QueryableType type)
+    : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(other)
   {
-    this->type = QueryableType::Set;
+    this->type = type;
   }
   SortedInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::set, TLessThan, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, TIterable, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, std::set, TLessThan, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
   {
   }
 

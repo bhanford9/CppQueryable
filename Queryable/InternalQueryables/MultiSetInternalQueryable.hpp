@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_MULTISETQUERYABLE_H
-#define CPPQUERYABLE_QUERYABLE_MULTISETQUERYABLE_H
+#ifndef CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_MULTISETINTERNALQUERYABLE_H
+#define CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_MULTISETINTERNALQUERYABLE_H
 
 #include <iostream>
 #include <set>
@@ -33,6 +33,17 @@ public:
   {
     this->type = QueryableType::MultiSet;
     this->items = other.items;
+  }
+
+  MultiSetInternalQueryable(const InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & other)
+    : SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(other, QueryableType::MultiSet)
+  {
+  }
+  MultiSetInternalQueryable(
+    std::shared_ptr<QueryableData<TObj, std::multiset, TLessThan, TAllocator>> && queryableData,
+    QueryableType type)
+      : SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(std::move(queryableData), type)
+  {
   }
 
   virtual InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override

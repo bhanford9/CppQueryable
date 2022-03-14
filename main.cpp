@@ -46,11 +46,12 @@ int main()
   // InternalQueryable<uint, std::vector> * meh = reinterpret_cast<InternalQueryable<uint, std::vector>*>(&queryable);
 
   // std::shared_ptr<InternalQueryable<uint, std::vector>> ptr = std::make_shared<InternalQueryable<uint, std::vector>>(*meh);
-  std::set<uint> setItems = queryable.ToSet();
-  Queryable<uint, std::set> blah(std::move(setItems));
+  std::multiset<uint> setItems = queryable.ToMultiSet();
+  Queryable<uint, std::multiset> blah(std::move(setItems));
+
   std::cout << "starting test. set size: " << setItems.size() << std::endl;
   blah
-    .Where([](uint num) { return num % 2; })
+    .Where([](uint num) { return (num % 2) == 0; })
     .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
     .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
   std::cout << "done with select\n\n" << std::endl;

@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_LISTQUERYABLE_H
-#define CPPQUERYABLE_QUERYABLE_LISTQUERYABLE_H
+#ifndef CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_LISTINTERNALQUERYABLE_H
+#define CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_LISTINTERNALQUERYABLE_H
 
 #include <iostream>
 #include <list>
@@ -31,6 +31,18 @@ public:
   {
     this->type = QueryableType::List;
     this->items = other.items;
+  }
+
+  ListInternalQueryable(const InternalQueryable<TObj, std::list, TAllocator> & other)
+    : InternalQueryable<TObj, std::list, TAllocator>(other)
+  {
+    this->type = QueryableType::Deque;
+  }
+  ListInternalQueryable(
+    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && queryableData,
+    QueryableType type)
+      : InternalQueryable<TObj, std::list, TAllocator>(std::move(queryableData), type)
+  {
   }
 
   virtual InternalQueryable<TObj, std::list, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
