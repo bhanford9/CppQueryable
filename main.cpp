@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "Queryable/Queryables/VectorQueryable.hpp"
+#include "Queryable/InternalQueryables/VectorInternalQueryable.hpp"
 #include "Queryable/QueryableData/IQueryableData.hpp"
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.hpp"
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
@@ -15,8 +15,8 @@
 #include "Queryable/QueryableData/QueryableData.hpp"
 #include "Queryable/QueryBuilder.hpp"
 #include "Queryable/QueryableType.hpp"
+#include "Queryable/InternalQueryable.hpp"
 #include "Queryable/Queryable.hpp"
-#include "Queryable/QueryableWrapper.hpp"
 #include "DataStructures/People.hpp"
 #include "DataStructures/PersonLibrary.hpp"
 

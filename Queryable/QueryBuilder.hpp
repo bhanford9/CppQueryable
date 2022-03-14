@@ -18,12 +18,12 @@
 // queue
 // priority_queue
 
-#include "Queryable.hpp"
-#include "Queryables/DequeQueryable.hpp"
-#include "Queryables/ListQueryable.hpp"
-#include "Queryables/MultiSetQueryable.hpp"
-#include "Queryables/SetQueryable.hpp"
-#include "Queryables/VectorQueryable.hpp"
+#include "InternalQueryable.hpp"
+#include "InternalQueryables/DequeInternalQueryable.hpp"
+#include "InternalQueryables/ListInternalQueryable.hpp"
+#include "InternalQueryables/MultiSetInternalQueryable.hpp"
+#include "InternalQueryables/SetInternalQueryable.hpp"
+#include "InternalQueryables/VectorInternalQueryable.hpp"
 
 namespace QueryBuilder
 {

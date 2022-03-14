@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "QueryableForwardDeclare.hpp"
-#include "../Queryable.hpp"
+#include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableVectorData.hpp"
 

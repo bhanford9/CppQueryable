@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Person.hpp"
-#include "../Queryable/Queryables/VectorQueryable.hpp"
+#include "../Queryable/InternalQueryables/VectorInternalQueryable.hpp"
 
 // class People : public VectorInternalQueryable<Person>
 // {

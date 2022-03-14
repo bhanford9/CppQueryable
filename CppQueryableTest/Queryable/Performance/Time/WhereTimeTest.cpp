@@ -7,7 +7,7 @@
 #include "../../../../DataStructures/Person.hpp"
 #include "../../../../DataStructures/People.hpp"
 
-#include "../../../../Queryable/Queryable.hpp"
+#include "../../../../Queryable/InternalQueryable.hpp"
 
 #include "../../../../Queryable/QueryBuilder.hpp"
 

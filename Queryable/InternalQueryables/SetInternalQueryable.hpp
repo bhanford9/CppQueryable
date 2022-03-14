@@ -4,8 +4,8 @@
 #include <iostream>
 #include <set>
 #include "QueryableForwardDeclare.hpp"
-#include "SortedQueryable.hpp"
-#include "../Queryable.hpp"
+#include "SortedInternalQueryable.hpp"
+#include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableSetData.hpp"
 

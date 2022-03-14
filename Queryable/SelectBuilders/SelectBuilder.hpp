@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-#include "../Queryable.hpp"
+#include "../InternalQueryable.hpp"
 
 template<
   typename TOriginal,

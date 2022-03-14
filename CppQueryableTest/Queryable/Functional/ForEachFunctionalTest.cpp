@@ -15,7 +15,7 @@
 
 
 #include "../../../Queryable/QueryablesForwardDeclarations.hpp"
-#include "../../../Queryable/Queryables/DequeQueryable.hpp"
+#include "../../../Queryable/InternalQueryables/DequeInternalQueryable.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
