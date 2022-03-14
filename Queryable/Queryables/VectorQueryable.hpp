@@ -43,9 +43,6 @@ public:
     QueryableType type)
       : Queryable<TObj, std::vector, TAllocator>(std::move(queryableData), type)
   {
-      std::cout << "\n\nin VectorQueryable" << std::endl;
-      std::cout << "incoming size: " << this->items->Count() << std::endl; // data here appears to be corrupted
-      for (TObj orig : *this->items) std::cout << "new: " << orig << std::endl;
   }
 
   virtual Queryable<TObj, std::vector, TAllocator> & Where(std::function<bool(const TObj &)> condition) override

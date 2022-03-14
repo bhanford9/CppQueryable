@@ -34,9 +34,8 @@ public:
     std::function<TCurrent(TOriginal) > selector) :
       original(std::move(data))
   {
-    std::cout << "\n\nin SelectQueryableData" << std::endl;
-    for (TOriginal orig : *original) std::cout << "orig: " << orig << std::endl;
     this->selector = selector;
+    this->size = original->Count();
   }
   SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
     original(data.original),
@@ -44,53 +43,53 @@ public:
   {
   }
 
-  virtual ~SelectQueryableData() { std::cout << "destroying select data" << std::endl; }
+  virtual ~SelectQueryableData() { }
 
   inline virtual TCurrent & Get(IteratorType type) override
   {
-    std::cout << "Select Data Get" << std::endl;
+    // std::cout << "Select Data Get" << std::endl;
     this->value = this->selector(this->original->Get(type));
     return this->value;
   }
 
   inline virtual const TCurrent & ConstGet(IteratorType type) override
   {
-    std::cout << "Select Data ConstGet" << std::endl;
+    // std::cout << "Select Data ConstGet" << std::endl;
     this->value = this->selector(this->original->ConstGet(type));
     return this->value;
   }
 
   inline virtual IQueryableIteratorData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
   {
-    std::cout << "Select Data Next" << std::endl;
+    // std::cout << "Select Data Next" << std::endl;
     this->original->Next(type, iterated);
     return *this;
   }
 
   inline virtual IQueryableIteratorData<TCurrent> & Prev(IteratorType type, uint64_t & iterated) override
   {
-    std::cout << "Select Data Prev" << std::endl;
+    // std::cout << "Select Data Prev" << std::endl;
     this->original->Prev(type, iterated);
     return *this;
   }
 
   inline virtual IQueryableIteratorData<TCurrent> & Add(int addend, IteratorType type) override
   {
-    std::cout << "Select Data Add" << std::endl;
+    // std::cout << "Select Data Add" << std::endl;
     this->original->Add(addend, type);
     return *this;
   }
 
   inline virtual IQueryableIteratorData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
   {
-    std::cout << "Select Data Subtract" << std::endl;
+    // std::cout << "Select Data Subtract" << std::endl;
     this->original->Add(subtrahend, type);
     return *this;
   }
 
   virtual QueryableIterator<TCurrent> begin() override
   {
-    std::cout << "Select Data begin" << std::endl;
+    // std::cout << "Select Data begin" << std::endl;
     this->original->begin();
     QueryableIterator<TCurrent> retVal(this, 0, IteratorType::BeginForward);
     return retVal;
@@ -98,7 +97,7 @@ public:
 
   virtual QueryableIterator<TCurrent> end() override
   {
-    std::cout << "Select Data end" << std::endl;
+    // std::cout << "Select Data end" << std::endl;
     this->original->end();
     QueryableIterator<TCurrent> retVal(this, this->original->Count(), IteratorType::EndForward);
     return retVal;

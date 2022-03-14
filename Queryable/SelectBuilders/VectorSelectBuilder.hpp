@@ -19,13 +19,8 @@ public:
     std::function<TCurrent(TOriginal)> & selector,
     TAllocator allocator = {})
   {
-    std::cout << "\n\nin builder" << std::endl;
-    for (TOriginal orig : *data) std::cout << "orig: " << orig << std::endl;
-
     std::shared_ptr<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>> selectData =
       std::make_shared<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>>(std::move(data), selector);
-
-    std::cout << "\n\ncreated select data" << std::endl;
 
     std::shared_ptr<VectorQueryable<TCurrent, TAllocator>> vectorQueryable =
       std::make_shared<VectorQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::Vector);

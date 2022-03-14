@@ -20,8 +20,6 @@ public:
     std::function<TCurrent(TOriginal)> selector)
     : SelectQueryableData<TOriginal, TCurrent, std::vector, TAllocator>(std::move(data), selector)
   {
-    std::cout << "\n\nin SelectQueryableVectorData" << std::endl;
-    for (TOriginal orig : *this->original) std::cout << "orig: " << orig << std::endl;
   }
   virtual ~SelectQueryableVectorData() { }
 

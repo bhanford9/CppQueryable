@@ -138,9 +138,6 @@ public:
     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && queryableData,
     QueryableType type)
   {
-    std::cout << "\n\nin Queryable" << std::endl;
-    std::cout << "incoming size: " << queryableData->Count() << std::endl; // data here appears to be corrupted
-    for (TObj orig : *queryableData) std::cout << "new: " << orig << std::endl;
     this->items = std::move(queryableData);
     this->type = type;
   }
@@ -981,31 +978,6 @@ public:
     TNewArgs... iterableParameters)
   {
     selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
-    // copy of shared reference must be made so the original container can still
-    // be used. assigning shared pointers can be slower than moving them by hundreds
-    // of clock cycles, so this needs to be avoided when possible
-    // std::shared_ptr<IQueryableData<TObj, TObj>> itemCopy = this->items;
-
-    // TODO --> move the std::function as well
-    // switch (this->type)
-    // {
-    //   case QueryableType::Deque:
-    //     *newQueryable = std::make_shared<DequeQueryable<T, TNewArgs...>>(std::move(std::make_shared<SelectQueryableDequeData<TObj, T>>(std::move(this->items), retrieveValue)));
-    //     break;
-    //   case QueryableType::List:
-    //     *newQueryable = std::move(std::make_shared<SelectQueryableListData<TObj, T>>(std::move(this->items), retrieveValue));
-    //     break;
-    //   case QueryableType::MultiSet:
-    //     *newQueryable = std::move(std::make_shared<SelectQueryableMultiSetData<TObj, T>>(std::move(this->items), retrieveValue));
-    //     break;
-    //   case QueryableType::Set:
-    //     *newQueryable = std::move(std::make_shared<SelectQueryableSetData<TObj, T>>(std::move(this->items), retrieveValue));
-    //     break;
-    //   case QueryableType::Vector:
-    //     *newQueryable = std::move(std::make_shared<SelectQueryableVectorData<TObj, T>>(std::move(this->items), retrieveValue));
-    //     break;
-    //   default: break;
-    // }
   }
 
   bool Contains(TObj obj) const

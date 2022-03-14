@@ -20,6 +20,7 @@ private:
   std::shared_ptr<Queryable<TObj, TIterable, TArgs...>> queryable;
 
 public:
+  QueryableWrapper() { }
   QueryableWrapper(const std::shared_ptr<Queryable<TObj, TIterable, TArgs...>> && other)
     : queryable(other)
   {
@@ -38,34 +39,40 @@ public:
     std::function<T(TObj)> retrieveValue,
     TNewArgs... iterableParameters)
   {
-    std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryable;
 
     switch (this->queryable->GetType())
     {
       case QueryableType::Vector:
       {
-        std::cout << "selecting vector" << std::endl;
+        // std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryable;
         VectorSelectBuilder<TObj, T, TNewArgs...> selectBuilder;
         this->queryable->Select(
           retrieveValue,
           reinterpret_cast<SelectBuilder<TObj, T, TIterable, TNewArgs...>*>(&selectBuilder),
           iterableParameters...);
+
+        std::shared_ptr<Queryable<T, TIterable, TNewArgs...>> newQueryble(FutureStd::reinterpret_pointer_cast<Queryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
+        // move constructor so no new memory is created
+        QueryableWrapper<T, TIterable, TNewArgs...> newQueryableWrapper(std::move(newQueryble));
+
+        // TODO --> determine if reseting is undesireable
+        this->queryable.reset();
+
+        // return uses move constructor so no new memory is created
+        return newQueryableWrapper;
         break;
       }
       default:
         break;
     }
 
-    newQueryable->ForEach([](T val) { std::cout << "value: " << val << std::endl; });
 
-    // move constructor so no new memory is created
-    QueryableWrapper<T, TIterable, TNewArgs...> newQueryableWrapper(std::move(newQueryable));
+    return {};
+  }
 
-    // TODO --> determine if reseting is undesireable
-    this->queryable.reset();
-
-    // return uses move constructor so no new memory is created
-    return newQueryable;
+  inline void ForEach(std::function<void(TObj)> action)
+  {
+    this->queryable->ForEach(action);
   }
 
 };

@@ -47,7 +47,11 @@ int main()
 
   // std::shared_ptr<Queryable<uint, std::vector>> ptr = std::make_shared<Queryable<uint, std::vector>>(*meh);
   QueryableWrapper<uint, std::vector> blah(std::move(queryable));
-  blah.Select<std::string>([](uint num) { return "Number: " + std::to_string(num); });
+  blah
+    .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
+    .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
+  std::cout << "done with select\n\n" << std::endl;
+
 
   // std::cout << "attempting foreach" << std::endl;
   // queryable.ForEach([](uint value) { std::cout << value << ", "; });
