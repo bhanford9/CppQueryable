@@ -18,14 +18,27 @@ public:
   RandomAccessQueryableData() : QueryableData<T, TIterable, TAllocator, TArgs...>()
   {
   }
-  RandomAccessQueryableData(TIterable<T, TAllocator, TArgs...> items)
+
+  // RandomAccessQueryableData(TIterable<T, TAllocator, TArgs...> items)
+  //   : QueryableData<T, TIterable, TAllocator, TArgs...>(items)
+  // {
+  // }
+
+  RandomAccessQueryableData(const TIterable<T, TAllocator, TArgs...> & items)
     : QueryableData<T, TIterable, TAllocator, TArgs...>(items)
   {
   }
+
+  RandomAccessQueryableData(TIterable<T, TAllocator, TArgs...> && items)
+    : QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(items))
+  {
+  }
+
   RandomAccessQueryableData(const RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> & data)
     : QueryableData<T, TIterable, TAllocator, TArgs...>(data)
   {
   }
+
   RandomAccessQueryableData(RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> && data)
     : QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(data))
   {
@@ -33,7 +46,7 @@ public:
 
   virtual ~RandomAccessQueryableData() { }
 
-  inline virtual IQueryableIteratorData<T> & Add(int addend, IteratorType type) override
+  inline virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
     std::cout << "Random Access + Operator" << std::endl;
     switch (type)
@@ -47,7 +60,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<T> & Subtract(int subtrahend, IteratorType type) override
+  inline virtual IQueryableData<T> & Subtract(int subtrahend, IteratorType type) override
   {
     switch (type)
     {

@@ -143,6 +143,7 @@ public:
   }
 
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
+  InternalQueryable(TIterable<TObj, TArgs...> && iterable);
   // END CONSTRUCTORS
 
   QueryableType GetType()
@@ -161,9 +162,9 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::deque<TObj, TAllocator> ToDeque() const
+  std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
-    std::deque<TObj, TAllocator> newItems;
+    std::deque<TObj, TAllocator> newItems(allocator);
 
     for (TObj item : *this->items.get())
     {
@@ -174,9 +175,9 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::list<TObj, TAllocator> ToList() const
+  std::list<TObj, TAllocator> ToList(TAllocator allocator = {}) const
   {
-    std::list<TObj, TAllocator> newItems;
+    std::list<TObj, TAllocator> newItems(allocator);
 
     for (TObj item : *this->items.get())
     {
@@ -187,9 +188,9 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}) const
+  std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::multiset<TObj, TLessThan, TAllocator> newItems(lessThan);
+    std::multiset<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
 
     for (TObj item : *this->items.get())
     {
@@ -200,9 +201,9 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::set<TObj, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}) const
+  std::set<TObj, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::set<TObj, TLessThan, TAllocator> newItems(lessThan);
+    std::set<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
 
     for (TObj item : *this->items.get())
     {
@@ -213,9 +214,9 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::vector<TObj, TAllocator> ToVector() const
+  std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
   {
-    std::vector<TObj, TAllocator> newItems;
+    std::vector<TObj, TAllocator> newItems(allocator);
 
     for (TObj item : *this->items.get())
     {
@@ -227,68 +228,44 @@ public:
 
   // TODO --> determine best way to return
   template<typename TAllocator = std::allocator<TObj>>
-  DequeInternalQueryable<TObj, TAllocator> & ToQueryableDeque()
+  DequeInternalQueryable<TObj, TAllocator> ToQueryableDeque(TAllocator allocator = {}) const
   {
-    std::deque<TObj, TAllocator> copy = this->ToDeque();
-
-    this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>();
-    for (TObj item : copy)
-    {
-      this->items.get()->Add(item);
-    }
-
-    this->type = QueryableType::Deque;
-    return *this;
+    std::deque<TObj, TAllocator> copy = this->ToDeque(allocator);
+    DequeInternalQueryable<TObj, TAllocator> retValue(copy);
+    return retValue;
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::list, TAllocator> & ToQueryableList()
+  InternalQueryable<TObj, std::list, TAllocator> ToQueryableList(TAllocator allocator = {}) const
   {
-    std::list<TObj, TAllocator> copy = this->ToList();
-
-    this->items = std::make_shared<QueryableListData<TObj, TAllocator>>();
-    for (TObj item : copy)
-    {
-      this->items.get()->Add(item);
-    }
-
-    this->type = QueryableType::List;
-    return *this;
+    std::list<TObj, TAllocator> copy = this->ToList(allocator);
+    ListInternalQueryable<TObj, TAllocator> retValue(copy);
+    return retValue;
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & ToQueryableMultiSet()
+  InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> ToQueryableMultiSet(
+    TLessThan lessThan = {},
+    TAllocator allocator = {}) const
   {
-    std::multiset<TObj, TLessThan, TAllocator> copy = this->ToMultiSet();
-    this->items = std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(copy);
-
-    this->type = QueryableType::MultiSet;
-    return *this;
+    MultiSetInternalQueryable<TObj, TLessThan, TAllocator> retValue(this->ToMultiSet(lessThan, allocator));
+    return retValue;
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::set, TLessThan, TAllocator> & ToQueryableSet()
+  InternalQueryable<TObj, std::set, TLessThan, TAllocator> ToQueryableSet(
+    TLessThan lessThan = {},
+    TAllocator allocator = {}) const
   {
-    std::set<TObj, std::function<bool(TObj, TObj)>> copy = this->ToSet();
-    this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(copy);
-
-    this->type = QueryableType::Set;
-    return *this;
+    SetInternalQueryable<TObj, TLessThan, TAllocator> retValue(this->ToSet(lessThan, allocator));
+    return retValue;
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::vector, TAllocator> & ToQueryableVector()
+  InternalQueryable<TObj, std::vector, TAllocator> ToQueryableVector(TAllocator allocator = {}) const
   {
-    std::vector<TObj> copy = this->ToVector();
-
-    this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>();
-    for (TObj item : copy)
-    {
-      this->items.get()->Add(item);
-    }
-
-    this->type = QueryableType::Vector;
-    return *this;
+    VectorInternalQueryable<TObj, TAllocator> retValue(this->ToVector(allocator));
+    return retValue;
   }
 
   bool IsEmpty()
@@ -1050,6 +1027,7 @@ public:
         break;
     }
 
+    // I think this is the only thing keeping us from using IQueryableData everywhere instead of QueryableData, and its not even working....
     SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(*sorter);
     // This return does not work due to the SortedQueryable being abstract.
     // I could have the SortedQueryable implement all abstract methods and pass the execution to child virtual methods,
@@ -1065,7 +1043,7 @@ public:
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
-    return this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); });
+    return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); }) };
   }
 
   template<
@@ -1076,7 +1054,7 @@ public:
     std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
     TLessThan lessThan = {})
   {
-    return this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); });
+    return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); }) };
   }
 
   // TODO --> is returing it ordered based on the given comparator okay?

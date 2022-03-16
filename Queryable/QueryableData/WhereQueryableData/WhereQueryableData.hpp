@@ -141,7 +141,7 @@ protected:
 
 public:
   // WhereQueryableData(
-  //   std::shared_ptr<IQueryableData<TObj, TObj>> && data,
+  //   std::shared_ptr<IQueryableData<TObj>> && data,
   //   std::function<bool(TObj)> && condition)
   //   : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
   // {
@@ -161,7 +161,24 @@ public:
 
   virtual ~WhereQueryableData() { }
 
-  inline virtual IQueryableIteratorData<TObj> & Next(IteratorType type, uint64_t & iterated) override
+  // TODO --> this is a pretty bad method to call for this class. finding a way
+  //    to track this instead of iterating over the container would be good.
+  virtual int Count() override
+  {
+    int count = 0;
+
+    for (TObj item : this->items)
+    {
+      if (condition(item))
+      {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  inline virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -173,7 +190,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  inline virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -186,7 +203,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Add(int addend, IteratorType type) override
+  inline virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     switch (type)
@@ -224,7 +241,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Subtract(int subtrahend, IteratorType type) override
+  inline virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     bool isFirst = false;

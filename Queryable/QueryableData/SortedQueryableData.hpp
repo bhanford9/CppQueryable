@@ -15,7 +15,7 @@ template<
 class SortedQueryableData : public QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>
 {
 protected:
-  TCompare comparator;
+  TCompare comparator; // TODO --> I don't think this is actually necessary
 
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
@@ -26,10 +26,26 @@ public:
     this->items = TIterable<T, TCompare, TAllocator, TArgs...>(comparator);
   }
 
+  // SortedQueryableData(
+  //   TIterable<T, TCompare, TAllocator, TArgs...> items,
+  //   TCompare comparator = {})
+  //   : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
+  // {
+  //   this->comparator = comparator;
+  // }
+
   SortedQueryableData(
-    TIterable<T, TCompare, TAllocator, TArgs...> items,
+    const TIterable<T, TCompare, TAllocator, TArgs...> & items,
     TCompare comparator = {})
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
+  {
+    this->comparator = comparator;
+  }
+
+  SortedQueryableData(
+    TIterable<T, TCompare, TAllocator, TArgs...> && items,
+    TCompare comparator = {})
+    : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(std::move(items))
   {
     this->comparator = comparator;
   }

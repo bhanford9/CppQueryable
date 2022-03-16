@@ -44,7 +44,7 @@ TEST_F(OrderByFunctionalTest, OrderByUninitialized)
 
 TEST_F(OrderByFunctionalTest, DequeDefault)
 {
-  DequeInternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  DequeInternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
   local.OrderBy();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -59,7 +59,7 @@ TEST_F(OrderByFunctionalTest, DequeDefault)
 
 TEST_F(OrderByFunctionalTest, ListDefault)
 {
-  ListInternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  ListInternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
   local.OrderBy();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -74,7 +74,7 @@ TEST_F(OrderByFunctionalTest, ListDefault)
 
 // TEST_F(OrderByFunctionalTest, MultiSetDefault)
 // {
-//   InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+//   InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
 //   local.OrderBy();
 //
 //   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -89,7 +89,7 @@ TEST_F(OrderByFunctionalTest, ListDefault)
 //
 // TEST_F(OrderByFunctionalTest, SetDefault)
 // {
-//   InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToSet());
+//   InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToSet());
 //   local.OrderBy();
 //
 //   ASSERT_FALSE(this->queryable.Count() == local.Count());
@@ -104,7 +104,7 @@ TEST_F(OrderByFunctionalTest, ListDefault)
 
 TEST_F(OrderByFunctionalTest, VectorDefault)
 {
-  VectorInternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  VectorInternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
   local.OrderBy();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -119,7 +119,7 @@ TEST_F(OrderByFunctionalTest, VectorDefault)
 
 TEST_F(OrderByFunctionalTest, DequeClass)
 {
-  DequeInternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToDeque());
+  DequeInternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToDeque());
   local.OrderBy();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -145,7 +145,7 @@ TEST_F(OrderByFunctionalTest, DequeClass)
 
 TEST_F(OrderByFunctionalTest, ListClass)
 {
-  ListInternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToList());
+  ListInternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToList());
   local.OrderBy();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -171,7 +171,7 @@ TEST_F(OrderByFunctionalTest, ListClass)
 
 // TEST_F(OrderByFunctionalTest, MultiSetClass)
 // {
-//   InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToMultiSet());
+//   InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToMultiSet());
 //   local.OrderBy();
 //
 //   ASSERT_EQ(this->people.Count(), local.Count());
@@ -197,7 +197,7 @@ TEST_F(OrderByFunctionalTest, ListClass)
 //
 // TEST_F(OrderByFunctionalTest, SetClass)
 // {
-//   InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToSet());
+//   InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToSet());
 //   local.OrderBy();
 //
 //   ASSERT_TRUE(this->people.Count() == local.Count());
@@ -225,7 +225,7 @@ TEST_F(OrderByFunctionalTest, ListClass)
 
 TEST_F(OrderByFunctionalTest, VectorClass)
 {
-  VectorInternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToVector());
+  VectorInternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToVector());
   local.OrderBy();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -251,7 +251,7 @@ TEST_F(OrderByFunctionalTest, VectorClass)
 
 TEST_F(OrderByFunctionalTest, WhereOrderBy)
 {
-  VectorInternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  VectorInternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
 
   local
     .Where([](uint value) { return (value % 2) == 0; })

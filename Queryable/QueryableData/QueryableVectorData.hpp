@@ -14,8 +14,14 @@ class QueryableVectorData : public RandomAccessQueryableData<T, std::vector, TAl
 public:
   QueryableVectorData() : RandomAccessQueryableData<T, std::vector, TAllocator>() { }
 
-  QueryableVectorData(std::vector<T, TAllocator> items)
+  // QueryableVectorData(std::vector<T, TAllocator> items)
+  //   : RandomAccessQueryableData<T, std::vector, TAllocator>(items) { }
+
+  QueryableVectorData(const std::vector<T, TAllocator> & items)
     : RandomAccessQueryableData<T, std::vector, TAllocator>(items) { }
+
+  QueryableVectorData(std::vector<T, TAllocator> && items)
+    : RandomAccessQueryableData<T, std::vector, TAllocator>(std::move(items)) { }
 
   QueryableVectorData(const QueryableVectorData & data)
     : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }

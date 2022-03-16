@@ -20,7 +20,7 @@ protected:
   }
 public:
   WhereQueryableListData(
-    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::shared_ptr<IQueryableData<TObj>> data,
     std::function<bool(TObj)> condition)
     : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
   {

@@ -26,7 +26,7 @@ private:
   std::shared_ptr<IGroup<TKey, TData>> internalGroup;
 
 protected:
-  virtual IQueryableData<TData, TData> & GetData() override
+  virtual IQueryableData<TData> & GetData() override
   {
     return this->internalGroup.get()->GetData();
   }

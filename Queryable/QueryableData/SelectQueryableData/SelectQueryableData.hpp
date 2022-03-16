@@ -59,28 +59,28 @@ public:
     return this->value;
   }
 
-  inline virtual IQueryableIteratorData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
+  inline virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
   {
     // std::cout << "Select Data Next" << std::endl;
     this->original->Next(type, iterated);
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TCurrent> & Prev(IteratorType type, uint64_t & iterated) override
+  inline virtual IQueryableData<TCurrent> & Prev(IteratorType type, uint64_t & iterated) override
   {
     // std::cout << "Select Data Prev" << std::endl;
     this->original->Prev(type, iterated);
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TCurrent> & Add(int addend, IteratorType type) override
+  inline virtual IQueryableData<TCurrent> & Add(int addend, IteratorType type) override
   {
     // std::cout << "Select Data Add" << std::endl;
     this->original->Add(addend, type);
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
+  inline virtual IQueryableData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
   {
     // std::cout << "Select Data Subtract" << std::endl;
     this->original->Add(subtrahend, type);

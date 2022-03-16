@@ -7,10 +7,12 @@
 #include "../Iterators/QueryableIterator.hpp"
 #include "../Iterators/IIterable.hpp"
 #include "../Sorters/Sorter.hpp"
-#include "IQueryableIteratorData.hpp"
 
-template<typename TObj, typename TIterator>
-class IQueryableData : public IQueryableIteratorData<TIterator>
+template<typename TObj>
+class QueryableIterator;
+
+template<typename TObj>
+class IQueryableData
 {
 public:
   virtual ~IQueryableData() { }
@@ -20,7 +22,17 @@ public:
   virtual int Count() = 0;
   virtual int StorageSize() = 0;
 
-  // virtual void Update(QueryableIterator<TIterator, TIterable, TArgs...> first, QueryableIterator<TIterator, TIterable, TArgs...> last, std::function<bool(TObj, TObj)> compare = [](TObj a, TObj b) { return a < b; }) = 0;
+  virtual QueryableIterator<TObj> begin() = 0;
+  virtual QueryableIterator<TObj> end() = 0;
+  virtual QueryableIterator<TObj> rbegin() = 0;
+  virtual QueryableIterator<TObj> rend() = 0;
+
+  inline virtual IQueryableData<TObj>& Next(IteratorType type, uint64_t & iterated) = 0;
+  inline virtual IQueryableData<TObj>& Prev(IteratorType type, uint64_t & iterated) = 0;
+  inline virtual TObj& Get(IteratorType type) = 0;
+  inline virtual const TObj& ConstGet(IteratorType type) = 0;
+  inline virtual IQueryableData<TObj>& Add(int addend, IteratorType type) = 0;
+  inline virtual IQueryableData<TObj>& Subtract(int subtrahend, IteratorType type) = 0;
 };
 
 #endif

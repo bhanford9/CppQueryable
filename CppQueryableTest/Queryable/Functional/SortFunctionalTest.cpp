@@ -44,7 +44,7 @@ TEST_F(SortFunctionalTest, SortUninitialized)
 
 TEST_F(SortFunctionalTest, DequeDefault)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToDeque());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToDeque());
   local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -59,7 +59,7 @@ TEST_F(SortFunctionalTest, DequeDefault)
 
 TEST_F(SortFunctionalTest, ListDefault)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToList());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToList());
   local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -74,7 +74,7 @@ TEST_F(SortFunctionalTest, ListDefault)
 
 TEST_F(SortFunctionalTest, MultiSetDefault)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToMultiSet());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToMultiSet());
   local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -89,7 +89,7 @@ TEST_F(SortFunctionalTest, MultiSetDefault)
 
 TEST_F(SortFunctionalTest, DequeSet)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToSet());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToSet());
   local.Sort();
 
   ASSERT_FALSE(this->queryable.Count() == local.Count());
@@ -104,7 +104,7 @@ TEST_F(SortFunctionalTest, DequeSet)
 
 TEST_F(SortFunctionalTest, VectorDefault)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
   local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -119,7 +119,7 @@ TEST_F(SortFunctionalTest, VectorDefault)
 
 TEST_F(SortFunctionalTest, DequeClass)
 {
-  InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToDeque());
+  InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToDeque());
   local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -145,7 +145,7 @@ TEST_F(SortFunctionalTest, DequeClass)
 
 TEST_F(SortFunctionalTest, ListClass)
 {
-  InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToList());
+  InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToList());
   local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -171,7 +171,7 @@ TEST_F(SortFunctionalTest, ListClass)
 
 TEST_F(SortFunctionalTest, MultiSetClass)
 {
-  InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToMultiSet());
+  InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToMultiSet());
   local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -197,7 +197,7 @@ TEST_F(SortFunctionalTest, MultiSetClass)
 
 TEST_F(SortFunctionalTest, SetClass)
 {
-  InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToSet());
+  InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToSet());
   local.Sort();
 
   ASSERT_TRUE(this->people.Count() == local.Count());
@@ -225,7 +225,7 @@ TEST_F(SortFunctionalTest, SetClass)
 
 TEST_F(SortFunctionalTest, VectorClass)
 {
-  InternalQueryable<Person> local = BuildInternalQueryable<Person>(this->people.ToVector());
+  InternalQueryable<Person> local = BuildQueryable<Person>(this->people.ToVector());
   local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
@@ -251,7 +251,7 @@ TEST_F(SortFunctionalTest, VectorClass)
 
 TEST_F(SortFunctionalTest, WhereSort)
 {
-  InternalQueryable<uint> local = BuildInternalQueryable<uint>(this->queryable.ToVector());
+  InternalQueryable<uint> local = BuildQueryable<uint>(this->queryable.ToVector());
 
   local
     .Where([](uint value) { return (value % 2) == 0; })

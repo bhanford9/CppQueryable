@@ -36,7 +36,7 @@ public:
 
   GroupQueryableData(
     TKey key,
-    std::shared_ptr<IQueryableData<TData, TData>> data,
+    std::shared_ptr<IQueryableData<TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
     : QueryableData<TData, TIterable, TArgs...>(std::move(data))

@@ -15,7 +15,7 @@ class WhereQueryableSetData : public WhereQueryableData<TObj, std::set, TCompare
 {
 public:
   WhereQueryableSetData(
-    std::shared_ptr<IQueryableData<TObj, TObj>> data,
+    std::shared_ptr<IQueryableData<TObj>> data,
     std::function<bool(TObj)> condition)
     : WhereQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
   {

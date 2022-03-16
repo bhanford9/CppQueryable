@@ -27,6 +27,12 @@ public:
     this->items = std::move(std::make_shared<QueryableDequeData<TObj, TAllocator>>(deque));
   }
 
+  DequeInternalQueryable(std::deque<TObj, TAllocator> && deque)
+  {
+    this->type = QueryableType::Deque;
+    this->items = std::move(std::make_shared<QueryableDequeData<TObj, TAllocator>>(std::move(deque)));
+  }
+
   DequeInternalQueryable(const DequeInternalQueryable<TObj, TAllocator> & other)
   {
     this->type = QueryableType::Deque;

@@ -61,9 +61,9 @@ int main()
   // queryable.ForEach([](uint value) { std::cout << value << ", "; });
   // std::cout << std::endl;
 
-  // ListInternalQueryable<uint> local = BuildInternalQueryable<uint>(queryable.ToList());
+  // ListInternalQueryable<uint> local = BuildQueryable<uint>(queryable.ToList());
   // std::cout << "local made\n\n" << std::endl;
-  // ListInternalQueryable<uint> mevens = BuildInternalQueryable<uint>(queryableEvens.ToList());
+  // ListInternalQueryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
   // std::cout << "mevens made\n\n" << std::endl;
   // auto result = local.Where([](uint value) { return value > 10; });
   // std::vector<uint> vectorResult = result.ToVector();

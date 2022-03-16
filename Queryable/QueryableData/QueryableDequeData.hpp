@@ -13,10 +13,19 @@ class QueryableDequeData : public RandomAccessQueryableData<T, std::deque, TAllo
 {
 public:
   QueryableDequeData() : RandomAccessQueryableData<T, std::deque, TAllocator>() { }
-  QueryableDequeData(std::deque<T, TAllocator> items)
+
+  // QueryableDequeData(std::deque<T, TAllocator> items)
+  //   : RandomAccessQueryableData<T, std::deque, TAllocator>(items) { }
+
+  QueryableDequeData(const std::deque<T, TAllocator> & items)
     : RandomAccessQueryableData<T, std::deque, TAllocator>(items) { }
+
+  QueryableDequeData(std::deque<T, TAllocator> && items)
+    : RandomAccessQueryableData<T, std::deque, TAllocator>(std::move(items)) { }
+
   QueryableDequeData(const QueryableDequeData& data)
     : RandomAccessQueryableData<T, std::deque, TAllocator>(data) { }
+
   QueryableDequeData(QueryableDequeData && data)
     : RandomAccessQueryableData<T, std::deque, TAllocator>(data) { }
 

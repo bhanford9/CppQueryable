@@ -25,7 +25,7 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class QueryableData : public IQueryableData<TObj, TObj>               // TODO --> go fix IQueryableData
+class QueryableData : public IQueryableData<TObj>               // TODO --> go fix IQueryableData
 {
 public:
   using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
@@ -83,8 +83,10 @@ public:
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
-    this->value = items.value;
-    this->size = this->items.size();
+    //
+    //   another option could be to let the child constructors set the size, but
+    //   that is a bit harder to maintain
+    this->size = items.size();
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
@@ -109,7 +111,7 @@ public:
     this->size = data->Count();
     // std::cout << "leaving constructor 6" << std::endl;
   }
-  // QueryableData(std::shared_ptr<IQueryableData<TObj, TObj>> && data)
+  // QueryableData(std::shared_ptr<IQueryableData<TObj>> && data)
   // {
   //   // std::cout << "\nQueryableData Constructor 6" << std::endl;
   //   // std::cout << "incoming data is null: " << (data.get() ? "no" : "yes") << std::endl;
@@ -124,7 +126,7 @@ public:
   // }
   virtual ~QueryableData() { }
 
-  inline virtual IQueryableIteratorData<TObj> & Next(IteratorType type, uint64_t & iterated) override
+  inline virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -138,7 +140,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  inline virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -174,7 +176,7 @@ public:
     }
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Add(int addend, IteratorType type) override
+  inline virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     switch (type)
@@ -188,7 +190,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableIteratorData<TObj> & Subtract(int subtrahend, IteratorType type) override
+  inline virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     switch (type)

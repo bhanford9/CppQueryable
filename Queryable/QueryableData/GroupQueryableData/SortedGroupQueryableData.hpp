@@ -39,7 +39,7 @@ public:
 
   SortedGroupQueryableData(
     TKey key,
-    std::shared_ptr<IQueryableData<TData, TData>> data,
+    std::shared_ptr<IQueryableData<TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
     std::function<bool(TData, TData)> compare = [](TData a, TData b) { return a < b; })

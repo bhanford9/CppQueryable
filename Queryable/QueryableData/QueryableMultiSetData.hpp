@@ -16,17 +16,20 @@ class QueryableMultiSetData : public SortedQueryableData<T, std::multiset, TComp
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   QueryableMultiSetData(TCompare comparator = {})
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>()
-  {
-  }
-  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items)
-  {
-  }
+    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>() { }
+
+  // QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
+  //   : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items) { }
+
+  QueryableMultiSetData(const std::multiset<T, TCompare, TAllocator> & items)
+    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items) { }
+
+  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> && items)
+    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(std::move(items)) { }
+
   QueryableMultiSetData(const QueryableMultiSetData<T, TCompare, TAllocator> & data)
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(data)
-  {
-  }
+    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(data) { }
+
   QueryableMultiSetData(
     TVectorIterator first,
     TVectorIterator last,

@@ -6,17 +6,16 @@
 
 #include "IteratorType.hpp"
 #include "IIterable.hpp"
-#include "../QueryableData/IQueryableIteratorData.hpp"
+#include "../QueryableData/IQueryableData.hpp"
 
 template<typename T>
-class IIterable;
+class IQueryableData;
 
 template <typename T>
-class QueryableIterator// : public IIterable<T>
+class QueryableIterator
 {
 private:
-  IQueryableIteratorData<T> * queryableData;
-  // std::shared_ptr<IQueryableIteratorData<T>> queryableData;
+  IQueryableData<T> * queryableData;
 public:
   uint64_t index;
   IteratorType type;
@@ -29,13 +28,13 @@ public:
 
   QueryableIterator() : index(0) {}
 
-  QueryableIterator(IQueryableIteratorData<T> * queryableData, IteratorType type) : QueryableIterator()
+  QueryableIterator(IQueryableData<T> * queryableData, IteratorType type) : QueryableIterator()
   {
     this->queryableData = queryableData;
     this->type = type;
   }
 
-  QueryableIterator(IQueryableIteratorData<T> * queryableData, int startingIndex, IteratorType type)
+  QueryableIterator(IQueryableData<T> * queryableData, int startingIndex, IteratorType type)
   {
     this->queryableData = queryableData;
     this->index = startingIndex;
@@ -49,7 +48,7 @@ public:
     this->type = other.type;
   }
 
-  inline QueryableIterator<T> & operator=(IQueryableIteratorData<T> * queryableData)
+  inline QueryableIterator<T> & operator=(IQueryableData<T> * queryableData)
   {
     this->queryableData = queryableData;
     return *this;

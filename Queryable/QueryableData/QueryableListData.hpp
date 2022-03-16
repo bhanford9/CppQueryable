@@ -19,14 +19,18 @@ protected:
   }
 public:
   QueryableListData() : QueryableData<T, std::list, TAllocator>() { }
-  QueryableListData(std::list<T, TAllocator> items)
-    : QueryableData<T, std::list, TAllocator>(items)
-  {
-  }
+
+  // QueryableListData(std::list<T, TAllocator> items)
+  //   : QueryableData<T, std::list, TAllocator>(items) { }
+
+  QueryableListData(const std::list<T, TAllocator> & items)
+    : QueryableData<T, std::list, TAllocator>(items) { }
+
+  QueryableListData(std::list<T, TAllocator> && items)
+    : QueryableData<T, std::list, TAllocator>(std::move(items)) { }
+
   QueryableListData(const QueryableListData& data)
-    : QueryableData<T, std::list, TAllocator>(data)
-  {
-  }
+    : QueryableData<T, std::list, TAllocator>(data) { }
 
   virtual ~QueryableListData() { }
 

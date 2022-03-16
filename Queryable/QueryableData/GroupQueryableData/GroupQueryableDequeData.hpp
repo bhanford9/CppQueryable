@@ -27,7 +27,7 @@ public:
 
   GroupQueryableDequeData(
     TKey key,
-    std::shared_ptr<IQueryableData<TData, TData>> data,
+    std::shared_ptr<IQueryableData<TData>> data,
     QueryableType type,
     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; })
     : RandomAccessGroupQueryableData<TKey, TData, std::deque, TArgs...>(key, std::move(data), type, keyCompare)
