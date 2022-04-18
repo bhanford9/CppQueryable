@@ -32,17 +32,18 @@ protected:
   using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
 
   Condition<TObj> condition;
+  bool sizeIsCalculated;
 
   uint64_t IncrementBeginForwardPastFalseConditions()
   {
     uint64_t iterated = 1;
 
     // TODO apply this to the other methods as well so we are not copying end() on every iteration
-    TForwardIterator last = this->items.end();
+    TForwardIterator last = this->items->end();
     while (condition && this->beginIterator != last && !condition(*this->beginIterator))
     {
       ++this->beginIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -52,10 +53,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->endIterator != this->items.end() && !condition(*this->endIterator))
+    while (condition && this->endIterator != this->items->end() && !condition(*this->endIterator))
     {
       ++this->endIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -65,10 +66,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->rbeginIterator != this->items.rend() && !condition(*this->rbeginIterator))
+    while (condition && this->rbeginIterator != this->items->rend() && !condition(*this->rbeginIterator))
     {
       ++this->rbeginIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -78,10 +79,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->rendIterator != this->items.rend() && !condition(*this->rendIterator))
+    while (condition && this->rendIterator != this->items->rend() && !condition(*this->rendIterator))
     {
       ++this->rendIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -91,10 +92,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->beginIterator != this->items.begin() && !condition(*this->beginIterator))
+    while (condition && this->beginIterator != this->items->begin() && !condition(*this->beginIterator))
     {
       --this->beginIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -104,10 +105,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->endIterator != this->items.begin() && !condition(*this->endIterator))
+    while (condition && this->endIterator != this->items->begin() && !condition(*this->endIterator))
     {
       --this->endIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -117,10 +118,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->rbeginIterator != this->items.rbegin() && !condition(*this->rbeginIterator))
+    while (condition && this->rbeginIterator != this->items->rbegin() && !condition(*this->rbeginIterator))
     {
       --this->rbeginIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -130,10 +131,10 @@ protected:
   {
     uint64_t iterated = 1;
 
-    while (condition && this->rendIterator != this->items.rbegin() && !condition(*this->rendIterator))
+    while (condition && this->rendIterator != this->items->rbegin() && !condition(*this->rendIterator))
     {
       --this->rendIterator;
-      iterated++;
+      // iterated++;
     }
 
     return iterated;
@@ -152,22 +153,30 @@ public:
     std::function<bool(TObj)> && condition)
     : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
   {
+    this->sizeIsCalculated = false;
     this->condition += condition;
   }
   WhereQueryableData(const WhereQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
+    this->sizeIsCalculated = other.sizeIsCalculated;
+    this->condition = other.condition;
   }
 
   virtual ~WhereQueryableData() { }
 
   // TODO --> this is a pretty bad method to call for this class. finding a way
   //    to track this instead of iterating over the container would be good.
-  virtual int Count() override
+  virtual size_t Count() override
   {
-    int count = 0;
+    if (this->sizeIsCalculated)
+    {
+      return this->size;
+    }
 
-    for (TObj item : this->items)
+    size_t count = 0;
+
+    for (TObj item : *this->items)
     {
       if (condition(item))
       {
@@ -175,10 +184,24 @@ public:
       }
     }
 
+    this->size = count;
+    this->sizeIsCalculated = true;
+
     return count;
   }
 
-  inline virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
+  virtual void Add(TObj item) override
+  {
+    if (this->condition(item))
+    {
+      this->InternalAdd(item);
+      this->size++;
+    }
+  }
+
+  virtual void InternalAdd(TObj item) = 0;
+
+  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -190,7 +213,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
   {
     switch (type)
     {
@@ -203,34 +226,34 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
+  virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     switch (type)
     {
       case IteratorType::BeginForward:
-        while (this->beginIterator != this->items.end() && addend-- > 0)
+        while (this->beginIterator != this->items->end() && addend-- > 0)
         {
           ++this->beginIterator;
           this->IncrementBeginForwardPastFalseConditions();
         }
         break;
       case IteratorType::EndForward:
-        while (this->endIterator != this->items.end() && addend-- > 0)
+        while (this->endIterator != this->items->end() && addend-- > 0)
         {
           ++this->endIterator;
           this->IncrementEndForwardPastFalseConditions();
         }
         break;
       case IteratorType::BeginReverse:
-        while (this->rbeginIterator != this->items.rend() && addend-- > 0)
+        while (this->rbeginIterator != this->items->rend() && addend-- > 0)
         {
           ++this->rbeginIterator;
           this->IncrementBeginReversePastFalseConditions();
         }
         break;
       case IteratorType::EndReverse: default:
-        while (this->rendIterator != this->items.rend() && addend-- > 0)
+        while (this->rendIterator != this->items->rend() && addend-- > 0)
         {
           ++this->rendIterator;
           this->IncrementBeginReversePastFalseConditions();
@@ -241,7 +264,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     bool isFirst = false;
@@ -251,7 +274,7 @@ public:
       case IteratorType::BeginForward:
         while (subtrahend-- > 0)
         {
-          isFirst = this->beginIterator == this->items.begin();
+          isFirst = this->beginIterator == this->items->begin();
           --this->beginIterator;
           this->DecrementBeginForwardPastFalseConditions();
 
@@ -261,7 +284,7 @@ public:
       case IteratorType::EndForward:
         while (subtrahend-- > 0)
         {
-          isFirst = this->endIterator == this->items.begin();
+          isFirst = this->endIterator == this->items->begin();
           --this->endIterator;
           this->DecrementEndForwardPastFalseConditions();
 
@@ -271,7 +294,7 @@ public:
       case IteratorType::BeginReverse:
         while (subtrahend-- > 0)
         {
-          isFirst = this->rbeginIterator == this->items.rbegin();
+          isFirst = this->rbeginIterator == this->items->rbegin();
           --this->rbeginIterator;
           this->DecrementBeginReversePastFalseConditions();
 
@@ -281,7 +304,7 @@ public:
       case IteratorType::EndReverse:
         while (subtrahend-- > 0)
         {
-          isFirst = this->rendIterator == this->items.rbegin();
+          isFirst = this->rendIterator == this->items->rbegin();
           --this->rendIterator;
           this->DecrementBeginReversePastFalseConditions();
 
@@ -298,11 +321,11 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> begin() override
   {
-    this->beginIterator = this->items.begin();
+    this->beginIterator = this->items->begin();
 
     int startIndex = this->IncrementBeginForwardPastFalseConditions() - 1;
     // std::cout << "where queryable data start index: " << startIndex << std::endl;
-    QueryableIterator<TObj> retVal(this, startIndex, IteratorType::BeginForward);
+    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
     // std::cout << "returning from where queryable begin" << std::endl;
     return retVal;
   }
@@ -313,11 +336,16 @@ public:
   virtual QueryableIterator<TObj> end() override
   {
     // std::cout << "within where queryable end" << std::endl;
-    this->endIterator = this->items.end();
+    this->endIterator = this->items->end();
+
+    if (!this->sizeIsCalculated)
+    {
+      this->Count();
+    }
 
     // although not ideal, it is simpler to keep end the true end
     // this->DecrementEndForwardPastFalseConditions();
-    QueryableIterator<TObj> retVal(this, this->size, IteratorType::EndForward);
+    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
     // std::cout << "leaving where queryable end" << std::endl;
     return retVal;
   }
@@ -328,9 +356,9 @@ public:
   virtual QueryableIterator<TObj> rbegin() override
   {
     // TODO
-    this->rbeginIterator = this->items.rbegin();
+    this->rbeginIterator = this->items->rbegin();
     int startIndex = this->IncrementBeginReversePastFalseConditions() - 1;
-    QueryableIterator<TObj> retVal(this, startIndex, IteratorType::BeginReverse);
+    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
     return retVal;
   }
 
@@ -340,8 +368,14 @@ public:
   virtual QueryableIterator<TObj> rend() override
   {
     // TODO
-    this->rendIterator = this->items.rend();
-    QueryableIterator<TObj> retVal(this, this->size, IteratorType::EndReverse);
+    this->rendIterator = this->items->rend();
+
+    if (!this->sizeIsCalculated)
+    {
+      this->Count();
+    }
+
+    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
     return retVal;
   }
 };

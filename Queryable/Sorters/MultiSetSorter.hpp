@@ -8,21 +8,26 @@
 
 template<
   typename TObj,
+  typename TOutLessThan = std::less<TObj>,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
 class MultiSetSorter :
   public Sorter<
     TObj,
-    std::multiset,
-    SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>>>
+    SortOutput<TObj, std::multiset, TOutLessThan>,
+    TOutLessThan>
 {
 public:
-  virtual SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>> Sort(
-    std::multiset<TObj, TLessThan, TAllocator> & iterable,
-    std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
+  virtual SortOutput<TObj, std::multiset, TOutLessThan> Sort(
+    QueryableIterator<TObj> beginIterator,
+    QueryableIterator<TObj> endIterator,
+    TOutLessThan lessThan = {}) const override
   {
-    std::multiset<TObj, std::function<bool(TObj, TObj)>, TAllocator> newMultiSet(iterable.begin(), iterable.end(), lessThan);
-    SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>> newlySorted(newMultiSet);
+    std::cout << "multiset sorter sort 1" << std::endl;
+    std::multiset<TObj, TOutLessThan, TAllocator> newMultiSet(beginIterator, endIterator, lessThan);
+    std::cout << "multiset sorter sort 2" << std::endl;
+    SortOutput<TObj, std::multiset, TOutLessThan> newlySorted(newMultiSet);
+    std::cout << "multiset sorter sort 3" << std::endl;
     return newlySorted;
   }
 };

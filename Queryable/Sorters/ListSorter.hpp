@@ -8,21 +8,24 @@
 
 template<
   typename TObj,
-  typename TAllocator = std::allocator<TObj>>
+  typename TAllocator = std::allocator<TObj>,
+  typename TLessThan = std::less<TObj>>
 class ListSorter :
   public Sorter<
     TObj,
-    std::list,
     SortOutput<TObj, std::list, TAllocator>,
-    TAllocator>
+    TLessThan>
 {
 public:
   virtual SortOutput<TObj, std::list, TAllocator> Sort(
-    std::list<TObj, TAllocator> & iterable,
-    std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
+    QueryableIterator<TObj> beginIterator,
+    QueryableIterator<TObj> endIterator,
+    TLessThan lessThan = {}) const override
   {
-    iterable.sort(lessThan);
-    return iterable;
+    std::list<TObj, TAllocator> copy(beginIterator, endIterator);
+    copy.sort(lessThan);
+    SortOutput<TObj, std::list, TAllocator> output(copy);
+    return output;
   }
 };
 

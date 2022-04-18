@@ -14,7 +14,7 @@ class WhereQueryableListData : public WhereQueryableData<TObj, std::list, TAlloc
 {
 protected:
 
-  inline virtual void Add(std::list<TObj, TAllocator> items, TObj item) const
+  virtual void Add(std::list<TObj, TAllocator> items, TObj item) const
   {
     items.push_back(item);
   }
@@ -38,11 +38,14 @@ public:
 
   virtual ~WhereQueryableListData() { }
 
-  void Add(TObj item) override
+  virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    // this wont easily or quickly work... might want to nix it
-    this->items.push_back(item);
-    this->size++;
+    return std::make_shared<WhereQueryableListData<TObj, TAllocator>>(*this);
+  }
+
+  virtual void InternalAdd(TObj item) override
+  {
+    this->items->push_back(item);
   }
 };
 

@@ -13,7 +13,7 @@ class QueryableListData : public QueryableData<T, std::list, TAllocator>
 {
 protected:
 
-  inline virtual void Add(std::list<T, TAllocator> items, T item) const
+  virtual void Add(std::list<T, TAllocator> items, T item) const
   {
     items.push_back(item);
   }
@@ -34,9 +34,14 @@ public:
 
   virtual ~QueryableListData() { }
 
+  virtual std::shared_ptr<IQueryableData<T>> Clone() override
+  {
+    return std::make_shared<QueryableListData<T, TAllocator>>(*this);
+  }
+
   void Add(T item) override
   {
-    this->items.push_back(item);
+    this->items->push_back(item);
     this->size++;
   }
 };

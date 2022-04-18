@@ -23,10 +23,15 @@ public:
   }
   virtual ~SelectQueryableVectorData() { }
 
+  virtual std::shared_ptr<IQueryableData<TCurrent>> Clone() override
+  {
+    return std::make_shared<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>>(*this);
+  }
+
   void Add(TCurrent item) override
   {
     // this wont easily or quickly work... might want to nix it
-    this->items.push_back(item);
+    this->items->push_back(item);
     this->size++;
   }
 };

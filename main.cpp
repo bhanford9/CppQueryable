@@ -29,32 +29,33 @@ int main()
 {
 
 
-  PersonLibrary personLibrary;
-  VectorInternalQueryable<Person> people(personLibrary.GetPeople());
-
-
-  std::vector<uint> startingInput;
-  std::vector<uint> evens;
-  VectorInternalQueryable<uint> queryable;
-  VectorInternalQueryable<uint> queryableEvens;
-  startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
-  evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
-
-  queryable = BuildQueryable(startingInput);
-  queryableEvens = BuildQueryable(evens);
-
-  // InternalQueryable<uint, std::vector> * meh = reinterpret_cast<InternalQueryable<uint, std::vector>*>(&queryable);
-
-  // std::shared_ptr<InternalQueryable<uint, std::vector>> ptr = std::make_shared<InternalQueryable<uint, std::vector>>(*meh);
-  std::multiset<uint> setItems = queryable.ToMultiSet();
-  Queryable<uint, std::multiset> blah(std::move(setItems));
-
-  std::cout << "starting test. set size: " << setItems.size() << std::endl;
-  blah
-    .Where([](uint num) { return (num % 2) == 0; })
-    .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
-    .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
-  std::cout << "done with select\n\n" << std::endl;
+  // PersonLibrary personLibrary;
+  // VectorInternalQueryable<Person> people(personLibrary.GetPeople());
+  //
+  //
+  // std::vector<uint> startingInput;
+  // std::vector<uint> evens;
+  // VectorInternalQueryable<uint> queryable;
+  // VectorInternalQueryable<uint> queryableEvens;
+  // startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
+  // evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
+  //
+  // queryable = BuildQueryable(startingInput);
+  // queryableEvens = BuildQueryable(evens);
+  //
+  // // InternalQueryable<uint, std::vector> * meh = reinterpret_cast<InternalQueryable<uint, std::vector>*>(&queryable);
+  //
+  // // std::shared_ptr<InternalQueryable<uint, std::vector>> ptr = std::make_shared<InternalQueryable<uint, std::vector>>(*meh);
+  // std::multiset<uint> setItems = queryable.ToMultiSet();
+  // MultiSetInternalQueryable<uint> qSetItems(std::move(setItems));
+  // Queryable<uint, std::multiset> blah(reinterpret_cast<InternalQueryable<uint, std::multiset>*>(&qSetItems));
+  //
+  // std::cout << "starting test. set size: " << setItems.size() << std::endl;
+  // blah
+  //   .Where([](uint num) { return (num % 2) == 0; })
+  //   .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
+  //   .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
+  // std::cout << "done with select\n\n" << std::endl;
 
 
   // std::cout << "attempting foreach" << std::endl;

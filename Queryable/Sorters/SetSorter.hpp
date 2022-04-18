@@ -8,21 +8,23 @@
 
 template<
   typename TObj,
+  typename TOutLessThan = std::less<TObj>,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
 class SetSorter :
   public Sorter<
     TObj,
-    std::set,
-    SortOutput<TObj, std::set, std::function<bool(TObj, TObj)>>>
+    SortOutput<TObj, std::set, TOutLessThan>,
+    TOutLessThan>
 {
 public:
-  virtual SortOutput<TObj, std::set, std::function<bool(TObj, TObj)>> Sort(
-    std::set<TObj, TLessThan, TAllocator> & iterable,
-    std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const override
+  virtual SortOutput<TObj, std::set, TOutLessThan> Sort(
+    QueryableIterator<TObj> beginIterator,
+    QueryableIterator<TObj> endIterator,
+    TOutLessThan lessThan = {}) const override
   {
-    std::set<TObj, std::function<bool(TObj, TObj)>, TAllocator> newSet(iterable.begin(), iterable.end(), lessThan);
-    SortOutput<TObj, std::set, std::function<bool(TObj, TObj)>> newlySorted(newSet);
+    std::set<TObj, TOutLessThan, TAllocator> newSet(beginIterator, endIterator, lessThan);
+    SortOutput<TObj, std::set, TOutLessThan> newlySorted(newSet);
     return newlySorted;
   }
 };

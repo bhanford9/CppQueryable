@@ -3,20 +3,22 @@
 
 #include <functional>
 #include <iostream>
+#include <memory>
 
 #include "Outputs/SortOutput.hpp"
+#include "../InternalQueryable.hpp"
 
 template<
   typename TObj,
-  template<typename, typename ...> typename TIterable,
   typename TOutput,
-  typename ...TArgs>
+  typename TLessThan = std::less<TObj>>
 class Sorter
 {
 public:
   virtual TOutput Sort(
-    TIterable<TObj, TArgs...> & iterable,
-    std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) const = 0;
+    QueryableIterator<TObj> beginIterator,
+    QueryableIterator<TObj> endIterator,
+    TLessThan lessThan = {}) const = 0;
 };
 
 #endif

@@ -15,9 +15,12 @@ template<
   typename TAllocator>
 class SortedInternalQueryable : public InternalQueryable<TObj, TIterable, TLessThan, TAllocator>
 {
+protected:
+  SortedInternalQueryable() { }
+
 public:
-  SortedInternalQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(QueryableType::Set)
+  SortedInternalQueryable(QueryableType type, TLessThan lessThan = {}, TAllocator allocator = {}) :
+    InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(type)
   {
   }
 
@@ -33,11 +36,6 @@ public:
     QueryableType type)
       : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
   {
-  }
-
-  virtual InternalQueryable<TObj, TIterable, TLessThan, TAllocator> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) override
-  {
-    throw std::runtime_error("Sorted Containers cannot be sorted normally. Use ReOrderby or ReSort instead.");
   }
 };
 

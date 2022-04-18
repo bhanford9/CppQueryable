@@ -33,17 +33,26 @@ public:
 
   virtual ~WhereQueryableSetData() { }
 
-  void Add(TObj item) override
+  virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    // this wont easily or quickly work... might want to nix it
-    this->items.insert(item);
-    this->size++;
+    return std::make_shared<WhereQueryableSetData<TObj, TCompare, TAllocator>>(*this);
   }
 
-  // virtual void Update(QueryableIterator<TObj> first, QueryableIterator<TObj> last, std::function<bool(TObj, TObj)> compare) override
-  // {
-  //   this->original.get()->Update(first, last, compare);
-  // }
+  virtual void InternalAdd(TObj item) override
+  {
+    this->items->insert(item);
+  }
+
+  virtual TObj & Get(IteratorType type) override
+  {
+    switch (type)
+    {
+        case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+        case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+        case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+        case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+  }
 };
 
 #endif

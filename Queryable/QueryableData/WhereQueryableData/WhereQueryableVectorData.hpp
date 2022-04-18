@@ -34,7 +34,12 @@ public:
 
   virtual ~WhereQueryableVectorData() { }
 
-  inline virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
+  virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
+  {
+    return std::make_shared<WhereQueryableVectorData<TObj, TAllocator>>(*this);
+  }
+
+  virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // std::cout << "[VectorWhere+]" << std::endl;
     switch (type)
@@ -48,7 +53,7 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     switch (type)
     {
@@ -61,11 +66,9 @@ public:
     return *this;
   }
 
-  void Add(TObj item) override
+  virtual void InternalAdd(TObj item) override
   {
-    // this wont easily or quickly work... might want to nix it
-    this->items.push_back(item);
-    this->size++;
+    this->items->push_back(item);
   }
 };
 

@@ -72,52 +72,6 @@ protected:
   PersistentContainer persistentContainer;
   QueryableType type;
 
-  template<template<typename...> typename TContainer, typename ...TContainerArgs>
-  bool Equal(const TContainer<TObj, TContainerArgs...> & collection, int collectionSize)
-  {
-    static_assert(is_equatable<TObj>::value, "Type must be equatable");
-
-    int localCount = this->Count();
-
-    if (localCount != collectionSize)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (TObj item : collection)
-    {
-      if (!(this->At(i++) == item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  template<template<typename...> typename TContainer, typename ...TContainerArgs>
-  bool Equal(const TContainer<TObj, TContainerArgs...> & collection, int collectionSize, std::function<bool(TObj, TObj)> areEqual)
-  {
-    int localCount = this->Count();
-
-    if (localCount != collectionSize)
-    {
-      return false;
-    }
-
-    int i = 0;
-    for (TObj item : collection)
-    {
-      if (!areEqual(this->At(i++), item))
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
 public:
 
   // BEGIN CONSTRUCTORS
@@ -143,26 +97,26 @@ public:
   }
 
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
-  InternalQueryable(TIterable<TObj, TArgs...> && iterable);
+  InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
   // END CONSTRUCTORS
 
-  QueryableType GetType()
+  inline QueryableType GetType()
   {
     return this->type;
   }
 
-  void Clear()
+  inline void Clear()
   {
     this->items.get()->Clear();
   }
 
-  void Add(TObj obj)
+  inline void Add(TObj obj)
   {
     this->items.get()->Add(obj);
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
+  inline std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
     std::deque<TObj, TAllocator> newItems(allocator);
 
@@ -175,7 +129,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::list<TObj, TAllocator> ToList(TAllocator allocator = {}) const
+  inline std::list<TObj, TAllocator> ToList(TAllocator allocator = {}) const
   {
     std::list<TObj, TAllocator> newItems(allocator);
 
@@ -188,7 +142,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  inline std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
     std::multiset<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
 
@@ -201,7 +155,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  std::set<TObj, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  inline std::set<TObj, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
     std::set<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
 
@@ -214,7 +168,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
+  inline std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
   {
     std::vector<TObj, TAllocator> newItems(allocator);
 
@@ -268,12 +222,12 @@ public:
     return retValue;
   }
 
-  bool IsEmpty()
+  inline bool IsEmpty()
   {
     return this->items.get()->begin() == this->items.get()->end();
   }
 
-  TObj & At(int index)
+  inline TObj & At(int index)
   {
     if (index < 0)
     {
@@ -292,14 +246,14 @@ public:
     throw std::runtime_error("Specified index was outside the bounds of the container");
   }
 
-  int Count()
+  inline size_t Count()
   {
     return this->items.get()->Count();
   }
 
-  int CountIf(std::function<bool(TObj)> condition)
+  inline size_t CountIf(std::function<bool(TObj)> condition) const
   {
-    int count = 0;
+    size_t count = 0;
 
     for (TObj item : *this->items.get())
     {
@@ -506,55 +460,68 @@ public:
   //   return retval;
   // }
 
-  // TODO --> these should be handled by child classes
-  bool Equal(const std::vector<TObj> & collection)
+  inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
   {
-    return this->Equal<TObj, std::vector>(collection, collection.size());
+    return this->Equal(collection, collection.size());
   }
 
-  bool Equal(const std::vector<TObj> & collection, std::function<bool(TObj, TObj)> areEqual)
+  inline bool Equal(
+    const TIterable<TObj, TArgs...> & collection,
+    const std::function<bool(TObj, TObj)> & areEqual) const
   {
-    return this->Equal<TObj, std::vector>(collection, collection.size(), areEqual);
+    return this->Equal(collection, collection.size(), areEqual);
   }
 
-  bool Equal(const std::list<TObj> & collection)
+  // forward_list does not contain size() method and don't want to require it
+  inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
   {
-    return this->Equal<TObj, std::list>(collection, collection.size());
+    static_assert(is_equatable<TObj>::value, "Type must be equatable");
+
+    size_t localCount = this->Count();
+
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
+
+    auto localIterator = this->items->begin();
+    for (TObj item : collection)
+    {
+      if (!(*localIterator == item))
+      {
+        return false;
+      }
+
+      ++localIterator;
+    }
+
+    return true;
   }
 
-  bool Equal(const std::list<TObj> & collection, std::function<bool(TObj, TObj)> areEqual)
+  inline bool Equal(
+    const TIterable<TObj, TArgs...> & collection,
+    size_t collectionSize,
+    const std::function<bool(TObj, TObj)> & areEqual) const
   {
-    return this->Equal<TObj, std::list>(collection, collection.size(), areEqual);
-  }
+    size_t localCount = this->Count();
 
-  bool Equal(const std::deque<TObj> & collection)
-  {
-    return this->Equal<TObj, std::deque>(collection, collection.size());
-  }
+    if (localCount != collectionSize)
+    {
+      return false;
+    }
 
-  bool Equal(const std::deque<TObj> & collection, std::function<bool(TObj, TObj)> areEqual)
-  {
-    return this->Equal<TObj, std::deque>(collection, collection.size(), areEqual);
-  }
+    auto localIterator = this->items->begin();
+    for (TObj item : collection)
+    {
+      if (!areEqual(*localIterator, item))
+      {
+        return false;
+      }
 
-  bool Equal(const std::set<TObj> & collection)
-  {
-    return this->Equal<TObj, std::set>(collection, collection.size());
-  }
+      ++localIterator;
+    }
 
-  bool Equal(const std::set<TObj> & collection, std::function<bool(TObj, TObj)> areEqual)
-  {
-    return this->Equal<TObj, std::set>(collection, collection.size(), areEqual);
-  }
-
-  bool Equal(const std::multiset<TObj> & collection)
-  {
-    return this->Equal<TObj, std::multiset>(collection, collection.size());
-  }
-
-  bool Equal(const std::multiset<TObj> & collection, std::function<bool(TObj, TObj)> areEqual)
-  {
-    return this->Equal<TObj, std::multiset>(collection, collection.size(), areEqual);
+    return true;
   }
 
   // with preserveFilter true, you can do the following:
@@ -592,7 +559,7 @@ public:
     return sum;
   }
 
-  TObj Sum() const
+  inline TObj Sum() const
   {
     static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
@@ -607,12 +574,12 @@ public:
   }
 
   template<typename T>
-  double Average(std::function<T(TObj)> retrieveValue) const
+  inline double Average(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
 
     double sum = 0;
-    ulong count = 0;
+    size_t count = 0;
 
     for (TObj item : *this->items.get())
     {
@@ -623,12 +590,12 @@ public:
     return count > 0 ? sum / count : 0;
   }
 
-  TObj Average(std::function<TObj(const TObj &, ulong)> divisor) const
+  inline TObj Average(std::function<TObj(const TObj &, size_t)> divisor) const
   {
     static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
     TObj sum = TObj();
-    ulong count = 0;
+    size_t count = 0;
 
     for (TObj item : *this->items.get())
     {
@@ -639,12 +606,12 @@ public:
     return divisor(sum, count);
   }
 
-  double Average() const
+  inline double Average() const
   {
     static_assert(std::is_arithmetic<TObj>::value, "Type must be numeric");
 
     double sum = 0;
-    ulong count = 0;
+    size_t count = 0;
 
     for (TObj item : *this->items.get())
     {
@@ -922,7 +889,8 @@ public:
     return max - min;
   }
 
-  bool Any(std::function<bool(TObj)> condition) const
+  // TODO : templates are supposed to be faster than std::function. will require static asserts though
+  inline bool Any(std::function<bool(TObj)> condition) const
   {
     for (TObj item : *this->items.get())
     {
@@ -935,7 +903,8 @@ public:
     return false;
   }
 
-  bool All(std::function<bool(TObj)> condition) const
+  // TODO : templates are supposed to be faster than std::function. will require static asserts though
+  inline bool All(std::function<bool(TObj)> condition) const
   {
     for (TObj item : *this->items.get())
     {
@@ -957,13 +926,13 @@ public:
     selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
   }
 
-  bool Contains(TObj obj) const
+  inline bool Contains(const TObj & item) const
   {
     static_assert(is_equatable<TObj>::value, "Item must be equatable");
 
-    for (TObj item : *this->items.get())
+    for (TObj localItem : *this->items.get())
     {
-      if (item == obj)
+      if (localItem == item)
       {
         return true;
       }
@@ -977,159 +946,215 @@ public:
   //   1.1. this is due to the sorting algorithm being type dependent within the container
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   3. all other types use their built in optimized sorting algorithms
-  //   4. need to verify that the Queryable move constructor is always used for returning
-  virtual InternalQueryable<TObj, TIterable, TArgs...> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) = 0;
+  //   4. would be faster if std::function could be replaced by type parameter, but then inheritance wouldn't work
+  template<
+    typename TSortOutput,
+    typename TLessThan = std::less<TObj>>
+  TSortOutput Sort(
+    Sorter<TObj, TSortOutput, TLessThan> * sorter,
+    TLessThan lessThan = {})
+  {
+    return sorter->Sort(this->items->begin(), this->items->end(), lessThan);
+  }
 
   // TODO --> using a template instead of std::function is probably faster
   // These are dangerous methods due to not having an Allocator specified at the
   // class level and needing one in the lower layers. I'm not sure how to fix it yet
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>>
-  InternalQueryable<TObj, TIterable, TArgs...> & OrderBy(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
-  {
-    return this->Sort([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); });
-  }
-
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>>
-  InternalQueryable<TObj, TIterable, TArgs...> & OrderByDescending(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
-  {
-    InternalQueryable<TObj, TIterable, TArgs...> & retVal =
-      this->Sort([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); });
-    return retVal;
-  }
-
-  template<typename TLessThan, typename TAllocator>
-  SortedInternalQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
-  {
-    std::shared_ptr<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>> sorter;
-
-    switch (this->type)
-    {
-      case QueryableType::MultiSet:
-      {
-        MultiSetSorter<TObj, TLessThan, TAllocator> multiSetSorter;
-        sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(multiSetSorter);
-      }
-      case QueryableType::Set:
-      {
-        SetSorter<TObj, TLessThan, TAllocator> setSorter;
-        sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(setSorter);
-      }
-      default:
-        throw std::runtime_error("ReOrderBy, ReOrderByDescending and ReSort are only meant for containers that are ordered by default. For all other containers use OrderBy, OrderByDescending or Sort");
-        break;
-    }
-
-    // I think this is the only thing keeping us from using IQueryableData everywhere instead of QueryableData, and its not even working....
-    SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(*sorter);
-    // This return does not work due to the SortedQueryable being abstract.
-    // I could have the SortedQueryable implement all abstract methods and pass the execution to child virtual methods,
-    // but I don't like needing the Re-Sort method anyway, so might try to find another way to handle this instead.
-    return { setOutput.Get() };
-  }
-
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>,
-    typename TAllocator = std::allocator<TObj>>
-  SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderBy(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
-  {
-    return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); }) };
-  }
-
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>,
-    typename TAllocator = std::allocator<TObj>>
-  SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderByDescending(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
-  {
-    return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); }) };
-  }
-
-  // TODO --> is returing it ordered based on the given comparator okay?
-  //          should having an implementation that doesn't change order be done?
-  // InternalQueryable<TObj> & Except(
-  //   const InternalQueryable<TObj> & collection,
-  //   std::function<bool(TObj, TObj)> comparator = [](TObj a, TObj b) { return a < b; })
+  // template<
+  //   typename TSortOutput,
+  //   typename T = TObj,
+  //   typename TLessThan = std::less<T>>
+  // TSortOutput OrderBy(
+  //   Sorter<TObj, TIterable, TSortOutput, TArgs...> & sorter,
+  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
+  //   TLessThan lessThan = {})
   // {
-  //   // TODO --> if  nXm < max(nlog(n), mlog(m)) then sorting is not worth it
-  //   // TODO --> don't call toVector if the type is already a random access iterator
+  //   return this->Sort(
+  //     sorter,
+  //     [&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); });
+  // }
   //
-  //   std::vector<TObj> localSorted = this->Sort(comparator).ToVector();
-  //   std::vector<TObj> inputSorted = collection.ToVector();
-  //   std::sort(inputSorted.begin(), inputSorted.end(), comparator);
-  //
-  //   int localCount = localSorted.size();
-  //   int inputCount = inputSorted.size();
-  //
-  //   if (localCount <= 0 || inputCount <= 0)
-  //   {
-  //     return *this;
-  //   }
-  //
-  //   std::vector<TObj> result;
-  //   int localIndex = 0;
-  //   int inputIndex = 0;
-  //
-  //   std::function<bool(TObj, TObj)> equal = [&](TObj a, TObj b)
-  //   {
-  //     return !comparator(a, b) && !comparator(b, a);
-  //   };
-  //
-  //   while (localIndex < localCount && inputIndex < inputCount)
-  //   {
-  //     TObj localItem = localSorted[localIndex];
-  //     TObj inputItem = inputSorted[inputIndex];
-  //
-  //     if (equal(localItem, inputItem))
-  //     {
-  //       TObj equalValue = localItem;
-  //
-  //       while (++localIndex < localCount && equal(equalValue, localSorted[localIndex]));
-  //       while (++inputIndex < inputCount && equal(equalValue, inputSorted[inputIndex]));
-  //     }
-  //     else if (comparator(localItem, inputItem))
-  //     {
-  //       result.push_back(localItem);
-  //       localIndex++;
-  //     }
-  //     else
-  //     {
-  //       inputIndex++;
-  //     }
-  //   }
-  //
-  //   // gather leftovers
-  //   for (; localIndex < localCount; localIndex++)
-  //   {
-  //     if (!equal(localSorted[localIndex], inputSorted[inputCount - 1]))
-  //     {
-  //       result.push_back(localSorted[localIndex]);
-  //     }
-  //   }
-  //
-  //   // this is a linear update. Constant update or updating within the previous
-  //   // looping would be ideal
-  //   this->items.get()->Update(result.begin(), result.end());
-  //
-  //   return *this;
+  // template<
+  //   typename TSortOutput,
+  //   typename T = TObj,
+  //   typename TLessThan = std::less<T>>
+  // TSortOutput OrderByDescending(
+  //   Sorter<TObj, TIterable, TSortOutput, TArgs...> & sorter,
+  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
+  //   TLessThan lessThan = {})
+  // {
+  //   return this->Sort(
+  //       sorter,
+  //       [&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); });
   // }
 
-  template<typename T = TObj>
-  T Aggregate(std::function<T(T, TObj)> accumulate, T * seed = NULL)
+  // template<typename TLessThan, typename TAllocator>
+  // SortedInternalQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
+  // {
+  //   std::shared_ptr<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>> sorter;
+  //
+  //   switch (this->type)
+  //   {
+  //     case QueryableType::MultiSet:
+  //     {
+  //       MultiSetSorter<TObj, TLessThan, TAllocator> multiSetSorter;
+  //       sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(multiSetSorter);
+  //     }
+  //     case QueryableType::Set:
+  //     {
+  //       SetSorter<TObj, TLessThan, TAllocator> setSorter;
+  //       sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(setSorter);
+  //     }
+  //     default:
+  //       throw std::runtime_error("ReOrderBy, ReOrderByDescending and ReSort are only meant for containers that are ordered by default. For all other containers use OrderBy, OrderByDescending or Sort");
+  //       break;
+  //   }
+  //
+  //   // I think this is the only thing keeping us from using IQueryableData everywhere instead of QueryableData, and its not even working....
+  //   SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(*sorter);
+  //   // This return does not work due to the SortedQueryable being abstract.
+  //   // I could have the SortedQueryable implement all abstract methods and pass the execution to child virtual methods,
+  //   // but I don't like needing the Re-Sort method anyway, so might try to find another way to handle this instead.
+  //   return { setOutput.Get() };
+  // }
+  //
+  // template<
+  //   typename T = TObj,
+  //   typename TLessThan = std::less<T>,
+  //   typename TAllocator = std::allocator<TObj>>
+  // SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderBy(
+  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
+  //   TLessThan lessThan = {})
+  // {
+  //   return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); }) };
+  // }
+  //
+  // template<
+  //   typename T = TObj,
+  //   typename TLessThan = std::less<T>,
+  //   typename TAllocator = std::allocator<TObj>>
+  // SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderByDescending(
+  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
+  //   TLessThan lessThan = {})
+  // {
+  //   return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); }) };
+  // }
+
+  // TODO --> make this virtual? like Where()
+  template<
+    template<typename, typename ...> typename TExceptions,
+    typename TLessThan = std::less<TObj>,
+    typename TAllocator = std::allocator<TObj>,
+    typename ...TExceptionArgs>
+  void Except(
+    const TExceptions<TObj, TExceptionArgs...> & exceptions,
+    TLessThan lessThan = {},
+    TAllocator allocator = {})
   {
-    T aggregatedValue = T();
+    static_assert(can_iterate<TExceptions<TObj, TExceptionArgs...>>::value, "Class must be able to be iterated over");
+
+    // O(nlogn) minimize and sort the exceptions coming in
+    std::set<TObj, TLessThan, TAllocator> sortedExceptions(
+      exceptions.begin(),
+      exceptions.end(),
+      lessThan,
+      allocator);
+
+    // O(m) make a copy of current items
+    TIterable<TObj, TArgs...> copy(this->items->begin(), this->items->end());
+
+    // O(m) clear current items (may be better to re-instantiate instead?)
+    this->items->Clear();
+
+    auto last = sortedExceptions.end();
+    // O(mlogn) add back any that don't exist within exceptions
+    for (TObj item : copy)
+    {
+      if (sortedExceptions.find(item) == last)
+      {
+        this->items->Add(item);
+      }
+    }
+
+    // Total: O(nlogn + m + m + mlogn) ~= O(nlogn + 2m + mlogn) ~= O((n + m)logn + 2m) ~= O(max(n, m)logn)
+    // There are some instances where O(nm) would be faster
+    //
+    // Another option is to sort both and only iterate over both once
+    // O(nlogn + mlogm + max(n, m))
+    //
+    // Probably some scenarios where removing is better than creation a full new copy too
+
+
+
+
+
+    // TODO --> if  nXm < max(nlog(n), mlog(m)) then sorting is not worth it
+    // TODO --> don't call toVector if the type is already a random access iterator
+    // std::vector<TObj> localSorted = this->Sort(comparator).ToVector();
+    // std::vector<TObj> inputSorted = collection->ToVector();
+    // std::sort(inputSorted.begin(), inputSorted.end(), comparator);
+    //
+    // int localCount = localSorted.size();
+    // int inputCount = inputSorted.size();
+    //
+    // if (localCount <= 0 || inputCount <= 0)
+    // {
+    //   return *this;
+    // }
+    //
+    // std::vector<TObj> result;
+    // int localIndex = 0;
+    // int inputIndex = 0;
+    //
+    // std::function<bool(TObj, TObj)> equal = [&](TObj a, TObj b)
+    // {
+    //   return !comparator(a, b) && !comparator(b, a);
+    // };
+    //
+    // while (localIndex < localCount && inputIndex < inputCount)
+    // {
+    //   TObj localItem = localSorted[localIndex];
+    //   TObj inputItem = inputSorted[inputIndex];
+    //
+    //   if (equal(localItem, inputItem))
+    //   {
+    //     TObj equalValue = localItem;
+    //
+    //     while (++localIndex < localCount && equal(equalValue, localSorted[localIndex]));
+    //     while (++inputIndex < inputCount && equal(equalValue, inputSorted[inputIndex]));
+    //   }
+    //   else if (comparator(localItem, inputItem))
+    //   {
+    //     result.push_back(localItem);
+    //     localIndex++;
+    //   }
+    //   else
+    //   {
+    //     inputIndex++;
+    //   }
+    // }
+    //
+    // // gather leftovers
+    // for (; localIndex < localCount; localIndex++)
+    // {
+    //   if (!equal(localSorted[localIndex], inputSorted[inputCount - 1]))
+    //   {
+    //     result.push_back(localSorted[localIndex]);
+    //   }
+    // }
+    //
+    // // this is a linear update. Constant update or updating within the previous
+    // // looping would be ideal
+    // // this->items.get()->Update(result.begin(), result.end());
+    //
+    // return *this;
+  }
+
+  // TODO: changing std::function to a templated member is supposed to be faster
+  template<typename T = TObj>
+  T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
+  {
+    T aggregatedValue;
 
     if (seed != NULL)
     {
@@ -1144,10 +1169,11 @@ public:
     return aggregatedValue;
   }
 
+  // TODO: changing std::function to a templated member is supposed to be faster
   template<typename T = TObj, typename TFinalizer>
   TFinalizer Aggregate(
-    std::function<T(T, TObj)> accumulate,
-    std::function<TFinalizer(T)> finalizer,
+    const std::function<T(T, TObj)> & accumulate,
+    const std::function<TFinalizer(T)> & finalizer,
     T * seed = NULL)
   {
     return finalizer(this->Aggregate<T>(accumulate, seed));

@@ -25,10 +25,15 @@ public:
 
   virtual ~SelectQueryableMultiSetData() { }
 
+  virtual std::shared_ptr<IQueryableData<TCurrent>> Clone() override
+  {
+    return std::make_shared<SelectQueryableMultiSetData<TOriginal, TCurrent, TCompare, TAllocator>>(*this);
+  }
+
   void Add(TCurrent item) override
   {
     // this wont easily or quickly work... might want to nix it
-    this->items.insert(item);
+    this->items->insert(item);
     this->size++;
   }
 };

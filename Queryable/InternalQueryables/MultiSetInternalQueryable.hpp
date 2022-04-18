@@ -17,7 +17,7 @@ class MultiSetInternalQueryable : public SortedInternalQueryable<TObj, std::mult
 {
 public:
   MultiSetInternalQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(QueryableType::MultiSet)
+    SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(QueryableType::MultiSet, lessThan, allocator)
   {
     std::multiset<TObj, TLessThan, TAllocator> localMultiSet(lessThan, allocator);
     this->items = std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(localMultiSet);

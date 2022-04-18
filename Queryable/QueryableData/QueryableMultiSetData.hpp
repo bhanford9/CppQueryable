@@ -40,9 +40,14 @@ public:
 
   virtual ~QueryableMultiSetData() { }
 
+  virtual std::shared_ptr<IQueryableData<T>> Clone() override
+  {
+    return std::make_shared<QueryableMultiSetData<T, TCompare, TAllocator>>(*this);
+  }
+
   void Add(T item) override
   {
-    this->items.insert(item);
+    this->items->insert(item);
     this->size++;
   }
 };

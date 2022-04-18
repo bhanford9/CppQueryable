@@ -111,7 +111,7 @@ DirTests: $(REFS_REF) $(SRC_COMPILE_REF)
 		$(CXX) -c $(CPPFLAGS) $$src -o $$obj ; \
 	done;
 
-	-$(CXX) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
+	-$(CXX) $(DEBUG) -o $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases \
 		$(CPPFLAGS) \
 		$(filter-out $(TEST_EXCLUDES), $(PROGRAM_OBJS)) \
 		$(OBJS) \

@@ -46,9 +46,9 @@ public:
 
   virtual ~RandomAccessQueryableData() { }
 
-  inline virtual IQueryableData<T> & Add(int addend, IteratorType type) override
+  virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
-    std::cout << "Random Access + Operator" << std::endl;
+    std::cout << "Random Access + Operator, adding: " << addend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
@@ -60,8 +60,9 @@ public:
     return *this;
   }
 
-  inline virtual IQueryableData<T> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<T> & Subtract(int subtrahend, IteratorType type) override
   {
+    std::cout << "Random Access - Operator, adding: " << subtrahend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
@@ -75,8 +76,19 @@ public:
 
   void Add(T item) override
   {
-    this->items.push_back(item);
+    this->items->push_back(item);
     this->size++;
+  }
+
+  virtual T & Get(IteratorType type) override
+  {
+    switch (type)
+    {
+        case IteratorType::BeginForward: { this->value = *this->beginIterator; return *this->beginIterator; }
+        case IteratorType::EndForward: { this->value = *this->endIterator; return *this->endIterator; }
+        case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return *this->rbeginIterator; }
+        case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return *this->rendIterator; }
+    }
   }
 };
 

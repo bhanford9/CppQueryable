@@ -20,11 +20,11 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  VectorInternalQueryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
+    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
   }
 
   void TearDown() override {}
@@ -32,7 +32,7 @@ protected:
 
 TEST_F(AtFunctionalTest, AtVectorUninitialized)
 {
-  VectorInternalQueryable<Person> emptyQueryable;
+  VectorQueryable<Person> emptyQueryable;
 
   try
   {
@@ -76,25 +76,25 @@ TEST_F(AtFunctionalTest, AtVector)
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  uint value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
+  uint value = BuildQueryable2(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  uint value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
+  uint value = BuildQueryable2(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  uint value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
+  uint value = BuildQueryable2(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  uint value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
+  uint value = BuildQueryable2(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 

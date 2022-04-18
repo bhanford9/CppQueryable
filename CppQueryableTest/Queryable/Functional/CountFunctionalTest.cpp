@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -18,11 +16,11 @@ class CountFunctionalTest : public ::testing::Test
 protected:
   uint expectedWithDuplicates = 12;
   uint expectedWithoutDuplicates = 8;
-  VectorInternalQueryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
+    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
   }
 
   void TearDown() override {}
@@ -30,8 +28,8 @@ protected:
 
 TEST_F(CountFunctionalTest, CountVectorUninitialized)
 {
-  // InternalQueryable<Person> emptyQueryable;
-  // ASSERT_EQ(0, emptyQueryable.Count());
+  VectorQueryable<Person> emptyQueryable;
+  ASSERT_EQ(0, emptyQueryable.Count());
 }
 
 TEST_F(CountFunctionalTest, CountVector)
@@ -41,25 +39,25 @@ TEST_F(CountFunctionalTest, CountVector)
 
 TEST_F(CountFunctionalTest, CountSet)
 {
-  int count = BuildQueryable(this->queryable.ToSet()).Count();
+  int count = BuildQueryable2(this->queryable.ToSet()).Count();
   ASSERT_EQ(this->expectedWithoutDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CountMultiSet)
 {
-  int count = BuildQueryable(this->queryable.ToMultiSet()).Count();
+  int count = BuildQueryable2(this->queryable.ToMultiSet()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CountDeque)
 {
-  int count = BuildQueryable(this->queryable.ToDeque()).Count();
+  int count = BuildQueryable2(this->queryable.ToDeque()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CountList)
 {
-  int count = BuildQueryable(this->queryable.ToList()).Count();
+  int count = BuildQueryable2(this->queryable.ToList()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 

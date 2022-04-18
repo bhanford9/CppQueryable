@@ -17,7 +17,7 @@ class SetInternalQueryable : public SortedInternalQueryable<TObj, std::set, TLes
 {
 public:
   SetInternalQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(QueryableType::Set)
+    SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(QueryableType::Set, lessThan, allocator)
   {
     std::set<TObj, TLessThan, TAllocator> localSet(lessThan, allocator);
     this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(localSet);

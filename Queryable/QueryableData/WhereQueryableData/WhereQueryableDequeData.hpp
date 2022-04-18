@@ -31,11 +31,14 @@ public:
 
   virtual ~WhereQueryableDequeData() { }
 
-  void Add(TObj item) override
+  virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    // this wont easily or quickly work... might want to nix it
-    this->items.push_back(item);
-    this->size++;
+    return std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(*this);
+  }
+
+  virtual void InternalAdd(TObj item) override
+  {
+    this->items->push_back(item);
   }
 };
 

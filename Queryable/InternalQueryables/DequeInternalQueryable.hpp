@@ -56,14 +56,6 @@ public:
     this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
     return *this;
   }
-
-  virtual InternalQueryable<TObj, std::deque, TAllocator> & Sort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; }) override
-  {
-    // don't think anything special needs done other than just calling sort
-    DequeSorter<TObj, TAllocator> sorter;
-    this->items->Sort(sorter, lessThan);
-    return *this;
-  }
 };
 
 #endif

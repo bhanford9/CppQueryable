@@ -30,6 +30,11 @@ public:
     : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
 
   virtual ~QueryableVectorData() { }
+
+  virtual std::shared_ptr<IQueryableData<T>> Clone() override
+  {
+    return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
+  }
 };
 
 #endif

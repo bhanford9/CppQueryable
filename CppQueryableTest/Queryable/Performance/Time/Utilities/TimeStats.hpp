@@ -59,7 +59,7 @@ public:
   Duration GetMax() const { return this->max; }
   Duration GetMin() const { return this->min; }
   Duration GetRange() const { return this->max - this->min; }
-  ulong GetCount() const { return this->count; }
+  ulong GetCount() { return this->count; }
 
   std::string ToString()
   {

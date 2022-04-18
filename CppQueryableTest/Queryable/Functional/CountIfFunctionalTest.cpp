@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -18,11 +16,11 @@ class CountIfFunctionalTest : public ::testing::Test
 protected:
   int expectedEvensWithDuplicates = 7;
   int expectedEvensWithoutDuplicates = 4;
-  VectorInternalQueryable<uint> queryable;
+  VectorQueryable<uint> queryable;
 
   void SetUp() override
   {
-    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
+    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
   }
 
   static bool IsEven(uint value)
@@ -35,7 +33,7 @@ protected:
 
 TEST_F(CountIfFunctionalTest, CountIfVectorUninitialized)
 {
-  VectorInternalQueryable<Person> emptyQueryable;
+  VectorQueryable<Person> emptyQueryable;
   ASSERT_EQ(0, emptyQueryable.CountIf([](Person p) { return true; }));
 }
 
@@ -46,25 +44,25 @@ TEST_F(CountIfFunctionalTest, CountIfVector)
 
 TEST_F(CountIfFunctionalTest, CountIfSet)
 {
-  int count = BuildQueryable(this->queryable.ToSet()).CountIf(this->IsEven);
+  int count = BuildQueryable2(this->queryable.ToSet()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfMultiSet)
 {
-  int count = BuildQueryable(this->queryable.ToMultiSet()).CountIf(this->IsEven);
+  int count = BuildQueryable2(this->queryable.ToMultiSet()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfDeque)
 {
-  int count = BuildQueryable(this->queryable.ToDeque()).CountIf(this->IsEven);
+  int count = BuildQueryable2(this->queryable.ToDeque()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfList)
 {
-  int count = BuildQueryable(this->queryable.ToList()).CountIf(this->IsEven);
+  int count = BuildQueryable2(this->queryable.ToList()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
