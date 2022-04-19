@@ -344,6 +344,63 @@ public:
     return this->queryable->Last();
   }
 
+  template<typename T>
+  inline TObj MaxItem(std::function<T(TObj)> retrieveValue) const
+  {
+    return this->queryable->MaxItem(retrieveValue);
+  }
+
+  template<typename T>
+  inline T Max(std::function<T(TObj)> retrieveValue) const
+  {
+    return this->queryable->Max(retrieveValue);
+  }
+
+  inline TObj Max() const
+  {
+    return this->queryable->Max();
+  }
+
+  template<typename T>
+  inline T Max(std::function<T(TObj)> retrieveValue, T startSeed) const
+  {
+    return this->queryable->Max(retrieveValue, startSeed);
+  }
+
+  inline TObj Max(TObj startSeed) const
+  {
+    return this->queryable->Max(startSeed);
+  }
+
+  template<typename T>
+  inline TObj MinItem(std::function<T(TObj)> retrieveValue) const
+  {
+    return this->queryable->MinItem(retrieveValue);
+  }
+
+  template<typename T>
+  inline T Min(std::function<T(TObj)> retrieveValue) const
+  {
+    return this->queryable->Min(retrieveValue);
+  }
+
+  inline TObj Min() const
+  {
+    return this->queryable->Min();
+  }
+
+  template<typename T>
+  inline T Min(std::function<T(TObj)> retrieveValue, T startSeed) const
+  {
+    return this->queryable->Min(retrieveValue, startSeed);
+  }
+
+  inline TObj Min(TObj startSeed) const
+  {
+    return this->queryable->Min(startSeed);
+  }
+
+
   template<typename T, typename ...TNewArgs>
   Queryable<T, TIterable, TNewArgs...> Select(
     std::function<T(TObj)> retrieveValue,

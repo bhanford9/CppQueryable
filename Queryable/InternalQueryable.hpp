@@ -596,7 +596,7 @@ public:
   }
 
   template<typename T>
-  TObj MaxItem(std::function<T(TObj)> retrieveValue) const
+  inline TObj MaxItem(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -625,20 +625,18 @@ public:
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> retrieveValue) const
+  inline T Max(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MaxItem(retrieveValue));
   }
 
-  TObj Max() const
+  inline TObj Max() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
     TObj maxItem = TObj();
-
-    TTime start = THighRes::now();
 
     for (TObj item : *this->items.get())
     {
@@ -653,17 +651,11 @@ public:
       }
     }
 
-    TTime end = THighRes::now();
-
-    Duration duration(start, end);
-
-    std::cout << "Max Iteration Time (millis): " << duration.MillisStr() << std::endl;
-
     return maxItem;
   }
 
   template<typename T>
-  T Max(std::function<T(TObj)> retrieveValue, T startSeed) const
+  inline T Max(std::function<T(TObj)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -682,7 +674,7 @@ public:
     return max;
   }
 
-  TObj Max(TObj startSeed) const
+  inline TObj Max(TObj startSeed) const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -700,7 +692,7 @@ public:
   }
 
   template<typename T>
-  TObj MinItem(std::function<T(TObj)> retrieveValue) const
+  inline TObj MinItem(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -729,13 +721,13 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> retrieveValue) const
+  inline T Min(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MinItem(retrieveValue));
   }
 
-  TObj Min() const
+  inline TObj Min() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
@@ -759,7 +751,7 @@ public:
   }
 
   template<typename T>
-  T Min(std::function<T(TObj)> retrieveValue, T startSeed) const
+  inline T Min(std::function<T(TObj)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -778,7 +770,7 @@ public:
     return min;
   }
 
-  TObj Min(TObj startSeed) const
+  inline TObj Min(TObj startSeed) const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
 
