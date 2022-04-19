@@ -311,9 +311,37 @@ public:
     return *this;
   }
 
+  TObj First(std::function<bool(TObj)> condition)
+  {
+    return this->queryable->First(condition);
+  }
+
+  TObj First()
+  {
+    return this->queryable->First();
+  }
+
+  inline void ForEach(std::function<void(TObj)> action)
+  {
+    this->queryable->ForEach(action);
+  }
+
   inline QueryableType GetType()
   {
     return this->queryable->GetType();
+  }
+
+  // GroupBy
+  // Join
+
+  inline TObj Last(std::function<bool(TObj)> condition)
+  {
+    return this->queryable->Last(condition);
+  }
+
+  inline TObj Last()
+  {
+    return this->queryable->Last();
   }
 
   template<typename T, typename ...TNewArgs>
@@ -437,10 +465,6 @@ public:
     return *this;
   }
 
-  inline void ForEach(std::function<void(TObj)> action)
-  {
-    this->queryable->ForEach(action);
-  }
 
   template<
     typename TLessThan = std::less<TObj>,

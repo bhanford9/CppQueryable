@@ -282,34 +282,7 @@ public:
   //   }
   // }
 
-  // TODO --> drop this down to child classes
   virtual InternalQueryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition) = 0;
-  // {
-  //   switch (this->type)
-  //   {
-  //     // Think I need to create move constructors or each of these
-  //     case QueryableType::Deque:
-  //       this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TArgs...>>(std::move(this->items), std::move(condition)));
-  //       break;
-  //     case QueryableType::List:
-  //       this->items = std::move(std::make_shared<WhereQueryableListData<TObj, TArgs...>>(std::move(this->items), std::move(condition)));
-  //       break;
-  //     case QueryableType::MultiSet:
-  //       this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj, TArgs...>>(std::move(this->items), std::move(condition)));
-  //       break;
-  //     case QueryableType::Set:
-  //       this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TArgs...>>(std::move(this->items), std::move(condition)));
-  //       break;
-  //     case QueryableType::Vector:
-  //       // std::cout << "into where, items count: " << this->Count() << std::endl;
-  //       this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj, TArgs...>>(std::move(this->items), std::move(condition)));
-  //       // std::cout << "out where, items count: " << this->Count() << std::endl;
-  //       break;
-  //     default: break;
-  //   }
-  //
-  //   return *this;
-  // }
 
   // InternalQueryable<TObj, TIterable, TArgs...> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
   // {
@@ -326,7 +299,7 @@ public:
   //   return returnValue;
   // }
 
-  TObj First(std::function<bool(TObj)> condition)
+  inline TObj First(std::function<bool(TObj)> condition)
   {
     for (TObj item : *this->items.get())
     {
@@ -339,7 +312,7 @@ public:
     throw std::runtime_error("No item fitting the condition was found.");
   }
 
-  TObj First()
+  inline TObj First()
   {
     if (!this->IsEmpty())
     {
@@ -349,7 +322,7 @@ public:
     throw std::runtime_error("Cannot get first item of empty collection.");
   }
 
-  TObj Last(std::function<bool(TObj)> condition)
+  inline TObj Last(std::function<bool(TObj)> condition)
   {
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); ++it)
     {
@@ -362,7 +335,7 @@ public:
     throw std::runtime_error("No item fitting the condition was found.");
   }
 
-  TObj Last()
+  inline TObj Last()
   {
     if (!this->IsEmpty())
     {
