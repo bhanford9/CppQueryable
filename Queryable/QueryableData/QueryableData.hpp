@@ -91,7 +91,7 @@ public:
     //
     //   another option could be to let the child constructors set the size, but
     //   that is a bit harder to maintain
-    this->size = items->size();
+    this->size = items.size();
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
@@ -107,70 +107,18 @@ public:
     this->size = data.size;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // IMPORTANT
-  // this needs to be abstract and implemented by each individual class so the overrides are properly executed
-  // virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
-  // {
-  //   std::cout << "\nwithin CLONE" << std::endl;
-  //   std::shared_ptr<IQueryableData<TObj>> clone = std::make_shared<QueryableData<TObj, TIterable, TArgs...>>(*this);
-  //   return clone;
-  // }
-
   QueryableData(std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data)
   {
-    // std::cout << "\nQueryableData Constructor 6" << std::endl;
-    // std::cout << "incoming data is null: " << (data.get() ? "no" : "yes") << std::endl;
-    // std::cout << "incoming data size: " << data->Count() << std::endl;
-    // THIS WOULD BE MUCH BETTER IF WE CAN MOVE IT INSTEAD OF COPY
     this->items = std::move(data->items);
-    // std::cout << "after setting items" << std::endl;
-
     this->DefaultInitialize();
     this->size = data->Count();
-    // std::cout << "leaving constructor 6" << std::endl;
   }
-  // QueryableData(std::shared_ptr<IQueryableData<TObj>> && data)
-  // {
-  //   // std::cout << "\nQueryableData Constructor 6" << std::endl;
-  //   // std::cout << "incoming data is null: " << (data.get() ? "no" : "yes") << std::endl;
-  //   // std::cout << "incoming data size: " << data->Count() << std::endl;
-  //   // THIS WOULD BE MUCH BETTER IF WE CAN MOVE IT INSTEAD OF COPY
-  //   this->items = *static_cast<TIterable<TObj, TArgs...>*>(data->GetData());
-  //   // std::cout << "after setting items" << std::endl;
-  //
-  //   this->DefaultInitialize();
-  //   this->size = data->Count();
-  //   // std::cout << "leaving constructor 6" << std::endl;
-  // }
+
+  QueryableData(QueryableIterator<TObj> first, QueryableIterator<TObj> last, TArgs... args) :
+    items(std::make_shared<TIterable<TObj, TArgs...>>(first, last, args...))
+  {
+  }
+
   virtual ~QueryableData() { }
 
   virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override

@@ -53,6 +53,17 @@ public:
   {
   }
 
+  SetInternalQueryable(
+    const QueryableIterator<TObj> & first,
+    const QueryableIterator<TObj> & last,
+    TLessThan lessThan = {},
+    TAllocator allocator = {})
+  {
+    this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(
+      std::set<TObj, TLessThan, TAllocator>(first, last, lessThan, allocator));
+    this->type = QueryableType::Set;
+  }
+
   virtual InternalQueryable<TObj, std::set, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));

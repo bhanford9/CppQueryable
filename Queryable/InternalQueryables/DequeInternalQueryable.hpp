@@ -51,6 +51,12 @@ public:
   {
   }
 
+  DequeInternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TAllocator allocator = {})
+  {
+    this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>(std::deque<TObj, TAllocator>(first, last, allocator));
+    this->type = QueryableType::Deque;
+  }
+
   virtual InternalQueryable<TObj, std::deque, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));

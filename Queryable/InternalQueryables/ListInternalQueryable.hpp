@@ -36,13 +36,19 @@ public:
   ListInternalQueryable(const InternalQueryable<TObj, std::list, TAllocator> & other)
     : InternalQueryable<TObj, std::list, TAllocator>(other)
   {
-    this->type = QueryableType::Deque;
+    this->type = QueryableType::List;
   }
   ListInternalQueryable(
     std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && queryableData,
     QueryableType type)
       : InternalQueryable<TObj, std::list, TAllocator>(std::move(queryableData), type)
   {
+  }
+
+  ListInternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TAllocator allocator = {})
+  {
+    this->items = std::make_shared<QueryableListData<TObj, TAllocator>>(std::list<TObj, TAllocator>(first, last, allocator));
+    this->type = QueryableType::List;
   }
 
   virtual InternalQueryable<TObj, std::list, TAllocator> & Where(std::function<bool(const TObj &)> condition) override

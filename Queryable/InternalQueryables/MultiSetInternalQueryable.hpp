@@ -46,6 +46,17 @@ public:
   {
   }
 
+  MultiSetInternalQueryable(
+    const QueryableIterator<TObj> & first,
+    const QueryableIterator<TObj> & last,
+    TLessThan lessThan = {},
+    TAllocator allocator = {})
+  {
+    this->items = std::make_shared<QueryableMultiSetData<TObj, TLessThan, TAllocator>>(
+      std::multiset<TObj, TLessThan, TAllocator>(first, last, lessThan, allocator));
+    this->type = QueryableType::MultiSet;
+  }
+
   virtual InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));

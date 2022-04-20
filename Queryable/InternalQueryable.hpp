@@ -96,6 +96,7 @@ public:
     this->type = type;
   }
 
+  InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
   InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
   // END CONSTRUCTORS
@@ -113,6 +114,50 @@ public:
   inline void Add(TObj obj)
   {
     this->items.get()->Add(obj);
+  }
+
+  inline QueryableIterator<TObj> begin()
+  {
+    return this->items->begin();
+  }
+
+  inline QueryableIterator<TObj> end()
+  {
+    return this->items->end();
+  }
+
+  inline QueryableIterator<TObj> rbegin()
+  {
+    return this->items->rbegin();
+  }
+
+  inline QueryableIterator<TObj> rend()
+  {
+    return this->items->rend();
+  }
+
+  inline std::pair<QueryableIterator<TObj>, QueryableIterator<TObj>> ForwardIterators()
+  {
+    return {this->begin(), this->end()};
+  }
+
+  inline std::pair<QueryableIterator<TObj>, QueryableIterator<TObj>> ReverseIterators()
+  {
+    return {this->rbegin(), this->ernd()};
+  }
+
+  template<
+    template<typename, typename, typename ...> typename TInternalQueryable,
+    template<typename, typename ...> typename TNewIterable,
+    typename ...TNewArgs>
+  inline InternalQueryable<TObj, TNewIterable, TNewArgs...> CopyAs(TNewArgs... args)
+  {
+    // TODO --> it would be nice to ensure that TInternalQueryable inherits InternalQueryable
+    //   on the other hand, this should not be accessible to any users
+    return TInternalQueryable<TObj, TNewIterable<TObj, TNewArgs...>, TNewArgs...>(
+      this->items->begin(),
+      this->items->end(),
+      args...);
   }
 
   template<typename TAllocator = std::allocator<TObj>>
@@ -788,7 +833,7 @@ public:
   }
 
   template<typename T>
-  T Range(std::function<T(TObj)> retrieveValue) const
+  inline T Range(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
@@ -822,7 +867,7 @@ public:
     return max - min;
   }
 
-  TObj Range() const
+  inline TObj Range() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
     static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");

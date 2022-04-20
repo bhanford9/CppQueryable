@@ -45,6 +45,12 @@ public:
   {
   }
 
+  VectorInternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TAllocator allocator = {})
+  {
+    this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>(std::vector<TObj, TAllocator>(first, last, allocator));
+    this->type = QueryableType::Vector;
+  }
+
   virtual InternalQueryable<TObj, std::vector, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableVectorData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
