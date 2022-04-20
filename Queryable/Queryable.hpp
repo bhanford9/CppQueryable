@@ -531,11 +531,6 @@ public:
     return {};
   }
 
-  inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
-  {
-    this->queryable->Where(condition);
-    return *this;
-  }
 
   // Sorting is tricky because containers that are self sorting are typed based on the means by which
   // they are sorted. This means that in order to sort them using this construct, the return type
@@ -642,176 +637,21 @@ std::cout << "c" << std::endl;
     }
   }
 
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>>
-  Queryable<TObj, TIterable, TArgs...> OrderBy(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
+  template<typename T>
+  inline T Sum(std::function<T(TObj)> retrieveValue) const
   {
-    // TODO --> this is terribly ugly, find a better way to handle it
-    switch (this->queryable->GetType())
-    {
-      case QueryableType::Deque:
-      {
-        DequeSorter<TObj, TArgs...> sorter;
-        Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderBy(sorter, retrieveValue, lessThan));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::List:
-      {
-        ListSorter<TObj, TArgs...> sorter;
-        Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderBy(sorter, retrieveValue, lessThan));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::MultiSet:
-      {
-        MultiSetSorter<TObj, TArgs...> sorter;
-        Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderBy(sorter, retrieveValue, lessThan));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Set:
-      {
-        SetSorter<TObj, TArgs...> sorter;
-        Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderBy(sorter, retrieveValue, lessThan));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Vector:
-      {
-        VectorSorter<TObj, TArgs...> sorter;
-        Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderBy(sorter, retrieveValue, lessThan));
-        return newQueryable;
-        break;
-      }
-      default: break;
-    }
+    return this->queryable->Sum(retrieveValue);
   }
 
-  template<
-    typename T = TObj,
-    typename TLessThan = std::less<T>>
-  Queryable<TObj, TIterable, TArgs...> & OrderByDescending(
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {})
+  inline TObj Sum() const
   {
-    // TODO
-    return *this;//this->OrderByDescending<T, TLessThan, TArgs...>(retrieveValue, lessThan);
+    return this->queryable->Sum();
   }
 
-  template<
-    typename TOutLessThan = std::less<TObj>,
-    typename T = TObj,
-    typename TLessThan = std::less<T>,
-    typename TOutAllocator = std::allocator<TObj>>
-  Queryable<TObj, TIterable, TLessThan, TOutAllocator> OrderByDescending(
-    TOutLessThan outLessThan,
-    std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-    TLessThan lessThan = {},
-    TOutAllocator outAllocator = {})
+  inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
   {
-    // need to take the is_invocable_r implementation from gcc++14
-    // static_assert(std::is_invocable_r<bool, TOutLessThan, TObj, TObj>::value, "TOutLessThan must be an invocable type that takes two parameters of type TObj and returns a bool.");
-    // static_assert(std::is_invocable_r<TObj, TOutAllocator>::value, "TOutAllocator must be an invocable type that takes no parameters and returns a TObj.");
-
-
-  // }
-  //
-  // template<
-  //   typename T = TObj,
-  //   typename TLessThan = std::less<T>,
-  //   typename ...TNewArgs>
-  // Queryable<TObj, TIterable, TNewArgs...> OrderByDescending(
-  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-  //   TLessThan lessThan = {},
-  //   TNewArgs... newArgs)
-  // {
-    // TODO --> this is terribly ugly, find a better way to handle it
-    switch (this->queryable->GetType())
-    {
-      // case QueryableType::Deque:
-      // {
-      //   DequeSorter<TObj, TArgs...> sorter;
-      //   Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderByDescending(
-      //     *reinterpret_cast<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, TArgs...>, TArgs...>*>(&sorter),
-      //     retrieveValue,
-      //     lessThan));
-      //   return newQueryable;
-      //   break;
-      // }
-      // case QueryableType::List:
-      // {
-      //   ListSorter<TObj, TArgs...> sorter;
-      //   Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderByDescending(
-      //     *reinterpret_cast<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, TArgs...>, TArgs...>*>(&sorter),
-      //     retrieveValue,
-      //     lessThan));
-      //   return newQueryable;
-      //   break;
-      // }
-      case QueryableType::MultiSet:
-      {
-        MultiSetSorter<TObj, TOutLessThan, TArgs...> sorter;
-        std::cout << "outer orderby descending" << std::endl;
-
-
-
-
-        // TODO --> pass the resulting shared_ptr<InternalQueryable<TNewArgs...>> into the internal order by and get it back. Then you can create a new instance of self and return
-
-
-
-        // std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> result(
-        //   // FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(
-        //   //   std::make_shared<MultiSetInternalQueryable<TObj, TNewArgs...>>(
-        //       this->queryable->OrderByDescending(
-        //         *reinterpret_cast<Sorter<TObj, std::multiset, SortOutput<TObj, std::multiset, std::function<bool(TObj, TObj)>>, TArgs...>*>(&sorter),
-        //         retrieveValue,
-        //         lessThan)
-        //       .Get());//));
-
-        // this type always has to be std::function<bool(TObj, TObj)> for output of multi/sets there is no way around it
-        // I think I need to NIX the Orderbys and just do Sorting
-
-        // SortOutput<TObj, std::multiset, TOutLessThan, TOutAllocator> sortOutput = this->queryable->OrderByDescending(
-        //   *reinterpret_cast<Sorter<TObj, std::multiset, SortOutput<TObj, std::multiset, TOutLessThan, TOutAllocator>, TArgs...>*>(&sorter),
-        //   retrieveValue,
-        //   lessThan);
-        // std::multiset<TObj, TOutLessThan, TOutAllocator> resorted = sortOutput.Get();
-
-        Queryable<TObj, std::multiset, TOutLessThan, TOutAllocator> queryableResult;
-
-        std::cout << "returning self as sorted multiset" << std::endl;
-        return queryableResult;
-        break;
-      }
-      // case QueryableType::Set:
-      // {
-      //   SetSorter<TObj, TArgs...> sorter;
-      //   Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderByDescending(
-      //     *reinterpret_cast<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, TArgs...>, TArgs...>*>(&sorter),
-      //     retrieveValue,
-      //     lessThan));
-      //   return newQueryable;
-      //   break;
-      // }
-      // case QueryableType::Vector:
-      // {
-      //   VectorSorter<TObj, TArgs...> sorter;
-      //   Queryable<TObj, TIterable, TArgs...> newQueryable(this->queryable->OrderByDescending(
-      //     *reinterpret_cast<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, TArgs...>, TArgs...>*>(&sorter),
-      //     retrieveValue,
-      //     lessThan));
-      //   return newQueryable;
-      //   break;
-      // }
-      default: break;
-    }
-
-    throw std::runtime_error("should not reach here");
+    this->queryable->Where(condition);
+    return *this;
   }
 };
 

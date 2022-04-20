@@ -563,7 +563,7 @@ public:
   // }
 
   template<typename T>
-  T Sum(std::function<T(TObj)> retrieveValue) const
+  inline T Sum(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_aggregatable<T>::value, "Type must implement the '+=' operator");
 
