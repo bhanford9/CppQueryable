@@ -26,9 +26,13 @@ protected:
   uint expectedNoDupsSum = 1057;
   QueryableVector<uint> queryable;
 
+  SumFunctionalTest() :
+    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 })))
+  {
+  }
+
   void SetUp() override
   {
-    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }));
   }
 
   void TearDown() override {}
@@ -36,7 +40,7 @@ protected:
 
 TEST_F(SumFunctionalTest, SumUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double sum = emptyQueryable.Sum<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0, sum);
 }
@@ -44,7 +48,7 @@ TEST_F(SumFunctionalTest, SumUninitialized)
 TEST_F(SumFunctionalTest, SumUninitializedDefault)
 {
   Point expected(0, 0);
-  QueryableVector<Point> emptyQueryable;
+  QueryableVector<Point> emptyQueryable(BuildQueryable2(std::vector<Point>()));
   Point sum = emptyQueryable.Sum();
   ASSERT_EQ(expected.X, sum.X);
   ASSERT_EQ(expected.Y, sum.Y);

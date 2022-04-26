@@ -27,12 +27,16 @@ protected:
   QueryableVector<uint> queryableEvens;
   int oddCount = 5;
 
+  ExceptFunctionalTest() :
+    startingInput( std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 })),
+    evens( std::vector<uint>({ 4, 76, 8, 34, 76, 0 })),
+    queryable( BuildQueryable2(this->startingInput)),
+    queryableEvens( BuildQueryable2(this->evens))
+  {
+  }
+
   void SetUp() override
   {
-    this->startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
-    this->evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
-    this->queryable = BuildQueryable2(this->startingInput);
-    this->queryableEvens = BuildQueryable2(this->evens);
   }
 
   void TearDown() override {}

@@ -25,9 +25,13 @@ class ForEachFunctionalTest : public ::testing::Test
 protected:
   QueryableVector<uint> queryable;
 
+  ForEachFunctionalTest() :
+    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+  {
+  }
+
   void SetUp() override
   {
-    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 }));
   }
 
   template<
@@ -56,7 +60,7 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }

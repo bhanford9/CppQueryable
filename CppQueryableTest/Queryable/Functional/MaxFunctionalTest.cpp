@@ -27,10 +27,14 @@ protected:
   QueryableVector<uint> queryable;
   QueryableVector<std::string> queryableStrings;
 
+  MaxFunctionalTest() :
+    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, expectedMax, 1, 12 }))),
+    queryableStrings(BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"})))
+  {
+  }
+
   void SetUp() override
   {
-    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, expectedMax, 1, 12 }));
-    this->queryableStrings = BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"}));
   }
 
   void TearDown() override {}
@@ -38,21 +42,21 @@ protected:
 
 TEST_F(MaxFunctionalTest, MaxItemUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   Person max = emptyQueryable.MaxItem<double>([](Person p) { return p.GetAge(); });
   ASSERT_DOUBLE_EQ(0.0, max.GetAge());
 }
 
 TEST_F(MaxFunctionalTest, MaxUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double max = emptyQueryable.Max<double>([](Person p) { return p.GetAge(); });
   ASSERT_DOUBLE_EQ(0.0, max);
 }
 
 TEST_F(MaxFunctionalTest, MaxUninitializedDefault)
 {
-  QueryableVector<double> emptyQueryable;
+  QueryableVector<double> emptyQueryable(BuildQueryable2(std::vector<double>()));
   double max = emptyQueryable.Max();
   ASSERT_DOUBLE_EQ(0.0, max);
 }
@@ -60,7 +64,7 @@ TEST_F(MaxFunctionalTest, MaxUninitializedDefault)
 TEST_F(MaxFunctionalTest, MaxSeededUninitialized)
 {
   double seed = 9;
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double max = emptyQueryable.Max<double>([](Person p) { return p.GetAge(); }, seed);
   ASSERT_EQ(seed, max);
 }
@@ -68,7 +72,7 @@ TEST_F(MaxFunctionalTest, MaxSeededUninitialized)
 TEST_F(MaxFunctionalTest, MaxSeededUninitializedDefault)
 {
   double seed = 9;
-  QueryableVector<double> emptyQueryable;
+  QueryableVector<double> emptyQueryable(BuildQueryable2(std::vector<double>()));
   double max = emptyQueryable.Max(seed);
   ASSERT_EQ(seed, max);
 }

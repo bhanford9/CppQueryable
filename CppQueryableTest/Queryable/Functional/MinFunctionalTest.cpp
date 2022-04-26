@@ -27,10 +27,14 @@ protected:
   QueryableVector<uint> queryable;
   QueryableVector<std::string> queryableStrings;
 
+  MinFunctionalTest() :
+    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, expectedMin, 867, 12 }))),
+    queryableStrings(BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"})))
+  {
+  }
+
   void SetUp() override
   {
-    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, expectedMin, 867, 12 }));
-    this->queryableStrings = BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"}));
   }
 
   void TearDown() override {}
@@ -38,21 +42,21 @@ protected:
 
 TEST_F(MinFunctionalTest, MinItemUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   Person min = emptyQueryable.MinItem<double>([](Person p) { return p.GetAge(); });
   ASSERT_DOUBLE_EQ(0.0, min.GetAge());
 }
 
 TEST_F(MinFunctionalTest, MinUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double min = emptyQueryable.Min<double>([](Person p) { return p.GetAge(); });
   ASSERT_DOUBLE_EQ(0.0, min);
 }
 
 TEST_F(MinFunctionalTest, MinUninitializedDefault)
 {
-  QueryableVector<double> emptyQueryable;
+  QueryableVector<double> emptyQueryable(BuildQueryable2(std::vector<double>()));
   double min = emptyQueryable.Min();
   ASSERT_DOUBLE_EQ(0.0, min);
 }
@@ -60,7 +64,7 @@ TEST_F(MinFunctionalTest, MinUninitializedDefault)
 TEST_F(MinFunctionalTest, MinSeededUninitialized)
 {
   double seed = 9;
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double min = emptyQueryable.Min<double>([](Person p) { return p.GetAge(); }, seed);
   ASSERT_EQ(seed, min);
 }
@@ -68,7 +72,7 @@ TEST_F(MinFunctionalTest, MinSeededUninitialized)
 TEST_F(MinFunctionalTest, MinSeededUninitializedDefault)
 {
   double seed = 9;
-  QueryableVector<double> emptyQueryable;
+  QueryableVector<double> emptyQueryable(BuildQueryable2(std::vector<double>()));
   double min = emptyQueryable.Min(seed);
   ASSERT_EQ(seed, min);
 }

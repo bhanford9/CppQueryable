@@ -25,9 +25,13 @@ protected:
   uint expectedRange = 866;
   QueryableVector<uint> queryable;
 
+  RangeFunctionalTest() :
+    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+  {
+  }
+
   void SetUp() override
   {
-    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }));
   }
 
   void TearDown() override {}
@@ -35,14 +39,14 @@ protected:
 
 TEST_F(RangeFunctionalTest, RangeUninitialized)
 {
-  QueryableVector<Person> emptyQueryable;
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   double range = emptyQueryable.Range<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0.0, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeUninitializedDefault)
 {
-  QueryableVector<Point> emptyQueryable;
+  QueryableVector<Point> emptyQueryable(BuildQueryable2(std::vector<Point>()));
   Point range = emptyQueryable.Range();
   ASSERT_EQ(0.0, range.X);
   ASSERT_EQ(0.0, range.Y);
