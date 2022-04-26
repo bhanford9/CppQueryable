@@ -491,13 +491,15 @@ public:
   }
 
   // forward_list does not contain size() method and don't want to require it
+  // it would be faster to do a pre-check for containers that do have constant size methods
   inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
   {
     static_assert(is_equatable<TObj>::value, "Type must be equatable");
 
-    size_t localCount = this->Count();
+    bool selfEmpty = this->items->end() == this->items->begin();
+    bool otherEmpty = collection.end() == collection.begin();
 
-    if (localCount != collectionSize)
+    if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
     {
       return false;
     }
@@ -505,12 +507,17 @@ public:
     auto localIterator = this->items->begin();
     for (TObj item : collection)
     {
-      if (!(*localIterator == item))
+      if (localIterator == this->items->end() || !(*localIterator == item))
       {
         return false;
       }
 
       ++localIterator;
+    }
+
+    if (localIterator != this->items->end())
+    {
+      return false;
     }
 
     return true;
@@ -521,9 +528,10 @@ public:
     size_t collectionSize,
     const std::function<bool(TObj, TObj)> & areEqual) const
   {
-    size_t localCount = this->Count();
+    bool selfEmpty = this->items->end() == this->items->begin();
+    bool otherEmpty = collection.end() == collection.begin();
 
-    if (localCount != collectionSize)
+    if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
     {
       return false;
     }
@@ -531,12 +539,17 @@ public:
     auto localIterator = this->items->begin();
     for (TObj item : collection)
     {
-      if (!areEqual(*localIterator, item))
+      if (localIterator == this->items->end() || !areEqual(*localIterator, item))
       {
         return false;
       }
 
       ++localIterator;
+    }
+
+    if (localIterator != this->items->end())
+    {
+      return false;
     }
 
     return true;

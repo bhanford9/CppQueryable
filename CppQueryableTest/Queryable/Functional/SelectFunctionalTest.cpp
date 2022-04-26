@@ -22,14 +22,14 @@ using namespace QueryBuilder;
 class SelectFunctionalTest : public ::testing::Test
 {
 protected:
-  VectorInternalQueryable<uint> queryable;
-  VectorInternalQueryable<Person> people;
+  QueryableVector<uint> queryable;
+  QueryableVector<Person> people;
   PersonLibrary personLibrary;
 
   void SetUp() override
   {
-    this->queryable = BuildQueryable(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }));
-    this->people = VectorInternalQueryable<Person>(this->personLibrary.GetPeople());
+    this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }));
+    this->people = QueryableVector<Person>(this->personLibrary.GetPeople());
   }
 
   void TearDown() override {}
@@ -37,16 +37,16 @@ protected:
 
 TEST_F(SelectFunctionalTest, SelectUninitialized)
 {
-  VectorInternalQueryable<Person> local;
-  VectorInternalQueryable<std::string> result = local
+  QueryableVector<Person> local;
+  QueryableVector<std::string> result = local
     .Select<std::string>([](Person p) { return p.GetName(); });
   ASSERT_EQ(0, result.Count());
 }
 
 TEST_F(SelectFunctionalTest, DequeDefaultOut)
 {
-  DequeInternalQueryable<Person> local = BuildQueryable(this->people.ToDeque());
-  DequeInternalQueryable<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  QueryableDeque<Person> local = BuildQueryable2(this->people.ToDeque());
+  QueryableDeque<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
   ASSERT_TRUE(result.GetType() == QueryableType::Deque);
@@ -60,8 +60,8 @@ TEST_F(SelectFunctionalTest, DequeDefaultOut)
 
 TEST_F(SelectFunctionalTest, ListDefaultOut)
 {
-  InternalQueryable<Person> local = BuildQueryable(this->people.ToList());
-  InternalQueryable<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  QueryableList<Person> local = BuildQueryable2(this->people.ToList());
+  QueryableList<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
   ASSERT_TRUE(result.GetType() == QueryableType::List);
@@ -75,10 +75,10 @@ TEST_F(SelectFunctionalTest, ListDefaultOut)
 
 TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 {
-  InternalQueryable<Person> local1 = BuildQueryable(this->people.ToMultiSet());
-  InternalQueryable<Person> local2 = BuildQueryable(this->people.ToMultiSet());
-  InternalQueryable<double> ages = local1.Select<double>([](Person p) { return p.GetAge(); });
-  InternalQueryable<std::string> names = local2.Select<std::string>([](Person p) { return p.GetName(); });
+  QueryableMultiSet<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
+  QueryableMultiSet<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
+  QueryableMultiSet<double> ages = local1.Select<double>([](Person p) { return p.GetAge(); });
+  QueryableMultiSet<std::string> names = local2.Select<std::string>([](Person p) { return p.GetName(); });
 
   ASSERT_EQ(local1.Count(), ages.Count());
   ASSERT_EQ(local1.Count(), names.Count());
@@ -99,10 +99,10 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 
 TEST_F(SelectFunctionalTest, SetDefaultOut)
 {
-  InternalQueryable<Person> local1 = BuildQueryable(this->people.ToSet());
-  InternalQueryable<Person> local2 = BuildQueryable(this->people.ToSet());
-  InternalQueryable<double> ages = local1.Select<double>([](Person p) { return p.GetAge(); });
-  InternalQueryable<std::string> names = local2.Select<std::string>([](Person p) { return p.GetName(); });
+  QueryableSet<Person> local1 = BuildQueryable2(this->people.ToSet());
+  QueryableSet<Person> local2 = BuildQueryable2(this->people.ToSet());
+  QueryableSet<double> ages = local1.Select<double>([](Person p) { return p.GetAge(); });
+  QueryableSet<std::string> names = local2.Select<std::string>([](Person p) { return p.GetName(); });
 
   ASSERT_TRUE(local1.Count() == ages.Count());
   ASSERT_TRUE(local2.Count() == names.Count());
@@ -127,8 +127,8 @@ TEST_F(SelectFunctionalTest, SetDefaultOut)
 
 TEST_F(SelectFunctionalTest, VectorDefaultOut)
 {
-  InternalQueryable<Person> local = BuildQueryable(this->people.ToVector());
-  InternalQueryable<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
+  QueryableVector<Person> local = BuildQueryable2(this->people.ToVector());
+  QueryableVector<Gender> result = local.Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
   ASSERT_TRUE(result.GetType() == QueryableType::Vector);
@@ -142,13 +142,13 @@ TEST_F(SelectFunctionalTest, VectorDefaultOut)
 
 TEST_F(SelectFunctionalTest, SelectWhere)
 {
-  InternalQueryable<Person> local1 = BuildQueryable(this->people.ToVector());
-  InternalQueryable<Person> local2 = BuildQueryable(this->people.ToVector());
+  QueryableVector<Person> local1 = BuildQueryable2(this->people.ToVector());
+  QueryableVector<Person> local2 = BuildQueryable2(this->people.ToVector());
 
-  InternalQueryable<double> ages1 = local1
+  QueryableVector<double> ages1 = local1
     .Select<double>([](Person p) { return p.GetAge() / 10; })
     .Where([](double age) { return age > 3 && age < 8; });
-  InternalQueryable<double> ages2 = local2
+  QueryableVector<double> ages2 = local2
     .Where([](Person p) { return p.GetAge() > 30 && p.GetAge() < 80; })
     .Select<double>([](Person p) { return p.GetAge() / 10; });
 

@@ -35,10 +35,9 @@ class Queryable
 {
 protected:
   std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> queryable;
-  Queryable() {}
+  Queryable() { }
 
 public:
-
   virtual ~Queryable() { }
 
   Queryable(Queryable<TObj, TIterable, TArgs...> && other)
@@ -49,6 +48,14 @@ public:
     : queryable(other.queryable)
   {
   }
+
+  Queryable<TObj, TIterable, TArgs...> & operator=(const Queryable<TObj, TIterable, TArgs...> & other)
+  {
+    this->queryable = other.queryable;
+    return *this;
+  }
+
+  // I think these should be protected
   Queryable(std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> && other)
     : queryable(std::move(other))
   {
@@ -57,8 +64,10 @@ public:
   {
     queryable.reset(other);
   }
-  Queryable(const TIterable<TObj, TArgs...> & items);
-  Queryable(TIterable<TObj, TArgs...> && items);
+
+  // These can't actually be implemented here
+  // Queryable(const TIterable<TObj, TArgs...> & items);
+  // Queryable(TIterable<TObj, TArgs...> && items);
 
   // All these reinterpret_casts should not be necessary. Need to figure out why the inheritance
   // is not implemented properly
@@ -417,7 +426,7 @@ public:
   }
 
   template<typename T, typename ...TNewArgs>
-  Queryable<T, TIterable, TNewArgs...> Select(
+    Queryable<T, TIterable, TNewArgs...> Select(
     std::function<T(TObj)> retrieveValue,
     TNewArgs... iterableParameters)
   {

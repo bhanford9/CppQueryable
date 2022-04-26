@@ -25,6 +25,7 @@
 #include "InternalQueryables/SetInternalQueryable.hpp"
 #include "InternalQueryables/VectorInternalQueryable.hpp"
 #include "Queryable.hpp"
+#include "QueryableAliases.hpp"
 #include "Queryables/DequeQueryable.hpp"
 #include "Queryables/ListQueryable.hpp"
 #include "Queryables/MultiSetQueryable.hpp"
@@ -65,44 +66,36 @@ namespace QueryBuilder
   }
 
 
-
+  // This will work out better if the public facing types are the aliases and the actual
+  // child classes are only used internally to the library
   template<typename T, typename TAllocator = std::allocator<T>>
-  static DequeQueryable<T, TAllocator> BuildQueryable2(std::deque<T, TAllocator> items)
+  static QueryableDeque<T, TAllocator> BuildQueryable2(std::deque<T, TAllocator> items)
   {
-    return DequeQueryable<T, TAllocator>(items);
+    return QueryableDeque<T, TAllocator>::FromDeque(items);
   }
 
   template<typename T, typename TAllocator = std::allocator<T>>
-  static ListQueryable<T, TAllocator> BuildQueryable2(std::list<T, TAllocator> items)
+  static QueryableList<T, TAllocator> BuildQueryable2(std::list<T, TAllocator> items)
   {
-    return ListQueryable<T, TAllocator>(items);
+    return QueryableList<T, TAllocator>::FromList(items);
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  static MultiSetQueryable<T, TLessThan, TAllocator> BuildQueryable2(std::multiset<T, TLessThan, TAllocator> items)
+  static QueryableMultiSet<T, TLessThan, TAllocator> BuildQueryable2(std::multiset<T, TLessThan, TAllocator> items)
   {
-    return MultiSetQueryable<T, TLessThan, TAllocator>(items);
+    return QueryableMultiSet<T, TLessThan, TAllocator>::FromMultiSet(items);
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  static SetQueryable<T, TLessThan, TAllocator> BuildQueryable2(std::set<T, TLessThan, TAllocator> items)
+  static QueryableSet<T, TLessThan, TAllocator> BuildQueryable2(std::set<T, TLessThan, TAllocator> items)
   {
-    return SetQueryable<T, TLessThan, TAllocator>(items);
+    return QueryableSet<T, TLessThan, TAllocator>::FromSet(items);
   }
 
   template<typename T, typename TAllocator = std::allocator<T>>
-  static VectorQueryable<T, TAllocator> BuildQueryable2(std::vector<T, TAllocator> items)
+  static QueryableVector<T, TAllocator> BuildQueryable2(std::vector<T, TAllocator> items)
   {
-    return VectorQueryable<T, TAllocator>(items);
-  }
-
-  template<
-    typename T,
-    template<typename, typename ...> typename TIterable,
-    typename ...TArgs>
-  static Queryable<T, TIterable, TArgs...> BuildQueryable2(TIterable<T, TArgs...> items)
-  {
-    return Queryable<T, TIterable, TArgs...>(items);
+    return QueryableVector<T, TAllocator>::FromVector(items);
   }
 };
 

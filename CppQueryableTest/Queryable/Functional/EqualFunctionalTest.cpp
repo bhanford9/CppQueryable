@@ -20,18 +20,22 @@ using namespace QueryBuilder;
 class EqualFunctionalTest : public ::testing::Test
 {
 protected:
-  VectorQueryable<Person> queryablePeople;
-  VectorQueryable<int> queryableInts;
+  QueryableVector<Person> queryablePeople;
+  QueryableVector<int> queryableInts;
 
-  void SetUp() override
-  {
-    this->queryablePeople = BuildQueryable2(std::vector<Person>(
+  EqualFunctionalTest() :
+    queryablePeople(BuildQueryable2(std::vector<Person>(
     {
       Person(1, "Person 1", 26, 72, Gender::Male),
       Person(2, "Person 2", 34, 71, Gender::Female),
       Person(3, "Person 3", 22, 66, Gender::Female),
-    }));
-    this->queryableInts = BuildQueryable2(std::vector<int>({ 4, 7, 4, 7, 4 }));
+    }))),
+    queryableInts(BuildQueryable2(std::vector<int>({ 4, 7, 4, 7, 4 })))
+  {
+  }
+
+  void SetUp() override
+  {
   }
 
   Person GetPersonWithId(int id)
@@ -60,7 +64,8 @@ protected:
 // VECTOR (== comparison)
 TEST_F(EqualFunctionalTest, EqualVectorsUninitializedTest)
 {
-  VectorQueryable<int> localQueryable;
+  std::vector<int> empty;
+  QueryableVector<int> localQueryable(BuildQueryable2(empty));
   std::vector<int> localVector;
 
   ASSERT_TRUE(localQueryable.Equal(localVector));
@@ -68,7 +73,8 @@ TEST_F(EqualFunctionalTest, EqualVectorsUninitializedTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryEmptyVectorOneTest)
 {
-  VectorQueryable<int> localQueryable;
+  std::vector<int> empty;
+  QueryableVector<int> localQueryable(BuildQueryable2(empty));
   std::vector<int> localVector({ 9 });
 
   ASSERT_FALSE(localQueryable.Equal(localVector));
@@ -76,7 +82,7 @@ TEST_F(EqualFunctionalTest, EqualQueryEmptyVectorOneTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryOneVectorEmptyTest)
 {
-  VectorQueryable<int> localQueryable(std::vector<int>({ 9 }));
+  QueryableVector<int> localQueryable(BuildQueryable2(std::vector<int>({ 9 })));
   std::vector<int> localVector;
 
   ASSERT_FALSE(localQueryable.Equal(localVector));
@@ -103,7 +109,8 @@ TEST_F(EqualFunctionalTest, EqualVectorLastItemsSwappedTest)
 // SET (== comparison)
 TEST_F(EqualFunctionalTest, EqualSetsUninitializedTest)
 {
-  SetQueryable<int> localQueryable;
+  std::set<int> empty;
+  QueryableSet<int> localQueryable(BuildQueryable2(empty));
   std::set<int> localSet;
 
   ASSERT_TRUE(localQueryable.Equal(localSet));
@@ -111,7 +118,8 @@ TEST_F(EqualFunctionalTest, EqualSetsUninitializedTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryEmptySetOneTest)
 {
-  SetQueryable<int> localQueryable;
+  std::set<int> empty;
+  QueryableSet<int> localQueryable(BuildQueryable2(empty));
   std::set<int> localSet({ 9 });
 
   ASSERT_FALSE(localQueryable.Equal(localSet));
@@ -119,7 +127,7 @@ TEST_F(EqualFunctionalTest, EqualQueryEmptySetOneTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryOneSetEmptyTest)
 {
-  SetQueryable<int> localQueryable(std::set<int>({ 9 }));
+  QueryableSet<int> localQueryable(BuildQueryable2(std::set<int>({ 9 })));
   std::set<int> localSet;
 
   ASSERT_FALSE(localQueryable.Equal(localSet));
@@ -128,28 +136,29 @@ TEST_F(EqualFunctionalTest, EqualQueryOneSetEmptyTest)
 TEST_F(EqualFunctionalTest, EqualSetQueryOneExtraTest)
 {
   std::set<int> localSet({ 4, 7, 4, 7 });
-  SetQueryable<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
+  QueryableSet<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
   ASSERT_TRUE(queryableSet.Equal(localSet));
 }
 
 TEST_F(EqualFunctionalTest, EqualSetOneExtraTest)
 {
   std::set<int> localSet({ 4, 7, 4, 7, 4, 7 });
-  SetQueryable<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
+  QueryableSet<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
   ASSERT_TRUE(queryableSet.Equal(localSet));
 }
 
 TEST_F(EqualFunctionalTest, EqualSetLastItemsSwappedTest)
 {
   std::set<int> localSet({ 4, 7, 4, 4, 7 });
-  SetQueryable<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
+  QueryableSet<int> queryableSet = BuildQueryable2(this->queryableInts.ToSet());
   ASSERT_TRUE(queryableSet.Equal(localSet));
 }
 
 // MULTISET (== comparison)
 TEST_F(EqualFunctionalTest, EqualMultiSetsUninitializedTest)
 {
-  MultiSetQueryable<int> localQueryable;
+  std::multiset<int> empty;
+  QueryableMultiSet<int> localQueryable(BuildQueryable2(empty));
   std::multiset<int> localMultiSet;
 
   ASSERT_TRUE(localQueryable.Equal(localMultiSet));
@@ -157,7 +166,8 @@ TEST_F(EqualFunctionalTest, EqualMultiSetsUninitializedTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryEmptyMultiSetOneTest)
 {
-  MultiSetQueryable<int> localQueryable;
+  std::multiset<int> empty;
+  QueryableMultiSet<int> localQueryable(BuildQueryable2(empty));
   std::multiset<int> localMultiSet({ 9 });
 
   ASSERT_FALSE(localQueryable.Equal(localMultiSet));
@@ -165,7 +175,7 @@ TEST_F(EqualFunctionalTest, EqualQueryEmptyMultiSetOneTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryOneMultiSetEmptyTest)
 {
-  MultiSetQueryable<int> localQueryable(std::multiset<int>({ 9 }));
+  QueryableMultiSet<int> localQueryable(BuildQueryable2(std::multiset<int>({ 9 })));
   std::multiset<int> localMultiSet;
 
   ASSERT_FALSE(localQueryable.Equal(localMultiSet));
@@ -174,28 +184,29 @@ TEST_F(EqualFunctionalTest, EqualQueryOneMultiSetEmptyTest)
 TEST_F(EqualFunctionalTest, EqualMultiSetQueryOneExtraTest)
 {
   std::multiset<int> localMultiSet({ 4, 7, 4, 7 });
-  MultiSetQueryable<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
+  QueryableMultiSet<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
   ASSERT_FALSE(queryableMultiSet.Equal(localMultiSet));
 }
 
 TEST_F(EqualFunctionalTest, EqualMultiSetOneExtraTest)
 {
   std::multiset<int> localMultiSet({ 4, 7, 4, 7, 4, 7 });
-  MultiSetQueryable<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
+  QueryableMultiSet<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
   ASSERT_FALSE(queryableMultiSet.Equal(localMultiSet));
 }
 
 TEST_F(EqualFunctionalTest, EqualMultiSetLastItemsSwappedTest)
 {
   std::multiset<int> localMultiSet({ 4, 7, 4, 4, 7 });
-  MultiSetQueryable<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
+  QueryableMultiSet<int> queryableMultiSet = BuildQueryable2(this->queryableInts.ToMultiSet());
   ASSERT_TRUE(queryableMultiSet.Equal(localMultiSet));
 }
 
 // DEQUE (== comparison)
 TEST_F(EqualFunctionalTest, EqualDequesUninitializedTest)
 {
-  DequeQueryable<int> localQueryable;
+  std::deque<int> empty;
+  QueryableDeque<int> localQueryable(BuildQueryable2(empty));
   std::deque<int> localDeque;
 
   ASSERT_TRUE(localQueryable.Equal(localDeque));
@@ -203,7 +214,8 @@ TEST_F(EqualFunctionalTest, EqualDequesUninitializedTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryEmptyDequeOneTest)
 {
-  DequeQueryable<int> localQueryable;
+  std::deque<int> empty;
+  QueryableDeque<int> localQueryable(BuildQueryable2(empty));
   std::deque<int> localDeque({ 9 });
 
   ASSERT_FALSE(localQueryable.Equal(localDeque));
@@ -211,7 +223,7 @@ TEST_F(EqualFunctionalTest, EqualQueryEmptyDequeOneTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryOneDequeEmptyTest)
 {
-  DequeQueryable<int> localQueryable(std::deque<int>({ 9 }));
+  QueryableDeque<int> localQueryable(BuildQueryable2(std::deque<int>({ 9 })));
   std::deque<int> localDeque;
 
   ASSERT_FALSE(localQueryable.Equal(localDeque));
@@ -220,28 +232,29 @@ TEST_F(EqualFunctionalTest, EqualQueryOneDequeEmptyTest)
 TEST_F(EqualFunctionalTest, EqualDequeQueryOneExtraTest)
 {
   std::deque<int> localDeque({ 4, 7, 4, 7 });
-  DequeQueryable<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
+  QueryableDeque<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
   ASSERT_FALSE(queryableDeque.Equal(localDeque));
 }
 
 TEST_F(EqualFunctionalTest, EqualDequeOneExtraTest)
 {
   std::deque<int> localDeque({ 4, 7, 4, 7, 4, 7 });
-  DequeQueryable<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
+  QueryableDeque<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
   ASSERT_FALSE(queryableDeque.Equal(localDeque));
 }
 
 TEST_F(EqualFunctionalTest, EqualDequeLastItemsSwappedTest)
 {
   std::deque<int> localDeque({ 4, 7, 4, 4, 7 });
-  DequeQueryable<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
+  QueryableDeque<int> queryableDeque = BuildQueryable2(this->queryableInts.ToDeque());
   ASSERT_FALSE(queryableDeque.Equal(localDeque));
 }
 
 // LIST (== comparison)
 TEST_F(EqualFunctionalTest, EqualListsUninitializedTest)
 {
-  ListQueryable<int> localQueryable;
+  std::list<int> empty;
+  QueryableList<int> localQueryable(BuildQueryable2(empty));
   std::list<int> localList;
 
   ASSERT_TRUE(localQueryable.Equal(localList));
@@ -249,7 +262,8 @@ TEST_F(EqualFunctionalTest, EqualListsUninitializedTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryEmptyListOneTest)
 {
-  ListQueryable<int> localQueryable;
+  std::list<int> empty;
+  QueryableList<int> localQueryable(BuildQueryable2(empty));
   std::list<int> localList({ 9 });
 
   ASSERT_FALSE(localQueryable.Equal(localList));
@@ -257,7 +271,7 @@ TEST_F(EqualFunctionalTest, EqualQueryEmptyListOneTest)
 
 TEST_F(EqualFunctionalTest, EqualQueryOneListEmptyTest)
 {
-  ListQueryable<int> localQueryable(std::list<int>({ 9 }));
+  QueryableList<int> localQueryable(BuildQueryable2(std::list<int>({ 9 })));
   std::list<int> localList;
 
   ASSERT_FALSE(localQueryable.Equal(localList));
@@ -266,21 +280,21 @@ TEST_F(EqualFunctionalTest, EqualQueryOneListEmptyTest)
 TEST_F(EqualFunctionalTest, EqualListQueryOneExtraTest)
 {
   std::list<int> localList({ 4, 7, 4, 7 });
-  ListQueryable<int> queryableList(this->queryableInts.ToList());
+  QueryableList<int> queryableList(BuildQueryable2(this->queryableInts.ToList()));
   ASSERT_FALSE(queryableList.Equal(localList));
 }
 
 TEST_F(EqualFunctionalTest, EqualListOneExtraTest)
 {
   std::list<int> localList({ 4, 7, 4, 7, 4, 7 });
-  ListQueryable<int> queryableList(this->queryableInts.ToList());
+  QueryableList<int> queryableList(BuildQueryable2(this->queryableInts.ToList()));
   ASSERT_FALSE(queryableList.Equal(localList));
 }
 
 TEST_F(EqualFunctionalTest, EqualListLastItemsSwappedTest)
 {
   std::list<int> localList({ 4, 7, 4, 4, 7 });
-  ListQueryable<int> queryableList(this->queryableInts.ToList());
+  QueryableList<int> queryableList(BuildQueryable2(this->queryableInts.ToList()));
   ASSERT_FALSE(queryableList.Equal(localList));
 }
 
@@ -290,7 +304,8 @@ TEST_F(EqualFunctionalTest, EqualListLastItemsSwappedTest)
 // MISC (custom comparison)
 TEST_F(EqualFunctionalTest, EqualEmptiesAlwaysEqual)
 {
-  VectorQueryable<Person> localQueryable;
+  std::vector<Person> empty;
+  QueryableVector<Person> localQueryable(BuildQueryable2(empty));
   std::vector<Person> localVector;
   ASSERT_TRUE(localQueryable.Equal(localVector, [](Person p1, Person p2){ return false; }));
 }
@@ -325,7 +340,8 @@ TEST_F(EqualFunctionalTest, EqualCustomForcedNotEqual)
 // VECTOR (custom comparison)
 TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyVectorOneTest)
 {
-  VectorQueryable<Person> localQueryable;
+  std::vector<Person> empty;
+  QueryableVector<Person> localQueryable(BuildQueryable2(empty));
   std::vector<Person> localVector({ this->GetPersonWithId(1) });
 
   ASSERT_FALSE(localQueryable.Equal(localVector, LikeIds));
@@ -333,7 +349,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyVectorOneTest)
 
 TEST_F(EqualFunctionalTest, EqualCustomQueryOneVectorEmptyTest)
 {
-  VectorQueryable<Person> localQueryable = BuildQueryable2(std::vector<Person>({ this->GetPersonWithId(1) }));
+  QueryableVector<Person> localQueryable = BuildQueryable2(std::vector<Person>({ this->GetPersonWithId(1) }));
   std::vector<Person> localVector;
 
   ASSERT_FALSE(localQueryable.Equal(localVector, LikeIds));
@@ -373,7 +389,8 @@ TEST_F(EqualFunctionalTest, EqualCustomVectorLastItemsSwappedTest)
 // SET (custom comparison)
 TEST_F(EqualFunctionalTest, EqualCustomQueryEmptySetOneTest)
 {
-  SetQueryable<Person> localQueryable;
+  std::set<Person> empty;
+  QueryableSet<Person> localQueryable(BuildQueryable2(empty));
   std::set<Person> localSet({ this->GetPersonWithId(1) });
 
   ASSERT_FALSE(localQueryable.Equal(localSet, LikeIds));
@@ -381,7 +398,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryEmptySetOneTest)
 
 TEST_F(EqualFunctionalTest, EqualCustomQueryOneSetEmptyTest)
 {
-  SetQueryable<Person> localQueryable(std::set<Person>({ this->GetPersonWithId(1) }));
+  QueryableSet<Person> localQueryable(BuildQueryable2(std::set<Person>({ this->GetPersonWithId(1) })));
   std::set<Person> localSet;
 
   ASSERT_FALSE(localQueryable.Equal(localSet, LikeIds));
@@ -390,7 +407,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryOneSetEmptyTest)
 TEST_F(EqualFunctionalTest, EqualCustomSetQueryOneExtraTest)
 {
   std::set<Person> localSet({ this->GetPersonWithId(1), this->GetPersonWithId(2) });
-  SetQueryable<Person> localQueryable(this->queryablePeople.ToSet());
+  QueryableSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToSet()));
   ASSERT_FALSE(localQueryable.Equal(localSet, LikeIds));
 }
 
@@ -404,7 +421,7 @@ TEST_F(EqualFunctionalTest, EqualCustomSetOneExtraTest)
     this->GetPersonWithId(4)
   });
 
-  SetQueryable<Person> localQueryable(this->queryablePeople.ToSet());
+  QueryableSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToSet()));
   ASSERT_FALSE(localQueryable.Equal(localSet, LikeIds));
 }
 
@@ -417,7 +434,7 @@ TEST_F(EqualFunctionalTest, EqualCustomSetLastItemsSwappedSameNamesTest)
     this->GetPersonWithId(2),
   });
 
-  SetQueryable<Person> localQueryable(this->queryablePeople.ToSet());
+  QueryableSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToSet()));
   ASSERT_FALSE(localQueryable.Equal(localSet, LikeIds));
 }
 
@@ -431,14 +448,15 @@ TEST_F(EqualFunctionalTest, EqualCustomSetLastItemsSwappedDiffNamesTest)
   });
 
   // the set re-orders based on name which puts the IDs back in the proper order for equality to pass
-  SetQueryable<Person> localQueryable(this->queryablePeople.ToSet());
+  QueryableSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToSet()));
   ASSERT_TRUE(localQueryable.Equal(localSet, LikeIds));
 }
 
 // MULTISET (custom comparison)
 TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyMultiSetOneTest)
 {
-  MultiSetQueryable<Person> localQueryable;
+  std::multiset<Person> empty;
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(empty));
   std::multiset<Person> localMultiSet({ this->GetPersonWithId(1) });
 
   ASSERT_FALSE(localQueryable.Equal(localMultiSet, LikeIds));
@@ -446,7 +464,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyMultiSetOneTest)
 
 TEST_F(EqualFunctionalTest, EqualCustomQueryOneMultiSetEmptyTest)
 {
-  MultiSetQueryable<Person> localQueryable(std::multiset<Person>({ this->GetPersonWithId(1) }));
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(std::multiset<Person>({ this->GetPersonWithId(1) })));
   std::multiset<Person> localMultiSet;
 
   ASSERT_FALSE(localQueryable.Equal(localMultiSet, LikeIds));
@@ -455,7 +473,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryOneMultiSetEmptyTest)
 TEST_F(EqualFunctionalTest, EqualCustomMultiSetQueryOneExtraTest)
 {
   std::multiset<Person> localMultiSet({ this->GetPersonWithId(1), this->GetPersonWithId(2) });
-  MultiSetQueryable<Person> localQueryable(this->queryablePeople.ToMultiSet());
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToMultiSet()));
   ASSERT_FALSE(localQueryable.Equal(localMultiSet, LikeIds));
 }
 
@@ -469,7 +487,7 @@ TEST_F(EqualFunctionalTest, EqualCustomMultiSetOneExtraTest)
     this->GetPersonWithId(4)
   });
 
-  MultiSetQueryable<Person> localQueryable(this->queryablePeople.ToMultiSet());
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToMultiSet()));
   ASSERT_FALSE(localQueryable.Equal(localMultiSet, LikeIds));
 }
 
@@ -482,7 +500,7 @@ TEST_F(EqualFunctionalTest, EqualCustomMultiSetLastItemsSwappedTest)
     this->GetPersonWithId(2),
   });
 
-  MultiSetQueryable<Person> localQueryable(this->queryablePeople.ToMultiSet());
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToMultiSet()));
   ASSERT_FALSE(localQueryable.Equal(localMultiSet, LikeIds));
 }
 
@@ -496,14 +514,15 @@ TEST_F(EqualFunctionalTest, EqualCustomMultiSetLastItemsSwappedDiffNamesTest)
   });
 
   // the multiset re-orders based on name which puts the IDs back in the proper order for equality to pass
-  MultiSetQueryable<Person> localQueryable(this->queryablePeople.ToMultiSet());
+  QueryableMultiSet<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToMultiSet()));
   ASSERT_TRUE(localQueryable.Equal(localMultiSet, LikeIds));
 }
 
 // DEQUE (custom comparison)
 TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyDequeOneTest)
 {
-  DequeQueryable<Person> localQueryable;
+  std::deque<Person> empty;
+  QueryableDeque<Person> localQueryable(BuildQueryable2(empty));
   std::deque<Person> localDeque({ this->GetPersonWithId(1) });
 
   ASSERT_FALSE(localQueryable.Equal(localDeque, LikeIds));
@@ -511,7 +530,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyDequeOneTest)
 
 TEST_F(EqualFunctionalTest, EqualCustomQueryOneDequeEmptyTest)
 {
-  DequeQueryable<Person> localQueryable = BuildQueryable2(std::deque<Person>({ this->GetPersonWithId(1) }));
+  QueryableDeque<Person> localQueryable = BuildQueryable2(std::deque<Person>({ this->GetPersonWithId(1) }));
   std::deque<Person> localDeque;
 
   ASSERT_FALSE(localQueryable.Equal(localDeque, LikeIds));
@@ -527,7 +546,7 @@ TEST_F(EqualFunctionalTest, EqualCustomDequeQueryOneExtraTest)
     this->GetPersonWithId(4)
   });
 
-  DequeQueryable<Person> localQueryable(this->queryablePeople.ToDeque());
+  QueryableDeque<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToDeque()));
   ASSERT_FALSE(localQueryable.Equal(localDeque, LikeIds));
 }
 
@@ -540,7 +559,7 @@ TEST_F(EqualFunctionalTest, EqualCustomDequeOneExtraTest)
     this->GetPersonWithId(2),
   });
 
-  DequeQueryable<Person> localQueryable(this->queryablePeople.ToDeque());
+  QueryableDeque<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToDeque()));
   ASSERT_FALSE(localQueryable.Equal(localDeque, LikeIds));
 }
 
@@ -553,14 +572,15 @@ TEST_F(EqualFunctionalTest, EqualCustomDequeLastItemsSwappedTest)
     this->GetPersonWithId(2),
   });
 
-  DequeQueryable<Person> localQueryable(this->queryablePeople.ToDeque());
+  QueryableDeque<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToDeque()));
   ASSERT_FALSE(localQueryable.Equal(localDeque, LikeIds));
 }
 
 // LIST (custom comparison)
 TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyListOneTest)
 {
-  ListQueryable<Person> localQueryable;
+  std::list<Person> empty;
+  QueryableList<Person> localQueryable(BuildQueryable2(empty));
   std::list<Person> localList({ this->GetPersonWithId(1) });
 
   ASSERT_FALSE(localQueryable.Equal(localList, LikeIds));
@@ -568,7 +588,7 @@ TEST_F(EqualFunctionalTest, EqualCustomQueryEmptyListOneTest)
 
 TEST_F(EqualFunctionalTest, EqualCustomQueryOneListEmptyTest)
 {
-  ListQueryable<Person> localQueryable(std::list<Person>({ this->GetPersonWithId(1) }));
+  QueryableList<Person> localQueryable(BuildQueryable2(std::list<Person>({ this->GetPersonWithId(1) })));
   std::list<Person> localList;
 
   ASSERT_FALSE(localQueryable.Equal(localList, LikeIds));
@@ -584,7 +604,7 @@ TEST_F(EqualFunctionalTest, EqualCustomListQueryOneExtraTest)
     this->GetPersonWithId(4)
   });
 
-  ListQueryable<Person> localQueryable(this->queryablePeople.ToList());
+  QueryableList<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToList()));
   ASSERT_FALSE(localQueryable.Equal(localList, LikeIds));
 }
 
@@ -597,7 +617,7 @@ TEST_F(EqualFunctionalTest, EqualCustomListOneExtraTest)
     this->GetPersonWithId(2),
   });
 
-  ListQueryable<Person> localQueryable(this->queryablePeople.ToList());
+  QueryableList<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToList()));
   ASSERT_FALSE(localQueryable.Equal(localList, LikeIds));
 }
 
@@ -610,7 +630,7 @@ TEST_F(EqualFunctionalTest, EqualCustomListLastItemsSwappedTest)
     this->GetPersonWithId(2),
   });
 
-  ListQueryable<Person> localQueryable(this->queryablePeople.ToList());
+  QueryableList<Person> localQueryable(BuildQueryable2(this->queryablePeople.ToList()));
   ASSERT_FALSE(localQueryable.Equal(localList, LikeIds));
 }
 

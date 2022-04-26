@@ -23,14 +23,14 @@ using namespace QueryBuilder;
 class OrderByDescendingFunctionalTest : public ::testing::Test
 {
 protected:
-  VectorQueryable<uint> queryable;
-  VectorQueryable<Person> people;
+  QueryableVector<uint> queryable;
+  QueryableVector<Person> people;
   PersonLibrary personLibrary;
 
   void SetUp() override
   {
     this->queryable = BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }));
-    this->people = VectorQueryable<Person>(this->personLibrary.GetPeople());
+    this->people = QueryableVector<Person>(this->personLibrary.GetPeople());
   }
 
   void TearDown() override {}
@@ -39,14 +39,14 @@ protected:
 
 // TEST_F(OrderByDescendingFunctionalTest, OrderByDescendingUninitialized)
 // {
-//   VectorQueryable<Person> emptyQueryable;
-//   VectorQueryable<Person> result = emptyQueryable.Sort();
+//   QueryableVector<Person> emptyQueryable;
+//   QueryableVector<Person> result = emptyQueryable.Sort();
 //   result.ToList();
 // }
 
 TEST_F(OrderByDescendingFunctionalTest, DequeDefault)
 {
-  DequeQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
+  QueryableDeque<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
   Queryable<uint, std::deque> queryableDeque = local.Sort([](uint a, uint b) { return a > b; });
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -60,7 +60,7 @@ TEST_F(OrderByDescendingFunctionalTest, DequeDefault)
 }
 // TEST_F(OrderByDescendingFunctionalTest, VectorDefault)
 // {
-//   VectorQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
+//   QueryableVector<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
 //   Queryable<uint, std::deque> queryableVector(local);
 //   queryableVector.Sort([](uint a, uint b) { return a > b; });
 //
@@ -76,7 +76,7 @@ TEST_F(OrderByDescendingFunctionalTest, DequeDefault)
 //
 // TEST_F(OrderByDescendingFunctionalTest, ListDefault)
 // {
-//   ListQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
+//   QueryableList<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
 //   local.OrderByDescending();
 //
 //   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -92,14 +92,14 @@ TEST_F(OrderByDescendingFunctionalTest, DequeDefault)
 TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 {
 
-  // MultiSetQueryable<uint> qSetItems(std::move(this->queryable.ToMultiSet()));
+  // QueryableMultiSet<uint> qSetItems(std::move(this->queryable.ToMultiSet()));
   // Queryable<uint, std::multiset> local(reinterpret_cast<InternalQueryable<uint, std::multiset>*>(&qSetItems));
   // // Queryable<uint, std::multiset> local(BuildQueryable2<uint>(this->queryable.ToMultiSet()));
   // Queryable<uint, std::multiset, std::less<uint>, std::allocator<uint>> orderedQueryable =
   //   local.OrderByDescending<std::less<uint>>(std::less<uint>{});
 
 
-  MultiSetQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
+  QueryableMultiSet<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
   auto queryableMultiSet = local.Sort([](uint a, uint b) { return a > b; });
 
   ASSERT_EQ(queryableMultiSet.Count(), local.Count());
@@ -129,7 +129,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 
 // TEST_F(OrderByDescendingFunctionalTest, VectorDefault)
 // {
-//   VectorQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
+//   QueryableVector<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
 //   local.OrderByDescending();
 //
 //   ASSERT_EQ(this->queryable.Count(), local.Count());
@@ -144,7 +144,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 //
 // TEST_F(OrderByDescendingFunctionalTest, DequeClass)
 // {
-//   DequeQueryable<Person> local = BuildQueryable2<Person>(this->people.ToDeque());
+//   QueryableDeque<Person> local = BuildQueryable2<Person>(this->people.ToDeque());
 //   local.OrderByDescending();
 //
 //   ASSERT_EQ(this->people.Count(), local.Count());
@@ -170,7 +170,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 //
 // TEST_F(OrderByDescendingFunctionalTest, ListClass)
 // {
-//   ListQueryable<Person> local = BuildQueryable2<Person>(this->people.ToList());
+//   QueryableList<Person> local = BuildQueryable2<Person>(this->people.ToList());
 //   local.OrderByDescending();
 //
 //   ASSERT_EQ(this->people.Count(), local.Count());
@@ -222,7 +222,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 
 // TEST_F(OrderByDescendingFunctionalTest, SetClass)
 // {
-//   SetQueryable<Person> local = BuildQueryable2<Person>(this->people.ToSet());
+//   QueryableSet<Person> local = BuildQueryable2<Person>(this->people.ToSet());
 //   local.ReOrderByDescending();
 //
 //   ASSERT_TRUE(this->people.Count() == local.Count());
@@ -250,7 +250,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 
 // TEST_F(OrderByDescendingFunctionalTest, VectorClass)
 // {
-//   VectorQueryable<Person> local = BuildQueryable2<Person>(this->people.ToVector());
+//   QueryableVector<Person> local = BuildQueryable2<Person>(this->people.ToVector());
 //   local.OrderByDescending();
 //
 //   ASSERT_EQ(this->people.Count(), local.Count());
@@ -276,7 +276,7 @@ TEST_F(OrderByDescendingFunctionalTest, MultiSetDefault)
 //
 // TEST_F(OrderByDescendingFunctionalTest, WhereOrderByDescending)
 // {
-//   VectorQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
+//   QueryableVector<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
 //
 //   local
 //     .Where([](uint value) { return (value % 2) == 0; })
