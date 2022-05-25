@@ -6,8 +6,9 @@
 #include <type_traits>
 #include <utility>
 
+#include "InternalIQueryable.hpp"
 #include "InternalQueryable.hpp"
-
+#include "IQueryable.hpp"
 #include "QueryableTypeConverters/DequeQueryableTypeConverter.hpp"
 #include "QueryableTypeConverters/ListQueryableTypeConverter.hpp"
 #include "QueryableTypeConverters/MultiSetQueryableTypeConverter.hpp"
@@ -27,11 +28,16 @@
 #include "Sorters/VectorSorter.hpp"
 #include "Utilities/Casting.hpp"
 
+template<typename T, typename ...TArgs>
+class IQueryable;
+template<typename T, typename ...TArgs>
+class InternalIQueryable;
+
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class Queryable
+class Queryable : public InternalIQueryable<TObj, TArgs...>
 {
 protected:
   std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> queryable;
@@ -39,6 +45,16 @@ protected:
 
 public:
   virtual ~Queryable() { }
+
+  Queryable(const IQueryable<TObj, TArgs...> & other)
+  {
+    queryable = other.template AsExtendedQueryable<TIterable>().queryable;
+  }
+
+  // Queryable(IQueryable<TObj, TArgs...> && other)
+  // {
+  //   queryable = std::move(other.AsExtendedQueryable().queryable);
+  // }
 
   Queryable(Queryable<TObj, TIterable, TArgs...> && other)
     : queryable(std::move(other.queryable))
@@ -70,7 +86,11 @@ public:
   // Queryable(TIterable<TObj, TArgs...> && items);
 
   // All these reinterpret_casts should not be necessary. Need to figure out why the inheritance
-  // is not implemented properly
+  // is not allowing the shared_ptr<child> to be used as shared_ptr<parent>
+  //
+  // I don't think I like all these being in here either.
+  //   - FrontInternal* should not be accessible to anyone outside the library and can be put in its own location
+  //   - FromIterable* is basically what QueryBuilder is doing, so it can probably be moved there
   template<typename TAllocator = std::allocator<TObj>>
   static Queryable<TObj, std::deque, TAllocator> FromInternalDeque(DequeInternalQueryable<TObj, TAllocator> && other)
   {
@@ -172,6 +192,13 @@ public:
         std::make_shared<DequeInternalQueryable<TObj, TAllocator>>(iterable)));
     return queryable;
   }
+  static Queryable<TObj, std::deque> FromDeque(const std::deque<TObj> & iterable)
+  {
+    Queryable<TObj, std::deque> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque>>(
+        std::make_shared<DequeInternalQueryable<TObj>>(iterable)));
+    return queryable;
+  }
 
   template<typename TAllocator = std::allocator<TObj>>
   static Queryable<TObj, std::list, TAllocator> FromList(const std::list<TObj, TAllocator> & iterable)
@@ -179,6 +206,13 @@ public:
     Queryable<TObj, std::list, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list, TAllocator>>(
         std::make_shared<ListInternalQueryable<TObj, TAllocator>>(iterable)));
+    return queryable;
+  }
+  static Queryable<TObj, std::list> FromList(const std::list<TObj> & iterable)
+  {
+    Queryable<TObj, std::list> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list>>(
+        std::make_shared<ListInternalQueryable<TObj>>(iterable)));
     return queryable;
   }
 
@@ -190,6 +224,21 @@ public:
         std::make_shared<MultiSetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
     return queryable;
   }
+  // template<typename TLessThan = std::less<TObj>>
+  // static Queryable<TObj, std::multiset, TLessThan> FromMultiSet(const std::multiset<TObj, TLessThan> & iterable)
+  // {
+  //   Queryable<TObj, std::multiset, TLessThan> queryable(
+  //     FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan>>(
+  //       std::make_shared<MultiSetInternalQueryable<TObj, TLessThan>>(iterable)));
+  //   return queryable;
+  // }
+  static Queryable<TObj, std::multiset> FromMultiSet(const std::multiset<TObj> & iterable)
+  {
+    Queryable<TObj, std::multiset> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset>>(
+        std::make_shared<MultiSetInternalQueryable<TObj>>(iterable)));
+    return queryable;
+  }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
   static Queryable<TObj, std::set, TLessThan, TAllocator> FromSet(const std::set<TObj, TLessThan, TAllocator> & iterable)
@@ -197,6 +246,21 @@ public:
     Queryable<TObj, std::set, TLessThan, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
         std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
+    return queryable;
+  }
+  // template<typename TLessThan = std::less<TObj>>
+  // static Queryable<TObj, std::set, TLessThan> FromSet(const std::set<TObj, TLessThan> & iterable)
+  // {
+  //   Queryable<TObj, std::set, TLessThan> queryable(
+  //     FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan>>(
+  //       std::make_shared<SetInternalQueryable<TObj, TLessThan>>(iterable)));
+  //   return queryable;
+  // }
+  static Queryable<TObj, std::set> FromSet(const std::set<TObj> & iterable)
+  {
+    Queryable<TObj, std::set> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set>>(
+        std::make_shared<SetInternalQueryable<TObj>>(iterable)));
     return queryable;
   }
 
@@ -208,11 +272,23 @@ public:
         std::make_shared<VectorInternalQueryable<TObj, TAllocator>>(iterable)));
     return queryable;
   }
+  static Queryable<TObj, std::vector> FromVector(const std::vector<TObj> & iterable)
+  {
+    Queryable<TObj, std::vector> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector>>(
+        std::make_shared<VectorInternalQueryable<TObj>>(iterable)));
+    return queryable;
+  }
 
   template<typename TAllocator = std::allocator<TObj>>
   inline std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
     return this->queryable->ToDeque(allocator);
+  }
+
+  inline std::deque<TObj> ToDeque() const
+  {
+    return this->queryable->ToDeque();
   }
 
   template<typename TAllocator = std::allocator<TObj>>
@@ -221,10 +297,20 @@ public:
     return this->queryable->ToList(allocator);
   }
 
+  inline std::list<TObj> ToList() const
+  {
+    return this->queryable->ToList();
+  }
+
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
   inline std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
     return this->queryable->ToMultiSet(lessThan, allocator);
+  }
+
+  inline std::multiset<TObj> ToMultiSet() const
+  {
+    return this->queryable->ToMultiSet();
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
@@ -233,15 +319,35 @@ public:
     return this->queryable->ToSet(lessThan, allocator);
   }
 
+  inline std::set<TObj> ToSet() const
+  {
+    return this->queryable->ToSet();
+  }
+
   template<typename TAllocator = std::allocator<TObj>>
   inline std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
   {
     return this->queryable->ToVector(allocator);
   }
 
-  inline bool Any(std::function<bool(TObj)> condition) const
+  inline std::vector<TObj> ToVector() const
   {
-    return this->queryable->Any(condition);
+    return this->queryable->ToVector();
+  }
+
+  template<typename T = TObj>
+  inline T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
+  {
+    return this->queryable->Aggregate(accumulate, seed);
+  }
+
+  template<typename TFinalized, typename T = TObj>
+  inline TFinalized Aggregate(
+    const std::function<T(T, TObj)> & accumulate,
+    const std::function<TFinalized(T)> & finalizer,
+    T * seed = NULL)
+  {
+    return this->queryable->Aggregate(accumulate, finalizer, seed);
   }
 
   inline bool All(std::function<bool(TObj)> condition) const
@@ -249,15 +355,26 @@ public:
     return this->queryable->All(condition);
   }
 
-  inline TObj & At(int index)
+  inline bool Any(std::function<bool(TObj)> condition) const
+  {
+    return this->queryable->Any(condition);
+  }
+
+  inline TObj & At(int index) const
   {
     return this->queryable->At(index);
   }
 
-  template<typename T>
-  inline double Average(std::function<T(TObj)> retrieveValue) const
+  inline double Average(std::function<double(TObj)> retrieveValue) const
   {
     return this->queryable->Average(retrieveValue);
+  }
+
+  inline double Average(
+    std::function<double(double, size_t)> divisor,
+    std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  {
+    return this->queryable->Average(divisor, retrieveValue);
   }
 
   inline TObj Average(std::function<TObj(const TObj &, size_t)> divisor) const
@@ -285,30 +402,30 @@ public:
     return this->queryable->CountIf(condition);
   }
 
-  inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
-  {
-    return this->queryable->Equal(collection);
-  }
-
-  inline bool Equal(
-    const TIterable<TObj, TArgs...> & collection,
-    const std::function<bool(TObj, TObj)> & areEqual) const
-  {
-    return this->queryable->Equal(collection, areEqual);
-  }
-
-  inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
-  {
-    return this->queryable->Equal(collection, collectionSize);
-  }
-
-  inline bool Equal(
-    const TIterable<TObj, TArgs...> & collection,
-    size_t collectionSize,
-    const std::function<bool(TObj, TObj)> & areEqual) const
-  {
-    return this->queryable->Equal(collection, collectionSize, areEqual);
-  }
+  // inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
+  // {
+  //   return this->queryable->Equal(collection);
+  // }
+  //
+  // inline bool Equal(
+  //   const TIterable<TObj, TArgs...> & collection,
+  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  // {
+  //   return this->queryable->Equal(collection, areEqual);
+  // }
+  //
+  // inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
+  // {
+  //   return this->queryable->Equal(collection, collectionSize);
+  // }
+  //
+  // inline bool Equal(
+  //   const TIterable<TObj, TArgs...> & collection,
+  //   size_t collectionSize,
+  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  // {
+  //   return this->queryable->Equal(collection, collectionSize, areEqual);
+  // }
 
   template<
     template<typename, typename ...> typename TExceptions,
@@ -325,22 +442,22 @@ public:
     return *this;
   }
 
-  TObj First(std::function<bool(TObj)> condition)
+  inline TObj First(std::function<bool(TObj)> condition)
   {
     return this->queryable->First(condition);
   }
 
-  TObj First()
+  inline TObj First()
   {
     return this->queryable->First();
   }
 
-  inline void ForEach(std::function<void(TObj)> action)
+  inline void ForEach(std::function<void(TObj)> action) const
   {
     this->queryable->ForEach(action);
   }
 
-  inline QueryableType GetType()
+  inline QueryableType GetType() const
   {
     return this->queryable->GetType();
   }
@@ -414,8 +531,7 @@ public:
     return this->queryable->Min(startSeed);
   }
 
-  template<typename T>
-  inline T Range(std::function<T(TObj)> retrieveValue) const
+  inline double Range(std::function<double(TObj)> retrieveValue) const
   {
     return this->queryable->Range(retrieveValue);
   }
@@ -443,13 +559,8 @@ public:
 
         std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newInternalQueryable(
           FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
-        // move constructor so no new memory is created
+
         Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        // TODO --> determine if reseting is undesireable
-        this->queryable.reset();
-
-        // return uses move constructor so no new memory is created
         return newQueryable;
         break;
       }
@@ -463,13 +574,8 @@ public:
 
         std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newInternalQueryable(
           FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
-        // move constructor so no new memory is created
+
         Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        // TODO --> determine if reseting is undesireable
-        this->queryable.reset();
-
-        // return uses move constructor so no new memory is created
         return newQueryable;
         break;
       }
@@ -483,13 +589,8 @@ public:
 
         std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newInternalQueryable(
           FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
-        // move constructor so no new memory is created
+
         Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        // TODO --> determine if reseting is undesireable
-        this->queryable.reset();
-
-        // return uses move constructor so no new memory is created
         return newQueryable;
         break;
       }
@@ -503,13 +604,8 @@ public:
 
         std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newInternalQueryable(
           FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
-        // move constructor so no new memory is created
+
         Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        // TODO --> determine if reseting is undesireable
-        this->queryable.reset();
-
-        // return uses move constructor so no new memory is created
         return newQueryable;
         break;
       }
@@ -523,21 +619,13 @@ public:
 
         std::shared_ptr<InternalQueryable<T, TIterable, TNewArgs...>> newInternalQueryable(
           FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TNewArgs...>>(selectBuilder.Get()));
-        // move constructor so no new memory is created
+
         Queryable<T, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        // TODO --> determine if reseting is undesireable
-        this->queryable.reset();
-
-        // return uses move constructor so no new memory is created
         return newQueryable;
         break;
       }
-      default:
-        break;
+      default: throw std::runtime_error("should not reach here");
     }
-
-    return {};
   }
 
 
@@ -646,19 +734,25 @@ std::cout << "c" << std::endl;
     }
   }
 
-  template<typename T>
-  inline T Sum(std::function<T(TObj)> retrieveValue) const
+  inline double Sum(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
     return this->queryable->Sum(retrieveValue);
   }
 
-  inline TObj Sum() const
+  inline size_t Sum(std::function<size_t(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
-    return this->queryable->Sum();
+    return this->queryable->Sum(retrieveValue);
   }
 
-  inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
+  // inline TObj Sum() const
+  // {
+  //   return this->queryable->Sum();
+  // }
+
+  // inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
+  inline InternalIQueryable<TObj, TArgs...> & Where(std::function<bool(const TObj &)> condition)
   {
+    // TODO --> no return necessary
     this->queryable->Where(condition);
     return *this;
   }

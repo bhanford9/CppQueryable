@@ -20,7 +20,7 @@ protected:
   uint expectedUnorderedAt = 34;
   uint expectedOrderedAt = 45;
   uint expectedSetAt = 867;
-  QueryableVector<uint> queryable;
+  IQueryable<uint> queryable;
 
   AtFunctionalTest() :
     queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
@@ -36,7 +36,7 @@ protected:
 
 // TEST_F(AtFunctionalTest, AtVectorUninitialized)
 // {
-//   QueryableVector<Person> emptyQueryable;
+//   IQueryable<Person> emptyQueryable;
 //
 //   try
 //   {

@@ -64,10 +64,10 @@ public:
     this->type = QueryableType::Set;
   }
 
-  virtual InternalQueryable<TObj, std::set, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  virtual InternalQueryable<TObj, std::set, TLessThan, TAllocator> * Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
-    return *this;
+    return this;
   }
 };
 

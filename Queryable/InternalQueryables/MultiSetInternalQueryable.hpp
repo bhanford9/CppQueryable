@@ -57,10 +57,10 @@ public:
     this->type = QueryableType::MultiSet;
   }
 
-  virtual InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & Where(std::function<bool(const TObj &)> condition) override
+  virtual InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> * Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableMultiSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
-    return *this;
+    return this;
   }
 };
 

@@ -153,12 +153,23 @@ public:
     std::function<bool(TObj)> && condition)
     : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
   {
+    // std::cout << "WhereQueryableDAta move constructor" << std::endl;
+    this->sizeIsCalculated = false;
+    this->condition += condition;
+  }
+  WhereQueryableData(
+    const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
+    std::function<bool(TObj)> && condition)
+    : QueryableData<TObj, TIterable, TArgs...>(*data)
+  {
+    // std::cout << "WhereQueryableDAta copy constructor" << std::endl;
     this->sizeIsCalculated = false;
     this->condition += condition;
   }
   WhereQueryableData(const WhereQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
+    // std::cout << "WhereQueryableDAta copy constructor" << std::endl;
     this->sizeIsCalculated = other.sizeIsCalculated;
     this->condition = other.condition;
   }
@@ -321,6 +332,7 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> begin() override
   {
+    // std::cout << "WhereQueryableData::begin" << std::endl;
     this->beginIterator = this->items->begin();
 
     int startIndex = this->IncrementBeginForwardPastFalseConditions() - 1;
@@ -335,6 +347,7 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> end() override
   {
+    // std::cout << "WhereQueryableData::end" << std::endl;
     // std::cout << "within where queryable end" << std::endl;
     this->endIterator = this->items->end();
 

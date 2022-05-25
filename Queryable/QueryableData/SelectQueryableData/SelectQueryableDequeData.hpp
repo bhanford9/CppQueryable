@@ -19,6 +19,12 @@ public:
     : SelectQueryableData<TOriginal, TCurrent, std::deque, TAllocator>(std::move(data), selector)
   {
   }
+  SelectQueryableDequeData(
+    const std::shared_ptr<QueryableData<TOriginal, std::deque, TAllocator>> & data,
+    std::function<TCurrent(TOriginal)> selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::deque, TAllocator>(data, selector)
+  {
+  }
 
   virtual ~SelectQueryableDequeData() { }
 

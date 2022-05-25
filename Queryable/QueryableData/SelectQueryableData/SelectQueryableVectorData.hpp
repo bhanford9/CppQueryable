@@ -21,6 +21,12 @@ public:
     : SelectQueryableData<TOriginal, TCurrent, std::vector, TAllocator>(std::move(data), selector)
   {
   }
+  SelectQueryableVectorData(
+    const std::shared_ptr<QueryableData<TOriginal, std::vector, TAllocator>> & data,
+    std::function<TCurrent(TOriginal)> selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::vector, TAllocator>(data, selector)
+  {
+  }
   virtual ~SelectQueryableVectorData() { }
 
   virtual std::shared_ptr<IQueryableData<TCurrent>> Clone() override

@@ -20,7 +20,7 @@ public:
     TAllocator allocator = {})
   {
     std::shared_ptr<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>> selectData =
-      std::make_shared<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>>(std::move(data), selector);
+      std::make_shared<SelectQueryableVectorData<TOriginal, TCurrent, TAllocator>>(data, selector);
 
     std::shared_ptr<VectorInternalQueryable<TCurrent, TAllocator>> vectorQueryable =
       std::make_shared<VectorInternalQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::Vector);

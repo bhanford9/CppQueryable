@@ -20,7 +20,7 @@ public:
     TAllocator allocator = {})
   {
     std::shared_ptr<SelectQueryableDequeData<TOriginal, TCurrent, TAllocator>> selectData =
-      std::make_shared<SelectQueryableDequeData<TOriginal, TCurrent, TAllocator>>(std::move(data), selector);
+      std::make_shared<SelectQueryableDequeData<TOriginal, TCurrent, TAllocator>>(data, selector);
 
     std::shared_ptr<DequeInternalQueryable<TCurrent, TAllocator>> dequeQueryable =
       std::make_shared<DequeInternalQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::Deque);

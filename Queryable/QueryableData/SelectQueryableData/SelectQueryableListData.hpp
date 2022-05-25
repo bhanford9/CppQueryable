@@ -19,6 +19,12 @@ public:
     : SelectQueryableData<TOriginal, TCurrent, std::list, TAllocator>(std::move(data), selector)
   {
   }
+  SelectQueryableListData(
+    const std::shared_ptr<QueryableData<TOriginal, std::list, TAllocator>> & data,
+    std::function<TCurrent(TOriginal)> selector)
+    : SelectQueryableData<TOriginal, TCurrent, std::list, TAllocator>(data, selector)
+  {
+  }
 
   virtual ~SelectQueryableListData() { }
 

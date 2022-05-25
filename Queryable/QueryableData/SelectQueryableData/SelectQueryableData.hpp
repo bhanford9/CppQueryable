@@ -35,12 +35,23 @@ public:
       selector(selector),
       original(std::move(data))
   {
+    // std::cout << "select queryable parent data moving" << std::endl;
     this->size = original->StorageSize();
   }
+    SelectQueryableData(
+      const std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> & data,
+      std::function<TCurrent(TOriginal) > selector) :
+        selector(selector),
+        original(data)
+    {
+      // std::cout << "select queryable parent data copying" << std::endl;
+      this->size = original->StorageSize();
+    }
   SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
     selector(data.selector),
     original(data.original)
   {
+    this->size = original->StorageSize();
   }
 
   virtual ~SelectQueryableData() { }
@@ -93,7 +104,7 @@ public:
   {
     // std::cout << "Select Data begin" << std::endl;
     this->original->begin();
-    QueryableIterator<TCurrent> retVal(std::make_shared<SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...>>(*this), 0, IteratorType::BeginForward);
+    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginForward);
     return retVal;
   }
 
@@ -101,21 +112,21 @@ public:
   {
     // std::cout << "Select Data end" << std::endl;
     this->original->end();
-    QueryableIterator<TCurrent> retVal(std::make_shared<SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...>>(*this), this->original->Count(), IteratorType::EndForward);
+    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndForward);
     return retVal;
   }
 
   virtual QueryableIterator<TCurrent> rbegin() override
   {
     this->original->rbegin();
-    QueryableIterator<TCurrent> retVal(std::make_shared<SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...>>(*this), 0, IteratorType::BeginReverse);
+    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginReverse);
     return retVal;
   }
 
   virtual QueryableIterator<TCurrent> rend() override
   {
     this->original->rend();
-    QueryableIterator<TCurrent> retVal(std::make_shared<SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...>>(*this), this->original->Count(), IteratorType::EndReverse);
+    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndReverse);
     return retVal;
   }
 };

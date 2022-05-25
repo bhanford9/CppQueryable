@@ -20,7 +20,7 @@ public:
     TAllocator allocator = {})
   {
     std::shared_ptr<SelectQueryableListData<TOriginal, TCurrent, TAllocator>> selectData =
-      std::make_shared<SelectQueryableListData<TOriginal, TCurrent, TAllocator>>(std::move(data), selector);
+      std::make_shared<SelectQueryableListData<TOriginal, TCurrent, TAllocator>>(data, selector);
 
     std::shared_ptr<ListInternalQueryable<TCurrent, TAllocator>> listQueryable =
       std::make_shared<ListInternalQueryable<TCurrent, TAllocator>>(std::move(selectData), QueryableType::List);

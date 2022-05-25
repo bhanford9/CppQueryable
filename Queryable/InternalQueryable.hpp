@@ -118,6 +118,7 @@ public:
 
   inline QueryableIterator<TObj> begin()
   {
+    std::cout << "\nInternalQueryable::begin" << std::endl;
     return this->items->begin();
   }
 
@@ -215,6 +216,7 @@ public:
   template<typename TAllocator = std::allocator<TObj>>
   inline std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
   {
+    // probably be better to use the constructor that takes the iterators as parameters
     std::vector<TObj, TAllocator> newItems(allocator);
 
     for (TObj item : *this->items.get())
@@ -272,7 +274,7 @@ public:
     return this->items.get()->begin() == this->items.get()->end();
   }
 
-  inline TObj & At(int index)
+  inline TObj & At(int index) const
   {
     if (index < 0)
     {
@@ -311,7 +313,7 @@ public:
     return count;
   }
 
-  void ForEach(std::function<void(TObj)> action)
+  void ForEach(std::function<void(TObj)> action) const
   {
     for (TObj item : *this->items.get())
     {
@@ -327,7 +329,8 @@ public:
   //   }
   // }
 
-  virtual InternalQueryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition) = 0;
+  // TODO --> no return necessary
+  virtual InternalQueryable<TObj, TIterable, TArgs...> * Where(std::function<bool(const TObj &)> condition) = 0;
 
   // InternalQueryable<TObj, TIterable, TArgs...> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
   // {
@@ -478,82 +481,83 @@ public:
   //   return retval;
   // }
 
-  inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
-  {
-    return this->Equal(collection, collection.size());
-  }
-
-  inline bool Equal(
-    const TIterable<TObj, TArgs...> & collection,
-    const std::function<bool(TObj, TObj)> & areEqual) const
-  {
-    return this->Equal(collection, collection.size(), areEqual);
-  }
-
-  // forward_list does not contain size() method and don't want to require it
-  // it would be faster to do a pre-check for containers that do have constant size methods
-  inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
-  {
-    static_assert(is_equatable<TObj>::value, "Type must be equatable");
-
-    bool selfEmpty = this->items->end() == this->items->begin();
-    bool otherEmpty = collection.end() == collection.begin();
-
-    if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
-    {
-      return false;
-    }
-
-    auto localIterator = this->items->begin();
-    for (TObj item : collection)
-    {
-      if (localIterator == this->items->end() || !(*localIterator == item))
-      {
-        return false;
-      }
-
-      ++localIterator;
-    }
-
-    if (localIterator != this->items->end())
-    {
-      return false;
-    }
-
-    return true;
-  }
-
-  inline bool Equal(
-    const TIterable<TObj, TArgs...> & collection,
-    size_t collectionSize,
-    const std::function<bool(TObj, TObj)> & areEqual) const
-  {
-    bool selfEmpty = this->items->end() == this->items->begin();
-    bool otherEmpty = collection.end() == collection.begin();
-
-    if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
-    {
-      return false;
-    }
-
-    auto localIterator = this->items->begin();
-    for (TObj item : collection)
-    {
-      if (localIterator == this->items->end() || !areEqual(*localIterator, item))
-      {
-        return false;
-      }
-
-      ++localIterator;
-    }
-
-    if (localIterator != this->items->end())
-    {
-      return false;
-    }
-
-    return true;
-  }
+  // TODO these can be done with iterators instead
+  // inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
+  // {
+  //   return this->Equal(collection, collection.size());
+  // }
+  //
+  // inline bool Equal(
+  //   const TIterable<TObj, TArgs...> & collection,
+  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  // {
+  //   return this->Equal(collection, collection.size(), areEqual);
+  // }
+  //
+  // // forward_list does not contain size() method and don't want to require it
+  // // it would be faster to do a pre-check for containers that do have constant size methods
+  // inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
+  // {
+  //   static_assert(is_equatable<TObj>::value, "Type must be equatable");
+  //
+  //   bool selfEmpty = this->items->end() == this->items->begin();
+  //   bool otherEmpty = collection.end() == collection.begin();
+  //
+  //   if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
+  //   {
+  //     return false;
+  //   }
+  //
+  //   auto localIterator = this->items->begin();
+  //   for (TObj item : collection)
+  //   {
+  //     if (localIterator == this->items->end() || !(*localIterator == item))
+  //     {
+  //       return false;
+  //     }
+  //
+  //     ++localIterator;
+  //   }
+  //
+  //   if (localIterator != this->items->end())
+  //   {
+  //     return false;
+  //   }
+  //
+  //   return true;
+  // }
+  //
+  // inline bool Equal(
+  //   const TIterable<TObj, TArgs...> & collection,
+  //   size_t collectionSize,
+  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  // {
+  //   bool selfEmpty = this->items->end() == this->items->begin();
+  //   bool otherEmpty = collection.end() == collection.begin();
+  //
+  //   if ((selfEmpty && !otherEmpty) || (!selfEmpty && otherEmpty))
+  //   {
+  //     return false;
+  //   }
+  //
+  //   auto localIterator = this->items->begin();
+  //   for (TObj item : collection)
+  //   {
+  //     if (localIterator == this->items->end() || !areEqual(*localIterator, item))
+  //     {
+  //       return false;
+  //     }
+  //
+  //     ++localIterator;
+  //   }
+  //
+  //   if (localIterator != this->items->end())
+  //   {
+  //     return false;
+  //   }
+  //
+  //   return true;
+  // }
 
   // with preserveFilter true, you can do the following:
   //   collection.Where(x => x.IsValid).Concat(otherItems, true);
@@ -575,12 +579,9 @@ public:
   //   return this;
   // }
 
-  template<typename T>
-  inline T Sum(std::function<T(TObj)> retrieveValue) const
+  inline double Sum(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
-    static_assert(is_aggregatable<T>::value, "Type must implement the '+=' operator");
-
-    T sum = T();
+    double sum = 0;
 
     for (TObj item : *this->items.get())
     {
@@ -589,26 +590,34 @@ public:
 
     return sum;
   }
-
-  inline TObj Sum() const
+  inline size_t Sum(std::function<size_t(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
-    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
-
-    TObj sum = TObj();
+    size_t sum = 0;
 
     for (TObj item : *this->items.get())
     {
-      sum += item;
+      sum += retrieveValue(item);
     }
 
     return sum;
   }
+  //
+  // inline TObj Sum() const
+  // {
+  //   static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
+  //
+  //   TObj sum = TObj();
+  //
+  //   for (TObj item : *this->items.get())
+  //   {
+  //     sum += item;
+  //   }
+  //
+  //   return sum;
+  // }
 
-  template<typename T>
-  inline double Average(std::function<T(TObj)> retrieveValue) const
+  inline double Average(std::function<double(TObj)> retrieveValue) const
   {
-    static_assert(std::is_arithmetic<T>::value, "Type must be numeric");
-
     double sum = 0;
     size_t count = 0;
 
@@ -621,11 +630,28 @@ public:
     return count > 0 ? sum / count : 0;
   }
 
+  inline double Average(
+    std::function<double(double, size_t)> divisor,
+    std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  {
+    double sum  = 0;
+    size_t count = 0;
+
+    for (TObj item : *this->items.get())
+    {
+      sum += retrieveValue(item);
+      count++;
+    }
+
+    return divisor(sum, count);
+  }
+
   inline TObj Average(std::function<TObj(const TObj &, size_t)> divisor) const
   {
     static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
-    TObj sum = TObj();
+    // TOOD --> potential for failure here if no public default constructor
+    TObj sum;
     size_t count = 0;
 
     for (TObj item : *this->items.get())
@@ -639,7 +665,8 @@ public:
 
   inline double Average() const
   {
-    static_assert(std::is_arithmetic<TObj>::value, "Type must be numeric");
+    // TODO --> make better static assertion for being able to += with double
+    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
 
     double sum = 0;
     size_t count = 0;
@@ -849,7 +876,7 @@ public:
   inline T Range(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
-    static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
+    // static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
 
     bool isFirst = true;
     T max = T();
@@ -883,7 +910,7 @@ public:
   inline TObj Range() const
   {
     static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
-    static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");
+    // static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");
 
     bool isFirst = true;
     TObj max = TObj();
@@ -915,9 +942,9 @@ public:
   // TODO : templates are supposed to be faster than std::function. will require static asserts though
   inline bool Any(std::function<bool(TObj)> condition) const
   {
-    for (TObj item : *this->items.get())
+    for (auto item = this->items->begin(); item != this->items->end(); ++item)
     {
-      if (condition(item))
+      if (condition(*item))
       {
         return true;
       }
@@ -946,6 +973,7 @@ public:
     SelectBuilder<TObj, T, TIterable, TNewArgs...> * selectBuilder,
     TNewArgs... iterableParameters)
   {
+    std::cout << "internal select" << std::endl;
     selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
   }
 
@@ -953,7 +981,7 @@ public:
   {
     static_assert(is_equatable<TObj>::value, "Item must be equatable");
 
-    for (TObj localItem : *this->items.get())
+    for (const TObj & localItem : *this->items.get())
     {
       if (localItem == item)
       {
@@ -1174,8 +1202,10 @@ public:
   }
 
   // TODO: changing std::function to a templated member is supposed to be faster
+  // TODO: not sure I like this implementation:
+  //   - No guarantee that we can create a T (i.e., default constructor)
   template<typename T = TObj>
-  T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
+  inline T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
   {
     T aggregatedValue;
 
@@ -1193,10 +1223,10 @@ public:
   }
 
   // TODO: changing std::function to a templated member is supposed to be faster
-  template<typename T = TObj, typename TFinalizer>
-  TFinalizer Aggregate(
+  template<typename TFinalized, typename T = TObj>
+  inline TFinalized Aggregate(
     const std::function<T(T, TObj)> & accumulate,
-    const std::function<TFinalizer(T)> & finalizer,
+    const std::function<TFinalized(T)> & finalizer,
     T * seed = NULL)
   {
     return finalizer(this->Aggregate<T>(accumulate, seed));

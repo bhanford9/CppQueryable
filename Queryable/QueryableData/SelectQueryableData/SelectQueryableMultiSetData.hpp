@@ -22,6 +22,13 @@ public:
     : SelectQueryableData<TOriginal, TCurrent, std::multiset, TCompare, TAllocator>(std::move(data), selector)
   {
   }
+  SelectQueryableMultiSetData(
+    const std::shared_ptr<QueryableData<TOriginal, std::multiset, TCompare, TAllocator>> & data,
+    std::function<TCurrent(TOriginal)> selector,
+    TCompare comparator = {})
+    : SelectQueryableData<TOriginal, TCurrent, std::multiset, TCompare, TAllocator>(data, selector)
+  {
+  }
 
   virtual ~SelectQueryableMultiSetData() { }
 

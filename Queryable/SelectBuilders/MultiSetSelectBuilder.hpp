@@ -22,7 +22,7 @@ public:
     TAllocator allocator = {})
   {
     std::shared_ptr<SelectQueryableMultiSetData<TOriginal, TCurrent, TLessThan, TAllocator>> selectData =
-      std::make_shared<SelectQueryableMultiSetData<TOriginal, TCurrent, TLessThan, TAllocator>>(std::move(data), selector);
+      std::make_shared<SelectQueryableMultiSetData<TOriginal, TCurrent, TLessThan, TAllocator>>(data, selector);
 
     std::shared_ptr<MultiSetInternalQueryable<TCurrent, TLessThan, TAllocator>> multisetQueryable =
       std::make_shared<MultiSetInternalQueryable<TCurrent, TLessThan, TAllocator>>(std::move(selectData), QueryableType::MultiSet);

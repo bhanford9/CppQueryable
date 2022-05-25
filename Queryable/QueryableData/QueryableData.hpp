@@ -66,11 +66,12 @@ public:
   QueryableData()
   {
     // std::cout << "\nQueryableData Constructor 1" << std::endl;
+    this->items = std::make_shared<TIterable<TObj, TArgs...>>();
     this->DefaultInitialize();
   }
   QueryableData(const TIterable<TObj, TArgs...> & items)
   {
-    // std::cout << "\nQueryableData Constructor 2" << std::endl;
+    // std::cout << "\nQueryableData Constructor 2: " << typeid(TIterable<TObj, TArgs...>).name() << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
     this->DefaultInitialize();
 
