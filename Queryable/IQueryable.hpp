@@ -97,41 +97,31 @@ public:
   template<typename TAllocator = std::allocator<T>>
   inline std::deque<T, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
-    std::deque<T, TAllocator> newDeque(allocator);
-    this->queryable->ForEach([&](const T & value) { newDeque.push_back(value); });
-    return newDeque;
+    return this->queryable->ToDeque(allocator);
   }
 
   template<typename TAllocator = std::allocator<T>>
   inline std::list<T, TAllocator> ToList(TAllocator allocator = {}) const
   {
-    std::list<T, TAllocator> newList(allocator);
-    this->queryable->ForEach([&](const T & value) { newList.push_back(value); });
-    return newList;
+    return this->queryable->ToList(allocator);
   }
 
   template<typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
   inline std::multiset<T, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::multiset<T, TLessThan, TAllocator> newMultiSet(lessThan, allocator);
-    this->queryable->ForEach([&](const T & value) { newMultiSet.insert(value); });
-    return newMultiSet;
+    return this->queryable->ToMultiSet(lessThan, allocator);
   }
 
   template<typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
   inline std::set<T, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::set<T, TLessThan, TAllocator> newSet(lessThan, allocator);
-    this->queryable->ForEach([&](const T & value) { newSet.insert(value); });
-    return newSet;
+    return this->queryable->ToSet(lessThan, allocator);
   }
 
   template<typename TAllocator = std::allocator<T>>
   inline std::vector<T, TAllocator> ToVector(TAllocator allocator = {}) const
   {
-    std::vector<T, TAllocator> newVector(allocator);
-    this->queryable->ForEach([&](const T & value) { newVector.push_back(value); });
-    return newVector;
+    return this->queryable->ToVector(allocator);
   }
 
   template<template<typename, typename ...> typename TIterable, typename TOut = T>
@@ -164,7 +154,7 @@ public:
     return this->queryable->At(index);
   }
 
-  inline double Average(std::function<double(T)> retrieveValue) const
+  inline double Average(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {
     return this->queryable->Average(retrieveValue);
   }
@@ -174,17 +164,6 @@ public:
     std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {
     return this->queryable->Average(divisor, retrieveValue);
-  }
-
-  template<template<typename, typename ...> typename TIterable>
-  inline T Average(std::function<T(const T &, size_t)> divisor) const
-  {
-    return this->queryable->template Average<TIterable>(divisor);
-  }
-
-  inline double Average() const
-  {
-    return this->queryable->Average();
   }
 
   inline bool Contains(const T & item) const
@@ -200,6 +179,21 @@ public:
   inline size_t CountIf(std::function<bool(T)> condition) const
   {
     return this->queryable->CountIf(condition);
+  }
+
+  template<
+    template<typename, typename ...> typename TIterable,
+    template<typename, typename ...> typename TExceptions,
+    typename TLessThan = std::less<T>,
+    typename TAllocator = std::allocator<T>,
+    typename ...TExceptionArgs>
+  IQueryable<T, TArgs...> Except(
+    const TExceptions<T, TExceptionArgs...> & exceptions,
+    TLessThan lessThan = {},
+    TAllocator allocator = {})
+  {
+    this->queryable->template Except<TIterable, TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
+    return *this;
   }
 
   inline T First(std::function<bool(T)> condition)

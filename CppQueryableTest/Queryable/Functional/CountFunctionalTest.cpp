@@ -16,7 +16,7 @@ class CountFunctionalTest : public ::testing::Test
 protected:
   uint expectedWithDuplicates = 12;
   uint expectedWithoutDuplicates = 8;
-  QueryableVector<uint> queryable;
+  IQueryable<uint> queryable;
 
   CountFunctionalTest() :
     queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
@@ -32,7 +32,7 @@ protected:
 
 // TEST_F(CountFunctionalTest, CountVectorUninitialized)
 // {
-//   QueryableVector<Person> emptyQueryable;
+//   IQueryable<Person> emptyQueryable;
 //   ASSERT_EQ(0, emptyQueryable.Count());
 // }
 

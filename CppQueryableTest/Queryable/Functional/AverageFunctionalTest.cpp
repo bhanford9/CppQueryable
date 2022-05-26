@@ -76,11 +76,6 @@ TEST_F(AverageFunctionalTest, AverageOperatorOverload)
 
   ASSERT_EQ(expected.X, averageX);
   ASSERT_EQ(expected.Y, averageY);
-
-  // TODO --> this can only exist within the extended area
-  Point average = points.Average<std::vector>([](const Point & sum, ulong count) { return Point(sum.X / count, sum.Y / count); });
-  ASSERT_EQ(expected.X, average.X);
-  ASSERT_EQ(expected.Y, average.Y);
 }
 
 TEST_F(AverageFunctionalTest, AverageVector)

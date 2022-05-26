@@ -601,22 +601,8 @@ public:
 
     return sum;
   }
-  //
-  // inline TObj Sum() const
-  // {
-  //   static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
-  //
-  //   TObj sum = TObj();
-  //
-  //   for (TObj item : *this->items.get())
-  //   {
-  //     sum += item;
-  //   }
-  //
-  //   return sum;
-  // }
 
-  inline double Average(std::function<double(TObj)> retrieveValue) const
+  inline double Average(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
     double sum = 0;
     size_t count = 0;
@@ -644,40 +630,6 @@ public:
     }
 
     return divisor(sum, count);
-  }
-
-  inline TObj Average(std::function<TObj(const TObj &, size_t)> divisor) const
-  {
-    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
-
-    // TOOD --> potential for failure here if no public default constructor
-    TObj sum;
-    size_t count = 0;
-
-    for (TObj item : *this->items.get())
-    {
-      sum += item;
-      count++;
-    }
-
-    return divisor(sum, count);
-  }
-
-  inline double Average() const
-  {
-    // TODO --> make better static assertion for being able to += with double
-    static_assert(is_aggregatable<TObj>::value, "Type must implement the '+=' operator");
-
-    double sum = 0;
-    size_t count = 0;
-
-    for (TObj item : *this->items.get())
-    {
-      sum += item;
-      count++;
-    }
-
-    return count > 0 ? sum / count : 0;
   }
 
   template<typename T>

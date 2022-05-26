@@ -44,6 +44,12 @@ public:
     temp.Y -= other.Y;
     return temp;
   }
+
+  bool operator==(const Point & other) const
+  {
+    return this->X == other.X && this->Y == other.Y;
+  }
+
 };
 
 #endif

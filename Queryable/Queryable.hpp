@@ -365,7 +365,7 @@ public:
     return this->queryable->At(index);
   }
 
-  inline double Average(std::function<double(TObj)> retrieveValue) const
+  inline double Average(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
     return this->queryable->Average(retrieveValue);
   }
@@ -375,16 +375,6 @@ public:
     std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
     return this->queryable->Average(divisor, retrieveValue);
-  }
-
-  inline TObj Average(std::function<TObj(const TObj &, size_t)> divisor) const
-  {
-    return this->queryable->Average(divisor);
-  }
-
-  inline double Average() const
-  {
-    return this->queryable->Average();
   }
 
   inline bool Contains(const TObj & item) const
@@ -432,7 +422,7 @@ public:
     typename TLessThan = std::less<TObj>,
     typename TAllocator = std::allocator<TObj>,
     typename ...TExceptionArgs>
-  Queryable<TObj, TIterable, TArgs...> & Except(
+  InternalIQueryable<TObj, TArgs...> & Except(
     const TExceptions<TObj, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})

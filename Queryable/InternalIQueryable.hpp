@@ -122,6 +122,46 @@ public:
     return *const_cast<Queryable<T, TIterable, TArgs...>*>(dynamic_cast<const Queryable<T, TIterable, TArgs...>*>(this));
   }
 
+  template<typename TAllocator = std::allocator<T>>
+  inline std::deque<T, TAllocator> ToDeque(TAllocator allocator = {}) const
+  {
+    std::deque<T, TAllocator> newDeque(allocator);
+    this->ForEach([&](const T & value) { newDeque.push_back(value); });
+    return newDeque;
+  }
+
+  template<typename TAllocator = std::allocator<T>>
+  inline std::list<T, TAllocator> ToList(TAllocator allocator = {}) const
+  {
+    std::list<T, TAllocator> newList(allocator);
+    this->ForEach([&](const T & value) { newList.push_back(value); });
+    return newList;
+  }
+
+  template<typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
+  inline std::multiset<T, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  {
+    std::multiset<T, TLessThan, TAllocator> newMultiSet(lessThan, allocator);
+    this->ForEach([&](const T & value) { newMultiSet.insert(value); });
+    return newMultiSet;
+  }
+
+  template<typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
+  inline std::set<T, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  {
+    std::set<T, TLessThan, TAllocator> newSet(lessThan, allocator);
+    this->ForEach([&](const T & value) { newSet.insert(value); });
+    return newSet;
+  }
+
+  template<typename TAllocator = std::allocator<T>>
+  inline std::vector<T, TAllocator> ToVector(TAllocator allocator = {}) const
+  {
+    std::vector<T, TAllocator> newVector(allocator);
+    this->ForEach([&](const T & value) { newVector.push_back(value); });
+    return newVector;
+  }
+
   template<
     template<typename, typename ...> typename TIterable,
     typename TOut = T>
@@ -152,22 +192,28 @@ public:
   inline virtual bool All(std::function<bool(T)> condition) const = 0;
   inline virtual bool Any(std::function<bool(T)> condition) const = 0;
   inline virtual T & At(int index) const = 0;
-  inline virtual double Average(std::function<double(T)> retrieveValue) const = 0;
+  inline virtual double Average(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;
   inline virtual double Average(
     std::function<double(double, size_t)> divisor,
     std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;
-  inline virtual double Average() const = 0;
-  template<template<typename, typename ...> typename TIterable>
-  inline T Average(std::function<T(const T &, size_t)> divisor) const
-  {
-    return this->AsExtendedQueryable<TIterable>().Average(divisor);
-  }
   inline virtual bool Contains(const T & item) const = 0;
   inline virtual size_t Count() = 0;
   inline virtual size_t CountIf(std::function<bool(T)> condition) const = 0;
 
-  // virtual TODO
-  // virtual all the equal methods will need to have overloads for each container type
+
+  template<
+    template<typename, typename ...> typename TIterable,
+    template<typename, typename ...> typename TExceptions,
+    typename TLessThan = std::less<T>,
+    typename TAllocator = std::allocator<T>,
+    typename ...TExceptionArgs>
+  InternalIQueryable<T, TArgs...> & Except(
+    const TExceptions<T, TExceptionArgs...> & exceptions,
+    TLessThan lessThan = {},
+    TAllocator allocator = {})
+  {
+    return this->AsExtendedQueryable<TIterable>().Except(exceptions, lessThan, allocator);
+  }
 
   inline virtual T First(std::function<bool(T)> condition) = 0;
   inline virtual T First() = 0;
