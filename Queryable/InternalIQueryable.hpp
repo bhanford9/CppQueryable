@@ -12,6 +12,8 @@
 #include "QueryableAliases.hpp"
 #include "QueryableType.hpp"
 
+// TODO --> Test if using template parameters is faster than std;:function parameters
+
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
@@ -223,6 +225,25 @@ public:
   inline virtual T Last() = 0;
   inline virtual T Max() const = 0;
   inline virtual T Max(T startSeed) const = 0;
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Max(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->AsExtendedQueryable<TIterable>().Max(retrieveValue);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Max(std::function<TOut(T)> retrieveValue, TOut startSeed) const
+  {
+    return this->AsExtendedQueryable<TIterable>().Max(retrieveValue, startSeed);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline T MaxItem(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->AsExtendedQueryable<TIterable>().MaxItem(retrieveValue);
+  }
+
   inline virtual T Min() const = 0;
   inline virtual T Min(T startSeed) const = 0;
   inline virtual double Range(std::function<double(T)> retrieveValue) const = 0;

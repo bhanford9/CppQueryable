@@ -231,6 +231,24 @@ public:
     return this->queryable->Max(startSeed);
   }
 
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Max(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->queryable->template Max<TIterable, TOut>(retrieveValue);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Max(std::function<TOut(T)> retrieveValue, TOut startSeed) const
+  {
+    return this->queryable->template Max<TIterable, TOut>(retrieveValue, startSeed);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline T MaxItem(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->queryable->template MaxItem<TIterable, TOut>(retrieveValue);
+  }
+
   inline T Min() const
   {
     return this->queryable->Min();
