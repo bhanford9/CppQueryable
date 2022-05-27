@@ -828,11 +828,11 @@ public:
   inline T Range(std::function<T(TObj)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
-    // static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
+    static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
 
     bool isFirst = true;
-    T max = T();
-    T min = T();
+    T max;
+    T min;
 
     for (TObj item : *this->items.get())
     {
@@ -859,32 +859,31 @@ public:
     return max - min;
   }
 
-  inline TObj Range() const
+  inline double Range(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
-    // static_assert(is_subtractable<TObj>::value, "Type must overload subtraction operator");
-
     bool isFirst = true;
-    TObj max = TObj();
-    TObj min = TObj();
+    double max = 0.0;
+    double min = 0.0;
 
     for (TObj item : *this->items.get())
     {
+      double value = retrieveValue(item);
+
       if (isFirst)
       {
         isFirst = false;
-        max = item;
-        min = item;
+        max = value;
+        min = value;
       }
 
-      if (item < min)
+      if (value < min)
       {
-        min = item;
+        min = value;
       }
 
-      if (max < item)
+      if (max < value)
       {
-        max = item;
+        max = value;
       }
     }
 

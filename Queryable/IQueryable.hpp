@@ -277,9 +277,15 @@ public:
     return this->queryable->template MinItem<TIterable, TOut>(retrieveValue);
   }
 
-  inline double Range(std::function<double(T)> retrieveValue) const
+  inline double Range(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {
     return this->queryable->Range(retrieveValue);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Range(std::function<TOut(T)> retrieveValue)
+  {
+    return this->queryable->template Range<TIterable, TOut>(retrieveValue);
   }
 
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const

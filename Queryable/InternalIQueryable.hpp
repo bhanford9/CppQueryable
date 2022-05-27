@@ -265,7 +265,13 @@ public:
     return this->AsExtendedQueryable<TIterable>().MinItem(retrieveValue);
   }
 
-  inline virtual double Range(std::function<double(T)> retrieveValue) const = 0;
+  inline virtual double Range(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Range(std::function<TOut(T)> retrieveValue)
+  {
+    return this->AsExtendedQueryable<TIterable>().Range(retrieveValue);
+  }
 
   template<
     typename TOut,

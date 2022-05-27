@@ -521,14 +521,15 @@ public:
     return this->queryable->Min(startSeed);
   }
 
-  inline double Range(std::function<double(TObj)> retrieveValue) const
+  template<typename T>
+  inline T Range(std::function<T(TObj)> retrieveValue) const
   {
     return this->queryable->Range(retrieveValue);
   }
 
-  inline TObj Range() const
+  inline double Range(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
   {
-    return this->queryable->Range();
+    return this->queryable->Range(retrieveValue);
   }
 
   template<typename T, typename ...TNewArgs>
