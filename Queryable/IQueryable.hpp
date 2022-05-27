@@ -259,6 +259,24 @@ public:
     return this->queryable->Min(startSeed);
   }
 
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Min(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->queryable->template Min<TIterable, TOut>(retrieveValue);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  TOut Min(std::function<TOut(T)> retrieveValue, TOut startSeed) const
+  {
+    return this->queryable->template Min<TIterable, TOut>(retrieveValue, startSeed);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline T MinItem(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->queryable->template MinItem<TIterable, TOut>(retrieveValue);
+  }
+
   inline double Range(std::function<double(T)> retrieveValue) const
   {
     return this->queryable->Range(retrieveValue);

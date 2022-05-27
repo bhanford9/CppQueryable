@@ -246,6 +246,25 @@ public:
 
   inline virtual T Min() const = 0;
   inline virtual T Min(T startSeed) const = 0;
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline TOut Min(std::function<TOut(T)> retrieveValue)
+  {
+    return this->AsExtendedQueryable<TIterable>().Min(retrieveValue);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  TOut Min(std::function<TOut(T)> retrieveValue, TOut startSeed) const
+  {
+    return this->AsExtendedQueryable<TIterable>().Min(retrieveValue, startSeed);
+  }
+
+  template<template<typename, typename ...> typename TIterable, typename TOut>
+  inline T MinItem(std::function<TOut(T)> retrieveValue) const
+  {
+    return this->AsExtendedQueryable<TIterable>().MinItem(retrieveValue);
+  }
+
   inline virtual double Range(std::function<double(T)> retrieveValue) const = 0;
 
   template<
