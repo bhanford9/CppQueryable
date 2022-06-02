@@ -274,10 +274,10 @@ public:
   }
 
   template<
-    typename TOut,
     template<typename, typename ...> typename TIterable,
+    typename TOut,
     typename ...TNewArgs>
-  inline InternalIQueryable<TOut, TNewArgs...> & Select(
+  inline Queryable<TOut, TIterable, TNewArgs...> Select(
     std::function<TOut(T)> retrieveValue,
     TNewArgs... iterableParameters)
   {

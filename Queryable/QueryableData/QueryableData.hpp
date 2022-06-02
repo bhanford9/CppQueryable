@@ -122,9 +122,39 @@ public:
 
   virtual ~QueryableData() { }
 
+  virtual bool CanIncrement(IteratorType type) override
+  {
+    switch (type)
+    {
+      case IteratorType::BeginForward: return this->beginIterator != this->endIterator;
+      case IteratorType::BeginReverse: return this->rbeginIterator != this->rendIterator;
+      case IteratorType::EndForward:
+      case IteratorType::EndReverse:
+      default:
+        return true;
+    }
+
+    return false;
+  }
+
+  virtual bool CanDecrement(IteratorType type) override
+  {
+    switch (type)
+    {
+      case IteratorType::EndForward: return this->beginIterator != this->endIterator;
+      case IteratorType::EndReverse: return this->rbeginIterator != this->rendIterator;
+      case IteratorType::BeginForward:
+      case IteratorType::BeginReverse:
+      default:
+        return true;
+    }
+
+    return false;
+  }
+
   virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
   {
-    // std::cout << "[NEXT] underlying begin value before: " << *this->beginIterator << std::endl;
+    // std::cout << "[NEXT] underlying begin value before" << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: ++this->beginIterator; break;
@@ -238,7 +268,7 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> begin() override
   {
-    // std::cout << "begin" << std::endl;
+    // std::cout << "Standard Queryable begin" << std::endl;
     this->beginIterator = this->items->begin();
     QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginForward);
     return retVal;
@@ -249,7 +279,7 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> end() override
   {
-    // std::cout << "end" << std::endl;
+    // std::cout << "Standard Queryable end" << std::endl;
     this->endIterator = this->items->end();
     QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
     return retVal;

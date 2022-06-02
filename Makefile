@@ -14,14 +14,23 @@ TEST_PROGRAM = $(PROGRAM_TEST_DIR)/CppQueryableTest_testcases
 
 DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
 
-# GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
-GTEST_MAIN_CC = /home/bhanford9/Projects/googletest/googletest/src/gtest_main.cc
+# gtests setup instructions:
+# 1. sudo apt-get install libgtest-dev
+# 2. sudo apt-get install cmake
+# 3. cd /usr/src/gtest
+# 4. sudo cmake CMakeLists.txt
+# 5. sudo make
+# 6. sudo cp ./lib/*.a /usr/lib
+
+GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
+# GTEST_MAIN_CC = /home/bhanford9/Projects/googletest/googletest/src/gtest_main.cc
 GTEST = $(GTEST_MAIN_CC)
 
 LIBS =
 TEST_LIBS = $(LIBS) -lgtest -lgtest_main -lpthread
 INCLUDES =
-TEST_INCLUDES = $(INCLUDES) -I/home/bhanford9/Projects/googletest/googletest/include/gtest $(GTEST) -L/home/bhanford9/Projects/googletest/build/lib
+TEST_INCLUDES = $(INCLUDES) -I/usr/src/gtest/include/gtest $(GTEST) -L/usr/src/gtest/lib
+# TEST_INCLUDES = $(INCLUDES) -I/home/bhanford9/Projects/googletest/googletest/include/gtest $(GTEST) -L/home/bhanford9/Projects/googletest/build/lib
 
 TEST_TIMEOUT = 10000 # TODO --> get this to work properly
 
@@ -121,7 +130,7 @@ DirTests: $(REFS_REF) $(SRC_COMPILE_REF)
 	/bin/rm -f $(OBJS)
 	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
-	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
+	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
 .PHONY: memtests
 memtests: $(TEST_PROGRAM)

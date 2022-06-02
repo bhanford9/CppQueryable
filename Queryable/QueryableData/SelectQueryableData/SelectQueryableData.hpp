@@ -36,25 +36,35 @@ public:
       original(std::move(data))
   {
     // std::cout << "select queryable parent data moving" << std::endl;
-    this->size = original->StorageSize();
+    this->size = original->Count();
   }
-    SelectQueryableData(
-      const std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> & data,
-      std::function<TCurrent(TOriginal) > selector) :
-        selector(selector),
-        original(data)
-    {
-      // std::cout << "select queryable parent data copying" << std::endl;
-      this->size = original->StorageSize();
-    }
+  SelectQueryableData(
+    const std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> & data,
+    std::function<TCurrent(TOriginal) > selector) :
+      selector(selector),
+      original(data)
+  {
+    // std::cout << "select queryable parent data copying" << std::endl;
+    this->size = original->Count();
+  }
   SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
     selector(data.selector),
     original(data.original)
   {
-    this->size = original->StorageSize();
+    this->size = original->Count();
   }
 
   virtual ~SelectQueryableData() { }
+
+  virtual bool CanIncrement(IteratorType type) override
+  {
+    return this->original->CanIncrement(type);
+  }
+
+  virtual bool CanDecrement(IteratorType type) override
+  {
+    return this->original->CanDecrement(type);
+  }
 
   // I think this will make it so sorting won't work for Deque/Vector after calling Select
   // potential fix may be check this scenario and ToList it before trying to sort
@@ -74,8 +84,9 @@ public:
 
   virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
   {
-    // std::cout << "Select Data Next" << std::endl;
-    this->original->Next(type, iterated);
+    // std::cout << "Select Can Increment: " << this->original->CanIncrement(type) << std::endl;
+    // std::cout << "Select Data Next before value: " << this->original->Get(type) << std::endl;
+    if (this->original->CanIncrement(type)) this->original->Next(type, iterated);
     return *this;
   }
 
@@ -103,16 +114,16 @@ public:
   virtual QueryableIterator<TCurrent> begin() override
   {
     // std::cout << "Select Data begin" << std::endl;
-    this->original->begin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginForward);
+    QueryableIterator<TOriginal> child = this->original->begin();
+    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::BeginForward);
     return retVal;
   }
 
   virtual QueryableIterator<TCurrent> end() override
   {
     // std::cout << "Select Data end" << std::endl;
-    this->original->end();
-    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndForward);
+    QueryableIterator<TOriginal> child = this->original->end();
+    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::EndForward);
     return retVal;
   }
 

@@ -42,17 +42,6 @@ public:
   {
     this->items->insert(item);
   }
-
-  virtual TObj & Get(IteratorType type) override
-  {
-    switch (type)
-    {
-        case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-        case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-        case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-        case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
-    }
-  }
 };
 
 #endif

@@ -43,6 +43,10 @@ public:
     queryable(std::move(other))
   {
   }
+  IQueryable(InternalIQueryable<T, TArgs...> * other)
+  {
+    this->queryable.reset(other);
+  }
   IQueryable(const IQueryable<T, TArgs...> & other) :
     queryable(other.queryable)
   {
@@ -57,9 +61,21 @@ public:
     return this->queryable->template AsQueryableDeque();
   }
 
+  inline QueryableDeque<T, TArgs...> ToQueryableDeque() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableDeque<T, TArgs...>::FromDeque(this->queryable->ToDeque());
+  }
+
   inline QueryableList<T, TArgs...> & AsQueryableList() const
   {
     return this->queryable->template AsQueryableList();
+  }
+
+  inline QueryableList<T, TArgs...> ToQueryableList() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableList<T, TArgs...>::FromList(this->queryable->ToList());
   }
 
   inline QueryableMultiSet<T, TArgs...> & AsQueryableMultiSet() const
@@ -67,14 +83,32 @@ public:
     return this->queryable->template AsQueryableMultiSet();
   }
 
+  inline QueryableMultiSet<T, TArgs...> ToQueryableMultiSet() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableMultiSet<T, TArgs...>::FromMultiSet(this->queryable->ToMultiSet());
+  }
+
   inline QueryableSet<T, TArgs...> & AsQueryableSet() const
   {
     return this->queryable->template AsQueryableSet();
   }
 
+  inline QueryableSet<T, TArgs...> ToQueryableSet() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableSet<T, TArgs...>::FromSet(this->queryable->ToSet());
+  }
+
   inline QueryableVector<T, TArgs...> & AsQueryableVector() const
   {
     return this->queryable->template AsQueryableVector();
+  }
+
+  inline QueryableVector<T, TArgs...> ToQueryableVector() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableVector<T, TArgs...>::FromVector(this->queryable->ToVector());
   }
 
   template<template<typename, typename ...> typename TContainer>
@@ -84,14 +118,20 @@ public:
   }
 
   template<
-    typename TOut,
     template<typename, typename ...> typename TIterable,
+    typename TOut,
     typename ...TNewArgs>
-  InternalIQueryable<TOut, TNewArgs...> & Select(
+  IQueryable<TOut, TNewArgs...> Select(
     std::function<TOut(T)> retrieveValue,
     TNewArgs... iterableParameters)
   {
-    return this->queryable->Select(retrieveValue, iterableParameters...);
+    Queryable<TOut, TIterable, TNewArgs...> result =
+      this->queryable->template Select<TIterable, TOut, TNewArgs...>(
+          retrieveValue,
+          iterableParameters...);
+
+    IQueryable<TOut, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
+    return output;
   }
 
   template<typename TAllocator = std::allocator<T>>

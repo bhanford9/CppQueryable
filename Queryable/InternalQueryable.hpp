@@ -219,8 +219,11 @@ public:
     // probably be better to use the constructor that takes the iterators as parameters
     std::vector<TObj, TAllocator> newItems(allocator);
 
+    std::cout << "\n\n\nGoing into for loop" << std::endl;
+
     for (TObj item : *this->items.get())
     {
+        std::cout << "vector adding: " << item << std::endl;
       newItems.push_back(item);
     }
 
@@ -924,7 +927,6 @@ public:
     SelectBuilder<TObj, T, TIterable, TNewArgs...> * selectBuilder,
     TNewArgs... iterableParameters)
   {
-    std::cout << "internal select" << std::endl;
     selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
   }
 

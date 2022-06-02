@@ -38,9 +38,9 @@ protected:
 // TEST_F(WhereFunctionalTest, WhereVectorUninitializedTest)
 // {
 //   IQueryable<Person> emptyQueryable;
-//
+
 //   emptyQueryable.Where([](Person p) { return false; });
-//
+
 //   ASSERT_TRUE(true);
 // }
 
@@ -67,12 +67,12 @@ TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 //     Person(0, "Person 8", 0, 0, Gender::Male),
 //     Person(0, "Person 9", 0, 0, Gender::Male),
 //   });
-//
+
 //   std::vector<Person> people = this->queryable
 //     .Where([](Person p) { return p.GetName() >= "Person 7" && p.GetName() <= "Person 9"; })
 //     .OrderBy<std::string>([](Person p) { return p.GetName(); })
 //     .ToVector();
-//
+
 //   ASSERT_EQ(expected.size(), people.size());
 //   for (int i = 0; i < (int)expected.size(); i++)
 //     ASSERT_STREQ(expected[i].GetName().c_str(), people[i].GetName().c_str());
@@ -85,7 +85,7 @@ TEST_F(WhereFunctionalTest, WhereVectorFemale)
     .ToVector();
 
   for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
+    EXPECT_TRUE(p.GetGender() == Gender::Female);
 }
 
 TEST_F(WhereFunctionalTest, WhereSetFemale)
@@ -118,7 +118,7 @@ TEST_F(WhereFunctionalTest, WhereDequeFemale)
     .ToDeque();
 
   for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
+    EXPECT_TRUE(p.GetGender() == Gender::Female) << p;
 }
 
 TEST_F(WhereFunctionalTest, WhereListFemale)

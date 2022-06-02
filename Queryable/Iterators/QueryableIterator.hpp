@@ -17,6 +17,7 @@ class QueryableIterator
 private:
   std::shared_ptr<IQueryableData<T>> queryableData;
 public:
+  // TODO --> make private add an accessor
   uint64_t index;
   IteratorType type;
   // these seem to be needed by the std library
@@ -40,7 +41,7 @@ public:
 
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, int startingIndex, IteratorType type)
   {
-    // std::cout << "within constructor 2" << std::endl;
+    // std::cout << "Iterator constructor 2, starting index: " << startingIndex << std::endl;
     this->queryableData = queryableData->Clone();
     this->index = startingIndex;
     this->type = type;
@@ -48,13 +49,8 @@ public:
 
   QueryableIterator(const QueryableIterator<T> & other)
   {
-    // std::cout << "within copy constructor:"
-    //   << "\n\tIndex: " << other.index
-    //   << "\n\tType: " << (other.type == IteratorType::BeginForward ? "Begin" : "End")
-    //   << std::endl;
     // std::cout << "type: " << typeid(other.queryableData).name() << std::endl;
-    std::shared_ptr<IQueryableData<T>> clone = other.queryableData->Clone();
-    this->queryableData = clone;
+    this->queryableData = other.queryableData->Clone();
     this->index = other.index;
     this->type = other.type;
   }
@@ -64,7 +60,7 @@ public:
     index(other.index),
     type(other.type)
   {
-    // std::cout << "within move constructor" << std::endl;
+    // std::cout << "Iterator move constructor" << std::endl;
   }
 
 // start std::sort requirements
