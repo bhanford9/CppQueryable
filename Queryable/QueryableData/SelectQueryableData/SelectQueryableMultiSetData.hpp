@@ -43,11 +43,6 @@ public:
     this->items->insert(item);
     this->size++;
   }
-
-  virtual std::shared_ptr<Sorter<TCurrent, std::multiset, TCompare, TAllocator>> GetSorter() override
-  {
-    return nullptr;
-  }
 };
 
 #endif

@@ -52,11 +52,6 @@ public:
     // also a constant time action, so its cleaner to use it
     this->size = this->items->size();
   }
-
-  virtual std::shared_ptr<Sorter<T, std::multiset, TCompare, TAllocator>> GetSorter() override
-  {
-    return nullptr;
-  }
 };
 
 #endif

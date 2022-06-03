@@ -48,7 +48,7 @@ public:
 
   virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
-    std::cout << "Random Access + Operator, adding: " << addend << ", value: " << *this->beginIterator << std::endl;
+    std::cout << "Random Access + Operator, adding: " << addend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;

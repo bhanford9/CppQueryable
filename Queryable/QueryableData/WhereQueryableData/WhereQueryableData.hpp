@@ -129,6 +129,11 @@ public:
     }
   }
 
+  virtual TIterable<TObj, TArgs...> & GetContainer() override
+  {
+    return this->original->GetContainer();
+  }
+
   virtual void InternalAdd(TObj item) = 0;
 
   virtual TObj & Get(IteratorType type) override

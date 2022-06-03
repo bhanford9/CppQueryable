@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "../../TypeConstraintUtil.hpp"
-#include "../../Utilities/Condition.hpp"
 #include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
 
@@ -56,6 +55,20 @@ public:
 
   virtual ~SelectQueryableData() { }
 
+
+
+
+
+    // TODO --> this is going to fail for select->sort
+  virtual TIterable<TCurrent, TArgs...> & GetContainer() override
+  {
+    return *this->items;
+  }
+
+
+
+
+
   virtual bool CanIncrement(IteratorType type) override
   {
     return this->original->CanIncrement(type);
@@ -86,7 +99,7 @@ public:
   {
     // std::cout << "Select Can Increment: " << this->original->CanIncrement(type) << std::endl;
     // std::cout << "Select Data Next before value: " << this->original->Get(type) << std::endl;
-    if (this->original->CanIncrement(type)) this->original->Next(type, iterated);
+    this->original->Next(type, iterated);
     return *this;
   }
 

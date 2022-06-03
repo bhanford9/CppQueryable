@@ -61,7 +61,7 @@ protected:
     //this->index = 0;
   }
 
-  virtual std::shared_ptr<Sorter<TObj, TIterable, TArgs...>> GetSorter() = 0;
+  virtual std::shared_ptr<Sorter<TObj, TIterable, TArgs...>> GetSorter() { return nullptr; }
 
 public:
 
@@ -264,6 +264,11 @@ public:
   void Sort(TLessThan lessThan = {})
   {
     this->GetSorter()->Sort(*this->items, lessThan);
+  }
+
+  virtual TIterable<TObj, TArgs...> & GetContainer()
+  {
+    return *this->items;
   }
 
   // we return a copy of ourself, so we need to make sure to set our type
