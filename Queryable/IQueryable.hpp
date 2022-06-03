@@ -56,82 +56,75 @@ public:
   {
   }
 
-  inline QueryableDeque<T, TArgs...> & AsQueryableDeque() const
+  void operator=(const IQueryable<T, TArgs...> & other)
+  {
+    this->queryable = other.queryable;
+  }
+
+  void operator=(IQueryable<T, TArgs...> && other)
+  {
+    this->queryable = std::move(other.queryable);
+  }
+
+  inline Queryable<T, std::deque, TArgs...> & AsQueryableDeque() const
   {
     return this->queryable->template AsQueryableDeque();
   }
 
-  inline QueryableDeque<T, TArgs...> ToQueryableDeque() const
+  inline Queryable<T, std::deque, TArgs...> ToQueryableDeque() const
   {
     // Investiage speed of doing it this way and whether iterators would be simpler
-    return QueryableDeque<T, TArgs...>::FromDeque(this->queryable->ToDeque());
+    return Queryable<T, std::deque, TArgs...>::FromDeque(this->queryable->ToDeque());
   }
 
-  inline QueryableList<T, TArgs...> & AsQueryableList() const
+  inline Queryable<T, std::list, TArgs...> & AsQueryableList() const
   {
     return this->queryable->template AsQueryableList();
   }
 
-  inline QueryableList<T, TArgs...> ToQueryableList() const
+  inline Queryable<T, std::list, TArgs...> ToQueryableList() const
   {
     // Investiage speed of doing it this way and whether iterators would be simpler
-    return QueryableList<T, TArgs...>::FromList(this->queryable->ToList());
+    return Queryable<T, std::list, TArgs...>::FromList(this->queryable->ToList());
   }
 
-  inline QueryableMultiSet<T, TArgs...> & AsQueryableMultiSet() const
+  inline Queryable<T, std::multiset, TArgs...> & AsQueryableMultiSet() const
   {
     return this->queryable->template AsQueryableMultiSet();
   }
 
-  inline QueryableMultiSet<T, TArgs...> ToQueryableMultiSet() const
+  inline Queryable<T, std::multiset, TArgs...> ToQueryableMultiSet() const
   {
     // Investiage speed of doing it this way and whether iterators would be simpler
-    return QueryableMultiSet<T, TArgs...>::FromMultiSet(this->queryable->ToMultiSet());
+    return Queryable<T, std::multiset, TArgs...>::FromMultiSet(this->queryable->ToMultiSet());
   }
 
-  inline QueryableSet<T, TArgs...> & AsQueryableSet() const
+  inline Queryable<T, std::set, TArgs...> & AsQueryableSet() const
   {
     return this->queryable->template AsQueryableSet();
   }
 
-  inline QueryableSet<T, TArgs...> ToQueryableSet() const
+  inline Queryable<T, std::set, TArgs...> ToQueryableSet() const
   {
     // Investiage speed of doing it this way and whether iterators would be simpler
-    return QueryableSet<T, TArgs...>::FromSet(this->queryable->ToSet());
+    return Queryable<T, std::set, TArgs...>::FromSet(this->queryable->ToSet());
   }
 
-  inline QueryableVector<T, TArgs...> & AsQueryableVector() const
+  inline Queryable<T, std::vector, TArgs...> & AsQueryableVector() const
   {
     return this->queryable->template AsQueryableVector();
   }
 
-  inline QueryableVector<T, TArgs...> ToQueryableVector() const
+  inline Queryable<T, std::vector, TArgs...> ToQueryableVector() const
   {
     // Investiage speed of doing it this way and whether iterators would be simpler
-    return QueryableVector<T, TArgs...>::FromVector(this->queryable->ToVector());
+    return Queryable<T, std::vector, TArgs...>::FromVector(this->queryable->ToVector());
   }
 
   template<template<typename, typename ...> typename TContainer>
   inline Queryable<T, TContainer, TArgs...> & AsExtendedQueryable() const
   {
     return this->queryable->template AsExtendedQueryable<TContainer>();
-  }
-
-  template<
-    template<typename, typename ...> typename TIterable,
-    typename TOut,
-    typename ...TNewArgs>
-  IQueryable<TOut, TNewArgs...> Select(
-    std::function<TOut(T)> retrieveValue,
-    TNewArgs... iterableParameters)
-  {
-    Queryable<TOut, TIterable, TNewArgs...> result =
-      this->queryable->template Select<TIterable, TOut, TNewArgs...>(
-          retrieveValue,
-          iterableParameters...);
-
-    IQueryable<TOut, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
-    return output;
   }
 
   template<typename TAllocator = std::allocator<T>>
@@ -326,6 +319,33 @@ public:
   inline TOut Range(std::function<TOut(T)> retrieveValue)
   {
     return this->queryable->template Range<TIterable, TOut>(retrieveValue);
+  }
+
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TOut,
+    typename ...TNewArgs>
+  IQueryable<TOut, TNewArgs...> Select(
+    std::function<TOut(T)> retrieveValue,
+    TNewArgs... iterableParameters)
+  {
+    Queryable<TOut, TIterable, TNewArgs...> result =
+      this->queryable->template Select<TIterable, TOut, TNewArgs...>(
+        retrieveValue,
+        iterableParameters...);
+
+    IQueryable<TOut, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
+    return output;
+  }
+
+  // TODO --> [multi]sets and other sorted containers should not have this interface endpoint
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TLessThan = std::less<T>>
+  IQueryable<T, TArgs...> Sort(TLessThan lessThan = {})
+  {
+    this->queryable->template Sort<TIterable, TLessThan, TArgs...>(lessThan);
+    return *this;
   }
 
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const

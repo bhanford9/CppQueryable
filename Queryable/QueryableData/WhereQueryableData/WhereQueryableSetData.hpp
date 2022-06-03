@@ -42,6 +42,11 @@ public:
   {
     this->items->insert(item);
   }
+
+  virtual std::shared_ptr<Sorter<TObj, std::multiset, TCompare, TAllocator>> GetSorter() override
+  {
+    return nullptr;
+  }
 };
 
 #endif

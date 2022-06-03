@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 
+#include "../Sorters/ListSorter.hpp"
 #include "QueryableData.hpp"
 
 template<
@@ -43,6 +44,11 @@ public:
   {
     this->items->push_back(item);
     this->size++;
+  }
+
+  virtual std::shared_ptr<Sorter<T, std::list, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<ListSorter<T, TAllocator>>();
   }
 };
 

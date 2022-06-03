@@ -40,8 +40,6 @@
 #include "SelectBuilders/SelectBuilder.hpp"
 #include "Sorters/DequeSorter.hpp"
 #include "Sorters/ListSorter.hpp"
-#include "Sorters/MultiSetSorter.hpp"
-#include "Sorters/SetSorter.hpp"
 #include "Sorters/VectorSorter.hpp"
 #include "TypeConstraintUtil.hpp"
 #include "Utilities/Condition.hpp"
@@ -951,98 +949,39 @@ public:
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   3. all other types use their built in optimized sorting algorithms
   //   4. would be faster if std::function could be replaced by type parameter, but then inheritance wouldn't work
-  template<
-    typename TSortOutput,
-    typename TLessThan = std::less<TObj>>
-  TSortOutput Sort(
-    Sorter<TObj, TSortOutput, TLessThan> * sorter,
-    TLessThan lessThan = {})
+  template<typename TLessThan = std::less<TObj>>
+  void Sort(TLessThan lessThan = {})
   {
-    return sorter->Sort(this->items->begin(), this->items->end(), lessThan);
+    this->items->Sort(lessThan);
+    // std::shared_ptr<Sorter<TObj, TIterable, TLessThan, TArgs...>> sorter;
+
+    // switch (this->GetType())
+    // {
+    //   case QueryableType::Deque:
+    //   {
+    //     sorter = std::make_shared<DequeSorter<TObj, TLessThan>>();
+    //     // DequeSorter<TObj, TLessThan> dequeSorter;
+    //     // this->items->Sort(dequeSorter, lessThan);
+    //     break;
+    //   }
+    //   case QueryableType::List:
+    //   {
+    //     sorter = std::make_shared<ListSorter<TObj, TLessThan>>();
+    //     // ListSorter<TObj, TLessThan> listSorter;
+    //     // this->items->Sort(listSorter, lessThan);
+    //     break;
+    //   }
+    //   case QueryableType::Vector:
+    //   {
+    //     sorter = std::make_shared<VectorSorter<TObj, TLessThan>>();
+    //     // VectorSorter<TObj, TLessThan> vectorSorter;
+    //     // this->items->Sort(vectorSorter, lessThan);
+    //     break;
+    //   }
+    // }
+
+    // this->items->Sort(*sorter, lessThan);
   }
-
-  // TODO --> using a template instead of std::function is probably faster
-  // These are dangerous methods due to not having an Allocator specified at the
-  // class level and needing one in the lower layers. I'm not sure how to fix it yet
-  // template<
-  //   typename TSortOutput,
-  //   typename T = TObj,
-  //   typename TLessThan = std::less<T>>
-  // TSortOutput OrderBy(
-  //   Sorter<TObj, TIterable, TSortOutput, TArgs...> & sorter,
-  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-  //   TLessThan lessThan = {})
-  // {
-  //   return this->Sort(
-  //     sorter,
-  //     [&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); });
-  // }
-  //
-  // template<
-  //   typename TSortOutput,
-  //   typename T = TObj,
-  //   typename TLessThan = std::less<T>>
-  // TSortOutput OrderByDescending(
-  //   Sorter<TObj, TIterable, TSortOutput, TArgs...> & sorter,
-  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-  //   TLessThan lessThan = {})
-  // {
-  //   return this->Sort(
-  //       sorter,
-  //       [&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); });
-  // }
-
-  // template<typename TLessThan, typename TAllocator>
-  // SortedInternalQueryable<TObj, TIterable, std::function<bool(TObj, TObj)>, TAllocator> & ReSort(std::function<bool(TObj, TObj)> lessThan = [](TObj a, TObj b) { return a < b; })
-  // {
-  //   std::shared_ptr<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>> sorter;
-  //
-  //   switch (this->type)
-  //   {
-  //     case QueryableType::MultiSet:
-  //     {
-  //       MultiSetSorter<TObj, TLessThan, TAllocator> multiSetSorter;
-  //       sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(multiSetSorter);
-  //     }
-  //     case QueryableType::Set:
-  //     {
-  //       SetSorter<TObj, TLessThan, TAllocator> setSorter;
-  //       sorter = std::make_shared<Sorter<TObj, TIterable, SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>>, TLessThan, TAllocator>>(setSorter);
-  //     }
-  //     default:
-  //       throw std::runtime_error("ReOrderBy, ReOrderByDescending and ReSort are only meant for containers that are ordered by default. For all other containers use OrderBy, OrderByDescending or Sort");
-  //       break;
-  //   }
-  //
-  //   // I think this is the only thing keeping us from using IQueryableData everywhere instead of QueryableData, and its not even working....
-  //   SortOutput<TObj, TIterable, std::function<bool(TObj, TObj)>> setOutput = this->items->Sort(*sorter);
-  //   // This return does not work due to the SortedQueryable being abstract.
-  //   // I could have the SortedQueryable implement all abstract methods and pass the execution to child virtual methods,
-  //   // but I don't like needing the Re-Sort method anyway, so might try to find another way to handle this instead.
-  //   return { setOutput.Get() };
-  // }
-  //
-  // template<
-  //   typename T = TObj,
-  //   typename TLessThan = std::less<T>,
-  //   typename TAllocator = std::allocator<TObj>>
-  // SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderBy(
-  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-  //   TLessThan lessThan = {})
-  // {
-  //   return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return lessThan(retrieveValue(a), retrieveValue(b)); }) };
-  // }
-  //
-  // template<
-  //   typename T = TObj,
-  //   typename TLessThan = std::less<T>,
-  //   typename TAllocator = std::allocator<TObj>>
-  // SortedInternalQueryable<TObj, TIterable, TLessThan, TAllocator> & ReOrderByDescending(
-  //   std::function<T(TObj)> retrieveValue = [](TObj o) { return o; },
-  //   TLessThan lessThan = {})
-  // {
-  //   return { this->ReSort<TLessThan, TAllocator>([&](TObj a, TObj b) { return !lessThan(retrieveValue(a), retrieveValue(b)); }) };
-  // }
 
   // TODO --> make this virtual? like Where()
   template<

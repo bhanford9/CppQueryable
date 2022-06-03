@@ -41,6 +41,12 @@ public:
     return *const_cast<QueryableDeque<T, TArgs...>*>(dynamic_cast<const QueryableDeque<T, TArgs...>*>(this));
   }
 
+  inline QueryableDeque<T, TArgs...> ToQueryableDeque() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableDeque<T, TArgs...>::FromDeque(this->ToDeque());
+  }
+
   inline QueryableList<T, TArgs...> & AsQueryableList() const
   {
     if (this->GetType() != QueryableType::List)
@@ -49,6 +55,12 @@ public:
     }
 
     return *const_cast<QueryableList<T, TArgs...>*>(dynamic_cast<const QueryableList<T, TArgs...>*>(this));
+  }
+
+  inline QueryableList<T, TArgs...> ToQueryableList() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableList<T, TArgs...>::FromList(this->ToList());
   }
 
   inline QueryableMultiSet<T, TArgs...> & AsQueryableMultiSet() const
@@ -61,6 +73,12 @@ public:
     return *const_cast<QueryableMultiSet<T, TArgs...>*>(dynamic_cast<const QueryableMultiSet<T, TArgs...>*>(this));
   }
 
+  inline QueryableMultiSet<T, TArgs...> ToQueryableMultiSet() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableMultiSet<T, TArgs...>::FromMultiSet(this->ToMultiSet());
+  }
+
   inline QueryableSet<T, TArgs...> & AsQueryableSet() const
   {
     if (this->GetType() != QueryableType::Set)
@@ -71,6 +89,12 @@ public:
     return *const_cast<QueryableSet<T, TArgs...>*>(dynamic_cast<const QueryableSet<T, TArgs...>*>(this));
   }
 
+  inline QueryableSet<T, TArgs...> ToQueryableSet() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableSet<T, TArgs...>::FromSet(this->ToSet());
+  }
+
   inline QueryableVector<T, TArgs...> & AsQueryableVector() const
   {
     if (this->GetType() != QueryableType::Vector)
@@ -79,6 +103,12 @@ public:
     }
 
     return *const_cast<QueryableVector<T, TArgs...>*>(dynamic_cast<const QueryableVector<T, TArgs...>*>(this));
+  }
+
+  inline QueryableVector<T, TArgs...> ToQueryableVector() const
+  {
+    // Investiage speed of doing it this way and whether iterators would be simpler
+    return QueryableVector<T, TArgs...>::FromVector(this->ToVector());
   }
 
   template<template<typename, typename ...> typename TIterable>
@@ -184,13 +214,6 @@ public:
     return this->AsExtendedQueryable<TIterable>().Aggregate(accumulate, finalizer, seed);
   }
 
-
-  // inline virtual std::deque<T, TArgs...> ToDeque() const = 0;
-  // inline virtual std::list<T, TArgs...> ToList() const = 0;
-  // inline virtual std::multiset<T, TArgs...> ToMultiSet() const = 0;
-  // inline virtual std::set<T, TArgs...> ToSet() const = 0;
-  // inline virtual std::vector<T, TArgs...> ToVector() const = 0;
-
   inline virtual bool All(std::function<bool(T)> condition) const = 0;
   inline virtual bool Any(std::function<bool(T)> condition) const = 0;
   inline virtual T & At(int index) const = 0;
@@ -282,6 +305,14 @@ public:
     TNewArgs... iterableParameters)
   {
     return this->AsExtendedQueryable<TIterable>().Select(retrieveValue, iterableParameters...);
+  }
+
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TLessThan = std::less<T>>
+  inline void Sort(TLessThan lessThan = {})
+  {
+    this->AsExtendedQueryable<TIterable>().Sort(lessThan);
   }
 
   inline virtual double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;

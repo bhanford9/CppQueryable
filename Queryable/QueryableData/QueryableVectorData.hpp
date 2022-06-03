@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../Sorters/VectorSorter.hpp"
 #include "RandomAccessQueryableData.hpp"
 
 template<
@@ -34,6 +35,11 @@ public:
   virtual std::shared_ptr<IQueryableData<T>> Clone() override
   {
     return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
+  }
+
+  virtual std::shared_ptr<Sorter<T, std::vector, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<VectorSorter<T, TAllocator>>();
   }
 };
 

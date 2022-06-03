@@ -11,13 +11,14 @@
 #include <set>
 #include <vector>
 
+#include "IQueryableData.hpp"
 #include "../Iterators/Iterator.hpp"
 #include "../Iterators/IteratorType.hpp"
 #include "../Iterators/QueryableIterator.hpp"
 #include "../Iterators/QueryableDataIterator.hpp"
 #include "../TypeConstraintUtil.hpp"
 #include "../Utilities/Condition.hpp"
-#include "IQueryableData.hpp"
+#include "../Sorters/Sorter.hpp"
 
 #include "../../DataStructures/Person.hpp"
 
@@ -59,6 +60,8 @@ protected:
     this->size = 0;
     //this->index = 0;
   }
+
+  virtual std::shared_ptr<Sorter<TObj, TIterable, TArgs...>> GetSorter() = 0;
 
 public:
 
@@ -194,6 +197,7 @@ public:
         case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
         case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
     }
+    // std::cout << "Get: " << this->value << std::endl;
   }
 
   virtual const TObj & ConstGet(IteratorType type) override
@@ -254,14 +258,13 @@ public:
     this->size = 0;
   }
 
-  // template<
-  //   typename TOutput = SortOutput<TObj, TIterable, TArgs...>,
-  //   typename TLessThan = std::less<TObj>>
-  // TOutput Sort(const Sorter<TObj, TIterable, TOutput, TLessThan, TArgs...> & sorter, TLessThan lessThan = {})
-  // {
-  //   std::cout << "inner inner sort" << std::endl;
-  //   return sorter.Sort(this->items, lessThan);
-  // }
+  // This TSorter template is lazy, put in the actual interface
+  //const Sorter<TObj, TIterable, TLessThan, TArgs...> & sorter,
+  template<typename TLessThan = std::less<TObj>>
+  void Sort(TLessThan lessThan = {})
+  {
+    this->GetSorter()->Sort(*this->items, lessThan);
+  }
 
   // we return a copy of ourself, so we need to make sure to set our type
   // so that the next time its used, the correct underlying iterator is used

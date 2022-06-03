@@ -6,6 +6,7 @@
 
 #include "../../QueryableType.hpp"
 #include "../../Utilities/Condition.hpp"
+#include "../../Sorters/VectorSorter.hpp"
 #include "WhereQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
@@ -76,6 +77,11 @@ public:
   virtual void InternalAdd(TObj item) override
   {
     this->items->push_back(item);
+  }
+
+  virtual std::shared_ptr<Sorter<TObj, std::vector, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<VectorSorter<TObj, TAllocator>>();
   }
 };
 

@@ -5,6 +5,7 @@
 #include <list>
 
 #include "../../Utilities/Condition.hpp"
+#include "../../Sorters/ListSorter.hpp"
 #include "WhereQueryableData.hpp"
 
 template<
@@ -46,6 +47,11 @@ public:
   virtual void InternalAdd(TObj item) override
   {
     this->items->push_back(item);
+  }
+
+  virtual std::shared_ptr<Sorter<TObj, std::list, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<ListSorter<TObj, TAllocator>>();
   }
 };
 

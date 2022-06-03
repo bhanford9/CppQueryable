@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "SelectQueryableData.hpp"
+#include "../../Sorters/VectorSorter.hpp"
 
 template<
   typename TOriginal,
@@ -39,6 +40,11 @@ public:
     // this wont easily or quickly work... might want to nix it
     this->items->push_back(item);
     this->size++;
+  }
+
+  virtual std::shared_ptr<Sorter<TCurrent, std::vector, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<VectorSorter<TCurrent, TAllocator>>();
   }
 };
 

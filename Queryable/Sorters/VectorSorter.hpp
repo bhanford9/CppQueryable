@@ -8,21 +8,19 @@
 
 template<
   typename TObj,
-  typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
 class VectorSorter :
   public Sorter<
     TObj,
-    void, //SortOutput<TObj, std::vector, TAllocator>,
-    TLessThan>
+    std::vector,
+    TAllocator>
 {
 public:
   virtual void Sort(
-    QueryableIterator<TObj> beginIterator,
-    QueryableIterator<TObj> endIterator,
-    TLessThan lessThan = {}) const override
+    std::vector<TObj, TAllocator> & container,
+    std::function<bool(const TObj &, const TObj &)> lessThan = std::less<TObj>()) const override
   {
-    std::sort(beginIterator, endIterator, lessThan);
+    std::sort(container.begin(), container.end(), lessThan);
   }
 };
 

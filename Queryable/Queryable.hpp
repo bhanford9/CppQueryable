@@ -20,12 +20,6 @@
 #include "SelectBuilders/MultiSetSelectBuilder.hpp"
 #include "SelectBuilders/SetSelectBuilder.hpp"
 #include "SelectBuilders/VectorSelectBuilder.hpp"
-#include "Sorters/Sorter.hpp"
-#include "Sorters/DequeSorter.hpp"
-#include "Sorters/ListSorter.hpp"
-#include "Sorters/MultiSetSorter.hpp"
-#include "Sorters/SetSorter.hpp"
-#include "Sorters/VectorSorter.hpp"
 #include "Utilities/Casting.hpp"
 
 template<typename T, typename ...TArgs>
@@ -619,110 +613,10 @@ public:
     }
   }
 
-
-  // Sorting is tricky because containers that are self sorting are typed based on the means by which
-  // they are sorted. This means that in order to sort them using this construct, the return type
-  // must be differrent than what it started with. All other containers must conform to this as well.
-  //
-  // This is requiring a full copy of the container which is obviously undesireable
-  //
-  // This entire method feels dangerous and it would be really good to find a better way to handle this.
-  template<
-    typename TLessThan = std::less<TObj>,
-    typename ...TNewArgs>
-  Queryable<TObj, TIterable, TNewArgs...> Sort(TLessThan lessThan = {}, TNewArgs... args)
+  template<typename TLessThan = std::less<TObj>>
+  void Sort(TLessThan lessThan = {})
   {
-    std::pair<QueryableIterator<TObj>, QueryableIterator<TObj>> iterators(this->queryable->ForwardIterators());
-
-    switch (this->queryable->GetType())
-    {
-      case QueryableType::Deque:
-      {
-        DequeQueryableTypeConverter<TObj, TObj, TNewArgs...> dequeTypeConverter;
-
-        // I don't like this reinterpret_cast being necessary.
-        // Still not sure what I can do to get around it.
-        //   - Compiler sees this scope for all container types and complains that a multiset
-        //     cannot be converted into a deque
-        // I am not too worried about this being a performance hit, but I am worried about
-        // what kind of extra memory might be getting allocated during these shared_ptr casts.
-        std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> newInternalQueryable =
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TNewArgs...>>(
-            dequeTypeConverter.Convert(iterators.first, iterators.second, args...));
-
-        DequeSorter<TObj, TLessThan, TNewArgs...> sorter;
-        newInternalQueryable->Sort(reinterpret_cast<Sorter<TObj, void, TLessThan>*>(&sorter), lessThan);
-
-        Queryable<TObj, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        return newQueryable;
-        break;
-      }
-      // case QueryableType::List:
-      // {
-        // ListQueryableTypeConverter<TObj, TObj, TNewArgs...> listTypeConverter;
-        // std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> newInternalQueryable =
-        //   FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TNewArgs...>>(
-        //     listTypeConverter.Convert(iterators.first, iterators.second, args...));
-        //
-        // ListSorter<TObj, TLessThan, TNewArgs...> sorter;
-        // SortOutput<TObj, std::list, TNewArgs...> output = newInternalQueryable->Sort(
-        //   reinterpret_cast<Sorter<TObj, SortOutput<TObj, std::list, TNewArgs...>, TLessThan>*>(&sorter),
-        //   lessThan);
-        //
-        // Queryable<TObj, TIterable, TNewArgs...> newQueryable(std::move(output.Get()));
-        //
-        // return newQueryable;
-        // break;
-      // }
-      case QueryableType::MultiSet:
-      {
-        MultiSetQueryableTypeConverter<TObj, TObj, TNewArgs...> multiSetTypeConverter;
-        std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> newInternalQueryable =
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TNewArgs...>>(
-            multiSetTypeConverter.Convert(iterators.first, iterators.second, args...));
-
-        std::cout << "a" << std::endl;
-        MultiSetSorter<TObj, TLessThan, TNewArgs...> sorter;
-        newInternalQueryable->Sort(reinterpret_cast<Sorter<TObj, SortOutput<TObj, TIterable, TNewArgs...>, TLessThan>*>(&sorter), lessThan);
-std::cout << "b" << std::endl;
-        Queryable<TObj, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-std::cout << "c" << std::endl;
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Set:
-      {
-        SetQueryableTypeConverter<TObj, TObj, TNewArgs...> setTypeConverter;
-        std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> newInternalQueryable =
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TNewArgs...>>(
-            setTypeConverter.Convert(iterators.first, iterators.second, args...));
-
-        SetSorter<TObj, TLessThan, TNewArgs...> sorter;
-        newInternalQueryable->Sort(reinterpret_cast<Sorter<TObj, void, TLessThan>*>(&sorter), lessThan);
-
-        Queryable<TObj, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Vector:
-      {
-        VectorQueryableTypeConverter<TObj, TObj, TNewArgs...> vectorTypeConverter;
-        std::shared_ptr<InternalQueryable<TObj, TIterable, TNewArgs...>> newInternalQueryable =
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, TIterable, TNewArgs...>>(
-            vectorTypeConverter.Convert(iterators.first, iterators.second, args...));
-
-        VectorSorter<TObj, TLessThan, TNewArgs...> sorter;
-        newInternalQueryable->Sort(reinterpret_cast<Sorter<TObj, void, TLessThan>*>(&sorter), lessThan);
-
-        Queryable<TObj, TIterable, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-
-        return newQueryable;
-        break;
-      }
-      default: throw std::runtime_error("should not reach here");
-    }
+    this->queryable->Sort(lessThan);
   }
 
   inline double Sum(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const

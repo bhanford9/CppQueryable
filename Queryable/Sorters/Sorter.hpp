@@ -5,20 +5,19 @@
 #include <iostream>
 #include <memory>
 
-#include "Outputs/SortOutput.hpp"
-#include "../InternalQueryable.hpp"
+#include "../Iterators/QueryableIterator.hpp"
 
 template<
   typename TObj,
-  typename TOutput,
-  typename TLessThan = std::less<TObj>>
+  template<typename, typename ...> typename TIterable,
+  typename TAllocator = std::allocator<TObj>,
+  typename ...TArgs>
 class Sorter
 {
 public:
-  virtual TOutput Sort(
-    QueryableIterator<TObj> beginIterator,
-    QueryableIterator<TObj> endIterator,
-    TLessThan lessThan = {}) const = 0;
+  virtual void Sort(
+    TIterable<TObj, TAllocator, TArgs...> & container,
+    std::function<bool(const TObj &, const TObj &)> lessThan = std::less<TObj>()) const = 0;
 };
 
 #endif

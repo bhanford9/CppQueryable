@@ -171,37 +171,11 @@ public:
   virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
-    // switch (type)
-    // {
-    //   case IteratorType::BeginForward:
-    //     while (this->beginIterator != this->original->end() && addend-- > 0)
-    //     {
-    //       ++this->beginIterator;
-    //       this->IncrementBeginForwardPastFalseConditions();
-    //     }
-    //     break;
-    //   case IteratorType::EndForward:
-    //     while (this->endIterator != this->original->end() && addend-- > 0)
-    //     {
-    //       ++this->endIterator;
-    //       this->IncrementEndForwardPastFalseConditions();
-    //     }
-    //     break;
-    //   case IteratorType::BeginReverse:
-    //     while (this->rbeginIterator != this->original->rend() && addend-- > 0)
-    //     {
-    //       ++this->rbeginIterator;
-    //       this->IncrementBeginReversePastFalseConditions();
-    //     }
-    //     break;
-    //   case IteratorType::EndReverse: default:
-    //     while (this->rendIterator != this->original->rend() && addend-- > 0)
-    //     {
-    //       ++this->rendIterator;
-    //       this->IncrementBeginReversePastFalseConditions();
-    //     }
-    //     break;
-    // }
+    uint64_t dummy = 0;
+    while (this->original->CanIncrement(type) && addend-- > 0)
+    {
+      this->Next(type, dummy);
+    }
 
     return *this;
   }
@@ -209,51 +183,11 @@ public:
   virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
-    // bool isFirst = false;
-
-    // switch (type)
-    // {
-    //   case IteratorType::BeginForward:
-    //     while (subtrahend-- > 0)
-    //     {
-    //       isFirst = this->beginIterator == this->original->begin();
-    //       --this->beginIterator;
-    //       this->DecrementBeginForwardPastFalseConditions();
-
-    //       if (isFirst) break;
-    //     }
-    //     break;
-    //   case IteratorType::EndForward:
-    //     while (subtrahend-- > 0)
-    //     {
-    //       isFirst = this->endIterator == this->original->begin();
-    //       --this->endIterator;
-    //       this->DecrementEndForwardPastFalseConditions();
-
-    //       if (isFirst) break;
-    //     }
-    //     break;
-    //   case IteratorType::BeginReverse:
-    //     while (subtrahend-- > 0)
-    //     {
-    //       isFirst = this->rbeginIterator == this->original->rbegin();
-    //       --this->rbeginIterator;
-    //       this->DecrementBeginReversePastFalseConditions();
-
-    //       if (isFirst) break;
-    //     }
-    //     break;
-    //   case IteratorType::EndReverse:
-    //     while (subtrahend-- > 0)
-    //     {
-    //       isFirst = this->rendIterator == this->original->rbegin();
-    //       --this->rendIterator;
-    //       this->DecrementBeginReversePastFalseConditions();
-
-    //       if (isFirst) break;
-    //     }
-    //     break;
-    // }
+    uint64_t dummy = 0;
+    while (this->original->CanDecrement(type) && subtrahend-- > 0)
+    {
+      this->Prev(type, dummy);
+    }
 
     return *this;
   }

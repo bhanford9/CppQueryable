@@ -3,6 +3,10 @@
         "ostream": "cpp",
         "iostream": "cpp",
         "xmemory": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "deque": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "vector": "cpp"
     }
 }

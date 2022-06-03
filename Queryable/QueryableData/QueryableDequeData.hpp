@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 
+#include "../Sorters/DequeSorter.hpp"
 #include "RandomAccessQueryableData.hpp"
 
 template<typename T, typename TAllocator = std::allocator<T>>
@@ -34,6 +35,11 @@ public:
   virtual std::shared_ptr<IQueryableData<T>> Clone() override
   {
     return std::make_shared<QueryableDequeData<T, TAllocator>>(*this);
+  }
+
+  virtual std::shared_ptr<Sorter<T, std::deque, TAllocator>> GetSorter() override
+  {
+    return std::make_shared<DequeSorter<T, TAllocator>>();
   }
 };
 
