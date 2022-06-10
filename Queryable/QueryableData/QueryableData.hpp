@@ -113,6 +113,7 @@ public:
 
   QueryableData(std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data)
   {
+      throw;
     this->items = std::move(data->items);
     this->DefaultInitialize();
     this->size = data->Count();
@@ -121,6 +122,7 @@ public:
   QueryableData(QueryableIterator<TObj> first, QueryableIterator<TObj> last, TArgs... args) :
     items(std::make_shared<TIterable<TObj, TArgs...>>(first, last, args...))
   {
+      throw;
   }
 
   virtual ~QueryableData() { }
@@ -192,10 +194,14 @@ public:
   {
     switch (type)
     {
-        case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-        case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-        case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-        case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+        case IteratorType::BeginForward: { return *this->beginIterator; }
+        case IteratorType::EndForward: { return *this->endIterator; }
+        case IteratorType::BeginReverse: { return *this->rbeginIterator; }
+        case IteratorType::EndReverse: default: { return *this->rendIterator; }
+        // case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+        // case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+        // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+        // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
     }
     // std::cout << "Get: " << this->value << std::endl;
   }
@@ -204,10 +210,14 @@ public:
   {
     switch (type)
     {
-      case IteratorType::BeginForward: this->value = *this->beginIterator; return this->value;
-      case IteratorType::EndForward: this->value = *this->endIterator; return this->value;
-      case IteratorType::BeginReverse: this->value = *this->rbeginIterator; return this->value;
-      case IteratorType::EndReverse: default: this->value = *this->rendIterator; return this->value;
+      case IteratorType::BeginForward: return *this->beginIterator;
+      case IteratorType::EndForward: return *this->endIterator;
+      case IteratorType::BeginReverse: return *this->rbeginIterator;
+      case IteratorType::EndReverse: default: return *this->rendIterator;
+    //   case IteratorType::BeginForward: this->value = *this->beginIterator; return this->value;
+    //   case IteratorType::EndForward: this->value = *this->endIterator; return this->value;
+    //   case IteratorType::BeginReverse: this->value = *this->rbeginIterator; return this->value;
+    //   case IteratorType::EndReverse: default: this->value = *this->rendIterator; return this->value;
     }
   }
 
@@ -270,6 +280,15 @@ public:
   {
     return *this->items;
   }
+
+// I think these methods can be written with something like the following:
+//   virtual QueryableIterator<TObj> begin(QueryableData<TObj, TIterable, TArgs...> & data) override
+//   {
+//     // std::cout << "Standard Queryable begin" << std::endl;
+//     this->beginIterator = data.items->begin();
+//     QueryableIterator<TObj> retVal(data, 0, IteratorType::BeginForward);
+//     return retVal;
+//   }
 
   // we return a copy of ourself, so we need to make sure to set our type
   // so that the next time its used, the correct underlying iterator is used

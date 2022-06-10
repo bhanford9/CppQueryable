@@ -29,19 +29,19 @@ public:
 
   QueryableIterator() : index(0)
   {
-    // std::cout << "within base constructor" << std::endl;
+    std::cout << "QueryableIterator constructor 0" << std::endl;
   }
 
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, IteratorType type) : QueryableIterator()
   {
-    // std::cout << "within constructor 1" << std::endl;
-    this->queryableData = queryableData;
+    std::cout << "QueryableIterator constructor 1" << std::endl;
+    this->queryableData = queryableData->Clone();
     this->type = type;
   }
 
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, int startingIndex, IteratorType type)
   {
-    // std::cout << "Iterator constructor 2, starting index: " << startingIndex << std::endl;
+    std::cout << "QueryableIterator constructor 2, starting index: " << startingIndex << std::endl;
     this->queryableData = queryableData->Clone();
     this->index = startingIndex;
     this->type = type;
@@ -49,48 +49,49 @@ public:
 
   QueryableIterator(const QueryableIterator<T> & other)
   {
-    // std::cout << "type: " << typeid(other.queryableData).name() << std::endl;
+    std::cout << "QueryableIterator constructor 3, index: " << other.index << std::endl;
     this->queryableData = other.queryableData->Clone();
     this->index = other.index;
     this->type = other.type;
   }
 
   QueryableIterator(QueryableIterator<T> && other) :
-    queryableData(std::move(other.queryableData)),
+    queryableData(other.queryableData->Clone()),
     index(other.index),
     type(other.type)
   {
+    std::cout << "QueryableIterator constructor 4" << std::endl;
     // std::cout << "Iterator move constructor" << std::endl;
   }
 
 // start std::sort requirements
   inline bool operator<(const QueryableIterator<T> & other) const
   {
-    // std::cout << "iterator less than comparison. self: " << this->index << ", other: " << other.index << std::endl;
+    std::cout << "iterator less than comparison. self: " << this->index << ", other: " << other.index << std::endl;
     return this->index < other.index;
   }
 
   inline bool operator>(const QueryableIterator<T> & other) const
   {
-    // std::cout << "iterator greater than comparison. self: " << this->index << ", other: " << other.index << std::endl;
+    std::cout << "iterator greater than comparison. self: " << this->index << ", other: " << other.index << std::endl;
     return this->index > other.index;
   }
 
   inline bool operator<=(const QueryableIterator<T> & other) const
   {
-    // std::cout << "iterator less than or equal to comparison. self: " << this->index << ", other: " << other.index << std::endl;
+    std::cout << "iterator less than or equal to comparison. self: " << this->index << ", other: " << other.index << std::endl;
     return this->index <= other.index;
   }
 
   inline bool operator>=(const QueryableIterator<T> & other) const
   {
-    // std::cout << "iterator greater than or equal to comparison. self: " << this->index << ", other: " << other.index << std::endl;
+    std::cout << "iterator greater than or equal to comparison. self: " << this->index << ", other: " << other.index << std::endl;
     return this->index >= other.index;
   }
 
   inline T & operator[](int index) const
   {
-    // std::cout << "[] self: " << this->index << ", incoming index: " << index << std::endl;
+    std::cout << "[] self: " << this->index << ", incoming index: " << index << std::endl;
     QueryableIterator<T> copy = *this;
     return *(copy + index);
   }
@@ -111,28 +112,29 @@ public:
 
   virtual bool operator==(const QueryableIterator<T>& comparison) const
   {
-    // std::cout << "[==] " << this->index  << " vs " << comparison.index << std::endl;
+    std::cout << "[==] " << this->index  << " vs " << comparison.index << std::endl;
     return this->index == comparison.index;
   }
 
   virtual bool operator!=(const QueryableIterator<T>& comparison) const
   {
-    // std::cout << "[!=] " << this->index  << " vs " << comparison.index << std::endl;
+    std::cout << "[!=] " << this->index  << " vs " << comparison.index << std::endl;
     return this->index != comparison.index;
   }
 
   virtual int operator-(const QueryableIterator<T>& subtrahend) const
   {
-    // std::cout << "iterator subtraction. self: " << this->index << ", other: " << subtrahend.index << std::endl;
+    std::cout << "iterator subtraction (1). self: " << this->index << ", other: " << subtrahend.index << std::endl;
+    std::cout << "\tsubtraction result: " << (this->index - subtrahend.index) << std::endl;;
     return this->index - subtrahend.index;
   }
 
   virtual QueryableIterator<T>& operator=(const QueryableIterator<T>& value)
   {
-    // std::cout << "within asignement operator"
-    //   << "\n\tindex: " << value.index
-    //   << "\n\tvalue: " << value.queryableData->Get(value.type)
-    //   << std::endl;
+    std::cout << "within asignement operator"
+      << "\n\tindex: " << value.index
+      << "\n\tvalue: " << value.queryableData->Get(value.type)
+      << std::endl;
     this->queryableData = value.queryableData->Clone();
     this->index = value.index;
     this->type = value.type;
@@ -141,8 +143,8 @@ public:
 
   virtual QueryableIterator<T>& operator=(QueryableIterator<T> && value)
   {
-    // std::cout << "within move operator" << std::endl;
-    this->queryableData = value.queryableData;
+    std::cout << "within move operator" << std::endl;
+    this->queryableData = std::move(value.queryableData->Clone());
     this->index = value.index;
     this->type = value.type;
     return *this;
@@ -150,7 +152,7 @@ public:
 
   virtual QueryableIterator<T>& operator++()
   {
-    // std::cout << "operator++, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
+    std::cout << "operator++, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
     uint64_t iterated = 1;
     this->queryableData->Next(this->type, iterated);
 
@@ -160,25 +162,30 @@ public:
 
   virtual QueryableIterator<T>& operator--()
   {
-    // std::cout << "operator--, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
-    uint64_t iterated = 1;
-    this->queryableData->Prev(this->type, iterated);
-    this->index -= iterated;
+    std::cout << "operator--, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
+    // if (this->index > 0)
+    // {
+        uint64_t iterated = 1;
+        this->queryableData->Prev(this->type, iterated);
+        this->index -= iterated;
+    // }
     return *this;
   }
 
   virtual QueryableIterator<T> operator++(int)
   {
-    // std::cout << "++(int)" << std::endl;
+    std::cout << "++(int)" << std::endl;
     QueryableIterator<T> copy(*this);
-    return ++copy;
+    (*this)++;
+    return copy;
   }
 
   virtual QueryableIterator<T> operator--(int)
   {
-    // std::cout << "--(int)" << std::endl;
+    std::cout << "--(int)" << std::endl;
     QueryableIterator<T> copy(*this);
-    return --copy;
+    (*this)--;
+    return copy;
   }
 
   virtual T& operator*()
@@ -195,15 +202,15 @@ public:
 
   virtual QueryableIterator<T> operator+(int addend)
   {
-    // std::cout << "+(int) copy" << std::endl;
+    std::cout << "+(int) copy" << std::endl;
     QueryableIterator<T> copy(this->queryableData, this->index, this->type);
-    copy += addend;
+    (*this) += addend;
     return copy;
   }
 
   virtual QueryableIterator<T>& operator+=(int addend)
   {
-    // std::cout << "operator +=" << std::endl;
+    std::cout << "operator +=" << std::endl;
     this->queryableData->Add(addend, this->type);
     this->index += addend;
     return *this;
@@ -211,15 +218,15 @@ public:
 
   virtual QueryableIterator<T> operator-(int subtrahend)
   {
-    // std::cout << "-(int) copy" << std::endl;
+    std::cout << "-(int) copy" << std::endl;
     QueryableIterator<T> copy(this->queryableData, this->index, this->type);
-    copy -= subtrahend;
+    (*this) -= subtrahend;
     return copy;
   }
 
   virtual QueryableIterator<T>& operator-=(int subtrahend)
   {
-    // std::cout << "operator -=" << std::endl;
+    std::cout << "operator -=" << std::endl;
     this->queryableData->Subtract(subtrahend, this->type);
     this->index -= subtrahend;
     return *this;

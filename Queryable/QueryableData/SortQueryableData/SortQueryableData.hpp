@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDATA_H
-#define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_SORTQUERYABLEDATA_H
+#define CPPQUERYABLE_QUERYABLE_SORTQUERYABLEDATA_H
 
 #include <algorithm>
 #include <deque>
@@ -35,7 +35,6 @@ public:
   {
     // std::cout << "sort queryable parent data moving" << std::endl;
     this->size = original->Count();
-    this->original->Sort(compare);
   }
   SortQueryableData(
     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
@@ -45,22 +44,31 @@ public:
   {
     // std::cout << "sort queryable parent data copying" << std::endl;
     this->size = original->Count();
-    this->original->Sort(compare);
   }
-  SortQueryableData(const SortQueryableData<TObj, TIterable, TArgs...> & data,
-    const TLessThan & compare) :
+  SortQueryableData(const SortQueryableData<TObj, TIterable, TArgs...> & data) :
     original(data.original),
-    compare(compare)
+    compare(data.compare)
   {
     this->size = original->Count();
-    this->original->Sort(compare);
   }
 
   virtual ~SortQueryableData() { }
 
-  virtual TIterable & GetContainer() override
+  virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    return *this->original->GetContainer();
+    return std::make_shared<SortQueryableData<TObj, TIterable, TArgs...>>(*this);
+  }
+
+  void Add(TObj item) override
+  {
+    // this wont easily or quickly work... might want to nix it
+    this->items->push_back(item);
+    this->size++;
+  }
+
+  virtual TIterable<TObj, TArgs...> & GetContainer() override
+  {
+    return this->original->GetContainer();
   }
 
   virtual bool CanIncrement(IteratorType type) override
@@ -73,76 +81,77 @@ public:
     return this->original->CanDecrement(type);
   }
 
-  virtual TCurrent & Get(IteratorType type) override
+  virtual TObj & Get(IteratorType type) override
   {
-    // std::cout << "Sort Data Get" << std::endl;
+    std::cout << "Sort Data Get" << std::endl;
     this->value = this->original->Get(type);
+    std::cout << "Sort Data Got: " << this->value << std::endl;
     return this->value;
   }
 
-  virtual const TCurrent & ConstGet(IteratorType type) override
+  virtual const TObj & ConstGet(IteratorType type) override
   {
-    // std::cout << "Select Data ConstGet" << std::endl;
-    this->value = this->selector(this->original->ConstGet(type));
+    std::cout << "Sort Data ConstGet" << std::endl;
+    this->value = this->original->ConstGet(type);
     return this->value;
   }
 
-  virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
   {
-    // std::cout << "Select Can Increment: " << this->original->CanIncrement(type) << std::endl;
-    // std::cout << "Select Data Next before value: " << this->original->Get(type) << std::endl;
+    // std::cout << "Sort Can Increment: " << this->original->CanIncrement(type) << std::endl;
+    std::cout << "Sort Data Next before value: " << this->original->Get(type) << std::endl;
     this->original->Next(type, iterated);
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Prev(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
   {
-    // std::cout << "Select Data Prev" << std::endl;
-    this->original->Prev(type, iterated);
+    std::cout << "Sort Data Prev" << std::endl;
+    if (this->CanDecrement(type)) this->original->Prev(type, iterated);
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Add(int addend, IteratorType type) override
+  virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
-    // std::cout << "Select Data Add" << std::endl;
+    std::cout << "Sort Data Add" << std::endl;
     this->original->Add(addend, type);
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
-    // std::cout << "Select Data Subtract" << std::endl;
+    std::cout << "Sort Data Subtract" << std::endl;
     this->original->Add(subtrahend, type);
     return *this;
   }
 
-  virtual QueryableIterator<TCurrent> begin() override
+  virtual QueryableIterator<TObj> begin() override
   {
-    // std::cout << "Select Data begin" << std::endl;
-    QueryableIterator<TOriginal> child = this->original->begin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::BeginForward);
+    std::cout << "Sort Data begin" << std::endl;
+    QueryableIterator<TObj> child = this->original->begin();
+    QueryableIterator<TObj> retVal(this->Clone(), child.index, IteratorType::BeginForward);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> end() override
+  virtual QueryableIterator<TObj> end() override
   {
-    // std::cout << "Select Data end" << std::endl;
-    QueryableIterator<TOriginal> child = this->original->end();
-    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::EndForward);
+    std::cout << "Sort Data end" << std::endl;
+    QueryableIterator<TObj> child = this->original->end();
+    QueryableIterator<TObj> retVal(this->Clone(), child.index, IteratorType::EndForward);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> rbegin() override
+  virtual QueryableIterator<TObj> rbegin() override
   {
-    this->original->rbegin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginReverse);
+    QueryableIterator<TObj> child = this->original->rbegin();
+    QueryableIterator<TObj> retVal(this->Clone(), child.index, IteratorType::BeginReverse);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> rend() override
+  virtual QueryableIterator<TObj> rend() override
   {
-    this->original->rend();
-    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndReverse);
+    QueryableIterator<TObj> child = this->original->end();
+    QueryableIterator<TObj> retVal(this->Clone(), child.index, IteratorType::EndReverse);
     return retVal;
   }
 

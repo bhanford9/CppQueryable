@@ -29,6 +29,7 @@
 #include "QueryableData/SelectQueryableData/SelectQueryableMultiSetData.hpp"
 #include "QueryableData/SelectQueryableData/SelectQueryableSetData.hpp"
 #include "QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
+#include "QueryableData/SortQueryableData/SortQueryableData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableDequeData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableListData.hpp"
@@ -943,45 +944,63 @@ public:
     return false;
   }
 
+  template<typename TLessThan = std::less<TObj>>
+  void Sort(TLessThan lessThan = {})
+//   virtual void Sort(
+//     std::function<bool(const TObj &, const TObj &)> lessThan =
+//       [](const TObj & a, const TObj & b) { return a < b; })
+  {
+    this->items = std::move(
+      std::make_shared<SortQueryableData<TObj, TIterable, TLessThan>>(
+        std::move(this->items),
+        lessThan));
+
+    std::cout << "going into std::sort" << std::endl;
+
+    std::sort(this->items->begin(), this->items->end(), lessThan);
+
+    std::cout << "leaving std::sort" << std::endl;
+  }
+
   // Things to note
   //   1. [multi]sets must use a copy of storage
   //   1.1. this is due to the sorting algorithm being type dependent within the container
   //   2. this should not be used for [multi]sets if the comparator is the same it was built with
   //   3. all other types use their built in optimized sorting algorithms
   //   4. would be faster if std::function could be replaced by type parameter, but then inheritance wouldn't work
-  template<typename TLessThan = std::less<TObj>>
-  void Sort(TLessThan lessThan = {})
-  {
-    this->items->Sort(lessThan);
-    // std::shared_ptr<Sorter<TObj, TIterable, TLessThan, TArgs...>> sorter;
+//   template<typename TLessThan = std::less<TObj>>
+//   void Sort(TLessThan lessThan = {})
+//   {
+//     this->items->Sort(lessThan);
+//     // std::shared_ptr<Sorter<TObj, TIterable, TLessThan, TArgs...>> sorter;
 
-    // switch (this->GetType())
-    // {
-    //   case QueryableType::Deque:
-    //   {
-    //     sorter = std::make_shared<DequeSorter<TObj, TLessThan>>();
-    //     // DequeSorter<TObj, TLessThan> dequeSorter;
-    //     // this->items->Sort(dequeSorter, lessThan);
-    //     break;
-    //   }
-    //   case QueryableType::List:
-    //   {
-    //     sorter = std::make_shared<ListSorter<TObj, TLessThan>>();
-    //     // ListSorter<TObj, TLessThan> listSorter;
-    //     // this->items->Sort(listSorter, lessThan);
-    //     break;
-    //   }
-    //   case QueryableType::Vector:
-    //   {
-    //     sorter = std::make_shared<VectorSorter<TObj, TLessThan>>();
-    //     // VectorSorter<TObj, TLessThan> vectorSorter;
-    //     // this->items->Sort(vectorSorter, lessThan);
-    //     break;
-    //   }
-    // }
+//     // switch (this->GetType())
+//     // {
+//     //   case QueryableType::Deque:
+//     //   {
+//     //     sorter = std::make_shared<DequeSorter<TObj, TLessThan>>();
+//     //     // DequeSorter<TObj, TLessThan> dequeSorter;
+//     //     // this->items->Sort(dequeSorter, lessThan);
+//     //     break;
+//     //   }
+//     //   case QueryableType::List:
+//     //   {
+//     //     sorter = std::make_shared<ListSorter<TObj, TLessThan>>();
+//     //     // ListSorter<TObj, TLessThan> listSorter;
+//     //     // this->items->Sort(listSorter, lessThan);
+//     //     break;
+//     //   }
+//     //   case QueryableType::Vector:
+//     //   {
+//     //     sorter = std::make_shared<VectorSorter<TObj, TLessThan>>();
+//     //     // VectorSorter<TObj, TLessThan> vectorSorter;
+//     //     // this->items->Sort(vectorSorter, lessThan);
+//     //     break;
+//     //   }
+//     // }
 
-    // this->items->Sort(*sorter, lessThan);
-  }
+//     // this->items->Sort(*sorter, lessThan);
+//   }
 
   // TODO --> make this virtual? like Where()
   template<

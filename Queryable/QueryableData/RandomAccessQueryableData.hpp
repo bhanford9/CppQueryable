@@ -57,6 +57,8 @@ public:
       case IteratorType::EndReverse: this->rendIterator += addend; break;
     }
 
+    std::cout << "Random Access add result: " << *this->beginIterator << std::endl;
+
     return *this;
   }
 

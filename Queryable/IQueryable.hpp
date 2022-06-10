@@ -32,28 +32,51 @@ class IQueryable
 {
 private:
   std::shared_ptr<InternalIQueryable<T, TArgs...>> queryable;
+  bool isSortable;
+
+  void SetSortable(QueryableType type)
+  {
+    switch(type)
+    {
+      case QueryableType::Deque:
+      case QueryableType::List:
+      case QueryableType::Vector:
+        this->isSortable = true;
+        break;
+      case QueryableType::MultiSet:
+      case QueryableType::Set:
+      default:
+        this->isSortable = false;
+        break;
+    }
+  }
 
 public:
-  IQueryable() { }
+  IQueryable() : isSortable(false) { }
   IQueryable(const std::shared_ptr<InternalIQueryable<T, TArgs...>> & other) :
     queryable(other)
   {
+    this->SetSortable(this->queryable->GetType());
   }
   IQueryable(std::shared_ptr<InternalIQueryable<T, TArgs...>> && other) :
     queryable(std::move(other))
   {
+    this->SetSortable(this->queryable->GetType());
   }
   IQueryable(InternalIQueryable<T, TArgs...> * other)
   {
     this->queryable.reset(other);
+    this->SetSortable(this->queryable->GetType());
   }
   IQueryable(const IQueryable<T, TArgs...> & other) :
     queryable(other.queryable)
   {
+    this->SetSortable(this->queryable->GetType());
   }
   IQueryable(IQueryable<T, TArgs...> && other) :
     queryable(std::move(other.queryable))
   {
+    this->SetSortable(this->queryable->GetType());
   }
 
   void operator=(const IQueryable<T, TArgs...> & other)
@@ -344,7 +367,12 @@ public:
     typename TLessThan = std::less<T>>
   IQueryable<T, TArgs...> Sort(TLessThan lessThan = {})
   {
-    this->queryable->template Sort<TIterable, TLessThan, TArgs...>(lessThan);
+    if (this->isSortable)
+    {
+      this->queryable->template Sort<TIterable, TLessThan>(lessThan);
+    }
+    // TODO --> would be nice to generate new object with lessThan in type for sortable containers
+
     return *this;
   }
 
