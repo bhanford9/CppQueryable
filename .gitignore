@@ -4,5 +4,6 @@ Makefile.dep
 **/*.o
 **/*.gch
 *_testcases
+.vscode*
 
 CppQueryableTest/Queryable/Performance/Time/Logs/*

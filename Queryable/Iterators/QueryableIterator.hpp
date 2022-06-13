@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "IteratorType.hpp"
-#include "IIterable.hpp"
 #include "../QueryableData/IQueryableData.hpp"
 
 template<typename T>
@@ -152,23 +151,41 @@ public:
 
   virtual QueryableIterator<T>& operator++()
   {
-    std::cout << "operator++, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
+    std::cout << "in operator++"
+      << "\n\tCurrent Index: " << this->index 
+      << "\n\tId: " << this->queryableData->myId
+      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+      << std::endl;
     uint64_t iterated = 1;
     this->queryableData->Next(this->type, iterated);
 
     this->index += iterated;
+
+    std::cout << "out operator++"
+      << "\n\tCurrent Index: " << this->index 
+      << "\n\tId: " << this->queryableData->myId
+      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+      << std::endl;
     return *this;
   }
 
   virtual QueryableIterator<T>& operator--()
   {
-    std::cout << "operator--, current index: " << this->index << ", current value: " << this->queryableData->Get(this->type) << std::endl;
-    // if (this->index > 0)
-    // {
-        uint64_t iterated = 1;
-        this->queryableData->Prev(this->type, iterated);
-        this->index -= iterated;
-    // }
+    std::cout << "in operator--"
+      << "\n\tCurrent Index: " << this->index 
+      << "\n\tId: " << this->queryableData->myId
+      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+      << std::endl;
+    uint64_t iterated = 1;
+    this->queryableData->Prev(this->type, iterated);
+
+    this->index -= iterated;
+
+    std::cout << "out operator--"
+      << "\n\tCurrent Index: " << this->index 
+      << "\n\tId: " << this->queryableData->myId
+      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+      << std::endl;
     return *this;
   }
 

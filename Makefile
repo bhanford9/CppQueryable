@@ -2,8 +2,10 @@ CXX = g++
 CPPFLAGS = -Wall #-Werror
 DEBUG = -g  -ggdb3# -c
 
+# Prerequisits
+# 1. export PROJECTS_PATH environment variable to the full path to the directory housing CppQueryable project
+
 $(warning "Base Project Path: $(PROJECTS_PATH)") # exported environment variable
-$(warning "CppQueryable Project Path: $(CPP_QUERYABLE_PATH)") # exported environment variable
 PROJECT_PATH = $(PROJECTS_PATH)/CppQueryable
 PROGRAM_DIR = $(PROJECT_PATH)/Bin
 PROGRAM = $(PROGRAM_DIR)/CppQueryable
@@ -23,14 +25,12 @@ DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
 # 6. sudo cp ./lib/*.a /usr/lib
 
 GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
-# GTEST_MAIN_CC = /home/bhanford9/Projects/googletest/googletest/src/gtest_main.cc
 GTEST = $(GTEST_MAIN_CC)
 
 LIBS =
 TEST_LIBS = $(LIBS) -lgtest -lgtest_main -lpthread
 INCLUDES =
 TEST_INCLUDES = $(INCLUDES) -I/usr/src/gtest/include/gtest $(GTEST) -L/usr/src/gtest/lib
-# TEST_INCLUDES = $(INCLUDES) -I/home/bhanford9/Projects/googletest/googletest/include/gtest $(GTEST) -L/home/bhanford9/Projects/googletest/build/lib
 
 TEST_TIMEOUT = 10000 # TODO --> get this to work properly
 

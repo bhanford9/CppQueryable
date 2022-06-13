@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "../Iterators/QueryableIterator.hpp"
-#include "../Iterators/IIterable.hpp"
 #include "../Sorters/Sorter.hpp"
 
 template<typename TObj>
@@ -16,6 +15,7 @@ template<typename TObj>
 class IQueryableData
 {
 public:
+  int myId = 0;
   virtual ~IQueryableData() { }
 
   virtual void Clear() = 0;

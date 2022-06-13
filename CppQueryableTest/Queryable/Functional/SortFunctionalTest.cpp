@@ -15,9 +15,11 @@
 #include "../../../DataStructures/Point.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
-
+#include "../../../Queryable/QueryableData/TempId.hpp"
 
 using namespace QueryBuilder;
+
+int TempId::id = 0;
 
 class SortFunctionalTest : public ::testing::Test
 {

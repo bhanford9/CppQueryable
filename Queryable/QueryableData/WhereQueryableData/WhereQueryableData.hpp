@@ -129,10 +129,10 @@ public:
     }
   }
 
-  virtual TIterable<TObj, TArgs...> & GetContainer() override
-  {
-    return this->original->GetContainer();
-  }
+  // virtual TIterable<TObj, TArgs...> & GetContainer() override
+  // {
+  //   return this->original->GetContainer();
+  // }
 
   virtual void InternalAdd(TObj item) = 0;
 

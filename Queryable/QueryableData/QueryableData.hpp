@@ -12,15 +12,16 @@
 #include <vector>
 
 #include "IQueryableData.hpp"
-#include "../Iterators/Iterator.hpp"
 #include "../Iterators/IteratorType.hpp"
 #include "../Iterators/QueryableIterator.hpp"
-#include "../Iterators/QueryableDataIterator.hpp"
 #include "../TypeConstraintUtil.hpp"
 #include "../Utilities/Condition.hpp"
 #include "../Sorters/Sorter.hpp"
 
 #include "../../DataStructures/Person.hpp"
+#include "TempId.hpp"
+
+using namespace TempId;
 
 template<
   typename TObj,
@@ -68,12 +69,16 @@ public:
   // TODO --> allow TArgs to be passed in as a parameter?
   QueryableData()
   {
+    this->myId = id;
+    id++;
     // std::cout << "\nQueryableData Constructor 1" << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>();
     this->DefaultInitialize();
   }
   QueryableData(const TIterable<TObj, TArgs...> & items)
   {
+    this->myId = id;
+    id++;
     // std::cout << "\nQueryableData Constructor 2: " << typeid(TIterable<TObj, TArgs...>).name() << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
     this->DefaultInitialize();
@@ -85,6 +90,8 @@ public:
   }
   QueryableData(TIterable<TObj, TArgs...> && items)
   {
+    this->myId = id;
+    id++;
     // std::cout << "\nQueryableData Constructor 3" << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
 
@@ -99,7 +106,8 @@ public:
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
-    // std::cout << "QueryableData Copy Constructor 2" << std::endl;
+    std::cout << "QueryableData Copy Constructor 2" << std::endl;
+    this->myId = id;
     this->items = data.items;
 
     this->beginIterator = data.beginIterator;
@@ -276,10 +284,10 @@ public:
     this->GetSorter()->Sort(*this->items, lessThan);
   }
 
-  virtual TIterable<TObj, TArgs...> & GetContainer()
-  {
-    return *this->items;
-  }
+  // virtual TIterable<TObj, TArgs...> & GetContainer()
+  // {
+  //   return *this->items;
+  // }
 
 // I think these methods can be written with something like the following:
 //   virtual QueryableIterator<TObj> begin(QueryableData<TObj, TIterable, TArgs...> & data) override

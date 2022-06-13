@@ -60,10 +60,10 @@ public:
 
 
     // TODO --> this is going to fail for select->sort
-  virtual TIterable<TCurrent, TArgs...> & GetContainer() override
-  {
-    return *this->items;
-  }
+  // virtual TIterable<TCurrent, TArgs...> & GetContainer() override
+  // {
+  //   return *this->items;
+  // }
 
 
 
