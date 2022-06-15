@@ -50,6 +50,11 @@ public:
     this->items->insert(item);
     this->size++;
   }
+
+  virtual std::shared_ptr<IQueryableData<T>> GetRealizedQueryableData() override
+  {
+    return this->Clone();
+  }
 };
 
 #endif

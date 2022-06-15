@@ -52,6 +52,11 @@ public:
     // also a constant time action, so its cleaner to use it
     this->size = this->items->size();
   }
+
+  virtual std::shared_ptr<IQueryableData<T>> GetRealizedQueryableData() override
+  {
+    return this->Clone();
+  }
 };
 
 #endif

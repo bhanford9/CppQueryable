@@ -129,10 +129,10 @@ public:
     }
   }
 
-  virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
-  {
-    this->original->Sort(sorter);
-  }
+//   virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
+//   {
+//     this->original->Sort(sorter);
+//   }
 
   // virtual TIterable<TObj, TArgs...> & GetContainer() override
   // {

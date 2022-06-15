@@ -41,6 +41,21 @@ public:
     this->items->push_back(item);
     this->size++;
   }
+
+  virtual std::shared_ptr<IQueryableData<TCurrent>> GetRealizedQueryableData() override
+  {
+    // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
+    std::vector<TCurrent, TAllocator> data(this->items->get_allocator());
+
+    // std::cout << "about to go into select for loop" << std::endl;
+    for (const TCurrent & value : *this)
+    {
+        std::cout << "within select for loop: " << value << std::endl;
+        data.push_back(value);
+    }
+
+    return std::make_shared<QueryableVectorData<TCurrent, TAllocator>>(std::move(data));
+  }
 };
 
 #endif

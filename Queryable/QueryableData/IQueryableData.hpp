@@ -28,6 +28,7 @@ public:
   virtual QueryableIterator<TObj> rend() = 0;
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() = 0;
+  virtual std::shared_ptr<IQueryableData<TObj>> GetRealizedQueryableData() = 0;
 
   virtual bool CanIncrement(IteratorType type) = 0;
   virtual bool CanDecrement(IteratorType type) = 0;

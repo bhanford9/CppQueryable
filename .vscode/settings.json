@@ -8,6 +8,7 @@
         "algorithm": "cpp",
         "functional": "cpp",
         "vector": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "set": "cpp"
     }
 }

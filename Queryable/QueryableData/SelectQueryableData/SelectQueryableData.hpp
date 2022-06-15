@@ -77,10 +77,10 @@ public:
   //
   // Every child class will need to do its own Sort implemnetation so it can inately know what
   // kind of base QueryableData instantiation to resolve to.
-  virtual void Sort(std::shared_ptr<ISorter<TOriginal, TIterable, TArgs...>> sorter)
-  {
-    this->original->Sort(sorter);
-  }
+//   virtual void Sort(std::shared_ptr<ISorter<TOriginal, TIterable, TArgs...>> sorter)
+//   {
+//     this->original->Sort(sorter);
+//   }
 
 
   virtual bool CanIncrement(IteratorType type) override
@@ -97,16 +97,38 @@ public:
   // potential fix may be check this scenario and ToList it before trying to sort
   virtual TCurrent & Get(IteratorType type) override
   {
+    switch (type)
+    {
+    //   case IteratorType::BeginForward: return *this->beginIterator;
+    //   case IteratorType::EndForward: return *this->endIterator;
+    //   case IteratorType::BeginReverse: return *this->rbeginIterator;
+    //   case IteratorType::EndReverse: default: return *this->rendIterator;
+      case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::EndReverse: default: { this->value = this->selector(this->original->Get(type)); return this->value; }
+    }
     // std::cout << "Select Data Get" << std::endl;
-    *this->beginValue = this->selector(this->original->Get(type));
-    return *this->beginValue;
+    // this->value = this->selector(this->original->Get(type));
+    // return this->value;
   }
 
   virtual const TCurrent & ConstGet(IteratorType type) override
   {
+    switch (type)
+    {
+    //   case IteratorType::BeginForward: return *this->beginIterator;
+    //   case IteratorType::EndForward: return *this->endIterator;
+    //   case IteratorType::BeginReverse: return *this->rbeginIterator;
+    //   case IteratorType::EndReverse: default: return *this->rendIterator;
+      case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      case IteratorType::EndReverse: default: { this->value = this->selector(this->original->Get(type)); return this->value; }
+    }
     // std::cout << "Select Data ConstGet" << std::endl;
-    *this->beginValue = this->selector(this->original->ConstGet(type));
-    return *this->beginValue;
+    // this->value = this->selector(this->original->ConstGet(type));
+    // return this->value;
   }
 
   virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override

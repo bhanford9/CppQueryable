@@ -37,6 +37,11 @@ public:
     // std::cout << "deque clone" << std::endl;
     return std::make_shared<QueryableDequeData<T, TAllocator>>(*this);
   }
+
+  virtual std::shared_ptr<IQueryableData<T>> GetRealizedQueryableData() override
+  {
+    return this->Clone();
+  }
 };
 
 #endif

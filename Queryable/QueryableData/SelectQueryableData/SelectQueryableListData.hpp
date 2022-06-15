@@ -40,6 +40,19 @@ public:
     this->items->push_back(item);
     this->size++;
   }
+
+  virtual std::shared_ptr<IQueryableData<TCurrent>> GetRealizedQueryableData() override
+  {
+    // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
+    std::list<TCurrent, TAllocator> data(this->items->get_allocator());
+
+    for (const TCurrent & value : *this)
+    {
+        data.push_back(value);
+    }
+
+    return std::make_shared<QueryableListData<TCurrent, TAllocator>>(std::move(data));
+  }
 };
 
 #endif

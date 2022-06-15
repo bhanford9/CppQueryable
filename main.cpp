@@ -29,36 +29,20 @@
 int TempId::id = 0;
 using namespace QueryBuilder;
 
-template <class FwdIt, class Compare = std::less<>>
-void insertion_sort(FwdIt first, FwdIt last, Compare cmp = Compare{})
-{
-    for (auto it = first; it != last; ++it)
-    {
-        auto const insertion = std::upper_bound(first, it, *it, cmp);
-        std::rotate(insertion, it, std::next(it));
-        // assert(std::is_sorted(first, std::next(it), cmp));
-    }
-}
-
-template <class RandomIt, class Compare = std::less<>>
-void heap_sort(RandomIt first, RandomIt last, Compare cmp = Compare{})
-{
-    std::make_heap(first, last, cmp);
-    std::sort_heap(first, last, cmp);
-}
-
 int main()
 {
 
     //   PersonLibrary personLibrary;
     //   IQueryable<Person> people(BuildQueryable2(personLibrary.GetPeople()));
     IQueryable<uint> numbers(BuildQueryable2(std::vector<uint>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
-    numbers
-        .Where([](uint value) { return value < 10; })
+    IQueryable<double> newNumbers = numbers
+        // .Where([](uint value) { return value < 10; })
         .Select<std::vector, double>([](uint value) { return ((double)value) / 2.0; })
         .Sort<std::vector>();
-    numbers.ForEach([](uint value) { std::cout << value << ", "; });
 
+    std::cout << "\n\n\n\nAFTER SORT\n\n\n" << std::endl;
+    newNumbers.ForEach([](double value) { std::cout << value << ", "; });
+    std::cout << std::endl;
     //   bool result = people.Any([](Person person) { return person.GetAge() > 40; });
     //   std::cout << "Anybody over 40: " << (result ? "YES" : "NO") << std::endl;
 

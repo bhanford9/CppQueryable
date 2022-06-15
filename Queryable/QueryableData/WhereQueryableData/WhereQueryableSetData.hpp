@@ -42,6 +42,19 @@ public:
   {
     this->items->insert(item);
   }
+
+  virtual std::shared_ptr<IQueryableData<TObj>> GetRealizedQueryableData() override
+  {
+    // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
+    std::set<TObj, TCompare, TAllocator> data(this->items->value_comp(), this->items->get_allocator());
+
+    for (const TObj & value : *this)
+    {
+        data.insert(value);
+    }
+
+    return std::make_shared<QueryableSetData<TObj, TCompare, TAllocator>>(std::move(data));
+  }
 };
 
 #endif

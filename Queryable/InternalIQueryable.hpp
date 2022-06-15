@@ -313,6 +313,9 @@ public:
   inline void Sort(TLessThan lessThan = {})
   {
     this->AsExtendedQueryable<TIterable>().Sort(lessThan);
+    // std::cout << "\nafter after after sort" << std::endl;
+    // this->ForEach([](double value) { std::cout << value << ", "; });
+    // std::cout << std::endl;
   }
 
   inline virtual double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;

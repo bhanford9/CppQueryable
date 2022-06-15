@@ -26,7 +26,10 @@ public:
 
   virtual void Sort(std::vector<TObj, TAllocator> & container) const override
   {
+      std::cout << "vector sorter" << std::endl;
+      std::cout << "before sort, first: " << *container.begin() << std::endl;
     std::sort(container.begin(), container.end(), this->lessThan);
+    std::cout << "after sort, first: " << *container.begin() << std::endl;
   }
 };
 

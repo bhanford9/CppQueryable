@@ -951,6 +951,14 @@ public:
 //     std::function<bool(const TObj &, const TObj &)> lessThan =
 //       [](const TObj & a, const TObj & b) { return a < b; })
   {
+    // sorting is fragile wrt to container in cpp. Need to have a simple QueryableData container to be able to sort properly
+    std::cout << "in sort" << std::endl;
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    std::cout << "after getting realized" << std::endl;
+
+    this->ForEach([](double value) { std::cout << value << ", "; });
+    std::cout << std::endl;
+
     switch (this->GetType())
     {
       case QueryableType::Deque:
@@ -973,6 +981,9 @@ public:
       default:
         break;
     }
+    // std::cout << "\nAFTER SORT" << std::endl;
+    // this->ForEach([](double value) { std::cout << value << ", "; });
+    // std::cout << std::endl;
     // this->items = std::move(
     //   std::make_shared<SortQueryableData<TObj, TIterable>>(
     //     std::move(this->items)));
