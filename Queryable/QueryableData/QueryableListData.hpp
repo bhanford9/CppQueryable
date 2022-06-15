@@ -45,11 +45,6 @@ public:
     this->items->push_back(item);
     this->size++;
   }
-
-  virtual std::shared_ptr<Sorter<T, std::list, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<ListSorter<T, TAllocator>>();
-  }
 };
 
 #endif

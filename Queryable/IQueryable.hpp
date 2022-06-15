@@ -362,6 +362,8 @@ public:
   }
 
   // TODO --> [multi]sets and other sorted containers should not have this interface endpoint
+  //   or maybe they can, but one of the shims redirects it to recreating the container with
+  //   the new compare type (which ensures the container is sorted during creation)
   template<
     template<typename, typename ...> typename TIterable,
     typename TLessThan = std::less<T>>
@@ -371,10 +373,9 @@ public:
     {
       this->queryable->template Sort<TIterable, TLessThan>(lessThan);
     }
-    // TODO --> would be nice to generate new object with lessThan in type for sortable containers
 
     return *this;
-  }
+}
 
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {

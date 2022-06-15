@@ -41,11 +41,6 @@ public:
     this->items->push_back(item);
     this->size++;
   }
-
-  virtual std::shared_ptr<Sorter<TCurrent, std::vector, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<VectorSorter<TCurrent, TAllocator>>();
-  }
 };
 
 #endif

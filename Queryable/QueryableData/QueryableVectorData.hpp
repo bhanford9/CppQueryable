@@ -36,11 +36,6 @@ public:
   {
     return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
   }
-
-  virtual std::shared_ptr<Sorter<T, std::vector, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<VectorSorter<T, TAllocator>>();
-  }
 };
 
 #endif

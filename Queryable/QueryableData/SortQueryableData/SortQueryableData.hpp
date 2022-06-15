@@ -17,39 +17,75 @@
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
-  typename TLessThan = std::less<TObj>,
+//   typename TLessThan = std::less<TObj>,
   typename ...TArgs>
 class SortQueryableData : public QueryableData<TObj, TIterable, TArgs...>
 {
 protected:
   std::shared_ptr<IQueryableData<TObj>> original;
-  TLessThan compare;
+//   TLessThan compare;
   bool hasSorted = false;
 
 public:
-  SortQueryableData(
-    std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
-    const TLessThan & compare) :
-      original(std::move(data)),
-      compare(compare)
+//   SortQueryableData(
+//     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
+//     const TLessThan & compare) :
+//       original(std::move(data)),
+//       compare(compare)
+//   {
+//     // std::cout << "sort queryable parent data moving" << std::endl;
+//     this->size = original->Count();
+//   }
+//   SortQueryableData(
+//     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
+//     const TLessThan & compare) :
+//       original(data),
+//       compare(compare)
+//   {
+//     // std::cout << "sort queryable parent data copying" << std::endl;
+//     this->size = original->Count();
+//   }
+//   SortQueryableData(const SortQueryableData<TObj, TIterable, TArgs...> & data) :
+//     original(data.original->Clone()),
+//     compare(data.compare)
+//   {
+//     this->size = original->Count();
+//   }
+  SortQueryableData(std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data) :
+      original(std::move(data))
   {
     // std::cout << "sort queryable parent data moving" << std::endl;
     this->size = original->Count();
+    // const TObj * beginTemp = &(*this->original->begin());
+    // this->beginValue = const_cast<TObj*>(beginTemp);
+    // const TObj * endTemp = &(*this->original->end());
+    // this->endValue = const_cast<TObj*>(endTemp);
   }
-  SortQueryableData(
-    const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
-    const TLessThan & compare) :
-      original(data),
-      compare(compare)
+  SortQueryableData(const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data) :
+      original(data)
   {
     // std::cout << "sort queryable parent data copying" << std::endl;
     this->size = original->Count();
+    // const TObj * beginTemp = &(*this->original->begin());
+    // this->beginValue = const_cast<TObj*>(beginTemp);
+    // const TObj * endTemp = &(*this->original->end());
+    // this->endValue = const_cast<TObj*>(endTemp);
   }
   SortQueryableData(const SortQueryableData<TObj, TIterable, TArgs...> & data) :
-    original(data.original->Clone()),
-    compare(data.compare)
+    original(data.original->Clone())
   {
     this->size = original->Count();
+    this->original->begin();
+    this->original->end();
+    // const TObj * beginTemp = &(*this->original->begin());
+    // this->beginValue = const_cast<TObj*>(beginTemp);
+    // const TObj * endTemp = &(*this->original->end());
+    // this->endValue = const_cast<TObj*>(endTemp);
+  }
+
+  void Sort()
+  {
+      std::sort(this->original->begin(), this->original->end());
   }
 
   virtual ~SortQueryableData() { }
@@ -85,17 +121,19 @@ public:
 
   virtual TObj & Get(IteratorType type) override
   {
-    // std::cout << "Sort Data Get" << std::endl;
-    this->value = this->original->Get(type);
-    // std::cout << "Sort Data Got: " << this->value << std::endl;
-    return this->value;
+    std::cout << "Sort Data Get" << std::endl;
+    return this->original->Get(type);
+    // *this->value = this->original->Get(type);
+    // std::cout << "Sort Data Got: " << *this->value << std::endl;
+    // return *this->value;
   }
 
   virtual const TObj & ConstGet(IteratorType type) override
   {
     // std::cout << "Sort Data ConstGet" << std::endl;
-    this->value = this->original->ConstGet(type);
-    return this->value;
+    return this->original->ConstGet(type);
+    // *this->value = this->original->ConstGet(type);
+    // return *this->value;
   }
 
   virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override

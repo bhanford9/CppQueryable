@@ -129,6 +129,11 @@ public:
     }
   }
 
+  virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
+  {
+    this->original->Sort(sorter);
+  }
+
   // virtual TIterable<TObj, TArgs...> & GetContainer() override
   // {
   //   return this->original->GetContainer();
@@ -139,8 +144,9 @@ public:
   virtual TObj & Get(IteratorType type) override
   {
     //   std::cout << "Where Queryable Get" << std::endl;
-    this->value = this->original->Get(type);
-    return this->value;
+    return this->original->Get(type);
+    // *this->value = this->original->Get(type);
+    // return *this->value;
   }
 
   virtual bool CanIncrement(IteratorType type) override

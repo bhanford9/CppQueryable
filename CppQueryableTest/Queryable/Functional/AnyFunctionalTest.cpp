@@ -13,6 +13,7 @@
 #include "../../../Queryable/QueryableAliases.hpp"
 #include "../../../Queryable/QueryBuilder.hpp"
 
+int TempId::id = 0;
 
 using namespace QueryBuilder;
 

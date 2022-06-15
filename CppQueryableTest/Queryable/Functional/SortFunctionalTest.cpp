@@ -64,35 +64,35 @@ TEST_F(SortFunctionalTest, DequeDefault)
   });
 }
 
-// TEST_F(SortFunctionalTest, ListDefault)
-// {
-//   IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-//   local.Sort<std::list>();
+TEST_F(SortFunctionalTest, ListDefault)
+{
+  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
+  local.Sort<std::list>();
 
-//   ASSERT_EQ(this->queryable.Count(), local.Count());
+  ASSERT_EQ(this->queryable.Count(), local.Count());
 
-//   uint previous = 0;
-//   local.ForEach([&](uint value)
-//   {
-//     ASSERT_TRUE(previous <= value);
-//     previous = value;
-//   });
-// }
+  uint previous = 0;
+  local.ForEach([&](uint value)
+  {
+    ASSERT_TRUE(previous <= value);
+    previous = value;
+  });
+}
 
-// TEST_F(SortFunctionalTest, VectorDefault)
-// {
-//   IQueryable<uint> local = BuildQueryable2(this->queryable.ToVector());
-//   local = local.Sort<std::vector>();
+TEST_F(SortFunctionalTest, VectorDefault)
+{
+  IQueryable<uint> local = BuildQueryable2(this->queryable.ToVector());
+  local = local.Sort<std::vector>();
 
-//   ASSERT_EQ(this->queryable.Count(), local.Count());
+  ASSERT_EQ(this->queryable.Count(), local.Count());
 
-//   uint previous = 0;
-//   local.ForEach([&](uint value)
-//   {
-//     ASSERT_TRUE(previous <= value);
-//     previous = value;
-//   });
-// }
+  uint previous = 0;
+  local.ForEach([&](uint value)
+  {
+    ASSERT_TRUE(previous <= value);
+    previous = value;
+  });
+}
 
 // TEST_F(SortFunctionalTest, DequeClass)
 // {

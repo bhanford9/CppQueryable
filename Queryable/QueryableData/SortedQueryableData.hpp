@@ -69,16 +69,17 @@ public:
 
   virtual ~SortedQueryableData() { }
 
-  virtual T & Get(IteratorType type) override
-  {
-    switch (type)
-    {
-        case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-        case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-        case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-        case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
-    }
-  }
+  // TODO -> don't think this actually needs overriden
+//   virtual T & Get(IteratorType type) override
+//   {
+//     switch (type)
+//     {
+//         case IteratorType::BeginForward: { *this->beginValue = *this->beginIterator; return *this->beginValue; }
+//         case IteratorType::EndForward: { *this->endValue = *this->endIterator; return *this->endValue; }
+//         case IteratorType::BeginReverse: { *this->beginValue = *this->rbeginIterator; return *this->beginValue; }
+//         case IteratorType::EndReverse: default: { *this->endValue = *this->rendIterator; return *this->endValue; }
+//     }
+//   }
 };
 
 #endif

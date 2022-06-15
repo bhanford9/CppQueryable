@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "../Iterators/QueryableIterator.hpp"
-#include "../Sorters/Sorter.hpp"
 
 template<typename TObj>
 class QueryableIterator;

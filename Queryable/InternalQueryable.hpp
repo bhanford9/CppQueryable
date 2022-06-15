@@ -43,6 +43,7 @@
 #include "Sorters/ListSorter.hpp"
 #include "Sorters/VectorSorter.hpp"
 #include "TypeConstraintUtil.hpp"
+#include "Utilities/Casting.hpp"
 #include "Utilities/Condition.hpp"
 #include "Utilities/Group.hpp"
 #include "Utilities/PersistentContainer.hpp"
@@ -950,16 +951,37 @@ public:
 //     std::function<bool(const TObj &, const TObj &)> lessThan =
 //       [](const TObj & a, const TObj & b) { return a < b; })
   {
-    this->items = std::move(
-      std::make_shared<SortQueryableData<TObj, TIterable, TLessThan>>(
-        std::move(this->items),
-        lessThan));
+    switch (this->GetType())
+    {
+      case QueryableType::Deque:
+        this->items->Sort(
+          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
+            std::make_shared<DequeSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+        break;
+      case QueryableType::List:
+        this->items->Sort(
+          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
+            std::make_shared<ListSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+        break;
+      case QueryableType::Vector:
+        this->items->Sort(
+          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
+            std::make_shared<VectorSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+        break;
+      case QueryableType::MultiSet:
+      case QueryableType::Set:
+      default:
+        break;
+    }
+    // this->items = std::move(
+    //   std::make_shared<SortQueryableData<TObj, TIterable>>(
+    //     std::move(this->items)));
 
-    std::cout << "going into std::sort" << std::endl;
+    // std::cout << "going into std::sort" << std::endl;
 
-    std::sort(this->items->begin(), this->items->end(), lessThan);
+    // std::sort(this->items->begin(), this->items->end(), lessThan);
 
-    std::cout << "leaving std::sort" << std::endl;
+    // std::cout << "leaving std::sort" << std::endl;
   }
 
   // Things to note

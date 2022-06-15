@@ -37,11 +37,6 @@ public:
     // std::cout << "deque clone" << std::endl;
     return std::make_shared<QueryableDequeData<T, TAllocator>>(*this);
   }
-
-  virtual std::shared_ptr<Sorter<T, std::deque, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<DequeSorter<T, TAllocator>>();
-  }
 };
 
 #endif

@@ -6,18 +6,26 @@
 #include <memory>
 
 #include "../Iterators/QueryableIterator.hpp"
+#include "ISorter.hpp"
 
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
-  typename TAllocator = std::allocator<TObj>,
+  typename TLessThan = std::less<TObj>,
   typename ...TArgs>
-class Sorter
+class Sorter : public ISorter<TObj, TIterable, TArgs...>
 {
+protected:
+  TLessThan lessThan;
+
 public:
-  virtual void Sort(
-    TIterable<TObj, TAllocator, TArgs...> & container,
-    std::function<bool(const TObj &, const TObj &)> lessThan = std::less<TObj>()) const = 0;
+  Sorter(TLessThan lessThan = {}) :
+    lessThan(lessThan)
+  {
+  }
+  virtual ~Sorter() { }
+
+  virtual void Sort(TIterable<TObj, TArgs...> & container) const = 0;
 };
 
 #endif

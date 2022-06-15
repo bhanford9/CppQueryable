@@ -78,11 +78,6 @@ public:
   {
     this->items->push_back(item);
   }
-
-  virtual std::shared_ptr<Sorter<TObj, std::vector, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<VectorSorter<TObj, TAllocator>>();
-  }
 };
 
 #endif

@@ -40,7 +40,7 @@ public:
 
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, int startingIndex, IteratorType type)
   {
-    std::cout << "QueryableIterator constructor 2, starting index: " << startingIndex << std::endl;
+    // std::cout << "QueryableIterator constructor 2, starting index: " << startingIndex << std::endl;
     this->queryableData = queryableData->Clone();
     this->index = startingIndex;
     this->type = type;
@@ -48,7 +48,7 @@ public:
 
   QueryableIterator(const QueryableIterator<T> & other)
   {
-    std::cout << "QueryableIterator constructor 3, index: " << other.index << std::endl;
+    // std::cout << "QueryableIterator constructor 3, index: " << other.index << std::endl;
     this->queryableData = other.queryableData->Clone();
     this->index = other.index;
     this->type = other.type;
@@ -98,13 +98,13 @@ public:
 
   inline T * operator->() const
   {
-    // std::cout << "-> operator" << std::endl;
+    std::cout << "-> operator" << std::endl;
     return &this->queryableData->Get(this->type);
   }
 
   inline QueryableIterator<T> & operator=(IQueryableData<T> * queryableData)
   {
-    // std::cout << "\n\nthis is probably bad\n\n" << std::endl;
+    std::cout << "\n\nthis is probably bad\n\n" << std::endl;
     this->queryableData = queryableData;
     return *this;
   }
@@ -130,7 +130,8 @@ public:
 
   virtual QueryableIterator<T>& operator=(const QueryableIterator<T>& value)
   {
-    std::cout << "within asignement operator"
+      std::cout << "start assignment" << std::endl;
+    std::cout << "within assignment operator"
       << "\n\tindex: " << value.index
       << "\n\tvalue: " << value.queryableData->Get(value.type)
       << std::endl;
@@ -151,8 +152,9 @@ public:
 
   virtual QueryableIterator<T>& operator++()
   {
+      std::cout << "start ++" << std::endl;
     std::cout << "in operator++"
-      << "\n\tCurrent Index: " << this->index 
+      << "\n\tCurrent Index: " << this->index
       << "\n\tId: " << this->queryableData->myId
       << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
       << std::endl;
@@ -161,31 +163,32 @@ public:
 
     this->index += iterated;
 
-    std::cout << "out operator++"
-      << "\n\tCurrent Index: " << this->index 
-      << "\n\tId: " << this->queryableData->myId
-      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
-      << std::endl;
+    // std::cout << "out operator++"
+    //   << "\n\tCurrent Index: " << this->index
+    //   << "\n\tId: " << this->queryableData->myId
+    //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+    //   << std::endl;
     return *this;
   }
 
   virtual QueryableIterator<T>& operator--()
   {
-    std::cout << "in operator--"
-      << "\n\tCurrent Index: " << this->index 
-      << "\n\tId: " << this->queryableData->myId
-      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
-      << std::endl;
+      std::cout << "start --" << std::endl;
+    // std::cout << "in operator--"
+    //   << "\n\tCurrent Index: " << this->index
+    //   << "\n\tId: " << this->queryableData->myId
+    //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+    //   << std::endl;
     uint64_t iterated = 1;
     this->queryableData->Prev(this->type, iterated);
 
     this->index -= iterated;
 
-    std::cout << "out operator--"
-      << "\n\tCurrent Index: " << this->index 
-      << "\n\tId: " << this->queryableData->myId
-      << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
-      << std::endl;
+    // std::cout << "out operator--"
+    //   << "\n\tCurrent Index: " << this->index
+    //   << "\n\tId: " << this->queryableData->myId
+    //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
+    //   << std::endl;
     return *this;
   }
 
@@ -207,12 +210,16 @@ public:
 
   virtual T& operator*()
   {
+      std::cout << "starting *" << std::endl;
     // std::cout << "deref, addr: " << this << ", index: " << this->index << ", value: " << this->queryableData->Get(this->type) << std::endl;
-    return this->queryableData->Get(this->type);
+    T& value = this->queryableData->Get(this->type);
+    std::cout << "back from get" << std::endl;
+    return value;
   }
 
   virtual const T& operator*() const
   {
+      std::cout << "starting const *" << std::endl;
     // std::cout << "const deref, index: " << this->index << ", value: " << this->queryableData->Get(this->type) << std::endl;
     return this->queryableData->ConstGet(this->type);
   }

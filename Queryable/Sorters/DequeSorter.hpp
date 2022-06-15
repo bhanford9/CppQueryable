@@ -8,19 +8,25 @@
 
 template<
   typename TObj,
+  typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
 class DequeSorter :
   public Sorter<
     TObj,
     std::deque,
+    TLessThan,
     TAllocator>
 {
 public:
-  virtual void Sort(
-    std::deque<TObj, TAllocator> & container,
-    std::function<bool(const TObj &, const TObj &)> lessThan = std::less<TObj>()) const override
+  DequeSorter(TLessThan lessThan = {}) :
+    Sorter<TObj, std::deque, TLessThan, TAllocator>(lessThan)
   {
-    std::sort(container.begin(), container.end(), lessThan);
+  }
+  virtual ~DequeSorter() { }
+
+  virtual void Sort(std::deque<TObj, TAllocator> & container) const override
+  {
+    std::sort(container.begin(), container.end(), this->lessThan);
   }
 };
 

@@ -41,11 +41,6 @@ public:
   {
     this->items->push_back(item);
   }
-
-  virtual std::shared_ptr<Sorter<TObj, std::deque, TAllocator>> GetSorter() override
-  {
-    return std::make_shared<DequeSorter<TObj, TAllocator>>();
-  }
 };
 
 #endif

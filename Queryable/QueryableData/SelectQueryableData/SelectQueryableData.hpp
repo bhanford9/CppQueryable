@@ -67,6 +67,20 @@ public:
 
 
 
+  // cpp sorting algorithms are dependent on swaping references of values within the container.
+  // The corresponding referenced value is a completely different thing after Select has been
+  // done, but the entire contianer is not realized due to the deferred nature of the selection.
+  //
+  // In order for this to work, some kind of ToRealizedQueryableData will need to be in place
+  // for all QueryableData objects that performs any of the "deferred" actions in the chain of
+  // QueryableDatas and returns it as its most basic type of QueryableData
+  //
+  // Every child class will need to do its own Sort implemnetation so it can inately know what
+  // kind of base QueryableData instantiation to resolve to.
+  virtual void Sort(std::shared_ptr<ISorter<TOriginal, TIterable, TArgs...>> sorter)
+  {
+    this->original->Sort(sorter);
+  }
 
 
   virtual bool CanIncrement(IteratorType type) override
@@ -84,15 +98,15 @@ public:
   virtual TCurrent & Get(IteratorType type) override
   {
     // std::cout << "Select Data Get" << std::endl;
-    this->value = this->selector(this->original->Get(type));
-    return this->value;
+    *this->beginValue = this->selector(this->original->Get(type));
+    return *this->beginValue;
   }
 
   virtual const TCurrent & ConstGet(IteratorType type) override
   {
     // std::cout << "Select Data ConstGet" << std::endl;
-    this->value = this->selector(this->original->ConstGet(type));
-    return this->value;
+    *this->beginValue = this->selector(this->original->ConstGet(type));
+    return *this->beginValue;
   }
 
   virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override

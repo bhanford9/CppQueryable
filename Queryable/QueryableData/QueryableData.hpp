@@ -16,7 +16,7 @@
 #include "../Iterators/QueryableIterator.hpp"
 #include "../TypeConstraintUtil.hpp"
 #include "../Utilities/Condition.hpp"
-#include "../Sorters/Sorter.hpp"
+#include "../Sorters/ISorter.hpp"
 
 #include "../../DataStructures/Person.hpp"
 #include "TempId.hpp"
@@ -35,8 +35,9 @@ public:
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
 
-  // TODO --> consider making this a pointer so data doesn't have to be copied
-  TObj value;
+  // TODO --> If this value is a pointer, each child needs to instantiate it within the constructor using the allocator passed in
+  TObj * beginValue;
+  TObj * endValue;
   size_t size = 0;
 
   // this is a mess, but I can't find a better working solution...
@@ -59,10 +60,12 @@ protected:
     this->rbeginIterator = this->items->rbegin();
     this->rendIterator = this->items->rend();
     this->size = 0;
-    //this->index = 0;
-  }
 
-  virtual std::shared_ptr<Sorter<TObj, TIterable, TArgs...>> GetSorter() { return nullptr; }
+    const TObj * beginTemp = &(*this->beginIterator);
+    this->beginValue = const_cast<TObj*>(beginTemp);
+    const TObj * endTemp = &(*this->endIterator);
+    this->endValue = const_cast<TObj*>(endTemp);
+  }
 
 public:
 
@@ -106,7 +109,7 @@ public:
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
-    std::cout << "QueryableData Copy Constructor 2" << std::endl;
+    // std::cout << "QueryableData Copy Constructor 2" << std::endl;
     this->myId = id;
     this->items = data.items;
 
@@ -115,7 +118,8 @@ public:
     this->rbeginIterator = data.rbeginIterator;
     this->rendIterator = data.rendIterator;
 
-    this->value = data.value;
+    this->beginValue = data.beginValue;
+    this->endValue = data.endValue;
     this->size = data.size;
   }
 
@@ -200,16 +204,23 @@ public:
 // TODO --> override this for all children
   virtual TObj & Get(IteratorType type) override
   {
+      std::cout << "Get" << std::endl;
     switch (type)
     {
-        case IteratorType::BeginForward: { return *this->beginIterator; }
-        case IteratorType::EndForward: { return *this->endIterator; }
-        case IteratorType::BeginReverse: { return *this->rbeginIterator; }
-        case IteratorType::EndReverse: default: { return *this->rendIterator; }
-        // case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-        // case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-        // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-        // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    //   case IteratorType::BeginForward: { return *this->beginIterator; }
+    //   case IteratorType::EndForward: { return *this->endIterator; }
+    //   case IteratorType::BeginReverse: { return *this->rbeginIterator; }
+    //   case IteratorType::EndReverse: default: { return *this->rendIterator; }
+      case IteratorType::BeginForward:
+      {
+        // if (this->beginIterator < this->items->begin()) return (this->value ? *this->value : *this->beginIterator);
+        // if (!this->value) this->value = &(*this->beginIterator);
+        *this->beginValue = *this->beginIterator;
+        return *this->beginValue;
+      }
+      case IteratorType::EndForward: { *this->endValue = *this->endIterator; return *this->endValue; }
+      case IteratorType::BeginReverse: { *this->beginValue = *this->rbeginIterator; return *this->beginValue; }
+      case IteratorType::EndReverse: default: { *this->endValue = *this->rendIterator; return *this->endValue; }
     }
     // std::cout << "Get: " << this->value << std::endl;
   }
@@ -218,14 +229,14 @@ public:
   {
     switch (type)
     {
-      case IteratorType::BeginForward: return *this->beginIterator;
-      case IteratorType::EndForward: return *this->endIterator;
-      case IteratorType::BeginReverse: return *this->rbeginIterator;
-      case IteratorType::EndReverse: default: return *this->rendIterator;
-    //   case IteratorType::BeginForward: this->value = *this->beginIterator; return this->value;
-    //   case IteratorType::EndForward: this->value = *this->endIterator; return this->value;
-    //   case IteratorType::BeginReverse: this->value = *this->rbeginIterator; return this->value;
-    //   case IteratorType::EndReverse: default: this->value = *this->rendIterator; return this->value;
+    //   case IteratorType::BeginForward: return *this->beginIterator;
+    //   case IteratorType::EndForward: return *this->endIterator;
+    //   case IteratorType::BeginReverse: return *this->rbeginIterator;
+    //   case IteratorType::EndReverse: default: return *this->rendIterator;
+      case IteratorType::BeginForward: { *this->beginValue = *this->beginIterator; return *this->beginValue; }
+      case IteratorType::EndForward: { *this->endValue = *this->endIterator; return *this->endValue; }
+      case IteratorType::BeginReverse: { *this->beginValue = *this->rbeginIterator; return *this->beginValue; }
+      case IteratorType::EndReverse: default: { *this->endValue = *this->rendIterator; return *this->endValue; }
     }
   }
 
@@ -276,12 +287,9 @@ public:
     this->size = 0;
   }
 
-  // This TSorter template is lazy, put in the actual interface
-  //const Sorter<TObj, TIterable, TLessThan, TArgs...> & sorter,
-  template<typename TLessThan = std::less<TObj>>
-  void Sort(TLessThan lessThan = {})
+  virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
   {
-    this->GetSorter()->Sort(*this->items, lessThan);
+    sorter->Sort(*this->items);
   }
 
   // virtual TIterable<TObj, TArgs...> & GetContainer()
@@ -305,6 +313,15 @@ public:
   {
     // std::cout << "Standard Queryable begin" << std::endl;
     this->beginIterator = this->items->begin();
+    // if (this->beginValue)
+    // {
+    //     *this->beginValue = *this->beginIterator;
+    // }
+    // else
+    // {
+    //     const TObj * endTemp = &(*this->endIterator);
+    //     this->endValue = const_cast<TObj*>(endTemp);
+    // }
     QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginForward);
     return retVal;
   }
@@ -316,6 +333,15 @@ public:
   {
     // std::cout << "Standard Queryable end" << std::endl;
     this->endIterator = this->items->end();
+    // if (this->endValue)
+    // {
+    //     *this->endValue = *this->endIterator;
+    // }
+    // else
+    // {
+    //     const TObj * endTemp = &(*this->endIterator);
+    //     this->endValue = const_cast<TObj*>(endTemp);
+    // }
     QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
     return retVal;
   }
