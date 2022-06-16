@@ -76,6 +76,36 @@ TEST_F(SortFunctionalTest, ListDefault)
   });
 }
 
+TEST_F(SortFunctionalTest, MultiSetDefault)
+{
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  local.Sort<std::multiset>();
+
+  ASSERT_EQ(this->queryable.Count(), local.Count());
+
+  uint previous = 0;
+  local.ForEach([&](uint value)
+  {
+    ASSERT_TRUE(previous <= value);
+    previous = value;
+  });
+}
+
+TEST_F(SortFunctionalTest, SetDefault)
+{
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  local.Sort<std::set>();
+
+  ASSERT_EQ(this->queryable.Count(), local.Count());
+
+  uint previous = 0;
+  local.ForEach([&](uint value)
+  {
+    ASSERT_TRUE(previous <= value);
+    previous = value;
+  });
+}
+
 TEST_F(SortFunctionalTest, VectorDefault)
 {
   IQueryable<uint> local = BuildQueryable2(this->queryable.ToVector());
@@ -141,6 +171,34 @@ TEST_F(SortFunctionalTest, ListClass)
     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
     previous = person;
   });
+}
+
+TEST_F(SortFunctionalTest, MultiSetClass)
+{
+  ISortedQueryable<Person> local = BuildQueryable2(this->people.ToMultiSet());
+  local.Sort<std::multiset>();
+
+  ASSERT_EQ(this->people.Count(), local.Count());
+
+  Person previous;
+  previous.SetName("\0");
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetName() <= person.GetName());
+    previous = person;
+  });
+
+// have not figured out why this lambda doesn't build yet
+//
+//   local.Sort<std::multiset>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+
+//   previous = Person();
+//   previous.SetAge(-1);
+//   local.ForEach([&](Person person)
+//   {
+//     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
+//     previous = person;
+//   });
 }
 
 TEST_F(SortFunctionalTest, VectorClass)

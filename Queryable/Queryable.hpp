@@ -10,11 +10,11 @@
 #include "InternalQueryable.hpp"
 #include "IQueryable.hpp"
 #include "ISortedQueryable.hpp"
-#include "QueryableTypeConverters/DequeQueryableTypeConverter.hpp"
-#include "QueryableTypeConverters/ListQueryableTypeConverter.hpp"
-#include "QueryableTypeConverters/MultiSetQueryableTypeConverter.hpp"
-#include "QueryableTypeConverters/SetQueryableTypeConverter.hpp"
-#include "QueryableTypeConverters/VectorQueryableTypeConverter.hpp"
+// #include "QueryableTypeConverters/DequeQueryableTypeConverter.hpp"
+// #include "QueryableTypeConverters/ListQueryableTypeConverter.hpp"
+// #include "QueryableTypeConverters/MultiSetQueryableTypeConverter.hpp"
+// #include "QueryableTypeConverters/SetQueryableTypeConverter.hpp"
+// #include "QueryableTypeConverters/VectorQueryableTypeConverter.hpp"
 #include "SelectBuilders/SelectBuilder.hpp"
 #include "SelectBuilders/DequeSelectBuilder.hpp"
 #include "SelectBuilders/ListSelectBuilder.hpp"
@@ -81,7 +81,7 @@ public:
   template<typename TAllocator>
   TAllocator GetAllocator()
   {
-    return this->queryable->GetAllocator();
+    return this->queryable->template GetAllocator<TAllocator>();
   }
 
   template<typename TLessThan>
@@ -194,7 +194,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::deque, TAllocator> FromDeque(const std::deque<TObj, TAllocator> & iterable)
+  static Queryable<TObj, std::deque, TAllocator> FromDeque2(const std::deque<TObj, TAllocator> & iterable)
   {
     Queryable<TObj, std::deque, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque, TAllocator>>(
@@ -210,7 +210,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::list, TAllocator> FromList(const std::list<TObj, TAllocator> & iterable)
+  static Queryable<TObj, std::list, TAllocator> FromList2(const std::list<TObj, TAllocator> & iterable)
   {
     Queryable<TObj, std::list, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list, TAllocator>>(
@@ -226,7 +226,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromMultiSet(const std::multiset<TObj, TLessThan, TAllocator> & iterable)
+  static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromMultiSet2(const std::multiset<TObj, TLessThan, TAllocator> & iterable)
   {
     Queryable<TObj, std::multiset, TLessThan, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan, TAllocator>>(
@@ -250,7 +250,7 @@ public:
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::set, TLessThan, TAllocator> FromSet(const std::set<TObj, TLessThan, TAllocator> & iterable)
+  static Queryable<TObj, std::set, TLessThan, TAllocator> FromSet2(const std::set<TObj, TLessThan, TAllocator> & iterable)
   {
     Queryable<TObj, std::set, TLessThan, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
@@ -274,7 +274,7 @@ public:
   }
 
   template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::vector, TAllocator> FromVector(const std::vector<TObj, TAllocator> & iterable)
+  static Queryable<TObj, std::vector, TAllocator> FromVector2(const std::vector<TObj, TAllocator> & iterable)
   {
     Queryable<TObj, std::vector, TAllocator> queryable(
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector, TAllocator>>(

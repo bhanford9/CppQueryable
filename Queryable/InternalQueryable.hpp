@@ -119,7 +119,7 @@ public:
   template<typename TAllocator>
   TAllocator GetAllocator()
   {
-    return this->items->GetAllocator();
+    return this->items->template GetAllocator<TAllocator>();
   }
 
   template<typename TLessThan>
@@ -130,7 +130,7 @@ public:
 
   inline QueryableIterator<TObj> begin()
   {
-    std::cout << "\nInternalQueryable::begin" << std::endl;
+    // std::cout << "\nInternalQueryable::begin" << std::endl;
     return this->items->begin();
   }
 
@@ -986,46 +986,6 @@ public:
         break;
     }
   }
-
-  // Things to note
-  //   1. [multi]sets must use a copy of storage
-  //   1.1. this is due to the sorting algorithm being type dependent within the container
-  //   2. this should not be used for [multi]sets if the comparator is the same it was built with
-  //   3. all other types use their built in optimized sorting algorithms
-  //   4. would be faster if std::function could be replaced by type parameter, but then inheritance wouldn't work
-//   template<typename TLessThan = std::less<TObj>>
-//   void Sort(TLessThan lessThan = {})
-//   {
-//     this->items->Sort(lessThan);
-//     // std::shared_ptr<Sorter<TObj, TIterable, TLessThan, TArgs...>> sorter;
-
-//     // switch (this->GetType())
-//     // {
-//     //   case QueryableType::Deque:
-//     //   {
-//     //     sorter = std::make_shared<DequeSorter<TObj, TLessThan>>();
-//     //     // DequeSorter<TObj, TLessThan> dequeSorter;
-//     //     // this->items->Sort(dequeSorter, lessThan);
-//     //     break;
-//     //   }
-//     //   case QueryableType::List:
-//     //   {
-//     //     sorter = std::make_shared<ListSorter<TObj, TLessThan>>();
-//     //     // ListSorter<TObj, TLessThan> listSorter;
-//     //     // this->items->Sort(listSorter, lessThan);
-//     //     break;
-//     //   }
-//     //   case QueryableType::Vector:
-//     //   {
-//     //     sorter = std::make_shared<VectorSorter<TObj, TLessThan>>();
-//     //     // VectorSorter<TObj, TLessThan> vectorSorter;
-//     //     // this->items->Sort(vectorSorter, lessThan);
-//     //     break;
-//     //   }
-//     // }
-
-//     // this->items->Sort(*sorter, lessThan);
-//   }
 
   // TODO --> recently found out that the allocator and value compare are able to be retrieved
   //   from the std lib containers... Don't need to have them passed in

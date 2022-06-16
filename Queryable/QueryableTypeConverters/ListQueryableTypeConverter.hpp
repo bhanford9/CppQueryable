@@ -10,16 +10,16 @@ template<
   typename TDestObj,
   typename TDestAllocator = std::allocator<TDestObj>>
 class ListQueryableTypeConverter :
-  public QueryableTypeConverter<TSourceObj, TDestObj, std::list, TDestAllocator>
+  public QueryableTypeConverter<TSourceObj, TDestObj, std::list, TDesTAllocator>
 {
 public:
-  virtual std::shared_ptr<InternalQueryable<TDestObj, std::list, TDestAllocator>> Convert(
+  virtual std::shared_ptr<InternalQueryable<TDestObj, std::list, TDesTAllocator>> Convert(
     QueryableIterator<TSourceObj> first,
     QueryableIterator<TSourceObj> last,
     TDestAllocator allocator = {}) const override
   {
-    ListInternalQueryable<TDestObj, TDestAllocator> listQueryable(first, last, allocator);
-    return std::make_shared<ListInternalQueryable<TDestObj, TDestAllocator>>(listQueryable);
+    ListInternalQueryable<TDestObj, TDesTAllocator> listQueryable(first, last, allocator);
+    return std::make_shared<ListInternalQueryable<TDestObj, TDesTAllocator>>(listQueryable);
   }
 };
 

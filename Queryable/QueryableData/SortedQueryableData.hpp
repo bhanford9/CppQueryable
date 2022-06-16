@@ -15,14 +15,14 @@ template<
 class SortedQueryableData : public QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>
 {
 protected:
-  TCompare comparator; // TODO --> I don't think this is actually necessary
+//   TCompare comparator; // TODO --> I don't think this is actually necessary
 
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   SortedQueryableData(TCompare comparator = {})
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>()
   {
-    this->comparator = comparator;
+    // this->comparator = comparator;
     this->items = TIterable<T, TCompare, TAllocator, TArgs...>(comparator);
   }
 
@@ -34,26 +34,22 @@ public:
   //   this->comparator = comparator;
   // }
 
-  SortedQueryableData(
-    const TIterable<T, TCompare, TAllocator, TArgs...> & items,
-    TCompare comparator = {})
+  SortedQueryableData(const TIterable<T, TCompare, TAllocator, TArgs...> & items)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
   {
-    this->comparator = comparator;
+    // this->comparator = comparator;
   }
 
-  SortedQueryableData(
-    TIterable<T, TCompare, TAllocator, TArgs...> && items,
-    TCompare comparator = {})
+  SortedQueryableData(TIterable<T, TCompare, TAllocator, TArgs...> && items)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(std::move(items))
   {
-    this->comparator = comparator;
+    // this->comparator = comparator;
   }
 
   SortedQueryableData(const SortedQueryableData<T, TIterable, TCompare, TAllocator, TArgs...> & data)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(data)
   {
-    this->comparator = data.comparator;
+    // this->comparator = data.comparator;
   }
 
   SortedQueryableData(
@@ -62,8 +58,8 @@ public:
     TCompare comparator = {})
   {
     // TODO SFINAE require this constructor
-    this->comparator = comparator;
-    this->items = std::make_shared<TIterable<T, TCompare, TAllocator, TArgs...>>(first, last, this->comparator);
+    // this->comparator = comparator;
+    this->items = std::make_shared<TIterable<T, TCompare, TAllocator, TArgs...>>(first, last, comparator);
     this->size = this->items->size();
   }
 

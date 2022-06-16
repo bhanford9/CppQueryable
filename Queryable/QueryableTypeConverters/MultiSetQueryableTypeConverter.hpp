@@ -11,17 +11,17 @@ template<
   typename TDestLessThan = std::less<TDestObj>,
   typename TDestAllocator = std::allocator<TDestObj>>
 class MultiSetQueryableTypeConverter :
-  public QueryableTypeConverter<TSourceObj, TDestObj, std::multiset, TDestLessThan, TDestAllocator>
+  public QueryableTypeConverter<TSourceObj, TDestObj, std::multiset, TDesTLessThan, TDesTAllocator>
 {
 public:
-  virtual std::shared_ptr<InternalQueryable<TDestObj, std::multiset, TDestLessThan, TDestAllocator>> Convert(
+  virtual std::shared_ptr<InternalQueryable<TDestObj, std::multiset, TDesTLessThan, TDesTAllocator>> Convert(
     QueryableIterator<TSourceObj> first,
     QueryableIterator<TSourceObj> last,
-    TDestLessThan lessThan = {},
-    TDestAllocator allocator = {}) const override
+    const TDestLessThan & lessThan = {},
+    const TDestAllocator & allocator = {}) const override
   {
-    MultiSetInternalQueryable<TDestObj, TDestLessThan, TDestAllocator> multisetQueryable(first, last, lessThan, allocator);
-    return std::make_shared<MultiSetInternalQueryable<TDestObj, TDestLessThan, TDestAllocator>>(multisetQueryable);
+    MultiSetInternalQueryable<TDestObj, TDesTLessThan, TDesTAllocator> multisetQueryable(first, last, lessThan, allocator);
+    return std::make_shared<MultiSetInternalQueryable<TDestObj, TDesTLessThan, TDesTAllocator>>(multisetQueryable);
   }
 };
 

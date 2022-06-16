@@ -29,7 +29,7 @@ protected:
 public:
 //   SortQueryableData(
 //     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
-//     const TLessThan & compare) :
+//     TLessThan compare) :
 //       original(std::move(data)),
 //       compare(compare)
 //   {
@@ -38,7 +38,7 @@ public:
 //   }
 //   SortQueryableData(
 //     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
-//     const TLessThan & compare) :
+//     TLessThan compare) :
 //       original(data),
 //       compare(compare)
 //   {

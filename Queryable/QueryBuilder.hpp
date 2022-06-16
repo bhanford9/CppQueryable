@@ -108,7 +108,7 @@ namespace QueryBuilder
   {
     ISortedQueryable<T, TArgs...> queryable(
       std::make_shared<QueryableMultiSet<T, TArgs...>>(
-        QueryableMultiSet<T, TArgs...>::FromMultiSet(items)));
+        QueryableMultiSet<T, TArgs...>::FromMultiSet2(items)));
     return queryable;
   }
   template<typename T>
@@ -125,7 +125,7 @@ namespace QueryBuilder
   {
     ISortedQueryable<T, TArgs...> queryable(
       std::make_shared<QueryableSet<T, TArgs...>>(
-        QueryableSet<T, TArgs...>::FromSet(items)));
+        QueryableSet<T, TArgs...>::FromSet2(items)));
     return queryable;
   }
   template<typename T>

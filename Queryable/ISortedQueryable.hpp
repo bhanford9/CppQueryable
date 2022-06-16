@@ -95,35 +95,35 @@ public:
 
   template<
     template<typename, typename ...> typename TIterable,
-    typename TLessThan,
+    typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<T>>
-  ISortedQueryable<T, TLessThan, TAllocator> Sort(TLessThan lessThan)
+  ISortedQueryable<T, TLessThan, TAllocator> Sort(TLessThan lessThan = {})
   {
-    // switch (this->queryable->GetType())
-    // {
-    //   case QueryableType::MultiSet:
-    //   {
-    //     ISortedQueryable<T, TLessThan, TAllocator> newMultiSet(
-    //       std::make_shared<QueryableMultiSet<T, TLessThan, TAllocator>>(
-    //         QueryableMultiSet<T, TLessThan, TAllocator>::FromMultiSet(
-    //           this->queryable->ToMultiSet(
-    //             lessThan,
-    //             this->queryable->GetAllocator()))));
-    //     return newMultiSet;
-    //   }
-    //   case QueryableType::Set:
-    //   {
-    //     ISortedQueryable<T, TLessThan, TAllocator> newSet(
-    //       std::make_shared<QueryableSet<T, TLessThan, TAllocator>>(
-    //         QueryableSet<T, TLessThan, TAllocator>::FromSet(
-    //           this->queryable->ToSet(
-    //             lessThan,
-    //             this->queryable->GetAllocator()))));
-    //     return newSet;
-    //   }
-    // }
-
-    return *this;
+    switch (this->queryable->GetType())
+    {
+      case QueryableType::MultiSet:
+      {
+        ISortedQueryable<T, TLessThan, TAllocator> newMultiSet(
+          std::make_shared<Queryable<T, std::multiset, TLessThan, TAllocator>>(
+            Queryable<T, std::multiset, TLessThan, TAllocator>::FromMultiSet2(
+              this->queryable->ToMultiSet(
+                lessThan,
+                this->queryable->template GetAllocator<std::multiset, TAllocator>()))));
+        return newMultiSet;
+      }
+      case QueryableType::Set:
+      {
+        ISortedQueryable<T, TLessThan, TAllocator> newSet(
+          std::make_shared<Queryable<T, std::set, TLessThan, TAllocator>>(
+            Queryable<T, std::set, TLessThan, TAllocator>::FromSet2(
+              this->queryable->ToSet(
+                lessThan,
+                this->queryable->template GetAllocator<std::set, TAllocator>()))));
+        return newSet;
+      }
+      default:
+        throw; // TODO
+    }
   }
 
   inline ISortedQueryable<T, TArgs...> Where(std::function<bool(const T &)> condition)

@@ -20,12 +20,10 @@ class AnyFunctionalTest : public ::testing::Test
 {
 protected:
   IQueryable<uint> queryable;
-  ISortedQueryable<uint> queryable2;
   IQueryable<std::string> queryableStrings;
 
   AnyFunctionalTest() :
     queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
-    queryable2(BuildQueryable2(std::set<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
     queryableStrings(BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"})))
   {
   }

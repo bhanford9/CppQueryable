@@ -150,6 +150,22 @@ public:
     return *const_cast<Queryable<T, TIterable, TArgs...>*>(dynamic_cast<const Queryable<T, TIterable, TArgs...>*>(this));
   }
 
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TAllocator>
+  TAllocator GetAllocator()
+  {
+    return this->AsExtendedQueryable<TIterable>().template GetAllocator<TAllocator>();
+  }
+
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TLessThan>
+  TLessThan GetValueCompare()
+  {
+    return this->AsExtendedQueryable<TIterable>().GetValueCompare();
+  }
+
   template<typename TAllocator = std::allocator<T>>
   inline std::deque<T, TAllocator> ToDeque(TAllocator allocator = {}) const
   {

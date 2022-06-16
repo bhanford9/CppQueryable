@@ -11,17 +11,17 @@ template<
   typename TDestLessThan = std::less<TDestObj>,
   typename TDestAllocator = std::allocator<TDestObj>>
 class SetQueryableTypeConverter :
-  public QueryableTypeConverter<TSourceObj, TDestObj, std::set, TDestLessThan, TDestAllocator>
+  public QueryableTypeConverter<TSourceObj, TDestObj, std::set, TDesTLessThan, TDesTAllocator>
 {
 public:
-  virtual std::shared_ptr<InternalQueryable<TDestObj, std::set, TDestLessThan, TDestAllocator>> Convert(
+  virtual std::shared_ptr<InternalQueryable<TDestObj, std::set, TDesTLessThan, TDesTAllocator>> Convert(
     QueryableIterator<TSourceObj> first,
     QueryableIterator<TSourceObj> last,
-    TDestLessThan lessThan = {},
-    TDestAllocator allocator = {}) const override
+    const TDestLessThan & lessThan = {},
+    const TDestAllocator & allocator = {}) const override
   {
-    SetInternalQueryable<TDestObj, TDestLessThan, TDestAllocator> setQueryable(first, last, lessThan, allocator);
-    return std::make_shared<SetInternalQueryable<TDestObj, TDestLessThan, TDestAllocator>>(setQueryable);
+    SetInternalQueryable<TDestObj, TDesTLessThan, TDesTAllocator> setQueryable(first, last, lessThan, allocator);
+    return std::make_shared<SetInternalQueryable<TDestObj, TDesTLessThan, TDesTAllocator>>(setQueryable);
   }
 };
 
