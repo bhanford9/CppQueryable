@@ -50,7 +50,6 @@ public:
     // std::cout << "about to go into select for loop" << std::endl;
     for (const TCurrent & value : *this)
     {
-        std::cout << "within select for loop: " << value << std::endl;
         data.push_back(value);
     }
 

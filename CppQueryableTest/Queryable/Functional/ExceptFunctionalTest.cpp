@@ -796,6 +796,12 @@ TEST_F(ExceptFunctionalTest, WhereTemplateExcept)
     .Except<std::deque>(evens)
     .ToDeque();
 
+//   std::cout << "Evens:" << std::endl;
+//   for (uint value : evens) std::cout << value << ", ";
+//   std::cout << "\nResults:" << std::endl;
+//   for (uint value : result) std::cout << value << ", ";
+//   std::cout << std::endl;
+
   ASSERT_EQ(oddsOverTen, result.size());
   for (int value : result) { ASSERT_TRUE(value > 10); }
 }

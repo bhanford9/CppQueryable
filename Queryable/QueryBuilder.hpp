@@ -102,6 +102,13 @@ namespace QueryBuilder
     return queryable;
   }
 
+// TODO: For sorted containers (i.e. map, set, multiset), build an ISortedQueryable instead
+//   Then, there can be a separate file (some of which will have to be duplicated) that
+//   handles Sort and just returns a new instance of self with the new data type.
+//
+// This may lead to needing to create a 3rd interface that both inherit so that they could
+//   still be passed around interchangeably, but that might be a not so useful interface
+//   and handling opening it up to an extend Queryable might be a pain.
   template<typename T, typename ...TArgs>
   IQueryable<T, TArgs...> BuildQueryable2(std::multiset<T, TArgs...> items)
   {

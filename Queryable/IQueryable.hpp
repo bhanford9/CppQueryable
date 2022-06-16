@@ -373,9 +373,14 @@ public:
     {
       this->queryable->template Sort<TIterable, TLessThan>(lessThan);
     }
+    else
+    {
+        // return new instance?
+        // maybe a different interface for sorted containers instead? (this sounds cleaner)
+    }
 
     return *this;
-}
+  }
 
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {

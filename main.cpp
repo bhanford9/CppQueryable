@@ -26,7 +26,6 @@
 #include "Queryable/QueryableData/QueryableVectorData.hpp"
 #include "Queryable/QueryableData/SortQueryableData/SortQueryableData.hpp"
 
-int TempId::id = 0;
 using namespace QueryBuilder;
 
 int main()

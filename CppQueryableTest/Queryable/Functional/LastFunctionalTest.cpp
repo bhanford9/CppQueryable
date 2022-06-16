@@ -21,14 +21,19 @@ using namespace QueryBuilder;
 class LastFunctionalTest : public ::testing::Test
 {
 protected:
-  uint expectedUnorderedLast = 9;
-  uint expectedOrderedLast = 867;
-  uint expectedUnorderedUnder40 = 9;
-  uint expectedOrderedUnder40 = 34;
-  uint threshold = 40;
+  uint expectedUnorderedLast;
+  uint expectedOrderedLast;
+  uint expectedUnorderedUnder40;
+  uint expectedOrderedUnder40;
+  uint threshold;
   IQueryable<uint> queryable;
 
   LastFunctionalTest() :
+    expectedUnorderedLast(9),
+    expectedOrderedLast(867),
+    expectedUnorderedUnder40(9),
+    expectedOrderedUnder40(34),
+    threshold(40),
     queryable(BuildQueryable2(std::vector<uint>({ 4, 7, 4, 3, 76, 8, 45, expectedOrderedLast, 76, 0, expectedOrderedUnder40, expectedUnorderedLast })))
   {
   }

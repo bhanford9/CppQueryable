@@ -45,11 +45,6 @@ public:
     this->items->push_back(item);
     this->size++;
   }
-
-  virtual std::shared_ptr<IQueryableData<T>> GetRealizedQueryableData() override
-  {
-    return this->Clone();
-  }
 };
 
 #endif

@@ -98,26 +98,29 @@ public:
   //    to track this instead of iterating over the container would be good.
   virtual size_t Count() override
   {
-    return this->original->Count();
+    //   return this->original->Count();
     // if (this->sizeIsCalculated)
     // {
     //   return this->size;
     // }
 
-    // size_t count = 0;
+    size_t count = 0;
 
-    // for (TObj item : *this->original)
-    // {
-    //   if (condition(item))
-    //   {
-    //     count++;
-    //   }
-    // }
+    // not sure I like needing to get the realized queryable data
+    std::shared_ptr<IQueryableData<TObj>> realized = this->original->GetRealizedQueryableData();
 
-    // this->size = count;
+    for (const TObj & item : *realized)
+    {
+      if (condition(item))
+      {
+        count++;
+      }
+    }
+
+    this->size = count;
     // this->sizeIsCalculated = true;
 
-    // return count;
+    return count;
   }
 
   virtual void Add(TObj item) override
@@ -182,6 +185,7 @@ public:
   virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
+    std::cout << "bad" << std::endl;
     uint64_t dummy = 0;
     while (this->original->CanIncrement(type) && addend-- > 0)
     {
@@ -194,6 +198,7 @@ public:
   virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
+    std::cout << "bad" << std::endl;
     uint64_t dummy = 0;
     while (this->original->CanDecrement(type) && subtrahend-- > 0)
     {
@@ -227,9 +232,6 @@ public:
     QueryableIterator<TObj> child = this->original->end();
 
     uint64_t startIndex = child.index;
-    // uint64_t iterated = 0;
-    // this->DecrementPastFalseConditions(IteratorType::EndForward, iterated);
-    // startIndex -= iterated;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndForward);
 
     return retVal;
@@ -240,11 +242,12 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rbegin() override
   {
-    // TODO
-    this->original->rbegin();
-    uint64_t startIndex = 0;
+    QueryableIterator<TObj> child = this->original->rbegin();
+
+    uint64_t startIndex = child.index;
     this->IncrementPastFalseConditions(IteratorType::BeginReverse, startIndex);
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
+
     return retVal;
   }
 
@@ -253,15 +256,11 @@ public:
   // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rend() override
   {
-    // TODO
-    this->original->rend();
+    QueryableIterator<TObj> child = this->original->end();
 
-    if (!this->sizeIsCalculated)
-    {
-      this->Count();
-    }
+    uint64_t startIndex = child.index;
+    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
-    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
     return retVal;
   }
 };

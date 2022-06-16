@@ -36,11 +36,6 @@ public:
   {
     return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
   }
-
-  virtual std::shared_ptr<IQueryableData<T>> GetRealizedQueryableData() override
-  {
-    return this->Clone();
-  }
 };
 
 #endif

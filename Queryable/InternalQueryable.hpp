@@ -947,17 +947,9 @@ public:
 
   template<typename TLessThan = std::less<TObj>>
   void Sort(TLessThan lessThan = {})
-//   virtual void Sort(
-//     std::function<bool(const TObj &, const TObj &)> lessThan =
-//       [](const TObj & a, const TObj & b) { return a < b; })
   {
-    // sorting is fragile wrt to container in cpp. Need to have a simple QueryableData container to be able to sort properly
-    std::cout << "in sort" << std::endl;
+    // sorting is fragile wrt to container type in cpp. Need to have a simple QueryableData container to be able to sort properly
     this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
-    std::cout << "after getting realized" << std::endl;
-
-    this->ForEach([](double value) { std::cout << value << ", "; });
-    std::cout << std::endl;
 
     switch (this->GetType())
     {
@@ -981,18 +973,6 @@ public:
       default:
         break;
     }
-    // std::cout << "\nAFTER SORT" << std::endl;
-    // this->ForEach([](double value) { std::cout << value << ", "; });
-    // std::cout << std::endl;
-    // this->items = std::move(
-    //   std::make_shared<SortQueryableData<TObj, TIterable>>(
-    //     std::move(this->items)));
-
-    // std::cout << "going into std::sort" << std::endl;
-
-    // std::sort(this->items->begin(), this->items->end(), lessThan);
-
-    // std::cout << "leaving std::sort" << std::endl;
   }
 
   // Things to note
@@ -1035,7 +1015,8 @@ public:
 //     // this->items->Sort(*sorter, lessThan);
 //   }
 
-  // TODO --> make this virtual? like Where()
+  // TODO --> recently found out that the allocator and value compare are able to be retrieved
+  //   from the std lib containers... Don't need to have them passed in
   template<
     template<typename, typename ...> typename TExceptions,
     typename TLessThan = std::less<TObj>,
@@ -1055,6 +1036,9 @@ public:
       lessThan,
       allocator);
 
+    // TODO --> This should not be necessary and I am pretty sure there is a bug somewhere causing the need for it
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+
     // O(m) make a copy of current items
     TIterable<TObj, TArgs...> copy(this->items->begin(), this->items->end());
 
@@ -1063,7 +1047,7 @@ public:
 
     auto last = sortedExceptions.end();
     // O(mlogn) add back any that don't exist within exceptions
-    for (TObj item : copy)
+    for (const TObj & item : copy)
     {
       if (sortedExceptions.find(item) == last)
       {

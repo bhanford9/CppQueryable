@@ -46,8 +46,8 @@ protected:
 
 TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 {
-  IQueryable<int> localQueryable(BuildQueryable2(std::vector<int>({2, 1, 3, 7, 8, 12, 17})));
-  std::vector<int> expected({2, 8, 12});
+  IQueryable<int> localQueryable(BuildQueryable2(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
+  std::vector<int> expected({ 4, 4, 76, 8, 76, 0 });
 
   std::vector<int> values = localQueryable
     .Where([](int x) { return (x % 2) == 0; })

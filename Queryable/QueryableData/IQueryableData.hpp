@@ -14,7 +14,6 @@ template<typename TObj>
 class IQueryableData
 {
 public:
-  int myId = 0;
   virtual ~IQueryableData() { }
 
   virtual void Clear() = 0;

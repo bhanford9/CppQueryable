@@ -15,11 +15,8 @@
 #include "../../../DataStructures/Point.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
-#include "../../../Queryable/QueryableData/TempId.hpp"
 
 using namespace QueryBuilder;
-
-int TempId::id = 0;
 
 class SortFunctionalTest : public ::testing::Test
 {
@@ -94,102 +91,99 @@ TEST_F(SortFunctionalTest, VectorDefault)
   });
 }
 
-// TEST_F(SortFunctionalTest, DequeClass)
-// {
-//   IQueryable<Person> local = BuildQueryable2(this->people.ToDeque());
-//   local.Sort<std::deque>();
+TEST_F(SortFunctionalTest, DequeClass)
+{
+  IQueryable<Person> local = BuildQueryable2(this->people.ToDeque());
+  local.Sort<std::deque>();
 
-//   ASSERT_EQ(this->people.Count(), local.Count());
+  ASSERT_EQ(this->people.Count(), local.Count());
 
-//   Person previous;
-//   previous.SetName("\0");
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetName() <= person.GetName());
-//     previous = person;
-//   });
+  Person previous;
+  previous.SetName("\0");
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetName() <= person.GetName());
+    previous = person;
+  });
 
-//   local.Sort<std::deque>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort<std::deque>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
-//   previous = Person();
-//   previous.SetAge(-1);
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
-//     previous = person;
-//   });
-// }
+  previous = Person();
+  previous.SetAge(-1);
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetAge() <= person.GetAge());
+    previous = person;
+  });
+}
 
-// TEST_F(SortFunctionalTest, ListClass)
-// {
-//   IQueryable<Person> local = BuildQueryable2(this->people.ToList());
-//   local.Sort<std::list>();
+TEST_F(SortFunctionalTest, ListClass)
+{
+  IQueryable<Person> local = BuildQueryable2(this->people.ToList());
+  local.Sort<std::list>();
 
-//   ASSERT_EQ(this->people.Count(), local.Count());
+  ASSERT_EQ(this->people.Count(), local.Count());
 
-//   Person previous;
-//   previous.SetName("\0");
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetName() <= person.GetName());
-//     previous = person;
-//   });
+  Person previous;
+  previous.SetName("\0");
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetName() <= person.GetName());
+    previous = person;
+  });
 
-//   local.Sort<std::list>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort<std::list>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
-//   previous = Person();
-//   previous.SetAge(-1);
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
-//     previous = person;
-//   });
-// }
+  previous = Person();
+  previous.SetAge(-1);
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetAge() <= person.GetAge());
+    previous = person;
+  });
+}
 
-// TEST_F(SortFunctionalTest, VectorClass)
-// {
-//   IQueryable<Person> local = BuildQueryable2(this->people.ToVector());
-//   local.Sort<std::vector>();
+TEST_F(SortFunctionalTest, VectorClass)
+{
+  IQueryable<Person> local = BuildQueryable2(this->people.ToVector());
+  local.Sort<std::vector>();
 
-//   ASSERT_EQ(this->people.Count(), local.Count());
+  ASSERT_EQ(this->people.Count(), local.Count());
 
-//   Person previous;
-//   previous.SetName("\0");
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetName() <= person.GetName());
-//     previous = person;
-//   });
+  Person previous;
+  previous.SetName("\0");
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetName() <= person.GetName());
+    previous = person;
+  });
 
-//   local.Sort<std::vector>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort<std::vector>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
-//   previous = Person();
-//   previous.SetAge(-1);
-//   local.ForEach([&](Person person)
-//   {
-//     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
-//     previous = person;
-//   });
-// }
+  previous = Person();
+  previous.SetAge(-1);
+  local.ForEach([&](Person person)
+  {
+    ASSERT_TRUE(previous.GetAge() <= person.GetAge());
+    previous = person;
+  });
+}
 
-// TEST_F(SortFunctionalTest, WhereSort)
-// {
-//   IQueryable<uint> local = BuildQueryable2(this->queryable.ToVector());
+TEST_F(SortFunctionalTest, WhereSort)
+{
+  IQueryable<uint> local = BuildQueryable2(this->queryable.ToVector());
 
-//   local
-//     .Where([](uint value) { return (value % 2) == 0; })
-//     .Sort<std::vector>();
+  local
+    .Where([](uint value) { return (value % 2) == 0; })
+    .Sort<std::vector>();
 
-//     ASSERT_TRUE(this->queryable.Count() > local.Count())
-//         << "\n\tQueryable Count: " << this->queryable.Count()
-//         << "\n\tLocal Count: " << local.Count()
-//         << std::endl;
+    ASSERT_TRUE(this->queryable.Count() > local.Count());
 
-//     uint previous = 0;
-//     local.ForEach([&](uint value)
-//     {
-//       ASSERT_TRUE((value % 2) == 0);
-//       ASSERT_TRUE(previous <= value);
-//       previous = value;
-//     });
-// }
+    uint previous = 0;
+    local.ForEach([&](uint value)
+    {
+      ASSERT_TRUE((value % 2) == 0);
+      ASSERT_TRUE(previous <= value);
+      previous = value;
+    });
+}

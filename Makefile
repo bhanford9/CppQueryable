@@ -130,7 +130,7 @@ DirTests: $(REFS_REF) $(SRC_COMPILE_REF)
 	/bin/rm -f $(OBJS)
 	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
 	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
-	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
+	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
 .PHONY: memtests
 memtests: $(TEST_PROGRAM)

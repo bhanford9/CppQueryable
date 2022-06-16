@@ -98,7 +98,7 @@ public:
 
   virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
-    std::cout << "Random Access + Operator, adding: " << addend << std::endl;
+    // std::cout << "Random Access + Operator, adding: " << addend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
@@ -107,14 +107,14 @@ public:
       case IteratorType::EndReverse: this->rendIterator += addend; break;
     }
 
-    std::cout << "Random Access add result: " << *this->beginIterator << std::endl;
+    // std::cout << "Random Access add result: " << *this->beginIterator << std::endl;
 
     return *this;
   }
 
   virtual IQueryableData<T> & Subtract(int subtrahend, IteratorType type) override
   {
-    std::cout << "Random Access - Operator, adding: " << subtrahend << std::endl;
+    // std::cout << "Random Access - Operator, adding: " << subtrahend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
