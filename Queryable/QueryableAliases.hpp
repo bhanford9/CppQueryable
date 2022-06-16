@@ -9,34 +9,6 @@
 
 #include "Queryable.hpp"
 
-// template<
-//   typename TObj,
-//   typename TAllocator = std::allocator<TObj>>
-// using QueryableDeque = Queryable<TObj, std::deque, TAllocator>;
-//
-// template<
-//   typename TObj,
-//   typename TAllocator = std::allocator<TObj>>
-// using QueryableList = Queryable<TObj, std::list, TAllocator>;
-//
-// template<
-//   typename TObj,
-//   typename TLessThan = std::less<TObj>,
-//   typename TAllocator = std::allocator<TObj>>
-// using QueryableMultiSet = Queryable<TObj, std::multiset, TLessThan, TAllocator>;
-//
-// template<
-//   typename TObj,
-//   typename TLessThan = std::less<TObj>,
-//   typename TAllocator = std::allocator<TObj>>
-// using QueryableSet = Queryable<TObj, std::set, TLessThan, TAllocator>;
-//
-// template<
-//   typename TObj,
-//   typename TAllocator = std::allocator<TObj>>
-// using QueryableVector = Queryable<TObj, std::vector, TAllocator>;
-
-// I don't like having these all be TArgs.., but
 template<
   typename TObj,
   typename ...TArgs>

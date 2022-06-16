@@ -120,6 +120,18 @@ public:
 
   virtual ~QueryableData() { }
 
+  template<typename TAllocator>
+  TAllocator GetAllocator()
+  {
+    return this->items->get_allocator();
+  }
+
+  template<typename TLessThan>
+  TLessThan GetValueCompare()
+  {
+    return this->items->value_comp();
+  }
+
   virtual bool CanIncrement(IteratorType type) override
   {
     switch (type)

@@ -9,6 +9,7 @@
 #include "InternalIQueryable.hpp"
 #include "InternalQueryable.hpp"
 #include "IQueryable.hpp"
+#include "ISortedQueryable.hpp"
 #include "QueryableTypeConverters/DequeQueryableTypeConverter.hpp"
 #include "QueryableTypeConverters/ListQueryableTypeConverter.hpp"
 #include "QueryableTypeConverters/MultiSetQueryableTypeConverter.hpp"
@@ -24,6 +25,8 @@
 
 template<typename T, typename ...TArgs>
 class IQueryable;
+template<typename T, typename ...TArgs>
+class ISortedQueryable;
 template<typename T, typename ...TArgs>
 class InternalIQueryable;
 
@@ -45,10 +48,10 @@ public:
     queryable = other.template AsExtendedQueryable<TIterable>().queryable;
   }
 
-  // Queryable(IQueryable<TObj, TArgs...> && other)
-  // {
-  //   queryable = std::move(other.AsExtendedQueryable().queryable);
-  // }
+  Queryable(const ISortedQueryable<TObj, TArgs...> & other)
+  {
+    queryable = other.template AsExtendedQueryable<TIterable>().queryable;
+  }
 
   Queryable(Queryable<TObj, TIterable, TArgs...> && other)
     : queryable(std::move(other.queryable))
@@ -72,7 +75,19 @@ public:
   }
   Queryable(InternalQueryable<TObj, TIterable, TArgs...> * other)
   {
-    queryable.reset(other);
+    this->queryable.reset(other);
+  }
+
+  template<typename TAllocator>
+  TAllocator GetAllocator()
+  {
+    return this->queryable->GetAllocator();
+  }
+
+  template<typename TLessThan>
+  TLessThan GetValueCompare()
+  {
+    return this->queryable->GetValueCompare();
   }
 
   // These can't actually be implemented here

@@ -69,7 +69,7 @@ TEST_F(ContainsFunctionalTest, ListContains)
 TEST_F(ContainsFunctionalTest, MultiSetContains)
 {
   size_t count = this->queryable.Count();
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
@@ -78,7 +78,7 @@ TEST_F(ContainsFunctionalTest, MultiSetContains)
 TEST_F(ContainsFunctionalTest, SetContains)
 {
   size_t count = this->queryable.Count();
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   ASSERT_TRUE(count > local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));

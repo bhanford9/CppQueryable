@@ -39,7 +39,7 @@ protected:
     // template<typename, typename ...> typename TIterable,
     // typename TAllocator = std::allocator<TObj>,
     typename ...TArgs>
-  void TestForEach (IQueryable<TObj, TArgs...> & localQueryable)
+  void TestForEach (IBaseQueryable<TObj, TArgs...> & localQueryable)
   {
     std::vector<TObj> iterated(localQueryable.Count(), 0);
     size_t i = 0;
@@ -81,18 +81,6 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
   }
 }
 
-TEST_F(ForEachFunctionalTest, ForEachSet)
-{
-  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToSet());
-  this->TestForEach(localQueryable);
-}
-
-TEST_F(ForEachFunctionalTest, ForEachMultiSet)
-{
-  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
-  this->TestForEach(localQueryable);
-}
-
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
   IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToDeque());
@@ -102,6 +90,18 @@ TEST_F(ForEachFunctionalTest, ForEachDeque)
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
   IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToList());
+  this->TestForEach(localQueryable);
+}
+
+TEST_F(ForEachFunctionalTest, ForEachMultiSet)
+{
+  ISortedQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  this->TestForEach(localQueryable);
+}
+
+TEST_F(ForEachFunctionalTest, ForEachSet)
+{
+  ISortedQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToSet());
   this->TestForEach(localQueryable);
 }
 

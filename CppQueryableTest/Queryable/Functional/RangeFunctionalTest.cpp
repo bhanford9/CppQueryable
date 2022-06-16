@@ -213,7 +213,7 @@ TEST_F(RangeFunctionalTest, RangeListDefault)
 
 TEST_F(RangeFunctionalTest, RangeTemplateMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint range = local
     .Range<std::multiset, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -221,7 +221,7 @@ TEST_F(RangeFunctionalTest, RangeTemplateMultiSet)
 
 TEST_F(RangeFunctionalTest, RangeAsMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint range = local
     .AsQueryableMultiSet()
     .Range<uint>([](uint value) { return value; });
@@ -230,7 +230,7 @@ TEST_F(RangeFunctionalTest, RangeAsMultiSet)
 
 TEST_F(RangeFunctionalTest, RangeExtendedMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint range = local
     .AsExtendedQueryable<std::multiset>()
     .Range<uint>([](uint value) { return value; });
@@ -239,14 +239,14 @@ TEST_F(RangeFunctionalTest, RangeExtendedMultiSet)
 
 TEST_F(RangeFunctionalTest, RangeMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeTemplateSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint range = local
     .Range<std::set, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -254,7 +254,7 @@ TEST_F(RangeFunctionalTest, RangeTemplateSet)
 
 TEST_F(RangeFunctionalTest, RangeAsSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint range = local
     .AsQueryableSet()
     .Range<uint>([](uint value) { return value; });
@@ -263,7 +263,7 @@ TEST_F(RangeFunctionalTest, RangeAsSet)
 
 TEST_F(RangeFunctionalTest, RangeExtendedSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint range = local
     .AsExtendedQueryable<std::set>()
     .Range<uint>([](uint value) { return value; });
@@ -272,7 +272,7 @@ TEST_F(RangeFunctionalTest, RangeExtendedSet)
 
 TEST_F(RangeFunctionalTest, RangeSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }

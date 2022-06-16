@@ -9,6 +9,7 @@
 #include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/IQueryable.hpp"
+#include "../../../Queryable/ISortedQueryable.hpp"
 // #include "../../../Queryable/Queryable.hpp"
 #include "../../../Queryable/QueryableAliases.hpp"
 #include "../../../Queryable/QueryBuilder.hpp"
@@ -19,10 +20,12 @@ class AnyFunctionalTest : public ::testing::Test
 {
 protected:
   IQueryable<uint> queryable;
+  ISortedQueryable<uint> queryable2;
   IQueryable<std::string> queryableStrings;
 
   AnyFunctionalTest() :
     queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
+    queryable2(BuildQueryable2(std::set<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
     queryableStrings(BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"})))
   {
   }
@@ -83,28 +86,28 @@ TEST_F(AnyFunctionalTest, AnyListTrue)
 
 TEST_F(AnyFunctionalTest, AnyMultiSetFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   bool any = local.Any([](uint value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyMultiSetTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   bool any = local.Any([](uint value) { return value > 12; });
   ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnySetFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   bool any = local.Any([](uint value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnySetTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   bool any = local.Any([](uint value) { return value > 12; });
   ASSERT_TRUE(any);
 }

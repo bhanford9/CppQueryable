@@ -116,6 +116,18 @@ public:
     this->items.get()->Add(obj);
   }
 
+  template<typename TAllocator>
+  TAllocator GetAllocator()
+  {
+    return this->items->GetAllocator();
+  }
+
+  template<typename TLessThan>
+  TLessThan GetValueCompare()
+  {
+    return this->items->GetValueCompare();
+  }
+
   inline QueryableIterator<TObj> begin()
   {
     std::cout << "\nInternalQueryable::begin" << std::endl;

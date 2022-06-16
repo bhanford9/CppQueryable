@@ -19,6 +19,7 @@
 // priority_queue
 
 #include "IQueryable.hpp"
+#include "ISortedQueryable.hpp"
 #include "InternalQueryable.hpp"
 #include "InternalQueryables/DequeInternalQueryable.hpp"
 #include "InternalQueryables/ListInternalQueryable.hpp"
@@ -36,35 +37,35 @@
 namespace QueryBuilder
 {
 
-  template<typename T, typename TAllocator = std::allocator<T>>
-  DequeInternalQueryable<T, TAllocator> BuildQueryable(std::deque<T, TAllocator> items)
-  {
-    return DequeInternalQueryable<T, TAllocator>(items);
-  }
+//   template<typename T, typename TAllocator = std::allocator<T>>
+//   DequeInternalQueryable<T, TAllocator> BuildQueryable(std::deque<T, TAllocator> items)
+//   {
+//     return DequeInternalQueryable<T, TAllocator>(items);
+//   }
 
-  template<typename T, typename TAllocator = std::allocator<T>>
-  ListInternalQueryable<T, TAllocator> BuildQueryable(std::list<T, TAllocator> items)
-  {
-    return ListInternalQueryable<T, TAllocator>(items);
-  }
+//   template<typename T, typename TAllocator = std::allocator<T>>
+//   ListInternalQueryable<T, TAllocator> BuildQueryable(std::list<T, TAllocator> items)
+//   {
+//     return ListInternalQueryable<T, TAllocator>(items);
+//   }
 
-  template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  MultiSetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::multiset<T, TLessThan, TAllocator> items)
-  {
-    return MultiSetInternalQueryable<T, TLessThan, TAllocator>(items);
-  }
+//   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
+//   MultiSetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::multiset<T, TLessThan, TAllocator> items)
+//   {
+//     return MultiSetInternalQueryable<T, TLessThan, TAllocator>(items);
+//   }
 
-  template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-  SetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::set<T, TLessThan, TAllocator> items)
-  {
-    return SetInternalQueryable<T, TLessThan, TAllocator>(items);
-  }
+//   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
+//   SetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::set<T, TLessThan, TAllocator> items)
+//   {
+//     return SetInternalQueryable<T, TLessThan, TAllocator>(items);
+//   }
 
-  template<typename T, typename TAllocator = std::allocator<T>>
-  VectorInternalQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
-  {
-    return VectorInternalQueryable<T, TAllocator>(items);
-  }
+//   template<typename T, typename TAllocator = std::allocator<T>>
+//   VectorInternalQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
+//   {
+//     return VectorInternalQueryable<T, TAllocator>(items);
+//   }
 
   // This will work out better if the public facing types are the aliases and the actual
   // child classes are only used internally to the library
@@ -102,42 +103,35 @@ namespace QueryBuilder
     return queryable;
   }
 
-// TODO: For sorted containers (i.e. map, set, multiset), build an ISortedQueryable instead
-//   Then, there can be a separate file (some of which will have to be duplicated) that
-//   handles Sort and just returns a new instance of self with the new data type.
-//
-// This may lead to needing to create a 3rd interface that both inherit so that they could
-//   still be passed around interchangeably, but that might be a not so useful interface
-//   and handling opening it up to an extend Queryable might be a pain.
   template<typename T, typename ...TArgs>
-  IQueryable<T, TArgs...> BuildQueryable2(std::multiset<T, TArgs...> items)
+  ISortedQueryable<T, TArgs...> BuildQueryable2(std::multiset<T, TArgs...> items)
   {
-    IQueryable<T, TArgs...> queryable(
+    ISortedQueryable<T, TArgs...> queryable(
       std::make_shared<QueryableMultiSet<T, TArgs...>>(
         QueryableMultiSet<T, TArgs...>::FromMultiSet(items)));
     return queryable;
   }
   template<typename T>
-  IQueryable<T> BuildQueryable2(std::multiset<T> items)
+  ISortedQueryable<T> BuildQueryable2(std::multiset<T> items)
   {
-    IQueryable<T> queryable(
+    ISortedQueryable<T> queryable(
       std::make_shared<QueryableMultiSet<T>>(
         QueryableMultiSet<T>::FromMultiSet(items)));
     return queryable;
   }
 
   template<typename T, typename ...TArgs>
-  IQueryable<T, TArgs...> BuildQueryable2(std::set<T, TArgs...> items)
+  ISortedQueryable<T, TArgs...> BuildQueryable2(std::set<T, TArgs...> items)
   {
-    IQueryable<T, TArgs...> queryable(
+    ISortedQueryable<T, TArgs...> queryable(
       std::make_shared<QueryableSet<T, TArgs...>>(
         QueryableSet<T, TArgs...>::FromSet(items)));
     return queryable;
   }
   template<typename T>
-  IQueryable<T> BuildQueryable2(std::set<T> items)
+  ISortedQueryable<T> BuildQueryable2(std::set<T> items)
   {
-    IQueryable<T> queryable(
+    ISortedQueryable<T> queryable(
       std::make_shared<QueryableSet<T>>(
         QueryableSet<T>::FromSet(items)));
     return queryable;

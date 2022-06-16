@@ -502,7 +502,7 @@ TEST_F(MinFunctionalTest, MinSeededHigherListDefault)
 
 TEST_F(MinFunctionalTest, MinItemTemplateMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .MinItem<std::multiset, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedMin, min);
@@ -510,7 +510,7 @@ TEST_F(MinFunctionalTest, MinItemTemplateMultiSet)
 
 TEST_F(MinFunctionalTest, MinItemAsMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsQueryableMultiSet()
     .MinItem<uint>([](uint value) { return value; });
@@ -519,7 +519,7 @@ TEST_F(MinFunctionalTest, MinItemAsMultiSet)
 
 TEST_F(MinFunctionalTest, MinItemExtendedMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsExtendedQueryable<std::multiset>()
     .MinItem<uint>([](uint value) { return value; });
@@ -528,7 +528,7 @@ TEST_F(MinFunctionalTest, MinItemExtendedMultiSet)
 
 TEST_F(MinFunctionalTest, MinTemplateMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .Min<std::multiset, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedMin, min);
@@ -536,7 +536,7 @@ TEST_F(MinFunctionalTest, MinTemplateMultiSet)
 
 TEST_F(MinFunctionalTest, MinAsMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsQueryableMultiSet()
     .Min<uint>([](uint value) { return value; });
@@ -545,7 +545,7 @@ TEST_F(MinFunctionalTest, MinAsMultiSet)
 
 TEST_F(MinFunctionalTest, MinExtendedMultiSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsExtendedQueryable<std::multiset>()
     .Min<uint>([](uint value) { return value; });
@@ -554,7 +554,7 @@ TEST_F(MinFunctionalTest, MinExtendedMultiSet)
 
 TEST_F(MinFunctionalTest, MinMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local.Min();
   ASSERT_EQ(this->expectedMin, min);
 }
@@ -562,7 +562,7 @@ TEST_F(MinFunctionalTest, MinMultiSetDefault)
 TEST_F(MinFunctionalTest, MinTemplateSeededLowerMultiSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .Min<std::multiset, uint>([](uint value) { return value; }, seed);
   ASSERT_EQ(seed, min);
@@ -571,7 +571,7 @@ TEST_F(MinFunctionalTest, MinTemplateSeededLowerMultiSet)
 TEST_F(MinFunctionalTest, MinAsMultiSetSeededLowerMultiSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsQueryableMultiSet()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -581,7 +581,7 @@ TEST_F(MinFunctionalTest, MinAsMultiSetSeededLowerMultiSet)
 TEST_F(MinFunctionalTest, MinExtendedSeededLowerMultiSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsExtendedQueryable<std::multiset>()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -591,7 +591,7 @@ TEST_F(MinFunctionalTest, MinExtendedSeededLowerMultiSet)
 TEST_F(MinFunctionalTest, MinSeededLowerMultiSetDefault)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local.Min(seed);
   ASSERT_EQ(seed, min);
 }
@@ -599,7 +599,7 @@ TEST_F(MinFunctionalTest, MinSeededLowerMultiSetDefault)
 TEST_F(MinFunctionalTest, MinTemplateSeededHigherMultiSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .Min<std::multiset, uint>([](uint value) { return value; }, seed);
   ASSERT_EQ(this->expectedMin, min);
@@ -608,7 +608,7 @@ TEST_F(MinFunctionalTest, MinTemplateSeededHigherMultiSet)
 TEST_F(MinFunctionalTest, MinAsMultiSetSeededHigherMultiSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsQueryableMultiSet()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -618,7 +618,7 @@ TEST_F(MinFunctionalTest, MinAsMultiSetSeededHigherMultiSet)
 TEST_F(MinFunctionalTest, MinExtendedSeededHigherMultiSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local
     .AsExtendedQueryable<std::multiset>()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -628,14 +628,14 @@ TEST_F(MinFunctionalTest, MinExtendedSeededHigherMultiSet)
 TEST_F(MinFunctionalTest, MinSeededHigherMultiSetDefault)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   uint min = local.Min(seed);
   ASSERT_EQ(this->expectedMin, min);
 }
 
 TEST_F(MinFunctionalTest, MinItemTemplateSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .MinItem<std::set, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedMin, min);
@@ -643,7 +643,7 @@ TEST_F(MinFunctionalTest, MinItemTemplateSet)
 
 TEST_F(MinFunctionalTest, MinItemAsSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsQueryableSet()
     .MinItem<uint>([](uint value) { return value; });
@@ -652,7 +652,7 @@ TEST_F(MinFunctionalTest, MinItemAsSet)
 
 TEST_F(MinFunctionalTest, MinItemExtendedSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsExtendedQueryable<std::set>()
     .MinItem<uint>([](uint value) { return value; });
@@ -661,7 +661,7 @@ TEST_F(MinFunctionalTest, MinItemExtendedSet)
 
 TEST_F(MinFunctionalTest, MinTemplateSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .Min<std::set, uint>([](uint value) { return value; });
   ASSERT_EQ(this->expectedMin, min);
@@ -669,7 +669,7 @@ TEST_F(MinFunctionalTest, MinTemplateSet)
 
 TEST_F(MinFunctionalTest, MinAsSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsQueryableSet()
     .Min<uint>([](uint value) { return value; });
@@ -678,7 +678,7 @@ TEST_F(MinFunctionalTest, MinAsSet)
 
 TEST_F(MinFunctionalTest, MinExtendedSet)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsExtendedQueryable<std::set>()
     .Min<uint>([](uint value) { return value; });
@@ -687,7 +687,7 @@ TEST_F(MinFunctionalTest, MinExtendedSet)
 
 TEST_F(MinFunctionalTest, MinSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local.Min();
   ASSERT_EQ(this->expectedMin, min);
 }
@@ -695,7 +695,7 @@ TEST_F(MinFunctionalTest, MinSetDefault)
 TEST_F(MinFunctionalTest, MinTemplateSeededLowerSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .Min<std::set, uint>([](uint value) { return value; }, seed);
   ASSERT_EQ(seed, min);
@@ -704,7 +704,7 @@ TEST_F(MinFunctionalTest, MinTemplateSeededLowerSet)
 TEST_F(MinFunctionalTest, MinAsSetSeededLowerSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsQueryableSet()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -714,7 +714,7 @@ TEST_F(MinFunctionalTest, MinAsSetSeededLowerSet)
 TEST_F(MinFunctionalTest, MinExtendedSeededLowerSet)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsExtendedQueryable<std::set>()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -724,7 +724,7 @@ TEST_F(MinFunctionalTest, MinExtendedSeededLowerSet)
 TEST_F(MinFunctionalTest, MinSeededLowerSetDefault)
 {
   uint seed = 0;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local.Min(seed);
   ASSERT_EQ(seed, min);
 }
@@ -732,7 +732,7 @@ TEST_F(MinFunctionalTest, MinSeededLowerSetDefault)
 TEST_F(MinFunctionalTest, MinTemplateSeededHigherSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .Min<std::set, uint>([](uint value) { return value; }, seed);
   ASSERT_EQ(this->expectedMin, min);
@@ -741,7 +741,7 @@ TEST_F(MinFunctionalTest, MinTemplateSeededHigherSet)
 TEST_F(MinFunctionalTest, MinAsSetSeededHigherSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsQueryableSet()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -751,7 +751,7 @@ TEST_F(MinFunctionalTest, MinAsSetSeededHigherSet)
 TEST_F(MinFunctionalTest, MinExtendedSeededHigherSet)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local
     .AsExtendedQueryable<std::set>()
     .Min<uint>([](uint value) { return value; }, seed);
@@ -761,7 +761,7 @@ TEST_F(MinFunctionalTest, MinExtendedSeededHigherSet)
 TEST_F(MinFunctionalTest, MinSeededHigherSetDefault)
 {
   uint seed = expectedMin + 1;
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   uint min = local.Min(seed);
   ASSERT_EQ(this->expectedMin, min);
 }

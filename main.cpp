@@ -13,7 +13,8 @@
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
 #include "Queryable/QueryableData/QueryableData.hpp"
-#include "Queryable/IQueryable.hpp"
+// #include "Queryable/IQueryable.hpp"
+#include "Queryable/ISortedQueryable.hpp"
 #include "Queryable/QueryBuilder.hpp"
 #include "Queryable/QueryableType.hpp"
 #include "Queryable/InternalQueryable.hpp"
@@ -33,11 +34,11 @@ int main()
 
     //   PersonLibrary personLibrary;
     //   IQueryable<Person> people(BuildQueryable2(personLibrary.GetPeople()));
-    IQueryable<uint> numbers(BuildQueryable2(std::vector<uint>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
-    IQueryable<double> newNumbers = numbers
+    ISortedQueryable<uint> numbers(BuildQueryable2(std::set<uint>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
+    ISortedQueryable<double> newNumbers = numbers
         // .Where([](uint value) { return value < 10; })
-        .Select<std::vector, double>([](uint value) { return ((double)value) / 2.0; })
-        .Sort<std::vector>();
+        .Select<std::set, double>([](uint value) { return ((double)value) / 2.0; });
+        // .Sort<std::set>();
 
     std::cout << "\n\n\n\nAFTER SORT\n\n\n" << std::endl;
     newNumbers.ForEach([](double value) { std::cout << value << ", "; });

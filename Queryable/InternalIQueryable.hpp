@@ -7,21 +7,17 @@
 #include <set>
 #include <vector>
 
-#include "IQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableAliases.hpp"
 #include "QueryableType.hpp"
 
-// TODO --> Test if using template parameters is faster than std;:function parameters
+// TODO --> Test if using template parameters is faster than std::function parameters
 
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
 class Queryable;
-
-template<typename T, typename ...TArgs>
-class IQueryable;
 
 template<typename T, typename ...TArgs>
 class InternalIQueryable
@@ -316,7 +312,7 @@ public:
   }
 
   inline virtual double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;
-  inline virtual size_t Sum(std::function<size_t(T)> retrieveValue = [](T value) { return value; }) const = 0;
+//   inline virtual size_t Sum(std::function<size_t(T)> retrieveValue = [](T value) { return value; }) const = 0;
   inline virtual InternalIQueryable<T, TArgs...> & Where(std::function<bool(const T &)> condition) = 0;
 };
 

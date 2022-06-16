@@ -143,8 +143,8 @@ TEST_F(SelectFunctionalTest, ListExtendedDefaultOut)
 
 TEST_F(SelectFunctionalTest, MultiSetTemplateDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
   QueryableMultiSet<double> ages = local1
     .Select<std::multiset, double>([](Person p) { return p.GetAge(); })
     .ToQueryableMultiSet();
@@ -169,8 +169,8 @@ TEST_F(SelectFunctionalTest, MultiSetTemplateDefaultOut)
 
 TEST_F(SelectFunctionalTest, AsMultiSetDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
   QueryableMultiSet<double> ages = local1
     .AsQueryableMultiSet()
     .Select<double>([](Person p) { return p.GetAge(); })
@@ -197,8 +197,8 @@ TEST_F(SelectFunctionalTest, AsMultiSetDefaultOut)
 
 TEST_F(SelectFunctionalTest, MultiSetExtendedDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
   QueryableMultiSet<double> ages = local1
     .AsExtendedQueryable<std::multiset>()
     .Select<double>([](Person p) { return p.GetAge(); })
@@ -225,8 +225,8 @@ TEST_F(SelectFunctionalTest, MultiSetExtendedDefaultOut)
 
 TEST_F(SelectFunctionalTest, SetTemplateDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
   QueryableSet<double> ages = local1
     .Select<std::set, double>([](Person p) { return p.GetAge(); })
     .ToQueryableSet();
@@ -256,8 +256,8 @@ TEST_F(SelectFunctionalTest, SetTemplateDefaultOut)
 
 TEST_F(SelectFunctionalTest, AsSetDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
   QueryableSet<double> ages = local1
     .AsQueryableSet()
     .Select<double>([](Person p) { return p.GetAge(); })
@@ -289,8 +289,8 @@ TEST_F(SelectFunctionalTest, AsSetDefaultOut)
 
 TEST_F(SelectFunctionalTest, SetExtendedDefaultOut)
 {
-  IQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
-  IQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local1 = BuildQueryable2(this->people.ToSet());
+  ISortedQueryable<Person> local2 = BuildQueryable2(this->people.ToSet());
   QueryableSet<double> ages = local1
     .AsExtendedQueryable<std::set>()
     .Select<double>([](Person p) { return p.GetAge(); })

@@ -81,28 +81,28 @@ TEST_F(AllFunctionalTest, AllListTrue)
 
 TEST_F(AllFunctionalTest, AllMultiSetFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllMultiSetTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }
 
 TEST_F(AllFunctionalTest, AllSetFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   bool all = local.All([](uint value) { return value > 5; });
   ASSERT_FALSE(all);
 }
 
 TEST_F(AllFunctionalTest, AllSetTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
   bool all = local.All([](uint value) { return value < 5000; });
   ASSERT_TRUE(all);
 }

@@ -9,6 +9,7 @@
         "functional": "cpp",
         "vector": "cpp",
         "xutility": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "type_traits": "cpp"
     }
 }
