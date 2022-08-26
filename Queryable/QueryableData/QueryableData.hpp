@@ -33,6 +33,8 @@ public:
 protected:
   TObj value;
   size_t size = 0;
+  bool forceToEnd = false;
+  bool forceToBegin = false;
 
   // this is a mess, but I can't find a better working solution...
   //  - when sorting, copies of the iterators are made and used for comparison
@@ -58,7 +60,6 @@ protected:
 
 public:
 
-  // TODO --> allow TArgs to be passed in as a parameter?
   QueryableData()
   {
     // std::cout << "\nQueryableData Constructor 1" << std::endl;
@@ -74,6 +75,11 @@ public:
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
+    //
+    //   another option could be to let the child constructors set the size, but
+    //   that is a bit harder to maintain. Would need to always call the method
+    //   to have the child calculate the size after constructions... may be the cleanest
+    //   since the user never sees this class anyway
     this->size = this->items->size();
   }
   QueryableData(TIterable<TObj, TArgs...> && items)
@@ -82,12 +88,15 @@ public:
     this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
 
     this->DefaultInitialize();
+
     // TODO --> almost all containers have a size method. Either require that the
     //   items passed in have it or require the size is passed into the constructor
     //   then fix up the child classes having a Count method
     //
     //   another option could be to let the child constructors set the size, but
-    //   that is a bit harder to maintain
+    //   that is a bit harder to maintain. Would need to always call the method
+    //   to have the child calculate the size after constructions... may be the cleanest
+    //   since the user never sees this class anyway
     this->size = items.size();
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
@@ -102,6 +111,9 @@ public:
 
     this->value = data.value;
     this->size = data.size;
+
+    this->forceToEnd = data.forceToEnd;
+    this->forceToBegin = data.forceToBegin;
   }
 
   QueryableData(std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data)
@@ -110,6 +122,9 @@ public:
     this->items = std::move(data->items);
     this->DefaultInitialize();
     this->size = data->Count();
+
+    this->forceToEnd = data->forceToEnd;
+    this->forceToBegin = data->forceToBegin;
   }
 
   QueryableData(QueryableIterator<TObj> first, QueryableIterator<TObj> last, TArgs... args) :
@@ -162,9 +177,18 @@ public:
     return false;
   }
 
-  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated) override
+// pass a boolean by reference and return true/false whether force to end has been set
+  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "[NEXT] underlying begin value before" << std::endl;
+
+    if (this->forceToEnd)
+    {
+      iterated = this->size;
+      isForcingToEnd = true;
+      return *this;
+    }
+
     switch (type)
     {
       case IteratorType::BeginForward: ++this->beginIterator; break;
@@ -194,10 +218,9 @@ public:
     return *this;
   }
 
-// TODO --> override this for all children
   virtual TObj & Get(IteratorType type) override
   {
-    //   std::cout << "Get" << std::endl;
+      // std::cout << "Get" << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
@@ -277,60 +300,89 @@ public:
     sorter->Sort(*this->items);
   }
 
-  // virtual TIterable<TObj, TArgs...> & GetContainer()
-  // {
-  //   return *this->items;
-  // }
-
-// I think these methods can be written with something like the following:
-//   virtual QueryableIterator<TObj> begin(QueryableData<TObj, TIterable, TArgs...> & data) override
-//   {
-//     // std::cout << "Standard Queryable begin" << std::endl;
-//     this->beginIterator = data.items->begin();
-//     QueryableIterator<TObj> retVal(data, 0, IteratorType::BeginForward);
-//     return retVal;
-//   }
-
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> begin() override
   {
     // std::cout << "Standard Queryable begin" << std::endl;
     this->beginIterator = this->items->begin();
+    this->forceToBegin = false;
+    this->forceToEnd = false;
     QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginForward);
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> end() override
   {
     // std::cout << "Standard Queryable end" << std::endl;
     this->endIterator = this->items->end();
+    this->forceToBegin = false;
+    this->forceToEnd = false;
     QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rbegin() override
   {
     this->rbeginIterator = this->items->rbegin();
+    this->forceToBegin = false;
+    this->forceToEnd = false;
     QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginReverse);
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rend() override
   {
     this->rendIterator = this->items->rend();
+    this->forceToBegin = false;
+    this->forceToEnd = false;
     QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
     return retVal;
+  }
+
+  virtual void ForceEnd(IteratorType type) override
+  {
+    // TODO --> I think WhereQueryable might need two different sizes
+    //   1. theoretical size when skipping elements
+    //   2. true size
+
+    // std::cout << "force to end by size: " << this->size << std::endl;
+    this->forceToEnd = true;
+
+    switch(type)
+    {
+      case IteratorType::BeginForward:
+        this->beginIterator = this->items->end();
+        break;
+      case IteratorType::EndForward:
+        this->endIterator = this->items->end();
+        break;
+      case IteratorType::BeginReverse:
+        this->rendIterator = this->items->rend();
+        break;
+      case IteratorType::EndReverse:
+        this->rendIterator = this->items->rend();
+        break;
+    }
+  }
+
+  virtual void ForceBegin(IteratorType type) override
+  {
+    this->forceToBegin = true;
+
+    switch(type)
+    {
+      case IteratorType::BeginForward:
+        this->beginIterator = this->items->begin();
+        break;
+      case IteratorType::EndForward:
+        this->endIterator = this->items->begin();
+        break;
+      case IteratorType::BeginReverse:
+        this->rendIterator = this->items->rbegin();
+        break;
+      case IteratorType::EndReverse:
+        this->rendIterator = this->items->rbegin();
+        break;
+    }
   }
 };
 

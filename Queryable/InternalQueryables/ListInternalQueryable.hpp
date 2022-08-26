@@ -7,6 +7,7 @@
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableListData.hpp"
+#include "../Utilities/IWhileCondition.hpp"
 
 template<
   typename TObj,
@@ -51,10 +52,14 @@ public:
     this->type = QueryableType::List;
   }
 
-  virtual InternalQueryable<TObj, std::list, TAllocator> * Where(std::function<bool(const TObj &)> condition) override
+  virtual void Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableListData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
-    return this;
+  }
+
+  virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) override
+  {
+    // this->items = std::make_shared<WhileQueryableListData<TObj, TAllocator>>(std::move(this->items), std::move(condition));
   }
 };
 

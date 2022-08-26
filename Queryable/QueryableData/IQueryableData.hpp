@@ -25,13 +25,15 @@ public:
   virtual QueryableIterator<TObj> end() = 0;
   virtual QueryableIterator<TObj> rbegin() = 0;
   virtual QueryableIterator<TObj> rend() = 0;
+  virtual void ForceBegin(IteratorType type) = 0;
+  virtual void ForceEnd(IteratorType type) = 0;
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() = 0;
   virtual std::shared_ptr<IQueryableData<TObj>> GetRealizedQueryableData() = 0;
 
   virtual bool CanIncrement(IteratorType type) = 0;
   virtual bool CanDecrement(IteratorType type) = 0;
-  virtual IQueryableData<TObj>& Next(IteratorType type, uint64_t & iterated) = 0;
+  virtual IQueryableData<TObj>& Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) = 0;
   virtual IQueryableData<TObj>& Prev(IteratorType type, uint64_t & iterated) = 0;
   virtual TObj& Get(IteratorType type) = 0;
   virtual const TObj& ConstGet(IteratorType type) = 0;

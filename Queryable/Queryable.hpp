@@ -649,10 +649,13 @@ public:
   //   return this->queryable->Sum();
   // }
 
-  // inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
+  inline void Take(int count)
+  {
+    this->queryable->Take(count);
+  }
+
   inline InternalIQueryable<TObj, TArgs...> & Where(std::function<bool(const TObj &)> condition)
   {
-    // TODO --> no return necessary
     this->queryable->Where(condition);
     return *this;
   }

@@ -17,6 +17,7 @@ private:
   std::shared_ptr<IQueryableData<T>> queryableData;
 public:
   // TODO --> make private add an accessor
+  // TODO --> this should probably be size_t
   uint64_t index;
   IteratorType type;
   // these seem to be needed by the std library
@@ -159,9 +160,18 @@ public:
     //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
     //   << std::endl;
     uint64_t iterated = 1;
-    this->queryableData->Next(this->type, iterated);
+    bool isForcingToEnd = false;
+    this->queryableData->Next(this->type, iterated, isForcingToEnd);
 
-    this->index += iterated;
+    if (isForcingToEnd)
+    {
+      // size was sent back within iterated
+      this->index = iterated;
+    }
+    else
+    {
+      this->index += iterated;
+    }
 
     // std::cout << "out operator++"
     //   << "\n\tCurrent Index: " << this->index

@@ -131,11 +131,11 @@ public:
     // return this->value;
   }
 
-  virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TCurrent> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "Select Can Increment: " << this->original->CanIncrement(type) << std::endl;
     // std::cout << "Select Data Next before value: " << this->original->Get(type) << std::endl;
-    this->original->Next(type, iterated);
+    this->original->Next(type, iterated, isForcingToEnd);
     return *this;
   }
 

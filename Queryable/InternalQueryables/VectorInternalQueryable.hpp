@@ -2,11 +2,15 @@
 #define CPPQUERYABLE_QUERYABLE_INTERNALQUERYABLES_VECTORINTERNALQUERYABLE_H
 
 #include <iostream>
+#include <memory>
 #include <vector>
 #include "QueryableForwardDeclare.hpp"
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableVectorData.hpp"
+#include "../QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
+#include "../QueryableData/WhileQueryableData/WhileQueryableVectorData.hpp"
+#include "../Utilities/IWhileCondition.hpp"
 
 template<
   typename TObj,
@@ -51,10 +55,16 @@ public:
     this->type = QueryableType::Vector;
   }
 
-  virtual InternalQueryable<TObj, std::vector, TAllocator> * Where(std::function<bool(const TObj &)> condition) override
+  virtual void Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::make_shared<WhereQueryableVectorData<TObj, TAllocator>>(std::move(this->items), std::move(condition));
-    return this;
+  }
+
+  virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) override
+  {
+    this->items = std::move(std::make_shared<WhileQueryableVectorData<TObj, TAllocator>>(
+      std::move(this->items),
+      std::move(condition)));
   }
 };
 

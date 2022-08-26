@@ -86,14 +86,6 @@ public:
 
   virtual ~RandomAccessQueryableData()
   {
-    // this->value only gets assigned by this->allocator.allocate which either returns a non-null
-    //   value or it throws an exception
-    // all other instances of this->value are copy returns or assignements to the value at its address
-    // therefore, this check shouldn't be necessary
-    // if (this->value != NULL)
-    // {
-    //   this->allocator.deallocate(this->value, 1);
-    // }
   }
 
   virtual IQueryableData<T> & Add(int addend, IteratorType type) override
@@ -131,18 +123,6 @@ public:
     this->items->push_back(item);
     this->size++;
   }
-
-  // TODO --> don't think this actually needs overriden
-//   virtual T & Get(IteratorType type) override
-//   {
-//     switch (type)
-//     {
-//         case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->beginIterator; }
-//         case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->endIterator; }
-//         case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->rbeginIterator; }
-//         case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->rendIterator; }
-//     }
-//   }
 };
 
 #endif

@@ -102,6 +102,12 @@ public:
     return *this;
   }
 
+  inline IQueryable<T, TArgs...> Take(int count)
+  {
+    this->queryable->Take(count);
+    return *this;
+  }
+
   inline IQueryable<T, TArgs...> Where(std::function<bool(const T &)> condition)
   {
     this->queryable->Where(condition);

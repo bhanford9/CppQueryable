@@ -46,7 +46,9 @@
 #include "Utilities/Casting.hpp"
 #include "Utilities/Condition.hpp"
 #include "Utilities/Group.hpp"
+#include "Utilities/IWhileCondition.hpp"
 #include "Utilities/PersistentContainer.hpp"
+#include "Utilities/WhileCondition.hpp"
 
 #include "../CppQueryableTest/Queryable/Performance/Time/Utilities/Duration.hpp"
 #include "../CppQueryableTest/Queryable/Performance/Time/Utilities/TimingTypes.hpp"
@@ -74,7 +76,6 @@ protected:
 
 public:
 
-  // BEGIN CONSTRUCTORS
   InternalQueryable(QueryableType type = QueryableType::Vector)
   {
     this->type = type;
@@ -99,7 +100,6 @@ public:
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
   InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
-  // END CONSTRUCTORS
 
   inline QueryableType GetType()
   {
@@ -336,31 +336,7 @@ public:
     }
   }
 
-  // void ForEachRef(std::function<void(TObj&)> action)
-  // {
-  //   for (TObj & item : *this->items.get())
-  //   {
-  //     action(item);
-  //   }
-  // }
-
-  // TODO --> no return necessary
-  virtual InternalQueryable<TObj, TIterable, TArgs...> * Where(std::function<bool(const TObj &)> condition) = 0;
-
-  // InternalQueryable<TObj, TIterable, TArgs...> WhereCopy(std::function<bool(TObj)> condition, QueryableType returnType = QueryableType::Default)
-  // {
-  //   InternalQueryable<TObj, TIterable, TArgs...> returnValue(returnType);
-  //
-  //   for (TObj item : *this->items.get())
-  //   {
-  //     if (condition(item))
-  //     {
-  //       returnValue.Add(item);
-  //     }
-  //   }
-  //
-  //   return returnValue;
-  // }
+  virtual void Where(std::function<bool(const TObj &)> condition) = 0;
 
   inline TObj First(std::function<bool(TObj)> condition)
   {
@@ -408,24 +384,20 @@ public:
     throw std::runtime_error("Cannot get last item of empty collection.");
   }
 
-  // Need to get Take and Skip methods into deferred actions similar to the
-  // way that Where and Select work
-  // InternalQueryable<TObj> Take(int count)
-  // {
-  //   int i = 0;
-  //   std::vector<TObj> copy = this->ToVector();
-  //   this->Clear();
-  //
-  //   for (TObj item : copy)
-  //   {
-  //     this->items.get()->Add(item);
-  //     if (i == count)
-  //     {
-  //       break;
-  //     }
-  //   }
-  // }
-  //
+  inline void Take(int count)
+  {
+    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
+      std::make_shared<WhileCondition<TObj, int>>(
+        count,
+        [](const TObj & value, int & current) { return current-- > 0; },
+        [count](int current) mutable { return count; });
+    
+    this->While(std::move(whileCondition));
+  }
+
+  // make private?
+  inline virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
+  
   // InternalQueryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
   // {
   //   // consider optimization of doing this without duplicate vector

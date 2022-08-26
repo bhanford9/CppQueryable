@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHEREQUERYABLEDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDATA_H
+#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDATA_H
 
 #include <algorithm>
 #include <deque>
@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "../../TypeConstraintUtil.hpp"
-#include "../../Utilities/Condition.hpp"
+#include "../../Utilities/IWhileCondition.hpp"
 #include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
 
@@ -20,7 +20,7 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class WhereQueryableData : public QueryableData<TObj, TIterable, TArgs...>
+class WhileQueryableData : public QueryableData<TObj, TIterable, TArgs...>
 {
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
@@ -28,111 +28,82 @@ protected:
   using TForwardIterator = typename QueryableData<TObj, TIterable, TArgs...>::TForwardIterator;
   using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
 
-  Condition<TObj> condition;
+  std::shared_ptr<IWhileCondition<TObj>> condition;
   std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> original;
   bool sizeIsCalculated;
 
-  void IncrementPastFalseConditions(IteratorType type, uint64_t & iterated, bool & isForcingToEnd)
-  {
-    while (this->original->CanIncrement(type) && this->condition && !this->condition(this->original->Get(type)))
-    {
-      uint64_t internalIterated = 1;
-      this->original->Next(type, internalIterated, isForcingToEnd);
-      iterated += internalIterated;
-    }
-  }
-
-  void DecrementPastFalseConditions(IteratorType type, uint64_t & iterated)
-  {
-    while (this->original->CanDecrement(type) && this->condition && !this->condition(this->original->Get(type)))
-    {
-      uint64_t internalIterated = 1;
-      this->original->Prev(type, internalIterated);
-      iterated += internalIterated;
-    }
-  }
-
 public:
-  // WhereQueryableData(
-  //   std::shared_ptr<IQueryableData<TObj>> && data,
-  //   std::function<bool(TObj)> && condition)
-  //   : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
-  // {
-  //   this->condition += condition;
-  // }
-  WhereQueryableData(
+  WhileQueryableData(
     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
-    std::function<bool(TObj)> && condition)
-    // : QueryableData<TObj, TIterable, TArgs...>(std::move(data))
+    std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "WhereQueryableDAta move constructor" << std::endl;
+    // std::cout << "WhileQueryableData move constructor" << std::endl;
     this->original = std::move(data);
-    this->sizeIsCalculated = false;
-    this->condition += condition;
+    this->condition = std::move(condition);
   }
-  WhereQueryableData(
+  WhileQueryableData(
     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
-    std::function<bool(TObj)> && condition)
-    // : QueryableData<TObj, TIterable, TArgs...>(*data)
+    std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "WhereQueryableDAta copy constructor" << std::endl;
+    // std::cout << "WhileQueryableData copy constructor" << std::endl;
     this->original = data;
-    this->sizeIsCalculated = false;
-    this->condition += condition;
+    this->condition = std::move(condition);
   }
-  WhereQueryableData(const WhereQueryableData<TObj, TIterable, TArgs...> & other)
+  WhileQueryableData(const WhileQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
-    // std::cout << "WhereQueryableDAta copy constructor" << std::endl;
+    // std::cout << "WhileQueryableData copy constructor" << std::endl;
     this->original = other.original;
-    this->sizeIsCalculated = other.sizeIsCalculated;
     this->condition = other.condition;
   }
 
-  virtual ~WhereQueryableData() { }
+  virtual ~WhileQueryableData() { }
 
   // TODO --> this is a pretty bad method to call for this class. finding a way
   //    to track this instead of iterating over the container would be good.
   virtual size_t Count() override
   {
-    //   return this->original->Count();
-    // if (this->sizeIsCalculated)
-    // {
-    //   return this->size;
-    // }
+    // TODO --> size is calculated needs to act like the state of an IEnumerable
+    //   where the size can simply be returned if it has already been enumerated
+
+    if (this->sizeIsCalculated)
+    {
+      return this->size;
+    }
 
     size_t count = 0;
+    this->condition->Reset();
 
     // not sure I like needing to get the realized queryable data
     std::shared_ptr<IQueryableData<TObj>> realized = this->original->GetRealizedQueryableData();
 
     for (const TObj & item : *realized)
     {
-      if (condition(item))
+      if (this->condition->Passes(item))
       {
         count++;
+      }
+      else
+      {
+        break;
       }
     }
 
     this->size = count;
-    // this->sizeIsCalculated = true;
+    this->sizeIsCalculated = true;
 
     return count;
   }
 
   virtual void Add(TObj item) override
   {
-    if (this->condition(item))
-    {
-      this->InternalAdd(item);
-      this->size++;
-    }
+    // pretty sure we don't want this method to exist
+    // if (this->condition(item))
+    // {
+    //   this->InternalAdd(item);
+    //   this->size++;
+    // }
   }
-
-//   virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
-//   {
-//     this->original->Sort(sorter);
-//   }
 
   // virtual TIterable<TObj, TArgs...> & GetContainer() override
   // {
@@ -143,10 +114,7 @@ public:
 
   virtual TObj & Get(IteratorType type) override
   {
-    //   std::cout << "Where Queryable Get" << std::endl;
     return this->original->Get(type);
-    // *this->value = this->original->Get(type);
-    // return *this->value;
   }
 
   virtual bool CanIncrement(IteratorType type) override
@@ -166,21 +134,29 @@ public:
 
   virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
   {
-    //   std::cout << "Where Queryable Next" << std::endl;
-    this->original->Next(type, iterated, isForcingToEnd);
-    
-    if (!isForcingToEnd)
+    // std::cout << "While Queryable Next" << std::endl;
+
+    if (!this->condition->Passes(this->original->Get(type)))
     {
-      this->IncrementPastFalseConditions(type, iterated, isForcingToEnd);
+        this->original->ForceEnd(type);
     }
+
+    this->original->Next(type, iterated, isForcingToEnd);
     
     return *this;
   }
 
   virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
   {
+    // std::cout << "While Queryable Prev" << std::endl;
+
+    if (!this->condition->Passes(this->original->Get(type)))
+    {
+        this->original->ForceBegin(type);
+    }
+
     this->original->Prev(type, iterated);
-    this->DecrementPastFalseConditions(type, iterated);
+
     return *this;
   }
 
@@ -211,28 +187,43 @@ public:
     return *this;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
+  // virtual void SetForceToEnd(std::function<void(size_t)> positionEnforcer) override
+  // {
+  //   this->endPositionEnforcer = positionEnforcer;
+  //   this->original->SetForceToEnd(positionEnforcer);
+  //   std::cout << "[While] setting force to end position, goodness: " << (this->endPositionEnforcer ? "GOOD" : "BAD") << std::endl;
+  // }
+  
+  // virtual void SetForceToBegin(std::function<void()> positionEnforcer) override
+  // {
+  //   this->beginPositionEnforcer = positionEnforcer;
+  //   this->original->SetForceToBegin(positionEnforcer);
+  // }
+
+  // remove the possibility to iterate if the first element does not pass condition
   virtual QueryableIterator<TObj> begin() override
   {
-    // std::cout << "WhereQueryableData::begin" << std::endl;
+    // std::cout << "WhileQueryableData::begin" << std::endl;
+    this->condition->Reset();
     QueryableIterator<TObj> child = this->original->begin();
 
+
+    if (!this->condition->Passes(*child))
+    {
+      child = this->original->end();
+    }
+
     uint64_t startIndex = child.index;
-    bool isForcingToEnd = false;
-    this->IncrementPastFalseConditions(IteratorType::BeginForward, startIndex, isForcingToEnd);
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
 
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
+  // End only serves as a check of the last element while iterating begin.
+  // This will never be used to increment/decrement
   virtual QueryableIterator<TObj> end() override
   {
-    // std::cout << "WhereQueryableData::end" << std::endl;
+    // std::cout << "WhileQueryableData::end" << std::endl;
     QueryableIterator<TObj> child = this->original->end();
 
     uint64_t startIndex = child.index;
@@ -241,24 +232,25 @@ public:
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
+  // remove the possibility to iterate if the first element does not pass condition
   virtual QueryableIterator<TObj> rbegin() override
   {
+    this->condition->Reset();
     QueryableIterator<TObj> child = this->original->rbegin();
 
+    if (!this->condition->Passes(*child))
+    {
+        child = this->original->rend();
+    }
+
     uint64_t startIndex = child.index;
-    bool isForcingToEnd = false;
-    this->IncrementPastFalseConditions(IteratorType::BeginReverse, startIndex, isForcingToEnd);
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
 
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
+  // Rend only serves as a check of the last element while iterating begin.
+  // This will never be used to increment/decrement
   virtual QueryableIterator<TObj> rend() override
   {
     QueryableIterator<TObj> child = this->original->end();
