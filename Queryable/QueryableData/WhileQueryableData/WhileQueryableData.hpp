@@ -66,10 +66,11 @@ public:
     // TODO --> size is calculated needs to act like the state of an IEnumerable
     //   where the size can simply be returned if it has already been enumerated
 
-    if (this->sizeIsCalculated)
-    {
-      return this->size;
-    }
+    // if (this->sizeIsCalculated)
+    // {
+    //   std::cout << "size is already calculated" << std::endl;
+    //   return this->size;
+    // }
 
     size_t count = 0;
     this->condition->Reset();

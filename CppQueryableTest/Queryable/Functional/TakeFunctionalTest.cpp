@@ -94,19 +94,27 @@ protected:
 // TEST_F(TakeFunctionalTest, TakeVectorUninitialized)
 // {
 //   IQueryable<Person> emptyQueryable;
-//   IQueryable<Person>  result = emptyQueryable.Take(this->takeCount);
+//   IQueryable<Person> result = emptyQueryable.Take(this->takeCount);
 
 //   ASSERT_EQ(0, result.Count());
 // }
 
 // TEST_F(TakeFunctionalTest, TakeVectorTakeMoreThanSize)
 // {
-//   this->TestTake(this->queryable, this->queryable.Count() + 1);
+//   IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToVector());
+//   this->TestTake(localQueryable, this->queryable.Count() + 1);
 // }
 
 TEST_F(TakeFunctionalTest, TakeVector)
 {
-  this->TestTake(this->queryable, this->takeCount);
+  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToVector());
+  this->TestTake(localQueryable, this->takeCount);
+}
+
+TEST_F(TakeFunctionalTest, TakeVector2)
+{
+  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToVector());
+  this->TestTake(localQueryable, this->takeCount);
 }
 
 // TEST_F(TakeFunctionalTest, TakeSet)
@@ -121,11 +129,11 @@ TEST_F(TakeFunctionalTest, TakeVector)
 //   this->TestTake(&localQueryable, this->takeCount);
 // }
 
-// TEST_F(TakeFunctionalTest, TakeDeque)
-// {
-//   IQueryable<uint> localQueryable(this->queryable.ToDeque());
-//   this->TestTake(&localQueryable, this->takeCount);
-// }
+TEST_F(TakeFunctionalTest, TakeDeque)
+{
+  IQueryable<uint> localQueryable(BuildQueryable2(this->queryable.ToDeque()));
+  this->TestTake(localQueryable, this->takeCount);
+}
 
 // TEST_F(TakeFunctionalTest, TakeList)
 // {
@@ -162,17 +170,17 @@ TEST_F(TakeFunctionalTest, TakeVector)
 //   this->TestTakeNegative(&localQueryable, -this->takeCount);
 // }
 
-// TEST_F(TakeFunctionalTest, TakeWhere)
-// {
-//   int takeCount = 3;
-//   int expectedCount = 3;
-//   IQueryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-//   IQueryable<uint>  result = queryableVector
-//     .Where([](uint value) { return value % 2 == 0; })
-//     .Take(takeCount);
+TEST_F(TakeFunctionalTest, TakeWhere)
+{
+  int takeCount = 3;
+  int expectedCount = 3;
+  IQueryable<uint> queryableVector = BuildQueryable2(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  IQueryable<uint>  result = queryableVector
+    .Where([](uint value) { return value % 2 == 0; })
+    .Take(takeCount);
 
-//   ASSERT_EQ(expectedCount, result.Count());
+  ASSERT_EQ(expectedCount, result.Count());
 
-//   takeCount = 0;
-//   result.ForEach([&](uint value) { ASSERT_EQ(takeCount++ * 2, value); });
-// }
+  takeCount = 0;
+  result.ForEach([&](uint value) { ASSERT_EQ(takeCount++ * 2, value); });
+}
