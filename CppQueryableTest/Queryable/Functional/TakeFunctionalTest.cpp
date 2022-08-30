@@ -135,11 +135,11 @@ TEST_F(TakeFunctionalTest, TakeDeque)
   this->TestTake(localQueryable, this->takeCount);
 }
 
-// TEST_F(TakeFunctionalTest, TakeList)
-// {
-//   IQueryable<uint> localQueryable(this->queryable.ToList());
-//   this->TestTake(&localQueryable, this->takeCount);
-// }
+TEST_F(TakeFunctionalTest, TakeList)
+{
+  IQueryable<uint> localQueryable(BuildQueryable2(this->queryable.ToList()));
+  this->TestTake(localQueryable, this->takeCount);
+}
 
 // TEST_F(TakeFunctionalTest, TakeVectorNegative)
 // {
