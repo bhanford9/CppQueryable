@@ -8,6 +8,7 @@
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableSetData.hpp"
+#include "../QueryableData/WhileQueryableData/WhileQueryableSetData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
 template<
@@ -72,7 +73,9 @@ public:
   
   virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) override
   {
-    // this->items = std::make_shared<WhileQueryableSetData<TObj, TLessThan, TAllocator>>(std::move(this->items), std::move(condition));
+    this->items = std::move(std::make_shared<WhileQueryableSetData<TObj, TLessThan, TAllocator>>(
+      std::move(this->items),
+      std::move(condition)));
   }
 };
 

@@ -298,6 +298,12 @@ public:
     return this->queryable->template Range<TIterable, TOut>(retrieveValue);
   }
 
+  inline IBaseQueryable<T, TArgs...> Take(int count)
+  {
+    this->queryable->Take(count);
+    return *this;
+  }
+
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {
     return this->queryable->Sum(retrieveValue);
