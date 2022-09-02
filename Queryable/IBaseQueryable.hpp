@@ -298,15 +298,21 @@ public:
     return this->queryable->template Range<TIterable, TOut>(retrieveValue);
   }
 
-  inline IBaseQueryable<T, TArgs...> Take(int count)
+  inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
+  {
+    return this->queryable->Sum(retrieveValue);
+  }
+
+  inline IBaseQueryable<T, TArgs...> & Take(int count)
   {
     this->queryable->Take(count);
     return *this;
   }
 
-  inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
+  inline IBaseQueryable<T, TArgs...> & TakeWhile(std::function<bool(T)> && doTake)
   {
-    return this->queryable->Sum(retrieveValue);
+    this->queryable->TakeWhile(std::move(doTake));
+    return *this;
   }
 };
 

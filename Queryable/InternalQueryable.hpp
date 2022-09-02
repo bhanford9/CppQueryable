@@ -392,82 +392,19 @@ public:
         [](const TObj & value, int & current) { return current-- > 0; },
         [count](int current) mutable { return count; });
     
-    this->While(std::move(whileCondition));
+    this->InternalTakeWhile(std::move(whileCondition));
+  }
+
+  inline void TakeWhile(std::function<bool(TObj)> && doTake)
+  {
+    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
+      std::make_shared<WhileCondition<TObj, int>>(std::move(doTake));    
+    this->InternalTakeWhile(std::move(whileCondition));
   }
 
   // make private?
-  inline virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
+  inline virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
   
-  // InternalQueryable<TObj> * TakeWhile(std::function<bool(TObj)> doTake)
-  // {
-  //   // consider optimization of doing this without duplicate vector
-  //   // may be better/worse depending on container size
-  //   std::vector<TObj> copy = this->ToVector();
-  //   this->Clear();
-  //
-  //   for (TObj item : copy)
-  //   {
-  //     if (doTake(item))
-  //     {
-  //       this->items.get()->Add(item);
-  //     }
-  //     else
-  //     {
-  //       break;
-  //     }
-  //   }
-  //
-  //   return this;
-  // }
-  //
-  // InternalQueryable<TObj>* Skip(int count)
-  // {
-  //   if (count < 0)
-  //   {
-  //     return this->Take(this->Count() + count);
-  //   }
-  //
-  //   int localSize = this->Count();
-  //   if (count > localSize)
-  //   {
-  //     count = localSize;
-  //   }
-  //
-  //   QueryableVectorData<TObj> copy = this->items.get()->ToVector();
-  //   this->Clear();
-  //
-  //   int i = 0;
-  //   for (auto it = copy.begin(); it != copy.end(); ++it)
-  //   {
-  //     if (this->items.get()->PassesCondition(*it) && count <= i++)
-  //     {
-  //       this->items.get()->Add(*it);
-  //     }
-  //   }
-  //
-  //   return this;
-  // }
-  //
-  // InternalQueryable<TObj>* SkipWhile(std::function<bool(TObj)> doSkip)
-  // {
-  //   // the skip and take methods need to be thought through
-  //   // to come up with better space/time complexities
-  //   int toDelete = 0;
-  //
-  //   for (TObj item : *this->items.get())
-  //   {
-  //     if (!doSkip(item))
-  //     {
-  //       break;
-  //     }
-  //
-  //     toDelete++;
-  //   }
-  //
-  //   InternalQueryable<TObj>* retval = this->Skip(toDelete);
-  //   return retval;
-  // }
-
   // TODO these can be done with iterators instead
   // inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
   // {

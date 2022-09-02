@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDEQUEDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDEQUEDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDEQUEDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDEQUEDATA_H
 
 #include <iostream>
 #include <deque>
@@ -7,44 +7,44 @@
 #include "../../QueryableType.hpp"
 #include "../../Utilities/Condition.hpp"
 #include "../../Sorters/DequeSorter.hpp"
-#include "WhileQueryableData.hpp"
+#include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class WhileQueryableDequeData : public WhileQueryableData<TObj, std::deque, TAllocator>
+class TakeWhileQueryableDequeData : public TakeWhileQueryableData<TObj, std::deque, TAllocator>
 {
 public:
-  WhileQueryableDequeData(
+  TakeWhileQueryableDequeData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
   {
-    // std::cout << "WhileQueryable Deque Data Constructor 0" << std::endl;
+    // std::cout << "TakeWhileQueryable Deque Data Constructor 0" << std::endl;
   }
-  WhileQueryableDequeData(
+  TakeWhileQueryableDequeData(
     std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
   {
-    // std::cout << "WhileQueryable Deque Data Constructor 1" << std::endl;
+    // std::cout << "TakeWhileQueryable Deque Data Constructor 1" << std::endl;
   }
-  WhileQueryableDequeData(
+  TakeWhileQueryableDequeData(
     const std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::deque, TAllocator>(data, std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(data, std::move(condition))
   {
-    // std::cout << "WhileQueryable Deque Data Constructor 3" << std::endl;
+    // std::cout << "TakeWhileQueryable Deque Data Constructor 3" << std::endl;
   }
-  WhileQueryableDequeData(const WhileQueryableDequeData<TObj, TAllocator> & other)
-    : WhileQueryableData<TObj, std::deque, TAllocator>(other)
+  TakeWhileQueryableDequeData(const TakeWhileQueryableDequeData<TObj, TAllocator> & other)
+    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(other)
   {
-    // std::cout << "WhileQueryable Deque Data Constructor 2" << std::endl;
+    // std::cout << "TakeWhileQueryable Deque Data Constructor 2" << std::endl;
   }
 
-  virtual ~WhileQueryableDequeData() { }
+  virtual ~TakeWhileQueryableDequeData() { }
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    return std::make_shared<WhileQueryableDequeData<TObj, TAllocator>>(*this);
+    return std::make_shared<TakeWhileQueryableDequeData<TObj, TAllocator>>(*this);
   }
 
   virtual void InternalAdd(TObj item) override

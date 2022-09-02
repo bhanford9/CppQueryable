@@ -654,6 +654,11 @@ public:
     this->queryable->Take(count);
   }
 
+  inline void TakeWhile(std::function<bool(TObj)> && doTake)
+  {    
+    this->queryable->TakeWhile(std::move(doTake));
+  }
+
   inline InternalIQueryable<TObj, TArgs...> & Where(std::function<bool(const TObj &)> condition)
   {
     this->queryable->Where(condition);

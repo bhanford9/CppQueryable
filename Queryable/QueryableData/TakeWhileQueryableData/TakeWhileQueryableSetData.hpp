@@ -1,41 +1,41 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLESETDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLESETDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLESETDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLESETDATA_H
 
 #include <iostream>
 #include <set>
 
 #include "../../Utilities/Condition.hpp"
-#include "WhileQueryableData.hpp"
+#include "TakeWhileQueryableData.hpp"
 
 template<
   typename TObj,
   typename TCompare = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class WhileQueryableSetData : public WhileQueryableData<TObj, std::set, TCompare, TAllocator>
+class TakeWhileQueryableSetData : public TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>
 {
 public:
-  WhileQueryableSetData(
+  TakeWhileQueryableSetData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
-  WhileQueryableSetData(
+  TakeWhileQueryableSetData(
     std::shared_ptr<QueryableData<TObj, std::set, TCompare, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
-  WhileQueryableSetData(const WhileQueryableSetData<TObj, TCompare, TAllocator> & other)
-    : WhileQueryableData<TObj, std::set, TCompare, TAllocator>(other)
+  TakeWhileQueryableSetData(const TakeWhileQueryableSetData<TObj, TCompare, TAllocator> & other)
+    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(other)
   {
   }
 
-  virtual ~WhileQueryableSetData() { }
+  virtual ~TakeWhileQueryableSetData() { }
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    return std::make_shared<WhileQueryableSetData<TObj, TCompare, TAllocator>>(*this);
+    return std::make_shared<TakeWhileQueryableSetData<TObj, TCompare, TAllocator>>(*this);
   }
 
   virtual void InternalAdd(TObj item) override

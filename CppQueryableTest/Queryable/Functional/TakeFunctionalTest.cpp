@@ -34,7 +34,7 @@ protected:
   }
 
   template<typename TObj>
-  void TestTake(IBaseQueryable<TObj> localQueryable, int toTake)
+  void TestTake(IBaseQueryable<TObj> & localQueryable, int toTake)
   {
     std::vector<uint> expected;
     const size_t copyToTake = static_cast<size_t>(toTake);
@@ -49,7 +49,7 @@ protected:
       expected.push_back(localQueryable.At(i));
     }
 
-    IBaseQueryable<uint> result = localQueryable.Take(toTake);
+    IBaseQueryable<uint> & result = localQueryable.Take(toTake);
 
     ASSERT_EQ(expected.size(), result.Count());
 
@@ -90,14 +90,6 @@ protected:
 
   void TearDown() override {}
 };
-
-// TEST_F(TakeFunctionalTest, TakeVectorUninitialized)
-// {
-//   IQueryable<Person> emptyQueryable;
-//   IQueryable<Person> result = emptyQueryable.Take(this->takeCount);
-
-//   ASSERT_EQ(0, result.Count());
-// }
 
 TEST_F(TakeFunctionalTest, TakeVectorTakeMoreThanSize)
 {

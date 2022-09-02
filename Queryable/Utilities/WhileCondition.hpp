@@ -11,25 +11,42 @@ class WhileCondition : public IWhileCondition<TValue>
 {
 private:
   TCondition currentValue;
-  std::function<bool(const TValue &, TCondition &)> condition;
+  std::function<bool(const TValue &)> condition;
+  std::function<bool(const TValue &, TCondition &)> paramCondition;
   std::function<TCondition(TCondition)> resetCondition;
 
 public:
+    // TODO --> these would be better left as separate children
   WhileCondition(
     TCondition startingValue,
-    std::function<bool(const TValue &, TCondition &)> condition,
-    std::function<TCondition(TCondition)> resetCondition) :
+    std::function<bool(const TValue &, TCondition &)> && condition,
+    std::function<TCondition(TCondition)> && resetCondition) :
     currentValue(startingValue),
-    condition(condition),
-    resetCondition(resetCondition)
+    paramCondition(std::move(condition)),
+    resetCondition(std::move(resetCondition))
   {        
+  }
+
+  WhileCondition(std::function<bool(const TValue &)> condition) :
+    condition(std::move(condition))
+  {
   }
 
   virtual ~WhileCondition() { }
 
   inline virtual bool Passes(const TValue & obj) override
   {
-    bool passes = this->condition(obj, this->currentValue);
+    bool passes = false;
+    
+    if (this->paramCondition)
+    {
+      passes = this->paramCondition(obj, this->currentValue);
+    }
+    else
+    {
+      passes = this->condition(obj);
+    }
+
     return passes;
   }
 
@@ -40,7 +57,10 @@ public:
 
   inline virtual void Reset() override
   {
-    this->currentValue = this->resetCondition(this->currentValue);
+    if (this->resetCondition)
+    {
+        this->currentValue = this->resetCondition(this->currentValue);
+    }
   }
 };
 

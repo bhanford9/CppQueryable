@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_H
 
 #include <algorithm>
 #include <deque>
@@ -20,7 +20,7 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class WhileQueryableData : public QueryableData<TObj, TIterable, TArgs...>
+class TakeWhileQueryableData : public QueryableData<TObj, TIterable, TArgs...>
 {
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
@@ -33,31 +33,31 @@ protected:
   bool sizeIsCalculated;
 
 public:
-  WhileQueryableData(
+  TakeWhileQueryableData(
     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "WhileQueryableData move constructor" << std::endl;
+    // std::cout << "TakeWhileQueryableData move constructor" << std::endl;
     this->original = std::move(data);
     this->condition = std::move(condition);
   }
-  WhileQueryableData(
+  TakeWhileQueryableData(
     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "WhileQueryableData copy constructor" << std::endl;
+    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
     this->original = data;
     this->condition = std::move(condition);
   }
-  WhileQueryableData(const WhileQueryableData<TObj, TIterable, TArgs...> & other)
+  TakeWhileQueryableData(const TakeWhileQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
-    // std::cout << "WhileQueryableData copy constructor" << std::endl;
+    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
     this->original = other.original;
     this->condition = other.condition;
   }
 
-  virtual ~WhileQueryableData() { }
+  virtual ~TakeWhileQueryableData() { }
 
   // TODO --> this is a pretty bad method to call for this class. finding a way
   //    to track this instead of iterating over the container would be good.
@@ -73,6 +73,7 @@ public:
     // }
 
     size_t count = 0;
+
     this->condition->Reset();
 
     // not sure I like needing to get the realized queryable data
@@ -139,7 +140,7 @@ public:
 
     if (!this->condition->Passes(this->original->Get(type)))
     {
-        this->original->ForceEnd(type);
+      this->original->ForceEnd(type);
     }
 
     this->original->Next(type, iterated, isForcingToEnd);
@@ -204,7 +205,7 @@ public:
   // remove the possibility to iterate if the first element does not pass condition
   virtual QueryableIterator<TObj> begin() override
   {
-    // std::cout << "WhileQueryableData::begin" << std::endl;
+    // std::cout << "TakeWhileQueryableData::begin" << std::endl;
     this->condition->Reset();
     QueryableIterator<TObj> child = this->original->begin();
 
@@ -224,7 +225,7 @@ public:
   // This will never be used to increment/decrement
   virtual QueryableIterator<TObj> end() override
   {
-    // std::cout << "WhileQueryableData::end" << std::endl;
+    // std::cout << "TakeWhileQueryableData::end" << std::endl;
     QueryableIterator<TObj> child = this->original->end();
 
     uint64_t startIndex = child.index;

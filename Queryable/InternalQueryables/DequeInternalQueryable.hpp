@@ -7,7 +7,7 @@
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableDequeData.hpp"
-#include "../QueryableData/WhileQueryableData/WhileQueryableDequeData.hpp"
+#include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableDequeData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
 template<
@@ -64,9 +64,9 @@ public:
     this->items = std::move(std::make_shared<WhereQueryableDequeData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
   }
 
-  virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) override
+  virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
   {
-    this->items = std::move(std::make_shared<WhileQueryableDequeData<TObj, TAllocator>>(
+    this->items = std::move(std::make_shared<TakeWhileQueryableDequeData<TObj, TAllocator>>(
       std::move(this->items),
       std::move(condition)));
   }

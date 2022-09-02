@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLELISTDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLELISTDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLELISTDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLELISTDATA_H
 
 #include <iostream>
 #include <list>
@@ -7,44 +7,44 @@
 #include "../../QueryableType.hpp"
 #include "../../Utilities/Condition.hpp"
 #include "../../Sorters/ListSorter.hpp"
-#include "WhileQueryableData.hpp"
+#include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class WhileQueryableListData : public WhileQueryableData<TObj, std::list, TAllocator>
+class TakeWhileQueryableListData : public TakeWhileQueryableData<TObj, std::list, TAllocator>
 {
 public:
-  WhileQueryableListData(
+  TakeWhileQueryableListData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
   {
-    // std::cout << "WhileQueryable List Data Constructor 0" << std::endl;
+    // std::cout << "TakeWhileQueryable List Data Constructor 0" << std::endl;
   }
-  WhileQueryableListData(
+  TakeWhileQueryableListData(
     std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
   {
-    // std::cout << "WhileQueryable List Data Constructor 1" << std::endl;
+    // std::cout << "TakeWhileQueryable List Data Constructor 1" << std::endl;
   }
-  WhileQueryableListData(
+  TakeWhileQueryableListData(
     const std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::list, TAllocator>(data, std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TAllocator>(data, std::move(condition))
   {
-    // std::cout << "WhileQueryable List Data Constructor 3" << std::endl;
+    // std::cout << "TakeWhileQueryable List Data Constructor 3" << std::endl;
   }
-  WhileQueryableListData(const WhileQueryableListData<TObj, TAllocator> & other)
-    : WhileQueryableData<TObj, std::list, TAllocator>(other)
+  TakeWhileQueryableListData(const TakeWhileQueryableListData<TObj, TAllocator> & other)
+    : TakeWhileQueryableData<TObj, std::list, TAllocator>(other)
   {
-    // std::cout << "WhileQueryable List Data Constructor 2" << std::endl;
+    // std::cout << "TakeWhileQueryable List Data Constructor 2" << std::endl;
   }
 
-  virtual ~WhileQueryableListData() { }
+  virtual ~TakeWhileQueryableListData() { }
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    return std::make_shared<WhileQueryableListData<TObj, TAllocator>>(*this);
+    return std::make_shared<TakeWhileQueryableListData<TObj, TAllocator>>(*this);
   }
 
   virtual void InternalAdd(TObj item) override

@@ -328,6 +328,7 @@ public:
   }
 
   inline virtual void Take(int count) = 0;
+  inline virtual void TakeWhile(std::function<bool(T)> && doTake) = 0;
 
   inline virtual double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const = 0;
 //   inline virtual size_t Sum(std::function<size_t(T)> retrieveValue = [](T value) { return value; }) const = 0;

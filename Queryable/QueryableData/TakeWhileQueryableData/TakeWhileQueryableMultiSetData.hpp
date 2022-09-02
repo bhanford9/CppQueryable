@@ -1,41 +1,41 @@
-#ifndef CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEMULTISETDATA_H
-#define CPPQUERYABLE_QUERYABLE_WHILEQUERYABLEMULTISETDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEMULTISETDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEMULTISETDATA_H
 
 #include <iostream>
 #include <set>
 
 #include "../../Utilities/Condition.hpp"
-#include "WhileQueryableData.hpp"
+#include "TakeWhileQueryableData.hpp"
 
 template<
   typename TObj,
   typename TCompare = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class WhileQueryableMultiSetData : public WhileQueryableData<TObj, std::multiset, TCompare, TAllocator>
+class TakeWhileQueryableMultiSetData : public TakeWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>
 {
 public:
-  WhileQueryableMultiSetData(
+  TakeWhileQueryableMultiSetData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
-  WhileQueryableMultiSetData(
+  TakeWhileQueryableMultiSetData(
     std::shared_ptr<QueryableData<TObj, std::multiset, TCompare, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : WhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
-  WhileQueryableMultiSetData(const WhileQueryableMultiSetData<TObj, TCompare, TAllocator> & other)
-    : WhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(other)
+  TakeWhileQueryableMultiSetData(const TakeWhileQueryableMultiSetData<TObj, TCompare, TAllocator> & other)
+    : TakeWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(other)
   {
   }
 
-  virtual ~WhileQueryableMultiSetData() { }
+  virtual ~TakeWhileQueryableMultiSetData() { }
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {
-    return std::make_shared<WhileQueryableMultiSetData<TObj, TCompare, TAllocator>>(*this);
+    return std::make_shared<TakeWhileQueryableMultiSetData<TObj, TCompare, TAllocator>>(*this);
   }
 
   virtual void InternalAdd(TObj item) override

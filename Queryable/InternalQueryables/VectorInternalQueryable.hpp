@@ -9,7 +9,7 @@
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableVectorData.hpp"
 #include "../QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
-#include "../QueryableData/WhileQueryableData/WhileQueryableVectorData.hpp"
+#include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableVectorData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
 template<
@@ -60,9 +60,9 @@ public:
     this->items = std::make_shared<WhereQueryableVectorData<TObj, TAllocator>>(std::move(this->items), std::move(condition));
   }
 
-  virtual void While(std::shared_ptr<IWhileCondition<TObj>> && condition) override
+  virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
   {
-    this->items = std::move(std::make_shared<WhileQueryableVectorData<TObj, TAllocator>>(
+    this->items = std::move(std::make_shared<TakeWhileQueryableVectorData<TObj, TAllocator>>(
       std::move(this->items),
       std::move(condition)));
   }
