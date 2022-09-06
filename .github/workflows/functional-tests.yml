@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: echo "Starting Functional Tests: ${{ github.event_name }}"
+    - run: echo "Starting Functional Tests"
     - uses: actions/checkout@v3
     - name: Build and Run Functional Tests
       run: make FuncTests
