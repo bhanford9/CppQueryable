@@ -52,7 +52,7 @@ jobs:
       shell: pwsh
     
     - name: Set safe path
-      run: Add-Content $env:PROJECTS_PATH "D:\a\CppQueryable\CppQueryable"
+      run: $env:PROJECTS_PATH = 'D:\a\CppQueryable\CppQueryable'
       shell: pwsh
     
     - name: Display safe path
