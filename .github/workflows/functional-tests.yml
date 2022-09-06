@@ -25,8 +25,8 @@ jobs:
   windows:
     runs-on: windows-latest
     env: 
-      PROJECTS_PATH: D:/a/CppQueryable/CppQueryable
-      GTEST_BASE_DIR: D:/a/CppQueryable/CppQueryable/Installs/googletest/googletest
+      PROJECTS_PATH: D:/a/CppQueryable
+      GTEST_BASE_DIR: D:/a/CppQueryable/Installs/googletest/googletest
     steps:
 
     # (not sure if this step is necessary since we're already in git hub)
@@ -40,7 +40,7 @@ jobs:
       shell: bash
     
     - name: Display Installs Directory
-      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l ./googletest/src && ls -l ./googletest/include
+      run: cd ./Installs/googletest && cmake CMakeLists.txt && cmake && ls -l ./googletest/src && ls -l ./googletest/include
       shell: bash
 
     - uses: actions/checkout@v3
