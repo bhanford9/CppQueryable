@@ -40,10 +40,10 @@ jobs:
       shell: bash
     
     - name: Display Installs Directory
-      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l && ls -l ./googletest
+      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l ./googletest/src && ls -l ./googletest/include
       shell: bash
 
-    # - uses: actions/checkout@v3
-    # - name: Build and Run Functional Tests
-    #   run: make FuncTests
-    #   shell: bash
+    - uses: actions/checkout@v3
+    - name: Build and Run Functional Tests
+      run: make FuncTests
+      shell: bash
