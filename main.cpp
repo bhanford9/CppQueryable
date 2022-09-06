@@ -25,7 +25,6 @@
 #include "DataStructures/Base.hpp"
 #include "DataStructures/Derived.hpp"
 #include "Queryable/QueryableData/QueryableVectorData.hpp"
-#include "Queryable/QueryableData/SortQueryableData/SortQueryableData.hpp"
 
 using namespace QueryBuilder;
 

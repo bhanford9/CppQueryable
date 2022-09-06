@@ -34,6 +34,7 @@ public:
 
   virtual ~WhileCondition() { }
 
+  // TODO --> I think this method should be able to be const
   inline virtual bool Passes(const TValue & obj) override
   {
     bool passes = false;

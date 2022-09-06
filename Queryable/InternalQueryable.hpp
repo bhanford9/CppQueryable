@@ -29,7 +29,6 @@
 #include "QueryableData/SelectQueryableData/SelectQueryableMultiSetData.hpp"
 #include "QueryableData/SelectQueryableData/SelectQueryableSetData.hpp"
 #include "QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
-#include "QueryableData/SortQueryableData/SortQueryableData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableDequeData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableListData.hpp"

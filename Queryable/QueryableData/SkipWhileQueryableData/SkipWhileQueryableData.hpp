@@ -1,5 +1,5 @@
-#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEDATA_H
-#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEDATA_H
+#define CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEDATA_H
 
 #include <algorithm>
 #include <deque>
@@ -20,7 +20,7 @@ template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class TakeWhileQueryableData : public QueryableData<TObj, TIterable, TArgs...>
+class SkipWhileQueryableData : public QueryableData<TObj, TIterable, TArgs...>
 {
 protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
@@ -31,33 +31,37 @@ protected:
   std::shared_ptr<IWhileCondition<TObj>> condition;
   std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> original;
   bool sizeIsCalculated;
+  bool finishedSkipping;
 
 public:
-  TakeWhileQueryableData(
+  SkipWhileQueryableData(
     std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "TakeWhileQueryableData move constructor" << std::endl;
+    // std::cout << "SkipWhileQueryableData move constructor" << std::endl;
     this->original = std::move(data);
     this->condition = std::move(condition);
+    this->finishedSkipping = false;
   }
-  TakeWhileQueryableData(
+  SkipWhileQueryableData(
     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
+    // std::cout << "SkipWhileQueryableData copy constructor" << std::endl;
     this->original = data;
     this->condition = std::move(condition);
+    this->finishedSkipping = false;
   }
-  TakeWhileQueryableData(const TakeWhileQueryableData<TObj, TIterable, TArgs...> & other)
+  SkipWhileQueryableData(const SkipWhileQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
-    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
+    // std::cout << "SkipWhileQueryableData copy constructor" << std::endl;
     this->original = other.original;
     this->condition = other.condition;
+    this->finishedSkipping = other.finishedSkipping;
   }
 
-  virtual ~TakeWhileQueryableData() { }
+  virtual ~SkipWhileQueryableData() { }
 
   // TODO --> this is a pretty bad method to call for this class. finding a way
   //    to track this instead of iterating over the container would be good.
@@ -81,7 +85,7 @@ public:
 
     for (const TObj & item : *realized)
     {
-      if (this->condition->Passes(item))
+      if (!this->DoSkip(item))
       {
         count++;
       }
@@ -137,13 +141,17 @@ public:
   virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "While Queryable Next" << std::endl;
+    
+    uint64_t trueIterated = iterated;
+    this->original->Next(type, iterated, isForcingToEnd);
+    trueIterated += iterated;
 
-    if (!this->condition->Passes(this->original->Get(type)))
+    if (this->DoSkip(this->original->Get(type)))
     {
-      this->original->ForceEnd(type);
+      this->Next(type, trueIterated, isForcingToEnd);
     }
 
-    this->original->Next(type, iterated, isForcingToEnd);
+    iterated = trueIterated;
     
     return *this;
   }
@@ -152,11 +160,7 @@ public:
   {
     // std::cout << "While Queryable Prev" << std::endl;
 
-    if (!this->condition->Passes(this->original->Get(type)))
-    {
-        this->original->ForceBegin(type);
-    }
-
+    // TODO --> Prev may not have very applicable use here
     this->original->Prev(type, iterated);
 
     return *this;
@@ -192,15 +196,9 @@ public:
   // remove the possibility to iterate if the first element does not pass condition
   virtual QueryableIterator<TObj> begin() override
   {
-    // std::cout << "TakeWhileQueryableData::begin" << std::endl;
+    // std::cout << "SkipWhileQueryableData::begin" << std::endl;
     this->condition->Reset();
     QueryableIterator<TObj> child = this->original->begin();
-
-
-    if (!this->condition->Passes(*child))
-    {
-      child = this->original->end();
-    }
 
     uint64_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
@@ -212,7 +210,7 @@ public:
   // This will never be used to increment/decrement
   virtual QueryableIterator<TObj> end() override
   {
-    // std::cout << "TakeWhileQueryableData::end" << std::endl;
+    // std::cout << "SkipWhileQueryableData::end" << std::endl;
     QueryableIterator<TObj> child = this->original->end();
 
     uint64_t startIndex = child.index;
@@ -226,11 +224,6 @@ public:
   {
     this->condition->Reset();
     QueryableIterator<TObj> child = this->original->rbegin();
-
-    if (!this->condition->Passes(*child))
-    {
-        child = this->original->rend();
-    }
 
     uint64_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
@@ -248,6 +241,17 @@ public:
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
     return retVal;
+  }
+
+  inline bool DoSkip(const TObj & item) const
+  {
+    if (!this->finishedSkipping)
+    {
+      bool passes = this->condition->Passes(item);
+      this->finishedSkipping = !passes;
+    }
+
+    return !this->finishedSkipping;
   }
 };
 
