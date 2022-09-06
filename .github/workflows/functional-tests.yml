@@ -27,20 +27,13 @@ jobs:
     env: 
       PROJECTS_PATH: D:/a/CppQueryable
       GTEST_BASE_DIR: D:/a/CppQueryable/Installs/googletest/googletest
-    steps:
-
-    # (not sure if this step is necessary since we're already in git hub)
-    # - name: Set up MinGW
-    #   uses: egor-tensin/setup-mingw@v2
-    #   with:
-    #     platform: x64
-    
+    steps:    
     - name: Install GTEST and GMOCK
       run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
       shell: bash
     
     - name: Display Installs Directory
-      run: cd ./Installs/googletest && cmake CMakeLists.txt && cmake && ls -l ./googletest/src && ls -l ./googletest/include
+      run: cd ./Installs/googletest/googletest && cmake CMakeLists.txt && make && ls -l ./src && ls -l ./include/gtest && ls -l ./lib
       shell: bash
 
     - uses: actions/checkout@v3
