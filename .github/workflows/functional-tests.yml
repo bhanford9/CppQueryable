@@ -41,4 +41,4 @@ jobs:
       run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
     
     - name: Display Installs Directory
-      run: ls -al ./Installs/googletest && ls -al
+      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l
