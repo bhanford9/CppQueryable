@@ -42,3 +42,6 @@ jobs:
     
     - name: Display Installs Directory
       run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l
+    
+    - name: Add GTEST Output to PATH
+      run: echo "D:/a/CppQueryable/CppQueryable/Installs/googletest" >> $GITHUB_PATH && echo $GITHUB_PATH
