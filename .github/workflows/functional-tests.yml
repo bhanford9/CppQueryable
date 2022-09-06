@@ -33,7 +33,7 @@ jobs:
       shell: bash
     
     - name: Display Installs Directory
-      run: cd ./Installs/googletest/googletest && cmake CMakeLists.txt && make && ls -l ./src && ls -l ./include/gtest && ls -l ./lib
+      run: cd ./Installs/googletest/googletest && cmake CMakeLists.txt && cmake && ls -l ./src && ls -l ./include/gtest && ls -l ./lib
       shell: bash
 
     - uses: actions/checkout@v3
