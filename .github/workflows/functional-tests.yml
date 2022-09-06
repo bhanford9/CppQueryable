@@ -7,36 +7,37 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # linux:
+  linux:
 
-  #   runs-on: ubuntu-latest
-  #   env: 
-  #     PROJECTS_PATH: /home/runner/work/CppQueryable
-  #     GTEST_BASE_DIR: /usr/src/gtest
-
-  #   steps:
-  #   - name: Intall GTEST and GMOCK
-  #     run: sudo apt-get install libgtest-dev && sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib
-
-  #   - uses: actions/checkout@v3
-  #   - name: Build and Run Functional Tests
-  #     run: make FuncTests
-
-  windows:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env: 
-      PROJECTS_PATH: D:/a/CppQueryable
-      GTEST_BASE_DIR: D:/a/CppQueryable/Installs/googletest/googletest
-    steps:    
-    - name: Install GTEST and GMOCK
-      run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
-      shell: bash
-    
-    - name: Display Installs Directory
-      run: cd ./Installs/googletest/googletest && cmake CMakeLists.txt && cmake && ls -l ./src && ls -l ./include/gtest && ls -l ./lib
-      shell: bash
+      PROJECTS_PATH: /home/runner/work/CppQueryable
+      GTEST_BASE_DIR: /usr/src/gtest
+
+    steps:
+    - name: Intall GTEST and GMOCK
+      run: sudo apt-get install libgtest-dev && sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib
 
     - uses: actions/checkout@v3
     - name: Build and Run Functional Tests
       run: make FuncTests
-      shell: bash
+
+  ### probably just going to need to do windows using CMAKE ###
+  # windows:
+  #   runs-on: windows-latest
+  #   env: 
+  #     PROJECTS_PATH: D:/a/CppQueryable
+  #     GTEST_BASE_DIR: D:/a/CppQueryable/Installs/googletest/googletest
+  #   steps:    
+  #   - name: Install GTEST and GMOCK
+  #     run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
+  #     shell: bash
+    
+  #   - name: Display Installs Directory
+  #     run: cd ./Installs/googletest/googletest && cmake CMakeLists.txt && cmake && ls -l ./src && ls -l ./include/gtest && ls -l ./lib
+  #     shell: bash
+
+  #   - uses: actions/checkout@v3
+  #   - name: Build and Run Functional Tests
+  #     run: make FuncTests
+  #     shell: bash
