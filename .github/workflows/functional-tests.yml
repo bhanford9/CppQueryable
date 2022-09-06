@@ -7,12 +7,14 @@ on:
     branches: [ "main" ]
 
 env:
-  PROJECTS_PATH: /home/runner/work/CppQueryable
+  # PROJECTS_PATH: /home/runner/work/CppQueryable
 
 jobs:
   # linux:
 
   #   runs-on: ubuntu-latest
+      env: 
+        PROJECTS_PATH: /home/runner/work/CppQueryable
 
   #   steps:
   #   - name: Intall GTEST and GMOCK
@@ -24,6 +26,8 @@ jobs:
 
   windows:
     runs-on: windows-latest
+    env: 
+      PROJECTS_PATH: D:\a\CppQueryable\CppQueryable
 
     defaults:
       run:
@@ -43,17 +47,17 @@ jobs:
     - name: Display Installs Directory
       run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l
     
-    - name: Add GTEST Output to PATH
-      run: Add-Content $env:GITHUB_PATH "D:\a\CppQueryable\CppQueryable\Installs\googletest"
-      shell: pwsh
+    # - name: Add GTEST Output to PATH
+    #   run: Add-Content $env:GITHUB_PATH "D:\a\CppQueryable\CppQueryable\Installs\googletest"
+    #   shell: pwsh
 
-    - name: Display the path
-      run: echo ${env:GITHUB_PATH}
-      shell: pwsh
+    # - name: Display the path
+    #   run: echo ${env:GITHUB_PATH}
+    #   shell: pwsh
     
-    - name: Set safe path
-      run: $env:PROJECTS_PATH = 'D:\a\CppQueryable\CppQueryable'
-      shell: pwsh
+    # - name: Set safe path
+    #   run: $env:PROJECTS_PATH = 'D:\a\CppQueryable\CppQueryable'
+    #   shell: pwsh
     
     - name: Display safe path
       run: echo ${env:PROJECTS_PATH}
