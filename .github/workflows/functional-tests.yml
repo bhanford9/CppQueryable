@@ -46,9 +46,17 @@ jobs:
     - name: Add GTEST Output to PATH
       run: Add-Content $env:GITHUB_PATH "D:\a\CppQueryable\CppQueryable\Installs\googletest"
       shell: pwsh
-      # run: echo "D:/a/CppQueryable/CppQueryable/Installs/googletest" >> $GITHUB_PATH && echo $GITHUB_PATH
+
     - name: Display the path
       run: echo ${env:GITHUB_PATH}
+      shell: pwsh
+    
+    - name: Set safe path
+      run: Add-Content $env:PROJECTS_PATH "D:\a\CppQueryable\CppQueryable"
+      shell: pwsh
+    
+    - name: Display safe path
+      run: echo ${env:PROJECTS_PATH}
       shell: pwsh
 
     - uses: actions/checkout@v3
