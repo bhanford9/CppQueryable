@@ -2,7 +2,7 @@ name: Functional Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "ActionTest" ]
   pull_request:
     branches: [ "main" ]
 
@@ -10,7 +10,7 @@ env:
   PROJECTS_PATH: /home/runner/work/CppQueryable
 
 jobs:
-  build:
+  linux:
 
     runs-on: ubuntu-latest
 
@@ -18,7 +18,27 @@ jobs:
     - name: Intall GTEST and GMOCK
       run: sudo apt-get install libgtest-dev && sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib
 
-    - run: echo "Starting Functional Tests"
     - uses: actions/checkout@v3
     - name: Build and Run Functional Tests
       run: make FuncTests
+
+  windows:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+
+    # (not sure if this step is necessary since we're already in git hub)
+    # - name: Set up MinGW
+    #   uses: egor-tensin/setup-mingw@v2
+    #   with:
+    #     platform: x64
+    
+    - name: Install GTEST and GMOCK
+      run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
+    
+    - name: Display Installs Directory
+      run: ls -al ./Installs
