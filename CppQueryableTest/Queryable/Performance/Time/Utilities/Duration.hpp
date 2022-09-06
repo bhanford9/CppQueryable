@@ -14,16 +14,16 @@ class Duration
 private:
   std::chrono::duration<double> duration;
 
-  const uint HOUR_PER_DAY = 24;
-  const uint MIN_PER_HOUR = 60;
-  const uint SEC_PER_MIN = 60;
-  const uint MILLI_PER_SEC = 1000;
-  const uint MICRO_PER_MILLI = 1000;
+  const size_t HOUR_PER_DAY = 24;
+  const size_t MIN_PER_HOUR = 60;
+  const size_t SEC_PER_MIN = 60;
+  const size_t MILLI_PER_SEC = 1000;
+  const size_t MICRO_PER_MILLI = 1000;
 
-  const uint NANO_PER_MICRO = 1000;
-  const uint NANO_PER_MILLI = NANO_PER_MICRO * MICRO_PER_MILLI;
-  const uint NANO_PER_SEC = NANO_PER_MILLI * MILLI_PER_SEC;
-  const uint NANO_PER_MIN = NANO_PER_SEC * SEC_PER_MIN;
+  const size_t NANO_PER_MICRO = 1000;
+  const size_t NANO_PER_MILLI = NANO_PER_MICRO * MICRO_PER_MILLI;
+  const size_t NANO_PER_SEC = NANO_PER_MILLI * MILLI_PER_SEC;
+  const size_t NANO_PER_MIN = NANO_PER_SEC * SEC_PER_MIN;
 
 public:
   Duration() { }

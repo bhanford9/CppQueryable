@@ -22,12 +22,12 @@ using namespace QueryBuilder;
 class SumFunctionalTest : public ::testing::Test
 {
 protected:
-  uint expectedSum = 1144;
-  uint expectedNoDupsSum = 1057;
-  IQueryable<uint> queryable;
+  size_t expectedSum = 1144;
+  size_t expectedNoDupsSum = 1057;
+  IQueryable<size_t> queryable;
 
   SumFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 })))
   {
   }
 
@@ -72,86 +72,86 @@ TEST_F(SumFunctionalTest, SumUninitialized)
 
 TEST_F(SumFunctionalTest, SumVector)
 {
-  uint sum = this->queryable.Sum([](uint value) { return value; });
+  size_t sum = this->queryable.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumVectorDefault)
 {
-  uint sum = this->queryable.Sum();
+  size_t sum = this->queryable.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumDeque)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint sum = local.Sum([](uint value) { return value; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint sum = local.Sum();
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumList)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint sum = local.Sum([](uint value) { return value; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint sum = local.Sum();
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint sum = local.Sum([](uint value) { return value; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint sum = local.Sum();
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint sum = local.Sum([](uint value) { return value; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint sum = local.Sum();
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t sum = local.Sum();
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumWhere)
 {
-  uint expected = 1110;
-  uint sum = this->queryable
-    .Where([](uint value) { return value > 10; })
-    .Sum([](uint value) { return value; });
+  size_t expected = 1110;
+  size_t sum = this->queryable
+    .Where([](size_t value) { return value > 10; })
+    .Sum([](size_t value) { return value; });
   ASSERT_EQ(expected, sum);
 }
 
 TEST_F(SumFunctionalTest, SumWhereDefault)
 {
-  uint expected = 1110;
-  uint sum = this->queryable
-    .Where([](uint value) { return value > 10; })
+  size_t expected = 1110;
+  size_t sum = this->queryable
+    .Where([](size_t value) { return value > 10; })
     .Sum();
   ASSERT_EQ(expected, sum);
 }

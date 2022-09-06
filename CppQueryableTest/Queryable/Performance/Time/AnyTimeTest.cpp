@@ -33,9 +33,9 @@ using namespace TimingUtilities;
 class AnyTimeTest : public BaseTimeTest
 {
 protected:
-  uint triggerValue = 99999999;
+  size_t triggerValue = 99999999;
   std::string nameTriggerValue = "Hello World!";
-  uint64_t triggerIndex = 0;
+  size_t triggerIndex = 0;
 
   void SetUp() override
   {
@@ -88,19 +88,19 @@ TEST_P(AnyTimeTest, DequeNumberTest)
   this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::deque<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Any([&](uint value)
+      local.Any([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return value == this->triggerValue;
@@ -113,7 +113,7 @@ TEST_P(AnyTimeTest, DequeNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      for (uint value : data)
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if (value == this->triggerValue)
@@ -136,19 +136,19 @@ TEST_P(AnyTimeTest, ListNumberTest)
   this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::list<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Any([&](uint value)
+      local.Any([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return value == this->triggerValue;
@@ -161,7 +161,7 @@ TEST_P(AnyTimeTest, ListNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      for (uint value : data)
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if (value == this->triggerValue)
@@ -184,8 +184,8 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
   this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
-  std::multiset<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::multiset<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     if (i == this->triggerIndex)
     {
@@ -195,12 +195,12 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
     data.insert(i);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Any([&](uint value)
+      local.Any([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return value == this->triggerValue;
@@ -213,7 +213,7 @@ TEST_P(AnyTimeTest, MultiSetNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      for (uint value : data)
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if (value == this->triggerValue)
@@ -236,8 +236,8 @@ TEST_P(AnyTimeTest, SetNumberTest)
   this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
-  std::set<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::set<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     if (i == this->triggerIndex)
     {
@@ -247,12 +247,12 @@ TEST_P(AnyTimeTest, SetNumberTest)
     data.insert(i);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Any([&](uint value)
+      local.Any([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return value == this->triggerValue;
@@ -265,7 +265,7 @@ TEST_P(AnyTimeTest, SetNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      for (uint value : data)
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if (value == this->triggerValue)
@@ -288,19 +288,19 @@ TEST_P(AnyTimeTest, VectorNumberTest)
   this->params.SetCategory(TimeTestCategory::BuiltIn);
   this->Init();
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::vector<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Any([&](uint value)
+      local.Any([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return value == this->triggerValue;
@@ -313,7 +313,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      for (uint value : data)
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if (value == this->triggerValue)
@@ -349,7 +349,7 @@ TEST_P(AnyTimeTest, DequePersonTest)
   };
 
   std::deque<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
@@ -408,7 +408,7 @@ TEST_P(AnyTimeTest, ListPersonTest)
   };
 
   std::list<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }
@@ -456,7 +456,7 @@ TEST_P(AnyTimeTest, MultiSetPersonTest)
   this->Init();
 
   std::multiset<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     std::string name = "Person " + std::to_string(i);
     Person person(0, name, 0, 0, Gender::Male);
@@ -511,7 +511,7 @@ TEST_P(AnyTimeTest, SetPersonTest)
   this->Init();
 
   std::set<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     std::string name = "Person " + std::to_string(i);
     Person person(0, name, 0, 0, Gender::Male);
@@ -578,7 +578,7 @@ TEST_P(AnyTimeTest, VectorPersonTest)
   };
 
   std::vector<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
   }

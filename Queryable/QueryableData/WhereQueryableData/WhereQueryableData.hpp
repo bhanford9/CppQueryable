@@ -32,21 +32,21 @@ protected:
   std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> original;
   bool sizeIsCalculated;
 
-  void IncrementPastFalseConditions(IteratorType type, uint64_t & iterated, bool & isForcingToEnd)
+  void IncrementPastFalseConditions(IteratorType type, size_t & iterated, bool & isForcingToEnd)
   {
     while (this->original->CanIncrement(type) && this->condition && !this->condition(this->original->Get(type)))
     {
-      uint64_t internalIterated = 1;
+      size_t internalIterated = 1;
       this->original->Next(type, internalIterated, isForcingToEnd);
       iterated += internalIterated;
     }
   }
 
-  void DecrementPastFalseConditions(IteratorType type, uint64_t & iterated)
+  void DecrementPastFalseConditions(IteratorType type, size_t & iterated)
   {
     while (this->original->CanDecrement(type) && this->condition && !this->condition(this->original->Get(type)))
     {
-      uint64_t internalIterated = 1;
+      size_t internalIterated = 1;
       this->original->Prev(type, internalIterated);
       iterated += internalIterated;
     }
@@ -164,7 +164,7 @@ public:
     return this->original->ConstGet(type);
   }
 
-  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
+  virtual IQueryableData<TObj> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
     //   std::cout << "Where Queryable Next" << std::endl;
     this->original->Next(type, iterated, isForcingToEnd);
@@ -177,7 +177,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Prev(IteratorType type, size_t & iterated) override
   {
     this->original->Prev(type, iterated);
     this->DecrementPastFalseConditions(type, iterated);
@@ -188,7 +188,7 @@ public:
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     std::cout << "bad" << std::endl;
-    uint64_t dummy = 0;
+    size_t dummy = 0;
     while (this->original->CanIncrement(type) && addend-- > 0)
     {
       bool isForcingToEnd = false;
@@ -202,7 +202,7 @@ public:
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     std::cout << "bad" << std::endl;
-    uint64_t dummy = 0;
+    size_t dummy = 0;
     while (this->original->CanDecrement(type) && subtrahend-- > 0)
     {
       this->Prev(type, dummy);
@@ -219,7 +219,7 @@ public:
     // std::cout << "WhereQueryableData::begin" << std::endl;
     QueryableIterator<TObj> child = this->original->begin();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     bool isForcingToEnd = false;
     this->IncrementPastFalseConditions(IteratorType::BeginForward, startIndex, isForcingToEnd);
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
@@ -235,7 +235,7 @@ public:
     // std::cout << "WhereQueryableData::end" << std::endl;
     QueryableIterator<TObj> child = this->original->end();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndForward);
 
     return retVal;
@@ -248,7 +248,7 @@ public:
   {
     QueryableIterator<TObj> child = this->original->rbegin();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     bool isForcingToEnd = false;
     this->IncrementPastFalseConditions(IteratorType::BeginReverse, startIndex, isForcingToEnd);
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
@@ -263,7 +263,7 @@ public:
   {
     QueryableIterator<TObj> child = this->original->end();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
     return retVal;

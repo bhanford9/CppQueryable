@@ -14,12 +14,12 @@ using namespace QueryBuilder;
 class CountFunctionalTest : public ::testing::Test
 {
 protected:
-  uint expectedWithDuplicates = 12;
-  uint expectedWithoutDuplicates = 8;
-  IQueryable<uint> queryable;
+  size_t expectedWithDuplicates = 12;
+  size_t expectedWithoutDuplicates = 8;
+  IQueryable<size_t> queryable;
 
   CountFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
   {
   }
 
@@ -69,7 +69,7 @@ TEST_F(CountFunctionalTest, CountWhere)
 {
   int expected = 7;
   int count = this->queryable
-    .Where([](uint value) { return value % 2 == 0; })
+    .Where([](size_t value) { return value % 2 == 0; })
     .Count();
 
   ASSERT_EQ(expected, count);

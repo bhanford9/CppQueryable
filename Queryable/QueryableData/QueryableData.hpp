@@ -178,7 +178,7 @@ public:
   }
 
 // pass a boolean by reference and return true/false whether force to end has been set
-  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
+  virtual IQueryableData<TObj> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "[NEXT] underlying begin value before" << std::endl;
 
@@ -202,7 +202,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Prev(IteratorType type, size_t & iterated) override
   {
     // std::cout << "[PREV] underlying begin value before: " << std::endl;
 

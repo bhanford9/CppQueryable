@@ -16,10 +16,10 @@ class CountIfFunctionalTest : public ::testing::Test
 protected:
   int expectedEvensWithDuplicates = 7;
   int expectedEvensWithoutDuplicates = 4;
-  IQueryable<uint> queryable;
+  IQueryable<size_t> queryable;
 
   CountIfFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
   {
   }
 
@@ -27,7 +27,7 @@ protected:
   {
   }
 
-  static bool IsEven(uint value)
+  static bool IsEven(size_t value)
   {
     return (value % 2) == 0;
   }
@@ -73,8 +73,8 @@ TEST_F(CountIfFunctionalTest, CountIfList)
 TEST_F(CountIfFunctionalTest, CountIfWhere)
 {
   int count = this->queryable
-    .Where([](uint value) { return value % 2 == 0; })
-    .CountIf([] (uint value) { return true; });
+    .Where([](size_t value) { return value % 2 == 0; })
+    .CountIf([] (size_t value) { return true; });
 
   ASSERT_EQ(expectedEvensWithDuplicates, count);
 }

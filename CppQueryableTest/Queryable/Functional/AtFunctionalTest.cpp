@@ -17,13 +17,13 @@ class AtFunctionalTest : public ::testing::Test
 {
 protected:
   int atIndex = 9;
-  uint expectedUnorderedAt = 34;
-  uint expectedOrderedAt = 45;
-  uint expectedSetAt = 867;
-  IQueryable<uint> queryable;
+  size_t expectedUnorderedAt = 34;
+  size_t expectedOrderedAt = 45;
+  size_t expectedSetAt = 867;
+  IQueryable<size_t> queryable;
 
   AtFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -74,39 +74,39 @@ TEST_F(AtFunctionalTest, AtVectorIndexNegative)
 
 TEST_F(AtFunctionalTest, AtVector)
 {
-  uint value = this->queryable.At(this->atIndex);
+  size_t value = this->queryable.At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  uint value = BuildQueryable2(this->queryable.ToSet()).At(this->atIndex);
+  size_t value = BuildQueryable2(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  uint value = BuildQueryable2(this->queryable.ToMultiSet()).At(this->atIndex);
+  size_t value = BuildQueryable2(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  uint value = BuildQueryable2(this->queryable.ToDeque()).At(this->atIndex);
+  size_t value = BuildQueryable2(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  uint value = BuildQueryable2(this->queryable.ToList()).At(this->atIndex);
+  size_t value = BuildQueryable2(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtWhere)
 {
-  uint expected = 8;
-  uint value = this->queryable
-    .Where([](uint val) { return val % 2 == 0; })
+  size_t expected = 8;
+  size_t value = this->queryable
+    .Where([](size_t val) { return val % 2 == 0; })
     .At(3);
 
   ASSERT_EQ(expected, value);

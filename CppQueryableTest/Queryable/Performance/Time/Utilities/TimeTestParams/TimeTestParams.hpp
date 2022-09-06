@@ -16,9 +16,9 @@ private:
   std::string methodName = "";
   TriggerType triggerType = TriggerType::NotApplicable;
 
-  uint64_t containerSize = 0;
-  uint64_t iterations = 0;
-  uint16_t load = 1;
+  size_t containerSize = 0;
+  size_t iterations = 0;
+  size_t16_t load = 1;
 
   TimeStats standardStats;
   TimeStats queryableStats;
@@ -64,9 +64,9 @@ public:
     this->statsFilePath = other.statsFilePath;
   }
   TimeTestParams(
-    uint64_t iterations,
-    uint64_t containerSize,
-    uint16_t load = 1,
+    size_t iterations,
+    size_t containerSize,
+    size_t16_t load = 1,
     TriggerType triggerType = TriggerType::NotApplicable,
     bool doLog = true,
     bool doRecordStats = false) : TimeTestParams()
@@ -85,9 +85,9 @@ public:
   std::string GetMethodName() const { return this->methodName; }
   TriggerType GetTriggerType() const { return this->triggerType; }
 
-  uint64_t GetContainerSize() const { return this->containerSize; }
-  uint64_t GetIterations() const { return this->iterations; }
-  uint16_t GetLoad() const { return this->load; }
+  size_t GetContainerSize() const { return this->containerSize; }
+  size_t GetIterations() const { return this->iterations; }
+  size_t16_t GetLoad() const { return this->load; }
 
   TimeStats GetStandardStats() const { return this->standardStats; }
   TimeStats GetQueryableStats() const { return this->queryableStats; }
@@ -102,9 +102,9 @@ public:
   void SetMethodName(std::string methodName) { this->methodName = methodName; }
   void SetTriggerType(TriggerType type) { this->triggerType = type; }
 
-  void SetContainerSize(uint64_t containerSize) { this->containerSize = containerSize; }
-  void SetIterations(uint64_t iterations) { this->iterations = iterations; }
-  void SetLOod(uint16_t load) { this->load = load; }
+  void SetContainerSize(size_t containerSize) { this->containerSize = containerSize; }
+  void SetIterations(size_t iterations) { this->iterations = iterations; }
+  void SetLOod(size_t16_t load) { this->load = load; }
 
   void SetStandardStats(TimeStats stats) { this->standardStats = stats; }
   void SetQueryableStats(TimeStats stats) { this->queryableStats = stats; }

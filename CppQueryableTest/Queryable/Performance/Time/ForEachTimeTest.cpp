@@ -37,23 +37,23 @@ TEST_P(ForEachTimeTest, DequeNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::deque<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
+    [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
   this->standardStats = RunTimeAndLog(
-    [&]() { for (uint value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
+    [&]() { for (size_t value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
     params.GetIterations(),
     this->standardName);
 
@@ -65,23 +65,23 @@ TEST_P(ForEachTimeTest, ListNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::list<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
+    [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
   this->standardStats = RunTimeAndLog(
-    [&]() { for (uint value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
+    [&]() { for (size_t value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
     params.GetIterations(),
     this->standardName);
 
@@ -93,23 +93,23 @@ TEST_P(ForEachTimeTest, MultiSetNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::multiset<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
+    [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
   this->standardStats = RunTimeAndLog(
-    [&]() { for (uint value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
+    [&]() { for (size_t value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
     params.GetIterations(),
     this->standardName);
 
@@ -121,22 +121,22 @@ TEST_P(ForEachTimeTest, SetNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::set<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::set<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(i);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
+    [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
   this->standardStats = RunTimeAndLog(
-    [&]() { for (uint value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
+    [&]() { for (size_t value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
     params.GetIterations(),
     this->standardName);
 
@@ -148,23 +148,23 @@ TEST_P(ForEachTimeTest, VectorNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::vector<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  IQueryable<uint> local = BuildQueryable2(data);
+  IQueryable<size_t> local = BuildQueryable2(data);
 
   this->queryableStats = RunTimeAndLog(
-    [&]() { local.ForEach([&](uint value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
+    [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(this->params.GetLoad(), value); }); },
     params.GetIterations(),
     this->queryableName
   );
 
   this->standardStats = RunTimeAndLog(
-    [&]() { for (uint value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
+    [&]() { for (size_t value : data) { this->ApplyLoad(this->params.GetLoad(), value); }},
     params.GetIterations(),
     this->standardName);
 
@@ -187,7 +187,7 @@ TEST_P(ForEachTimeTest, DequePersonTest)
   };
 
   std::deque<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 6]);
   }
@@ -224,7 +224,7 @@ TEST_P(ForEachTimeTest, ListPersonTest)
   };
 
   std::list<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 6]);
   }
@@ -261,7 +261,7 @@ TEST_P(ForEachTimeTest, MultiSetPersonTest)
   };
 
   std::multiset<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 6]);
   }
@@ -298,7 +298,7 @@ TEST_P(ForEachTimeTest, SetPersonTest)
   };
 
   std::set<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 6]);
   }
@@ -335,7 +335,7 @@ TEST_P(ForEachTimeTest, VectorPersonTest)
   };
 
   std::vector<Person> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 6]);
   }

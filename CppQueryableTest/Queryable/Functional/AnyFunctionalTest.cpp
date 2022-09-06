@@ -19,11 +19,11 @@ using namespace QueryBuilder;
 class AnyFunctionalTest : public ::testing::Test
 {
 protected:
-  IQueryable<uint> queryable;
+  IQueryable<size_t> queryable;
   IQueryable<std::string> queryableStrings;
 
   AnyFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 }))),
     queryableStrings(BuildQueryable2(std::vector<std::string>({ "nbc", "fox", "abc", "cbs", "the cw"})))
   {
   }
@@ -56,72 +56,72 @@ TEST_F(AnyFunctionalTest, AnyStringTrue)
 
 TEST_F(AnyFunctionalTest, AnyDequeFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  bool any = local.Any([](uint value) { return value > 5000; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  bool any = local.Any([](size_t value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyDequeTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  bool any = local.Any([](uint value) { return value > 12; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  bool any = local.Any([](size_t value) { return value > 12; });
   ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyListFalse)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  bool any = local.Any([](uint value) { return value > 5000; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  bool any = local.Any([](size_t value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyListTrue)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  bool any = local.Any([](uint value) { return value > 12; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  bool any = local.Any([](size_t value) { return value > 12; });
   ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyMultiSetFalse)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  bool any = local.Any([](uint value) { return value > 5000; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  bool any = local.Any([](size_t value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyMultiSetTrue)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  bool any = local.Any([](uint value) { return value > 12; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  bool any = local.Any([](size_t value) { return value > 12; });
   ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnySetFalse)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  bool any = local.Any([](uint value) { return value > 5000; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  bool any = local.Any([](size_t value) { return value > 5000; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnySetTrue)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  bool any = local.Any([](uint value) { return value > 12; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  bool any = local.Any([](size_t value) { return value > 12; });
   ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyWhereFalse)
 {
   bool any = this->queryable
-    .Where([](uint value) { return value > 10; })
-    .Any([](uint value) { return value < 10; });
+    .Where([](size_t value) { return value > 10; })
+    .Any([](size_t value) { return value < 10; });
   ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalTest, AnyWhereTrue)
 {
   bool any = this->queryable
-    .Where([](uint value) { return value > 10; })
-    .Any([](uint value) { return value % 2 == 0; });
+    .Where([](size_t value) { return value > 10; })
+    .Any([](size_t value) { return value % 2 == 0; });
   ASSERT_TRUE(any);
 }

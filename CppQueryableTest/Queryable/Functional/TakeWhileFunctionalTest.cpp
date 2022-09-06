@@ -21,14 +21,14 @@ using namespace QueryBuilder;
 class TakeWhileFunctionalTest : public ::testing::Test
 {
 protected:
-  uint threshold = 10;
+  size_t threshold = 10;
   int expectedCountUnordered = 5;
   int expectedCountOrdered = 7;
   int expectedCountOrderedSet = 5;
-  IQueryable<uint> queryable;
+  IQueryable<size_t> queryable;
 
   TakeWhileFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -49,7 +49,7 @@ protected:
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileVectorAlwaysTrue)
 {
-  IBaseQueryable<uint> result = this->queryable.TakeWhile([](uint value) { return true; });
+  IBaseQueryable<size_t> result = this->queryable.TakeWhile([](size_t value) { return true; });
 
   ASSERT_EQ(this->queryable.Count(), result.Count());
 
@@ -61,9 +61,9 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileVectorAlwaysTrue)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileDeque)
 {
-  IQueryable<uint> queryableDeque(BuildQueryable2(this->queryable.ToDeque()));
-  IBaseQueryable<uint> & result = queryableDeque
-    .TakeWhile([&](uint value) { return value < this->threshold; });
+  IQueryable<size_t> queryableDeque(BuildQueryable2(this->queryable.ToDeque()));
+  IBaseQueryable<size_t> & result = queryableDeque
+    .TakeWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -75,9 +75,9 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileDeque)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileList)
 {
-  IQueryable<uint> queryableList = BuildQueryable2(this->queryable.ToList());
-  IBaseQueryable<uint> result = queryableList
-    .TakeWhile([&](uint value) { return value < this->threshold; });
+  IQueryable<size_t> queryableList = BuildQueryable2(this->queryable.ToList());
+  IBaseQueryable<size_t> result = queryableList
+    .TakeWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -89,9 +89,9 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileList)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 {
-  ISortedQueryable<uint> queryableSet = BuildQueryable2(this->queryable.ToMultiSet());
-  IBaseQueryable<uint> result = queryableSet
-    .TakeWhile([&](uint value) { return value < this->threshold; });
+  ISortedQueryable<size_t> queryableSet = BuildQueryable2(this->queryable.ToMultiSet());
+  IBaseQueryable<size_t> result = queryableSet
+    .TakeWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrdered, result.Count());
 
@@ -103,9 +103,9 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileSet)
 {
-  ISortedQueryable<uint> queryableSet = BuildQueryable2(this->queryable.ToSet());
-  IBaseQueryable<uint> result = queryableSet
-    .TakeWhile([&](uint value) { return value < this->threshold; });
+  ISortedQueryable<size_t> queryableSet = BuildQueryable2(this->queryable.ToSet());
+  IBaseQueryable<size_t> result = queryableSet
+    .TakeWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
 
@@ -117,8 +117,8 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileSet)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileVector)
 {
-  IBaseQueryable<uint> result = this->queryable
-    .TakeWhile([&](uint value) { return value < this->threshold; });
+  IBaseQueryable<size_t> result = this->queryable
+    .TakeWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -132,12 +132,12 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileWhere)
 {
   int takeCount = 0;
   int expectedCount = 4;
-  IQueryable<uint> queryableVector = BuildQueryable2(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-  IBaseQueryable<uint> result = queryableVector
-    .Where([](uint value) { return value % 2 == 0; })
-    .TakeWhile([](uint value) { return value < 8; });
+  IQueryable<size_t> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  IBaseQueryable<size_t> result = queryableVector
+    .Where([](size_t value) { return value % 2 == 0; })
+    .TakeWhile([](size_t value) { return value < 8; });
 
 
   ASSERT_EQ(expectedCount, result.Count());
-  result.ForEach([&](uint value) { ASSERT_EQ(takeCount++ * 2, value); });
+  result.ForEach([&](size_t value) { ASSERT_EQ(takeCount++ * 2, value); });
 }

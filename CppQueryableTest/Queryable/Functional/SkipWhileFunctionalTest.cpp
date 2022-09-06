@@ -21,15 +21,15 @@
 // class SkipWhileFunctionalTest : public ::testing::Test
 // {
 // protected:
-//   uint threshold = 10;
+//   size_t threshold = 10;
 //   int expectedCountUnordered = 8;
 //   int expectedCountOrdered = 6;
 //   int expectedCountOrderedSet = 5;
-//   InternalQueryable<uint> queryable;
+//   InternalQueryable<size_t> queryable;
 //
 //   void SetUp() override
 //   {
-//     this->queryable = InternalQueryable<uint>(std::vector<uint>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 }));
+//     this->queryable = InternalQueryable<size_t>(std::vector<size_t>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 }));
 //   }
 //
 //   void TearDown() override {}
@@ -45,7 +45,7 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 // {
-//   InternalQueryable<uint>* result = this->queryable.SkipWhile([](uint value) { return true; });
+//   InternalQueryable<size_t>* result = this->queryable.SkipWhile([](size_t value) { return true; });
 //
 //   ASSERT_EQ(this->queryable.Count(), result->Count());
 //
@@ -57,8 +57,8 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 // {
-//   InternalQueryable<uint>* result = this->queryable
-//     .SkipWhile([&](uint value) { return value < this->threshold; });
+//   InternalQueryable<size_t>* result = this->queryable
+//     .SkipWhile([&](size_t value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
 //
@@ -70,9 +70,9 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 // {
-//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToSet());
-//   InternalQueryable<uint>* result = queryableSet
-//     .SkipWhile([&](uint value) { return value < this->threshold; });
+//   InternalQueryable<size_t> queryableSet = BuildQueryable(this->queryable.ToSet());
+//   InternalQueryable<size_t>* result = queryableSet
+//     .SkipWhile([&](size_t value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountOrderedSet, result->Count());
 //
@@ -84,9 +84,9 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 // {
-//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
-//   InternalQueryable<uint>* result = queryableSet
-//     .SkipWhile([&](uint value) { return value < this->threshold; });
+//   InternalQueryable<size_t> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
+//   InternalQueryable<size_t>* result = queryableSet
+//     .SkipWhile([&](size_t value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountOrdered, result->Count());
 //
@@ -98,9 +98,9 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 // {
-//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToDeque());
-//   InternalQueryable<uint>* result = queryableSet
-//     .SkipWhile([&](uint value) { return value < this->threshold; });
+//   InternalQueryable<size_t> queryableSet = BuildQueryable(this->queryable.ToDeque());
+//   InternalQueryable<size_t>* result = queryableSet
+//     .SkipWhile([&](size_t value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
 //
@@ -112,9 +112,9 @@
 //
 // TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 // {
-//   InternalQueryable<uint> queryableSet = BuildQueryable(this->queryable.ToList());
-//   InternalQueryable<uint>* result = queryableSet
-//     .SkipWhile([&](uint value) { return value < this->threshold; });
+//   InternalQueryable<size_t> queryableSet = BuildQueryable(this->queryable.ToList());
+//   InternalQueryable<size_t>* result = queryableSet
+//     .SkipWhile([&](size_t value) { return value < this->threshold; });
 //
 //   ASSERT_EQ(this->expectedCountUnordered, result->Count());
 //
@@ -128,11 +128,11 @@
 // {
 //   int skipCount = 4;
 //   int expectedCount = 2;
-//   InternalQueryable<uint> queryableVector = BuildQueryable(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-//   InternalQueryable<uint> * result = queryableVector
-//     .Where([](uint value) { return value % 2 == 0; })
-//     .SkipWhile([](uint value) { return value < 8; });
+//   InternalQueryable<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+//   InternalQueryable<size_t> * result = queryableVector
+//     .Where([](size_t value) { return value % 2 == 0; })
+//     .SkipWhile([](size_t value) { return value < 8; });
 //
 //   ASSERT_EQ(expectedCount, result->Count());
-//   result->ForEach([&](uint value) { ASSERT_EQ(skipCount++ * 2, value); });
+//   result->ForEach([&](size_t value) { ASSERT_EQ(skipCount++ * 2, value); });
 // }

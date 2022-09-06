@@ -22,12 +22,12 @@ class SelectFunctionalTest : public ::testing::Test
 {
 protected:
   PersonLibrary personLibrary;
-  IQueryable<uint> queryable;
+  IQueryable<size_t> queryable;
   IQueryable<Person> people;
 
   SelectFunctionalTest() :
     personLibrary(),
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }))),
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }))),
     people(BuildQueryable2(this->personLibrary.GetPeople()))
   {
   }

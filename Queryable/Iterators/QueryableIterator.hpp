@@ -18,7 +18,7 @@ private:
 public:
   // TODO --> make private add an accessor
   // TODO --> this should probably be size_t
-  uint64_t index;
+  size_t index;
   IteratorType type;
   // these seem to be needed by the std library
   typedef std::random_access_iterator_tag iterator_category;
@@ -159,7 +159,7 @@ public:
     //   << "\n\tId: " << this->queryableData->myId
     //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
     //   << std::endl;
-    uint64_t iterated = 1;
+    size_t iterated = 1;
     bool isForcingToEnd = false;
     this->queryableData->Next(this->type, iterated, isForcingToEnd);
 
@@ -189,7 +189,7 @@ public:
     //   << "\n\tId: " << this->queryableData->myId
     //   << "\n\tCurrent Value: " << this->queryableData->Get(this->type)
     //   << std::endl;
-    uint64_t iterated = 1;
+    size_t iterated = 1;
     this->queryableData->Prev(this->type, iterated);
 
     this->index -= iterated;

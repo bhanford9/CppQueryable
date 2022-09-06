@@ -33,10 +33,10 @@ int main()
 
     //   PersonLibrary personLibrary;
     //   IQueryable<Person> people(BuildQueryable2(personLibrary.GetPeople()));
-    ISortedQueryable<uint> numbers(BuildQueryable2(std::set<uint>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
+    ISortedQueryable<size_t> numbers(BuildQueryable2(std::set<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
     ISortedQueryable<double> newNumbers = numbers
-        // .Where([](uint value) { return value < 10; })
-        .Select<std::set, double>([](uint value) { return ((double)value) / 2.0; });
+        // .Where([](size_t value) { return value < 10; })
+        .Select<std::set, double>([](size_t value) { return ((double)value) / 2.0; });
         // .Sort<std::set>();
 
     std::cout << "\n\n\n\nAFTER SORT\n\n\n" << std::endl;
@@ -45,21 +45,21 @@ int main()
     //   bool result = people.Any([](Person person) { return person.GetAge() > 40; });
     //   std::cout << "Anybody over 40: " << (result ? "YES" : "NO") << std::endl;
 
-    // QueryableVectorData<uint> vectorQueryable(std::vector<uint>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12}));
+    // QueryableVectorData<size_t> vectorQueryable(std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12}));
 
-    // std::shared_ptr<QueryableData<uint, std::vector>> queryableData(
-    //     FutureStd::reinterpret_pointer_cast<QueryableData<uint, std::vector>>(
-    //         std::make_shared<QueryableVectorData<uint>>(vectorQueryable)));
+    // std::shared_ptr<QueryableData<size_t, std::vector>> queryableData(
+    //     FutureStd::reinterpret_pointer_cast<QueryableData<size_t, std::vector>>(
+    //         std::make_shared<QueryableVectorData<size_t>>(vectorQueryable)));
 
-    // SortQueryableData<uint, std::vector> sortQueryable(queryableData);
+    // SortQueryableData<size_t, std::vector> sortQueryable(queryableData);
 
     // auto first = vectorQueryable.begin();
     // auto last = vectorQueryable.end();
     // std::cout << "pre SWAP" << std::endl;
     // heap_sort(first, last);
     // std::cout << "post SWAP" << std::endl;
-    // uint firstValue = *first;
-    // uint lastValue = *last;
+    // size_t firstValue = *first;
+    // size_t lastValue = *last;
     // std::cout << "\n\n\n\nfirst: " << firstValue << ", last: " << lastValue << std::endl;
     // // std::sort(vectorQueryable.begin(), vectorQueryable.end());
     // for (auto value : vectorQueryable)
@@ -73,7 +73,7 @@ int main()
     // auto lastIter = sortQueryable.end();
     // for (; iter != lastIter; ++iter)
     // {
-    //     uint temp = *iter;
+    //     size_t temp = *iter;
     //     auto innerIter = std::prev(iter);
     //     while (innerIter >= firstIter && temp <= *innerIter)
     //     {
@@ -91,8 +91,8 @@ int main()
 
 // auto first = sortQueryable.begin();
 // auto last = --sortQueryable.end();
-// uint firstValue = *first;
-// uint lastValue = *last;
+// size_t firstValue = *first;
+// size_t lastValue = *last;
 // std::cout << "\n\n\n\nfirst: " << firstValue << ", last: " << lastValue << std::endl;
 // //   auto temp = std::move(*first);
 // //   *first = std::move(*last);
@@ -109,47 +109,47 @@ int main()
 //     }
 
     //
-    // std::vector<uint> startingInput;
-    // std::vector<uint> evens;
-    // VectorInternalQueryable<uint> queryable;
-    // VectorInternalQueryable<uint> queryableEvens;
-    // startingInput = std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
-    // evens = std::vector<uint>({ 4, 76, 8, 34, 76, 0 });
+    // std::vector<size_t> startingInput;
+    // std::vector<size_t> evens;
+    // VectorInternalQueryable<size_t> queryable;
+    // VectorInternalQueryable<size_t> queryableEvens;
+    // startingInput = std::vector<size_t>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 });
+    // evens = std::vector<size_t>({ 4, 76, 8, 34, 76, 0 });
     //
     // queryable = BuildQueryable(startingInput);
     // queryableEvens = BuildQueryable(evens);
     //
-    // // InternalQueryable<uint, std::vector> * meh = reinterpret_cast<InternalQueryable<uint, std::vector>*>(&queryable);
+    // // InternalQueryable<size_t, std::vector> * meh = reinterpret_cast<InternalQueryable<size_t, std::vector>*>(&queryable);
     //
-    // // std::shared_ptr<InternalQueryable<uint, std::vector>> ptr = std::make_shared<InternalQueryable<uint, std::vector>>(*meh);
-    // std::multiset<uint> setItems = queryable.ToMultiSet();
-    // MultiSetInternalQueryable<uint> qSetItems(std::move(setItems));
-    // Queryable<uint, std::multiset> blah(reinterpret_cast<InternalQueryable<uint, std::multiset>*>(&qSetItems));
+    // // std::shared_ptr<InternalQueryable<size_t, std::vector>> ptr = std::make_shared<InternalQueryable<size_t, std::vector>>(*meh);
+    // std::multiset<size_t> setItems = queryable.ToMultiSet();
+    // MultiSetInternalQueryable<size_t> qSetItems(std::move(setItems));
+    // Queryable<size_t, std::multiset> blah(reinterpret_cast<InternalQueryable<size_t, std::multiset>*>(&qSetItems));
     //
     // std::cout << "starting test. set size: " << setItems.size() << std::endl;
     // blah
-    //   .Where([](uint num) { return (num % 2) == 0; })
-    //   .Select<std::string>([](uint num) { return "Number: " + std::to_string(num); })
+    //   .Where([](size_t num) { return (num % 2) == 0; })
+    //   .Select<std::string>([](size_t num) { return "Number: " + std::to_string(num); })
     //   .ForEach([](std::string str) { std::cout << "STRING REPRESENTATION: " << str << std::endl; });
     // std::cout << "done with select\n\n" << std::endl;
 
     // std::cout << "attempting foreach" << std::endl;
-    // queryable.ForEach([](uint value) { std::cout << value << ", "; });
+    // queryable.ForEach([](size_t value) { std::cout << value << ", "; });
     // std::cout << std::endl;
 
-    // ListInternalQueryable<uint> local = BuildQueryable<uint>(queryable.ToList());
+    // ListInternalQueryable<size_t> local = BuildQueryable<size_t>(queryable.ToList());
     // std::cout << "local made\n\n" << std::endl;
-    // ListInternalQueryable<uint> mevens = BuildQueryable<uint>(queryableEvens.ToList());
+    // ListInternalQueryable<size_t> mevens = BuildQueryable<size_t>(queryableEvens.ToList());
     // std::cout << "mevens made\n\n" << std::endl;
-    // auto result = local.Where([](uint value) { return value > 10; });
-    // std::vector<uint> vectorResult = result.ToVector();
+    // auto result = local.Where([](size_t value) { return value > 10; });
+    // std::vector<size_t> vectorResult = result.ToVector();
 
-    // std::vector<uint> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
-    // std::function<bool(uint)> conditioner = [](uint value) { return value % 2 == 0; };
-    // std::function<double(uint)> selector = [](uint value) { return static_cast<double>(value) / 2.0; };
+    // std::vector<size_t> numbers({ 1, 65, 8, 45, 7, 63, 22, 14, 7, 9 });
+    // std::function<bool(size_t)> conditioner = [](size_t value) { return value % 2 == 0; };
+    // std::function<double(size_t)> selector = [](size_t value) { return static_cast<double>(value) / 2.0; };
     //
-    // InternalQueryable<uint> local(numbers);
-    // local.Where(conditioner).ForEach([](uint value) { std::cout << "where value: " << value << std::endl; });
+    // InternalQueryable<size_t> local(numbers);
+    // local.Where(conditioner).ForEach([](size_t value) { std::cout << "where value: " << value << std::endl; });
     // local.Select<double>(selector).ForEach([](double value) { std::cout << "select value: " << value << std::endl; });
     //
     // std::vector<Person> people(PersonLibrary().GetPeople());
@@ -164,15 +164,15 @@ int main()
     //
     // queryablePeople.Count();
 
-    // QueryableVectorData<uint> queryableData(numbers);
-    // std::shared_ptr<IQueryableData<uint>> sharedData = std::make_shared<QueryableVectorData<uint, double>>(queryableData);
-    // IQueryableData<uint> * dummy = new SelectQueryableVectorData<uint, double>(sharedData, selector);
+    // QueryableVectorData<size_t> queryableData(numbers);
+    // std::shared_ptr<IQueryableData<size_t>> sharedData = std::make_shared<QueryableVectorData<size_t, double>>(queryableData);
+    // IQueryableData<size_t> * dummy = new SelectQueryableVectorData<size_t, double>(sharedData, selector);
     // for (double value : queryableData)
     // {
-    //   std::cout << "value as uint: " << value << std::endl;
+    //   std::cout << "value as size_t: " << value << std::endl;
     // }
     //
-    // WhereQueryableVectorData<uint> whereQueryableData(&queryableData, conditioner);
+    // WhereQueryableVectorData<size_t> whereQueryableData(&queryableData, conditioner);
     //
     // int count = 0;
     //
@@ -183,14 +183,14 @@ int main()
     //   std::cout << "even value: " << value << std::endl;
     // }
     //
-    // SelectQueryableVectorData<uint, double> selectQueryableData(&queryableData, selector);
+    // SelectQueryableVectorData<size_t, double> selectQueryableData(&queryableData, selector);
     //
     // for (double value : selectQueryableData)
     // {
     //   std::cout << "halved value as double: " << value << std::endl;
     // }
     //
-    // SelectQueryableVectorData<uint, double> selectWhereQueryableData(&whereQueryableData, selector);
+    // SelectQueryableVectorData<size_t, double> selectWhereQueryableData(&whereQueryableData, selector);
     //
     // for (double value : selectWhereQueryableData)
     // {

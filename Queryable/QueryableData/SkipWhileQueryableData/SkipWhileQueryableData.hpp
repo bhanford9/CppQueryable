@@ -138,11 +138,11 @@ public:
     return this->original->ConstGet(type);
   }
 
-  virtual IQueryableData<TObj> & Next(IteratorType type, uint64_t & iterated, bool & isForcingToEnd) override
+  virtual IQueryableData<TObj> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "While Queryable Next" << std::endl;
     
-    uint64_t trueIterated = iterated;
+    size_t trueIterated = iterated;
     this->original->Next(type, iterated, isForcingToEnd);
     trueIterated += iterated;
 
@@ -156,7 +156,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Prev(IteratorType type, uint64_t & iterated) override
+  virtual IQueryableData<TObj> & Prev(IteratorType type, size_t & iterated) override
   {
     // std::cout << "While Queryable Prev" << std::endl;
 
@@ -170,7 +170,7 @@ public:
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     std::cout << "bad" << std::endl;
-    uint64_t dummy = 0;
+    size_t dummy = 0;
     while (this->original->CanIncrement(type) && addend-- > 0)
     {
       bool isForcingToEnd = false;
@@ -184,7 +184,7 @@ public:
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     std::cout << "bad" << std::endl;
-    uint64_t dummy = 0;
+    size_t dummy = 0;
     while (this->original->CanDecrement(type) && subtrahend-- > 0)
     {
       this->Prev(type, dummy);
@@ -200,7 +200,7 @@ public:
     this->condition->Reset();
     QueryableIterator<TObj> child = this->original->begin();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
 
     return retVal;
@@ -213,7 +213,7 @@ public:
     // std::cout << "SkipWhileQueryableData::end" << std::endl;
     QueryableIterator<TObj> child = this->original->end();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndForward);
 
     return retVal;
@@ -225,7 +225,7 @@ public:
     this->condition->Reset();
     QueryableIterator<TObj> child = this->original->rbegin();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
 
     return retVal;
@@ -237,7 +237,7 @@ public:
   {
     QueryableIterator<TObj> child = this->original->end();
 
-    uint64_t startIndex = child.index;
+    size_t startIndex = child.index;
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
     return retVal;

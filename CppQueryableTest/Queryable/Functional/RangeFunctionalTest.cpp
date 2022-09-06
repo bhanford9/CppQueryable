@@ -22,11 +22,11 @@ using namespace QueryBuilder;
 class RangeFunctionalTest : public ::testing::Test
 {
 protected:
-  uint expectedRange = 866;
-  IQueryable<uint> queryable;
+  size_t expectedRange = 866;
+  IQueryable<size_t> queryable;
 
   RangeFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -147,168 +147,168 @@ TEST_F(RangeFunctionalTest, RangeExtendedPoint)
 
 TEST_F(RangeFunctionalTest, RangeTemplateDeque)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint range = local
-    .Range<std::deque, uint>([](uint value) { return value; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t range = local
+    .Range<std::deque, size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeAsDeque)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint range = local
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t range = local
     .AsQueryableDeque()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeExtendedDeque)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint range = local
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t range = local
     .AsExtendedQueryable<std::deque>()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToDeque());
-  uint range = local.Range();
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeTemplateList)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint range = local
-    .Range<std::list, uint>([](uint value) { return value; });
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t range = local
+    .Range<std::list, size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeAsList)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint range = local
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t range = local
     .AsQueryableList()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeExtendedList)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint range = local
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t range = local
     .AsExtendedQueryable<std::list>()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2(this->queryable.ToList());
-  uint range = local.Range();
+  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
+  size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeTemplateMultiSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint range = local
-    .Range<std::multiset, uint>([](uint value) { return value; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t range = local
+    .Range<std::multiset, size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeAsMultiSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint range = local
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t range = local
     .AsQueryableMultiSet()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeExtendedMultiSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint range = local
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t range = local
     .AsExtendedQueryable<std::multiset>()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeMultiSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToMultiSet());
-  uint range = local.Range();
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeTemplateSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint range = local
-    .Range<std::set, uint>([](uint value) { return value; });
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t range = local
+    .Range<std::set, size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeAsSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint range = local
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t range = local
     .AsQueryableSet()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeExtendedSet)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint range = local
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t range = local
     .AsExtendedQueryable<std::set>()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2(this->queryable.ToSet());
-  uint range = local.Range();
+  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeTemplateWhere)
 {
-  uint expected = 855;
-  uint range = this->queryable
-    .Where([](uint value) { return value > 10; })
-    .Range<std::vector, uint>([](uint value) { return value; });
+  size_t expected = 855;
+  size_t range = this->queryable
+    .Where([](size_t value) { return value > 10; })
+    .Range<std::vector, size_t>([](size_t value) { return value; });
   ASSERT_EQ(expected, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeAsVectorWhere)
 {
-  uint expected = 855;
-  uint range = this->queryable
-    .Where([](uint value) { return value > 10; })
+  size_t expected = 855;
+  size_t range = this->queryable
+    .Where([](size_t value) { return value > 10; })
     .AsQueryableVector()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(expected, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeExtendedWhere)
 {
-  uint expected = 855;
-  uint range = this->queryable
-    .Where([](uint value) { return value > 10; })
+  size_t expected = 855;
+  size_t range = this->queryable
+    .Where([](size_t value) { return value > 10; })
     .AsExtendedQueryable<std::vector>()
-    .Range<uint>([](uint value) { return value; });
+    .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(expected, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeWhereDefault)
 {
-  uint expected = 855;
-  uint range = this->queryable.Where([](uint value) { return value > 10; }).Range();
+  size_t expected = 855;
+  size_t range = this->queryable.Where([](size_t value) { return value > 10; }).Range();
   ASSERT_EQ(expected, range);
 }

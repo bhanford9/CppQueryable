@@ -23,10 +23,10 @@ using namespace QueryBuilder;
 class ForEachFunctionalTest : public ::testing::Test
 {
 protected:
-  IQueryable<uint> queryable;
+  IQueryable<size_t> queryable;
 
   ForEachFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<uint>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
   {
   }
 
@@ -67,10 +67,10 @@ TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 
 TEST_F(ForEachFunctionalTest, ForEachVector)
 {
-  std::vector<uint> iterated(this->queryable.Count(), 0);
+  std::vector<size_t> iterated(this->queryable.Count(), 0);
   size_t i = 0;
 
-  this->queryable.ForEach([&](uint value)
+  this->queryable.ForEach([&](size_t value)
   {
     iterated[i++] = value;
   });
@@ -83,37 +83,37 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
-  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
-  IQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToList());
+  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachMultiSet)
 {
-  ISortedQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachSet)
 {
-  ISortedQueryable<uint> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachWhere)
 {
-  IQueryable<uint> IQueryable = BuildQueryable2(std::vector<uint>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
+  IQueryable<size_t> IQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
 
   int expectedCount = 6;
   int count = 0;
   IQueryable
-    .Where([](uint value) { return value % 2 == 0; })
-    .ForEach([&](uint value) { ASSERT_EQ(count++ * 2, value); });
+    .Where([](size_t value) { return value % 2 == 0; })
+    .ForEach([&](size_t value) { ASSERT_EQ(count++ * 2, value); });
 
   ASSERT_EQ(expectedCount, count);
 }

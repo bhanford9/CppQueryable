@@ -15,8 +15,8 @@ public:
   virtual QueryableIterator<T> rbegin() = 0;
   virtual QueryableIterator<T> rend() = 0;
 
-  virtual IQueryableIteratorData<T>& Next(IteratorType type, uint64_t & iterated) = 0;
-  virtual IQueryableIteratorData<T>& Prev(IteratorType type, uint64_t & iterated) = 0;
+  virtual IQueryableIteratorData<T>& Next(IteratorType type, size_t & iterated) = 0;
+  virtual IQueryableIteratorData<T>& Prev(IteratorType type, size_t & iterated) = 0;
   virtual T Get(IteratorType type) = 0;
   virtual const T& ConstGet(IteratorType type) = 0;
   // virtual IQueryableIteratorData<T>& operator+(int addend) = 0;

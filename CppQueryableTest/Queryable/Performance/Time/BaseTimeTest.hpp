@@ -109,12 +109,12 @@ public:
     TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
   }
 
-  template<typename T = uint>
-  void ApplyLoad(uint magnitude, T useDummy)
+  template<typename T = size_t>
+  void ApplyLoad(size_t magnitude, T useDummy)
   {
     (void)useDummy;
     double value = 0.0;
-    for (uint i = 0; i < magnitude; i++)
+    for (size_t i = 0; i < magnitude; i++)
     {
       value = sqrt(value * i / (value + 100));
     }

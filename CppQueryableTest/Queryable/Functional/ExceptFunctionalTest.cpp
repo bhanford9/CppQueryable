@@ -21,15 +21,15 @@ using namespace QueryBuilder;
 class ExceptFunctionalTest : public ::testing::Test
 {
 protected:
-  std::vector<uint> startingInput;
-  std::vector<uint> evens;
-  IQueryable<uint> queryable;
-  IQueryable<uint> queryableEvens;
+  std::vector<size_t> startingInput;
+  std::vector<size_t> evens;
+  IQueryable<size_t> queryable;
+  IQueryable<size_t> queryableEvens;
   int oddCount = 5;
 
   ExceptFunctionalTest() :
-    startingInput( std::vector<uint>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 })),
-    evens( std::vector<uint>({ 4, 76, 8, 34, 76, 0 })),
+    startingInput( std::vector<size_t>({ 1, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 })),
+    evens( std::vector<size_t>({ 4, 76, 8, 34, 76, 0 })),
     queryable( BuildQueryable2(this->startingInput)),
     queryableEvens( BuildQueryable2(this->evens))
   {
@@ -44,8 +44,8 @@ protected:
 
 TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyTemplate)
 {
-  std::vector<uint> local;
-  std::vector<uint> result = this->queryable
+  std::vector<size_t> local;
+  std::vector<size_t> result = this->queryable
     .Except<std::vector>(local)
     .ToVector();
 
@@ -54,8 +54,8 @@ TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyTemplate)
 
 TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyAsVector)
 {
-  std::vector<uint> local;
-  std::vector<uint> result = this->queryable
+  std::vector<size_t> local;
+  std::vector<size_t> result = this->queryable
     .AsQueryableVector()
     .Except(local)
     .ToVector();
@@ -65,8 +65,8 @@ TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyAsVector)
 
 TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyExtended)
 {
-  std::vector<uint> local;
-  std::vector<uint> result = this->queryable
+  std::vector<size_t> local;
+  std::vector<size_t> result = this->queryable
     .AsExtendedQueryable<std::vector>()
     .Except(local)
     .ToVector();
@@ -76,9 +76,9 @@ TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmptyExtended)
 
 TEST_F(ExceptFunctionalTest, ExceptAllSameTemplate)
 {
-  IQueryable<uint> a = BuildQueryable2<uint>(std::vector<uint>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
-  std::vector<uint> b = std::vector<uint>({ 2, 5 });
-  std::vector<uint> result = a
+  IQueryable<size_t> a = BuildQueryable2<size_t>(std::vector<size_t>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
+  std::vector<size_t> b = std::vector<size_t>({ 2, 5 });
+  std::vector<size_t> result = a
     .Except<std::vector>(b)
     .ToVector();
 
@@ -87,9 +87,9 @@ TEST_F(ExceptFunctionalTest, ExceptAllSameTemplate)
 
 TEST_F(ExceptFunctionalTest, ExceptAllSameAsVector)
 {
-  IQueryable<uint> a = BuildQueryable2<uint>(std::vector<uint>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
-  std::vector<uint> b = std::vector<uint>({ 2, 5 });
-  std::vector<uint> result = a
+  IQueryable<size_t> a = BuildQueryable2<size_t>(std::vector<size_t>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
+  std::vector<size_t> b = std::vector<size_t>({ 2, 5 });
+  std::vector<size_t> result = a
     .AsQueryableVector()
     .Except(b)
     .ToVector();
@@ -99,9 +99,9 @@ TEST_F(ExceptFunctionalTest, ExceptAllSameAsVector)
 
 TEST_F(ExceptFunctionalTest, ExceptAllSameExtended)
 {
-  IQueryable<uint> a = BuildQueryable2<uint>(std::vector<uint>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
-  std::vector<uint> b = std::vector<uint>({ 2, 5 });
-  std::vector<uint> result = a
+  IQueryable<size_t> a = BuildQueryable2<size_t>(std::vector<size_t>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
+  std::vector<size_t> b = std::vector<size_t>({ 2, 5 });
+  std::vector<size_t> result = a
     .AsExtendedQueryable<std::vector>()
     .Except(b)
     .ToVector();
@@ -191,9 +191,9 @@ TEST_F(ExceptFunctionalTest, ExceptCustomCompareExtended)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateDequeDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
     .ToDeque();
 
@@ -202,9 +202,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateDequeDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsDequeDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -214,9 +214,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedDequeDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -226,9 +226,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedDequeDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateDequeListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
     .ToDeque();
 
@@ -237,9 +237,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateDequeListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsDequeListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -249,9 +249,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedDequeListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -261,9 +261,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedDequeListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateDequeMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
     .ToDeque();
 
@@ -272,9 +272,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateDequeMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsDequeMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -284,9 +284,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedDequeMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -296,9 +296,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedDequeMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateDequeSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
     .ToDeque();
 
@@ -307,9 +307,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateDequeSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsDequeSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -319,9 +319,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedDequeSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -331,9 +331,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedDequeSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateDequeVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
     .ToDeque();
 
@@ -342,9 +342,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateDequeVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsDequeVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -354,9 +354,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedDequeVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -366,9 +366,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedDequeVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateListDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::list<size_t> result = local
     .Except<std::list>(evens)
     .ToList();
 
@@ -377,9 +377,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateListDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsListDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::list<size_t> result = local
     .AsQueryableList()
     .Except(evens)
     .ToList();
@@ -389,9 +389,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsListDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedListDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::list<size_t> result = local
     .AsExtendedQueryable<std::list>()
     .Except(evens)
     .ToList();
@@ -401,9 +401,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedListDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateListMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::list<size_t> result = local
     .Except<std::list>(evens)
     .ToList();
 
@@ -412,9 +412,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateListMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsListMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::list<size_t> result = local
     .AsQueryableList()
     .Except(evens)
     .ToList();
@@ -424,9 +424,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsListMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedListMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::list<size_t> result = local
     .AsExtendedQueryable<std::list>()
     .Except(evens)
     .ToList();
@@ -436,9 +436,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedListMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateListSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::list<size_t> result = local
     .Except<std::list>(evens)
     .ToList();
 
@@ -447,9 +447,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateListSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsListSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::list<size_t> result = local
     .AsQueryableList()
     .Except(evens)
     .ToList();
@@ -459,9 +459,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsListSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedListSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::list<size_t> result = local
     .AsExtendedQueryable<std::list>()
     .Except(evens)
     .ToList();
@@ -471,9 +471,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedListSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateListVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::list<size_t> result = local
     .Except<std::list>(evens)
     .ToList();
 
@@ -482,9 +482,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateListVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsListVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::list<size_t> result = local
     .AsQueryableList()
     .Except(evens)
     .ToList();
@@ -494,9 +494,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsListVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedListVectorDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToList());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::list<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToList());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::list<size_t> result = local
     .AsExtendedQueryable<std::list>()
     .Except(evens)
     .ToList();
@@ -506,9 +506,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedListVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::multiset<size_t> result = local
     .Except<std::multiset>(evens)
     .ToMultiSet();
 
@@ -517,9 +517,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsMultiSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::multiset<size_t> result = local
     .AsQueryableMultiSet()
     .Except(evens)
     .ToMultiSet();
@@ -529,9 +529,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsMultiSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::multiset<size_t> result = local
     .AsExtendedQueryable<std::multiset>()
     .Except(evens)
     .ToMultiSet();
@@ -541,9 +541,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::multiset<size_t> result = local
     .Except<std::multiset>(evens)
     .ToMultiSet();
 
@@ -553,9 +553,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsMultiSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::multiset<size_t> result = local
     .AsQueryableMultiSet()
     .Except(evens)
     .ToMultiSet();
@@ -566,9 +566,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsMultiSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::multiset<size_t> result = local
     .AsExtendedQueryable<std::multiset>()
     .Except(evens)
     .ToMultiSet();
@@ -578,9 +578,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::multiset<size_t> result = local
     .Except<std::multiset>(evens)
     .ToMultiSet();
 
@@ -589,9 +589,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsMultiSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::multiset<size_t> result = local
     .AsQueryableMultiSet()
     .Except(evens)
     .ToMultiSet();
@@ -601,9 +601,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsMultiSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::multiset<size_t> result = local
     .AsExtendedQueryable<std::multiset>()
     .Except(evens)
     .ToMultiSet();
@@ -613,9 +613,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::multiset<size_t> result = local
     .Except<std::multiset>(evens)
     .ToMultiSet();
 
@@ -624,9 +624,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateMultiSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsMultiSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::multiset<size_t> result = local
     .AsQueryableMultiSet()
     .Except(evens)
     .ToMultiSet();
@@ -636,9 +636,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsMultiSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToMultiSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::multiset<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToMultiSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::multiset<size_t> result = local
     .AsExtendedQueryable<std::multiset>()
     .Except(evens)
     .ToMultiSet();
@@ -648,9 +648,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedMultiSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::set<size_t> result = local
     .Except<std::set>(evens)
     .ToSet();
 
@@ -659,9 +659,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::set<size_t> result = local
     .AsQueryableSet()
     .Except(evens)
     .ToSet();
@@ -671,9 +671,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedSetDequeDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::set<size_t> result = local
     .AsExtendedQueryable<std::set>()
     .Except(evens)
     .ToSet();
@@ -683,9 +683,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedSetDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::set<size_t> result = local
     .Except<std::set>(evens)
     .ToSet();
 
@@ -694,9 +694,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::set<size_t> result = local
     .AsQueryableSet()
     .Except(evens)
     .ToSet();
@@ -706,9 +706,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedSetListDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::set<size_t> result = local
     .AsExtendedQueryable<std::set>()
     .Except(evens)
     .ToSet();
@@ -718,9 +718,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedSetListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::set<size_t> result = local
     .Except<std::set>(evens)
     .ToSet();
 
@@ -729,9 +729,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::set<size_t> result = local
     .AsQueryableSet()
     .Except(evens)
     .ToSet();
@@ -741,9 +741,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedSetSetDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::set<size_t> result = local
     .AsExtendedQueryable<std::set>()
     .Except(evens)
     .ToSet();
@@ -753,9 +753,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedSetSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::set<size_t> result = local
     .Except<std::set>(evens)
     .ToSet();
 
@@ -764,9 +764,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::set<size_t> result = local
     .AsQueryableSet()
     .Except(evens)
     .ToSet();
@@ -776,9 +776,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedSetVectorDefault)
 {
-  ISortedQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToSet());
-  std::vector<uint> evens = this->queryableEvens.ToVector();
-  std::set<uint> result = local
+  ISortedQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToSet());
+  std::vector<size_t> evens = this->queryableEvens.ToVector();
+  std::set<size_t> result = local
     .AsExtendedQueryable<std::set>()
     .Except(evens)
     .ToSet();
@@ -788,9 +788,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedSetVectorDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateVectorDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::vector<size_t> result = local
     .Except<std::vector>(evens)
     .ToVector();
 
@@ -799,9 +799,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateVectorDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsVectorDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::vector<size_t> result = local
     .AsQueryableVector()
     .Except(evens)
     .ToVector();
@@ -811,9 +811,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsVectorDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedVectorDequeDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::vector<size_t> result = local
     .AsExtendedQueryable<std::vector>()
     .Except(evens)
     .ToVector();
@@ -823,9 +823,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedVectorDequeDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateVectorListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::vector<size_t> result = local
     .Except<std::vector>(evens)
     .ToVector();
 
@@ -834,9 +834,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateVectorListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsVectorListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::vector<size_t> result = local
     .AsQueryableVector()
     .Except(evens)
     .ToVector();
@@ -846,9 +846,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsVectorListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedVectorListDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::list<uint> evens = this->queryableEvens.ToList();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::list<size_t> evens = this->queryableEvens.ToList();
+  std::vector<size_t> result = local
     .AsExtendedQueryable<std::vector>()
     .Except(evens)
     .ToVector();
@@ -858,9 +858,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedVectorListDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateVectorMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::vector<size_t> result = local
     .Except<std::vector>(evens)
     .ToVector();
 
@@ -869,9 +869,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateVectorMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsVectorMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::vector<size_t> result = local
     .AsQueryableVector()
     .Except(evens)
     .ToVector();
@@ -881,9 +881,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsVectorMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedVectorMultiSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::multiset<uint> evens = this->queryableEvens.ToMultiSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  std::vector<size_t> result = local
     .AsExtendedQueryable<std::vector>()
     .Except(evens)
     .ToVector();
@@ -893,9 +893,9 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedVectorMultiSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptTemplateVectorSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::vector<size_t> result = local
     .Except<std::vector>(evens)
     .ToVector();
 
@@ -904,9 +904,9 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateVectorSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptAsVectorSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::vector<size_t> result = local
     .AsQueryableVector()
     .Except(evens)
     .ToVector();
@@ -916,9 +916,9 @@ TEST_F(ExceptFunctionalTest, ExceptAsVectorSetDefault)
 
 TEST_F(ExceptFunctionalTest, ExceptExtendedVectorSetDefault)
 {
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToVector());
-  std::set<uint> evens = this->queryableEvens.ToSet();
-  std::vector<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToVector());
+  std::set<size_t> evens = this->queryableEvens.ToSet();
+  std::vector<size_t> result = local
     .AsExtendedQueryable<std::vector>()
     .Except(evens)
     .ToVector();
@@ -929,17 +929,17 @@ TEST_F(ExceptFunctionalTest, ExceptExtendedVectorSetDefault)
 TEST_F(ExceptFunctionalTest, WhereTemplateExcept)
 {
   int oddsOverTen = 2;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
-    .Where([](uint value) { return value > 10; })
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
+    .Where([](size_t value) { return value > 10; })
     .Except<std::deque>(evens)
     .ToDeque();
 
 //   std::cout << "Evens:" << std::endl;
-//   for (uint value : evens) std::cout << value << ", ";
+//   for (size_t value : evens) std::cout << value << ", ";
 //   std::cout << "\nResults:" << std::endl;
-//   for (uint value : result) std::cout << value << ", ";
+//   for (size_t value : result) std::cout << value << ", ";
 //   std::cout << std::endl;
 
   ASSERT_EQ(oddsOverTen, result.size());
@@ -949,10 +949,10 @@ TEST_F(ExceptFunctionalTest, WhereTemplateExcept)
 TEST_F(ExceptFunctionalTest, WhereAsDequeExcept)
 {
   int oddsOverTen = 2;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
-    .Where([](uint value) { return value > 10; })
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
+    .Where([](size_t value) { return value > 10; })
     .AsQueryableDeque()
     .Except(evens)
     .ToDeque();
@@ -964,10 +964,10 @@ TEST_F(ExceptFunctionalTest, WhereAsDequeExcept)
 TEST_F(ExceptFunctionalTest, WhereExtendedExcept)
 {
   int oddsOverTen = 2;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
-    .Where([](uint value) { return value > 10; })
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
+    .Where([](size_t value) { return value > 10; })
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
     .ToDeque();
@@ -979,11 +979,11 @@ TEST_F(ExceptFunctionalTest, WhereExtendedExcept)
 TEST_F(ExceptFunctionalTest, ExceptTemplateWhere)
 {
   int oddsUnderTen = 3;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .Except<std::deque>(evens)
-    .Where([](uint value) { return value < 10; })
+    .Where([](size_t value) { return value < 10; })
     .ToDeque();
 
 
@@ -994,12 +994,12 @@ TEST_F(ExceptFunctionalTest, ExceptTemplateWhere)
 TEST_F(ExceptFunctionalTest, ExceptAsDequeWhere)
 {
   int oddsUnderTen = 3;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .AsQueryableDeque()
     .Except(evens)
-    .Where([](uint value) { return value < 10; })
+    .Where([](size_t value) { return value < 10; })
     .ToDeque();
 
 
@@ -1010,12 +1010,12 @@ TEST_F(ExceptFunctionalTest, ExceptAsDequeWhere)
 TEST_F(ExceptFunctionalTest, ExceptExtendedWhere)
 {
   int oddsUnderTen = 3;
-  IQueryable<uint> local = BuildQueryable2<uint>(this->queryable.ToDeque());
-  std::deque<uint> evens = this->queryableEvens.ToDeque();
-  std::deque<uint> result = local
+  IQueryable<size_t> local = BuildQueryable2<size_t>(this->queryable.ToDeque());
+  std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  std::deque<size_t> result = local
     .AsExtendedQueryable<std::deque>()
     .Except(evens)
-    .Where([](uint value) { return value < 10; })
+    .Where([](size_t value) { return value < 10; })
     .ToDeque();
 
 

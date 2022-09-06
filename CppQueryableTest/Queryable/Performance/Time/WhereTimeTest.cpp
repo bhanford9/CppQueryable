@@ -38,19 +38,19 @@ TEST_P(WhereTimeTest, DequeNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::deque<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::deque<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  DequeInternalQueryable<uint> local = BuildQueryable(data);
+  DequeInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Where([&](uint value)
+      local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -63,8 +63,8 @@ TEST_P(WhereTimeTest, DequeNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::deque<uint> standardWhered;
-      for (uint value : data)
+      std::deque<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -85,19 +85,19 @@ TEST_P(WhereTimeTest, DequeNumberCopyToQueryableDequeTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::deque<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::deque<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  DequeInternalQueryable<uint> local = BuildQueryable(data);
+  DequeInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local = local.Where([&](uint value)
+      local = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -110,8 +110,8 @@ TEST_P(WhereTimeTest, DequeNumberCopyToQueryableDequeTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::deque<uint> standardWhered;
-      for (uint value : data)
+      std::deque<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -132,19 +132,19 @@ TEST_P(WhereTimeTest, DequeNumberCopyToDequeTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::deque<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::deque<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::deque<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::deque<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  DequeInternalQueryable<uint> local = BuildQueryable(data);
+  DequeInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      std::deque<uint> newData = local.Where([&](uint value)
+      std::deque<size_t> newData = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -157,8 +157,8 @@ TEST_P(WhereTimeTest, DequeNumberCopyToDequeTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::deque<uint> standardWhered;
-      for (uint value : data)
+      std::deque<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -181,19 +181,19 @@ TEST_P(WhereTimeTest, ListNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::list<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  ListInternalQueryable<uint> local = BuildQueryable(data);
+  ListInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Where([&](uint value)
+      local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -206,8 +206,8 @@ TEST_P(WhereTimeTest, ListNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::list<uint> standardWhered;
-      for (uint value : data)
+      std::list<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -228,19 +228,19 @@ TEST_P(WhereTimeTest, ListNumberCopyToQueryableListTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::list<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  ListInternalQueryable<uint> local = BuildQueryable(data);
+  ListInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local = local.Where([&](uint value)
+      local = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -253,8 +253,8 @@ TEST_P(WhereTimeTest, ListNumberCopyToQueryableListTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::list<uint> standardWhered;
-      for (uint value : data)
+      std::list<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -275,19 +275,19 @@ TEST_P(WhereTimeTest, ListNumberCopyToListTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::list<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::list<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  ListInternalQueryable<uint> local = BuildQueryable(data);
+  ListInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      std::list<uint> newData = local.Where([&](uint value)
+      std::list<size_t> newData = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -300,8 +300,8 @@ TEST_P(WhereTimeTest, ListNumberCopyToListTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::list<uint> standardWhered;
-      for (uint value : data)
+      std::list<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -324,19 +324,19 @@ TEST_P(WhereTimeTest, MultiSetNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::multiset<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 12]);
   }
 
-  MultiSetInternalQueryable<uint> local = BuildQueryable(data);
+  MultiSetInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Where([&](uint value)
+      local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -349,8 +349,8 @@ TEST_P(WhereTimeTest, MultiSetNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::multiset<uint> standardWhered;
-      for (uint value : data)
+      std::multiset<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -371,19 +371,19 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToQueryableMultiSetTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::multiset<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 12]);
   }
 
-  MultiSetInternalQueryable<uint> local = BuildQueryable(data);
+  MultiSetInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local = local.Where([&](uint value)
+      local = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -396,8 +396,8 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToQueryableMultiSetTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::multiset<uint> standardWhered;
-      for (uint value : data)
+      std::multiset<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -418,19 +418,19 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToMultiSetTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::multiset<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::multiset<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.insert(dataSample[i % 12]);
   }
 
-  MultiSetInternalQueryable<uint> local = BuildQueryable(data);
+  MultiSetInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      std::multiset<uint> newData = local.Where([&](uint value)
+      std::multiset<size_t> newData = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -443,8 +443,8 @@ TEST_P(WhereTimeTest, MultiSetNumberCopyToMultiSetTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::multiset<uint> standardWhered;
-      for (uint value : data)
+      std::multiset<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -470,19 +470,19 @@ TEST_P(WhereTimeTest, VectorNumberTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::vector<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  VectorInternalQueryable<uint> local = BuildQueryable(data);
+  VectorInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local.Where([&](uint value)
+      local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -495,8 +495,8 @@ TEST_P(WhereTimeTest, VectorNumberTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::vector<uint> standardWhered;
-      for (uint value : data)
+      std::vector<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -517,19 +517,19 @@ TEST_P(WhereTimeTest, VectorNumberCopyToQueryableVectorTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::vector<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  VectorInternalQueryable<uint> local = BuildQueryable(data);
+  VectorInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      local = local.Where([&](uint value)
+      local = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -542,8 +542,8 @@ TEST_P(WhereTimeTest, VectorNumberCopyToQueryableVectorTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::vector<uint> standardWhered;
-      for (uint value : data)
+      std::vector<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
@@ -564,19 +564,19 @@ TEST_P(WhereTimeTest, VectorNumberCopyToVectorTest)
   this->params = GetParam();
   this->params.SetCategory(TimeTestCategory::BuiltIn);
 
-  std::vector<uint> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
-  std::vector<uint> data;
-  for (uint64_t i = 0; i < params.GetContainerSize(); i++)
+  std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
+  std::vector<size_t> data;
+  for (size_t i = 0; i < params.GetContainerSize(); i++)
   {
     data.push_back(dataSample[i % 12]);
   }
 
-  VectorInternalQueryable<uint> local = BuildQueryable(data);
+  VectorInternalQueryable<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
     {
-      std::vector<uint> newData = local.Where([&](uint value)
+      std::vector<size_t> newData = local.Where([&](size_t value)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         return (value % 2) == 0;
@@ -589,8 +589,8 @@ TEST_P(WhereTimeTest, VectorNumberCopyToVectorTest)
   this->standardStats = RunTimeAndLog(
     [&]()
     {
-      std::vector<uint> standardWhered;
-      for (uint value : data)
+      std::vector<size_t> standardWhered;
+      for (size_t value : data)
       {
         this->ApplyLoad(this->params.GetLoad(), value);
         if ((value % 2) == 0)
