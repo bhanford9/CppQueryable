@@ -13,8 +13,8 @@ jobs:
   # linux:
 
   #   runs-on: ubuntu-latest
-      env: 
-        PROJECTS_PATH: /home/runner/work/CppQueryable
+  #   env: 
+  #     PROJECTS_PATH: /home/runner/work/CppQueryable
 
   #   steps:
   #   - name: Intall GTEST and GMOCK
