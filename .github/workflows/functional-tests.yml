@@ -10,17 +10,17 @@ env:
   PROJECTS_PATH: /home/runner/work/CppQueryable
 
 jobs:
-  linux:
+  # linux:
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Intall GTEST and GMOCK
-      run: sudo apt-get install libgtest-dev && sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib
+  #   steps:
+  #   - name: Intall GTEST and GMOCK
+  #     run: sudo apt-get install libgtest-dev && sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp ./lib/*.a /usr/lib
 
-    - uses: actions/checkout@v3
-    - name: Build and Run Functional Tests
-      run: make FuncTests
+  #   - uses: actions/checkout@v3
+  #   - name: Build and Run Functional Tests
+  #     run: make FuncTests
 
   windows:
     runs-on: windows-latest
@@ -41,4 +41,4 @@ jobs:
       run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
     
     - name: Display Installs Directory
-      run: ls -al ./Installs
+      run: ls -al ./Installs/googletest && ls -al
