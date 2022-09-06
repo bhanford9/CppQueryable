@@ -12,6 +12,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   env: 
   #     PROJECTS_PATH: /home/runner/work/CppQueryable
+  #     GTEST_BASE_DIR: /usr/src/gtest
 
   #   steps:
   #   - name: Intall GTEST and GMOCK
@@ -25,11 +26,7 @@ jobs:
     runs-on: windows-latest
     env: 
       PROJECTS_PATH: D:/a/CppQueryable/CppQueryable
-
-    defaults:
-      run:
-        shell: bash
-
+      GTEST_BASE_DIR: D:/a/CppQueryable/CppQueryable/Installs/googletest/googletest
     steps:
 
     # (not sure if this step is necessary since we're already in git hub)
@@ -40,22 +37,13 @@ jobs:
     
     - name: Install GTEST and GMOCK
       run: mkdir ./Installs && cd Installs && git clone https://github.com/google/googletest.git
+      shell: bash
     
     - name: Display Installs Directory
-      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l
-    
-    # - name: Add GTEST Output to PATH
-    #   run: Add-Content $env:GITHUB_PATH "D:\a\CppQueryable\CppQueryable\Installs\googletest"
-    #   shell: pwsh
+      run: cd ./Installs/googletest && ls -l && cmake CMakeLists.txt && cmake && ls -l && ls -l ./googletest
+      shell: bash
 
-    # - name: Display the path
-    #   run: echo ${env:GITHUB_PATH}
-    #   shell: pwsh
-    
-    - name: Display Safe Project Path
-      run: echo ${env:PROJECTS_PATH}
-      shell: pwsh
-
-    - uses: actions/checkout@v3
-    - name: Build and Run Functional Tests
-      run: make FuncTests
+    # - uses: actions/checkout@v3
+    # - name: Build and Run Functional Tests
+    #   run: make FuncTests
+    #   shell: bash

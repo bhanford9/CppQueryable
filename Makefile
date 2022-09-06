@@ -24,13 +24,14 @@ DEPENDENCIES = $(PROJECT_PATH)/Makefile.dep
 # 5. sudo make
 # 6. sudo cp ./lib/*.a /usr/lib
 
-GTEST_MAIN_CC = /usr/src/gtest/src/gtest_main.cc
+GTEST_BASE = $(GTEST_BASE_DIR)
+GTEST_MAIN_CC = $(GTEST_BASE)/src/gtest_main.cc
 GTEST = $(GTEST_MAIN_CC)
 
 LIBS =
 TEST_LIBS = $(LIBS) -lgtest -lgtest_main -lpthread
 INCLUDES =
-TEST_INCLUDES = $(INCLUDES) -I/usr/src/gtest/include/gtest $(GTEST) -L/usr/src/gtest/lib
+TEST_INCLUDES = $(INCLUDES) -I$(GTEST_BASE)/include/gtest $(GTEST) -L$(GTEST_BASE)/lib
 
 TEST_TIMEOUT = 10000 # TODO --> get this to work properly
 
