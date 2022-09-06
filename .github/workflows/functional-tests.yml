@@ -24,7 +24,7 @@ jobs:
   windows:
     runs-on: windows-latest
     env: 
-      PROJECTS_PATH: D:\a\CppQueryable\CppQueryable
+      PROJECTS_PATH: D:/a/CppQueryable/CppQueryable
 
     defaults:
       run:
@@ -52,11 +52,7 @@ jobs:
     #   run: echo ${env:GITHUB_PATH}
     #   shell: pwsh
     
-    # - name: Set safe path
-    #   run: $env:PROJECTS_PATH = 'D:\a\CppQueryable\CppQueryable'
-    #   shell: pwsh
-    
-    - name: Display safe path
+    - name: Display Safe Project Path
       run: echo ${env:PROJECTS_PATH}
       shell: pwsh
 
