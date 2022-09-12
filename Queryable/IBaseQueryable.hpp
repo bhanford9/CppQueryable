@@ -298,6 +298,18 @@ public:
     return this->queryable->template Range<TIterable, TOut>(retrieveValue);
   }
 
+  inline IBaseQueryable<T, TArgs...> & Skip(int count)
+  {
+    this->queryable->Skip(count);
+    return *this;
+  }
+
+  inline IBaseQueryable<T, TArgs...> & SkipWhile(std::function<bool(T)> && doSkip)
+  {
+    this->queryable->SkipWhile(std::move(doSkip));
+    return *this;
+  }
+
   inline double Sum(std::function<double(T)> retrieveValue = [](T value) { return value; }) const
   {
     return this->queryable->Sum(retrieveValue);

@@ -319,6 +319,9 @@ public:
     return this->AsExtendedQueryable<TIterable>().Select(retrieveValue, iterableParameters...);
   }
 
+  inline virtual void Skip(int count) = 0;
+  inline virtual void SkipWhile(std::function<bool(T)> && doSkip) = 0;
+
   template<
     template<typename, typename ...> typename TIterable,
     typename TLessThan = std::less<T>>

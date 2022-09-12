@@ -32,6 +32,16 @@ protected:
   std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> original;
   bool sizeIsCalculated;
   bool finishedSkipping;
+  
+  void IncrementPastSkips(IteratorType type, size_t & iterated, bool & isForcingToEnd)
+  {
+    while (this->original->CanIncrement(type) && this->DoSkip(this->original->Get(type)))
+    {
+      size_t internalIterated = 1;
+      this->original->Next(type, internalIterated, isForcingToEnd);
+      iterated += internalIterated;
+    }
+  }
 
 public:
   SkipWhileQueryableData(
@@ -47,7 +57,7 @@ public:
     const std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
   {
-    // std::cout << "SkipWhileQueryableData copy constructor" << std::endl;
+    // std::cout << "SkipWhileQueryableData copy constructor 1" << std::endl;
     this->original = data;
     this->condition = std::move(condition);
     this->finishedSkipping = false;
@@ -55,7 +65,7 @@ public:
   SkipWhileQueryableData(const SkipWhileQueryableData<TObj, TIterable, TArgs...> & other)
     : QueryableData<TObj, TIterable, TArgs...>(other)
   {
-    // std::cout << "SkipWhileQueryableData copy constructor" << std::endl;
+    // std::cout << "SkipWhileQueryableData copy constructor 2" << std::endl;
     this->original = other.original;
     this->condition = other.condition;
     this->finishedSkipping = other.finishedSkipping;
@@ -78,6 +88,7 @@ public:
 
     size_t count = 0;
 
+    this->finishedSkipping = false;
     this->condition->Reset();
 
     // not sure I like needing to get the realized queryable data
@@ -89,14 +100,12 @@ public:
       {
         count++;
       }
-      else
-      {
-        break;
-      }
     }
 
     this->size = count;
     this->sizeIsCalculated = true;
+    this->condition->Reset();
+    this->finishedSkipping = false;
 
     return count;
   }
@@ -140,18 +149,8 @@ public:
 
   virtual IQueryableData<TObj> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
-    // std::cout << "While Queryable Next" << std::endl;
-    
-    size_t trueIterated = iterated;
+    // std::cout << "Skip While Queryable Next" << std::endl;
     this->original->Next(type, iterated, isForcingToEnd);
-    trueIterated += iterated;
-
-    if (this->DoSkip(this->original->Get(type)))
-    {
-      this->Next(type, trueIterated, isForcingToEnd);
-    }
-
-    iterated = trueIterated;
     
     return *this;
   }
@@ -198,9 +197,14 @@ public:
   {
     // std::cout << "SkipWhileQueryableData::begin" << std::endl;
     this->condition->Reset();
+    this->finishedSkipping = false;
     QueryableIterator<TObj> child = this->original->begin();
 
+    // while (this->DoSkip(*child)) ++child;
     size_t startIndex = child.index;
+    bool isForcingToEnd = false;
+    this->IncrementPastSkips(IteratorType::BeginForward, startIndex, isForcingToEnd);
+
     QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
 
     return retVal;
@@ -243,7 +247,7 @@ public:
     return retVal;
   }
 
-  inline bool DoSkip(const TObj & item) const
+  inline bool DoSkip(const TObj & item)
   {
     if (!this->finishedSkipping)
     {

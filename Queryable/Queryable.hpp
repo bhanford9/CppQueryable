@@ -628,6 +628,16 @@ public:
     }
   }
 
+  inline void Skip(int count)
+  {
+    this->queryable->Skip(count);
+  }
+
+  inline void SkipWhile(std::function<bool(TObj)> && doSkip)
+  {    
+    this->queryable->SkipWhile(std::move(doSkip));
+  }
+
   template<typename TLessThan = std::less<TObj>>
   void Sort(TLessThan lessThan = {})
   {

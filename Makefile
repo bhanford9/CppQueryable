@@ -4,6 +4,7 @@ DEBUG = -g -ggdb3# -c
 
 # Prerequisits
 # 1. export PROJECTS_PATH environment variable to the full path to the directory housing CppQueryable project
+# 2. export GTEST_BASE_DIR environment variable to the full path to the directory housing the src/lib/include directories for gtest
 
 $(warning "Base Project Path: $(PROJECTS_PATH)") # exported environment variable
 PROJECT_PATH = $(PROJECTS_PATH)/CppQueryable

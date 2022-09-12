@@ -383,6 +383,24 @@ public:
     throw std::runtime_error("Cannot get last item of empty collection.");
   }
 
+  inline void Skip(int count)
+  {
+    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
+      std::make_shared<WhileCondition<TObj, int>>(
+        count,
+        [](const TObj & value, int & current) { return current-- > 0; },
+        [count](int current) mutable { return count; });
+    
+    this->InternalSkipWhile(std::move(whileCondition));
+  }
+
+  inline void SkipWhile(std::function<bool(TObj)> && doSkip)
+  {
+    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
+      std::make_shared<WhileCondition<TObj, int>>(std::move(doSkip));    
+    this->InternalSkipWhile(std::move(whileCondition));
+  }
+
   inline void Take(int count)
   {
     std::shared_ptr<IWhileCondition<TObj>> whileCondition =
@@ -402,6 +420,7 @@ public:
   }
 
   // make private?
+  inline virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
   inline virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
   
   // TODO these can be done with iterators instead

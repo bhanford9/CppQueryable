@@ -7,6 +7,7 @@
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableListData.hpp"
+#include "../QueryableData/SkipWhileQueryableData/SkipWhileQueryableListData.hpp"
 #include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableListData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
@@ -56,6 +57,13 @@ public:
   virtual void Where(std::function<bool(const TObj &)> condition) override
   {
     this->items = std::move(std::make_shared<WhereQueryableListData<TObj, TAllocator>>(std::move(this->items), std::move(condition)));
+  }
+
+  virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
+  {
+    this->items = std::move(std::make_shared<SkipWhileQueryableListData<TObj, TAllocator>>(
+      std::move(this->items),
+      std::move(condition)));
   }
 
   virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
