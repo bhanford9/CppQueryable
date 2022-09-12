@@ -148,7 +148,7 @@ TEST_F(SkipFunctionalTest, SkipWhere)
   int skipCount = 3;
   size_t expectedCount = 3;
   IQueryable<size_t> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-  IBaseQueryable<size_t> & result = queryableVector
+  IBaseQueryable<size_t> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })
     .Skip(skipCount);
 
