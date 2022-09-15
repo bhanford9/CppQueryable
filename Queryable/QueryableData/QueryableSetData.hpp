@@ -16,16 +16,20 @@ class QueryableSetData : public SortedQueryableData<T, std::set, TCompare, TAllo
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   QueryableSetData(TCompare comparator = {})
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>() { }
+    : SortedQueryableData<T, std::set, TCompare, TAllocator>() { std::cout << "queryable set data default constructor" << std::endl;}
 
   // QueryableSetData(std::set<T, TCompare, TAllocator> items)
   //   : SortedQueryableData<T, std::set, TCompare, TAllocator>(items) { }
 
   QueryableSetData(const std::set<T, TCompare, TAllocator> & items)
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(items) { }
+    : SortedQueryableData<T, std::set, TCompare, TAllocator>(items)
+    {
+    }
 
   QueryableSetData(std::set<T, TCompare, TAllocator> && items)
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(std::move(items)) { }
+    : SortedQueryableData<T, std::set, TCompare, TAllocator>(std::move(items))
+    {
+    }
 
   QueryableSetData(const QueryableSetData<T, TCompare, TAllocator> & data)
     : SortedQueryableData<T, std::set, TCompare, TAllocator>(data) { }

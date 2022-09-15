@@ -44,7 +44,7 @@
 #include "TypeConstraintUtil.hpp"
 #include "Utilities/Casting.hpp"
 #include "Utilities/Condition.hpp"
-#include "Utilities/Group.hpp"
+#include "Utilities/Grouping.hpp"
 #include "Utilities/IWhileCondition.hpp"
 #include "Utilities/PersistentContainer.hpp"
 #include "Utilities/WhileCondition.hpp"
@@ -96,6 +96,14 @@ public:
     this->type = type;
   }
 
+  InternalQueryable(
+    const std::shared_ptr<QueryableSetData<TObj, TArgs...>> & queryableData,
+    QueryableType type)
+  {
+    this->items = queryableData;
+    this->type = type;
+  }
+
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
   InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
@@ -110,6 +118,7 @@ public:
     this->items.get()->Clear();
   }
 
+  // TODO --> this may need to be protected for internal use only
   inline void Add(TObj obj)
   {
     this->items.get()->Add(obj);
@@ -230,11 +239,8 @@ public:
     // probably be better to use the constructor that takes the iterators as parameters
     std::vector<TObj, TAllocator> newItems(allocator);
 
-    std::cout << "\n\n\nGoing into for loop" << std::endl;
-
     for (TObj item : *this->items.get())
     {
-        std::cout << "vector adding: " << item << std::endl;
       newItems.push_back(item);
     }
 
@@ -329,7 +335,7 @@ public:
 
   void ForEach(std::function<void(TObj)> action) const
   {
-    for (TObj item : *this->items.get())
+    for (const TObj & item : *this->items.get())
     {
       action(item);
     }
@@ -1149,54 +1155,6 @@ public:
   //
   //   return result.get();
   // }
-
-
-//   template<typename TKey, typename TData = TObj>
-//   InternalQueryable<Group<TKey, TObj>> GroupBy(
-//     std::function<TKey(TObj)> getKey,
-//     QueryableType storageType = QueryableType::Default,
-//     std::function<bool(TKey, TKey)> keyCompare = [](TKey a, TKey b) { return a < b; },
-//     std::function<bool(TData, TData)> dataCompare = [](TData a, TData b) { return a < b; })
-//   {
-//     QueryableType type = storageType == QueryableType::Default ? this->type : storageType;
-//     InternalQueryable<Group<TKey, TObj>> queryableGroups(type);
-//
-//     for (TObj item : *this->items.get())
-//     {
-//       TKey key = getKey(item);
-//
-//       if (!queryableGroups.Any([&](Group<TKey, TObj> group) { return group.HasKey(key); }))
-//       {
-//         switch (type)
-//         {
-//           case QueryableType::Deque:
-//             queryableGroups.Add(GroupQueryableDequeData<TKey, TData>(key, type, keyCompare));
-//             break;
-//           case QueryableType::List:
-//             queryableGroups.Add(GroupQueryableListData<TKey, TData>(key, type, keyCompare));
-//             break;
-//           case QueryableType::MultiSet:
-//             queryableGroups.Add(GroupQueryableMultiSetData<TKey, TData>(key, type, keyCompare, dataCompare));
-//             break;
-//           case QueryableType::Set:
-//             queryableGroups.Add(GroupQueryableSetData<TKey, TData>(key, type, keyCompare, dataCompare));
-//             break;
-//           case QueryableType::Vector:
-//           default:
-//             queryableGroups.Add(GroupQueryableVectorData<TKey, TData>(key, type, keyCompare));
-//             break;
-//         }
-//       }
-//
-//       queryableGroups
-//         .First([&](Group<TKey, TObj> group) { return group.HasKey(key); })
-//         .Add(item);
-//     }
-//
-//     queryableGroups.Sort([](Group<TKey, TObj> a, Group<TKey, TObj> b) { return a < b; });
-//
-//     return queryableGroups;
-//   }
 };
 
 #endif

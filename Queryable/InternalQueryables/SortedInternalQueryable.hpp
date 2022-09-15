@@ -37,6 +37,19 @@ public:
       : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
   {
   }
+  SortedInternalQueryable(
+    std::shared_ptr<QueryableSetData<TObj, TLessThan, TAllocator>> && queryableData,
+    QueryableType type)
+      : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
+  {
+    std::cout << "Sorted Move Constructor" << std::endl;
+  }
+  // SortedInternalQueryable(
+  //   const QueryableSetData<TObj, TLessThan, TAllocator> & queryableData,
+  //   QueryableType type)
+  //     : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::make_shared<>(queryableData))
+  // {
+  // }
 };
 
 #endif

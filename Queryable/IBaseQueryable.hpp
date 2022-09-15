@@ -11,6 +11,7 @@
 #include "InternalIQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableType.hpp"
+#include "Utilities/Grouping.hpp"
 
 template<
   typename TObj,

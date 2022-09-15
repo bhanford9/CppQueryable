@@ -16,6 +16,12 @@ template<
 class DequeInternalQueryable;
 
 template<
+  typename TKey,
+  typename TValue,
+  typename TValueAllocator = std::allocator<TValue>>
+class Grouping;
+
+template<
   typename TObj,
   typename TAllocator = std::allocator<TObj>>
 class ListInternalQueryable;

@@ -68,7 +68,6 @@ public:
   }
   QueryableData(const TIterable<TObj, TArgs...> & items)
   {
-    // std::cout << "\nQueryableData Constructor 2: " << typeid(TIterable<TObj, TArgs...>).name() << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
     this->DefaultInitialize();
 
@@ -81,6 +80,7 @@ public:
     //   to have the child calculate the size after constructions... may be the cleanest
     //   since the user never sees this class anyway
     this->size = this->items->size();
+    // std::cout << "\nQueryableData Constructor 2: " << this->size << std::endl;
   }
   QueryableData(TIterable<TObj, TArgs...> && items)
   {
@@ -98,10 +98,11 @@ public:
     //   to have the child calculate the size after constructions... may be the cleanest
     //   since the user never sees this class anyway
     this->size = items.size();
+    // std::cout << "\nQueryableData Constructor 3: " << this->size << std::endl;
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
-    // std::cout << "QueryableData Copy Constructor 2" << std::endl;
+    // std::cout << "QueryableData Copy Constructor 2: " << data.size << std::endl;
     this->items = data.items;
 
     this->beginIterator = data.beginIterator;

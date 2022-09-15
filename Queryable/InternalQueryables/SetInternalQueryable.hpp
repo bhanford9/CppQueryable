@@ -29,7 +29,13 @@ public:
   SetInternalQueryable(const std::set<TObj, TLessThan, TAllocator> & set)
   {
     this->type = QueryableType::Set;
-    this->items = std::move(std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(set));
+    this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(set);
+  }
+
+  SetInternalQueryable(std::set<TObj, TLessThan, TAllocator> && set)
+  {
+    this->type = QueryableType::Set;
+    this->items = std::make_shared<QueryableSetData<TObj, TLessThan, TAllocator>>(std::move(set));
   }
 
   // SetInternalQueryable(const std::set<TObj, TLessThan, TAllocator> & set, TLessThan lessThan = {}, TAllocator allocator = {})

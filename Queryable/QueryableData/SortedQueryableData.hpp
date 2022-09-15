@@ -22,6 +22,7 @@ public:
   SortedQueryableData(TCompare comparator = {})
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>()
   {
+    std::cout << "BAD: SortedQueryableData default constructor" << std::endl;
     // this->comparator = comparator;
     this->items = TIterable<T, TCompare, TAllocator, TArgs...>(comparator);
   }

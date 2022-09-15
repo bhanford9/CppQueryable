@@ -25,6 +25,8 @@ class IBaseQueryable;
 template<typename T, typename ...TArgs>
 class InternalIQueryable;
 
+// TODO --> if we template the allocator and less instead of using TArgs, we may be able to do more with less
+//   for example, GroupBy currently requires an allocator be passed in to account for TArgs...
 template<typename T, typename ...TArgs>
 class ISortedQueryable : public IBaseQueryable<T, TArgs...>
 {
@@ -74,6 +76,38 @@ public:
   {
     this->queryable->template Except<TIterable, TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
     return *this;
+  }
+
+  template<
+    template<typename, typename ...> typename TIterable, 
+    typename TKey,
+    typename TAllocator = std::allocator<T>>
+  inline ISortedQueryable<
+      Grouping<TKey, T, TAllocator>,
+      std::less<Grouping<TKey, T, TAllocator>>,
+      std::allocator<Grouping<TKey, T, TAllocator>>> GroupBy(
+    const std::function<TKey(T)> & getKey,
+    std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
+    TAllocator allocator = {})
+  {
+    Queryable<
+      Grouping<TKey, T, TAllocator>,
+      std::set,
+      std::less<Grouping<TKey, T, TAllocator>>,
+      std::allocator<Grouping<TKey, T, TAllocator>>> result =
+      this->queryable->template GroupBy<TIterable>(getKey, lessThan, allocator);
+    
+    ISortedQueryable<
+        Grouping<TKey, T, TAllocator>,
+        std::less<Grouping<TKey, T, TAllocator>>,
+        std::allocator<Grouping<TKey, T, TAllocator>>> output(
+      std::make_shared<Queryable<
+        Grouping<TKey, T, TAllocator>,
+        std::set,
+        std::less<Grouping<TKey, T, TAllocator>>,
+        std::allocator<Grouping<TKey, T, TAllocator>>>>
+      (result));
+    return output;
   }
 
   template<

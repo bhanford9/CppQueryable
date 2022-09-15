@@ -77,6 +77,38 @@ public:
   }
 
   template<
+    template<typename, typename ...> typename TIterable, 
+    typename TKey,
+    typename TAllocator = std::allocator<T>>
+  inline IQueryable<
+      Grouping<TKey, T, TAllocator>,
+      std::less<Grouping<TKey, T, TAllocator>>,
+      std::allocator<Grouping<TKey, T, TAllocator>>> GroupBy(
+    const std::function<TKey(T)> & getKey,
+    std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
+    TAllocator allocator = {})
+  {
+    Queryable<
+      Grouping<TKey, T, TAllocator>,
+      std::set,
+      std::less<Grouping<TKey, T, TAllocator>>,
+      std::allocator<Grouping<TKey, T, TAllocator>>> result =
+      this->queryable->template GroupBy<TIterable>(getKey, lessThan, allocator);
+    
+    IQueryable<
+        Grouping<TKey, T, TAllocator>,
+        std::less<Grouping<TKey, T, TAllocator>>,
+        std::allocator<Grouping<TKey, T, TAllocator>>> output(
+      std::make_shared<Queryable<
+        Grouping<TKey, T, TAllocator>,
+        std::set,
+        std::less<Grouping<TKey, T, TAllocator>>,
+        std::allocator<Grouping<TKey, T, TAllocator>>>>
+      (result));
+    return output;
+  }
+
+  template<
     template<typename, typename ...> typename TIterable,
     typename TOut,
     typename ...TNewArgs>

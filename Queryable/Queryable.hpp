@@ -1,6 +1,7 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLE_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLE_H
 
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <type_traits>
@@ -10,11 +11,6 @@
 #include "InternalQueryable.hpp"
 #include "IQueryable.hpp"
 #include "ISortedQueryable.hpp"
-// #include "QueryableTypeConverters/DequeQueryableTypeConverter.hpp"
-// #include "QueryableTypeConverters/ListQueryableTypeConverter.hpp"
-// #include "QueryableTypeConverters/MultiSetQueryableTypeConverter.hpp"
-// #include "QueryableTypeConverters/SetQueryableTypeConverter.hpp"
-// #include "QueryableTypeConverters/VectorQueryableTypeConverter.hpp"
 #include "SelectBuilders/SelectBuilder.hpp"
 #include "SelectBuilders/DequeSelectBuilder.hpp"
 #include "SelectBuilders/ListSelectBuilder.hpp"
@@ -136,6 +132,7 @@ public:
       std::move(
         FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
           std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(other))));
+    return queryable;
   }
 
   template<typename TAllocator = std::allocator<TObj>>
@@ -461,7 +458,47 @@ public:
     return this->queryable->GetType();
   }
 
-  // GroupBy
+  template<
+    typename TKey,
+    typename TAllocator = std::allocator<TObj>>
+  inline Queryable<
+      Grouping<TKey, TObj, TAllocator>,
+      std::set,
+      std::less<Grouping<TKey, TObj, TAllocator>>,
+      std::allocator<Grouping<TKey, TObj, TAllocator>>> GroupBy(
+    const std::function<TKey(TObj)> & getKey,
+    std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
+    TAllocator allocator = {})
+  {
+    using TGrouping = Grouping<TKey, TObj, TAllocator>;
+    using TSetIter = typename std::set<TGrouping>::iterator;
+
+    std::set<TGrouping> groups;
+    
+    this->ForEach([&](TObj value)
+    {
+      std::pair<TSetIter, bool> result = 
+        groups.insert(TGrouping(
+          getKey(value),
+          value,
+          lessThan,
+          allocator));
+
+      if (!result.second)
+      {
+        TGrouping group = *result.first;
+        group.Add(value);
+      }
+    });
+
+    SetInternalQueryable<TGrouping> setGroupedQueryable(std::move(groups));
+
+    Queryable<TGrouping, std::set, std::less<TGrouping>, std::allocator<TGrouping>> queryable =
+      Queryable<TGrouping, std::set>::FromInternalSet(std::move(setGroupedQueryable));
+
+    return queryable;
+  }
+
   // Join
 
   inline TObj Last(std::function<bool(TObj)> condition)

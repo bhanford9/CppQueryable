@@ -256,6 +256,22 @@ public:
   inline virtual T First() = 0;
   inline virtual void ForEach(std::function<void(T)> action) const = 0;
 
+  template<
+    template<typename, typename ...> typename TIterable,
+    typename TKey,
+    typename TAllocator = std::allocator<T>>
+  inline Queryable<
+    Grouping<TKey, T, TAllocator>,
+    std::set,
+    std::less<Grouping<TKey, T, TAllocator>>,
+    std::allocator<Grouping<TKey, T, TAllocator>>> GroupBy(
+    const std::function<TKey(T)> & getKey,
+    const std::function<bool(TKey, TKey)> & lessThan = [](TKey a, TKey b) { return a < b; },
+    TAllocator allocator = {})
+  {
+    return this->AsExtendedQueryable<TIterable>().GroupBy(getKey, lessThan, allocator);
+  }
+
   inline virtual T Last(std::function<bool(T)> condition) = 0;
   inline virtual T Last() = 0;
   inline virtual T Max() const = 0;

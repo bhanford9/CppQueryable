@@ -13,9 +13,7 @@
 #include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableVectorData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
-template<
-  typename TObj,
-  typename TAllocator>
+template<typename TObj, typename TAllocator>
 class VectorInternalQueryable : public InternalQueryable<TObj, std::vector, TAllocator>
 {
 public:
@@ -33,9 +31,9 @@ public:
   }
 
   VectorInternalQueryable(const VectorInternalQueryable<TObj, TAllocator> & other)
+    : InternalQueryable<TObj, std::vector, TAllocator>(other)
   {
     this->type = QueryableType::Vector;
-    this->items = other.items;
   }
 
   VectorInternalQueryable(const InternalQueryable<TObj, std::vector, TAllocator> & other)
@@ -43,6 +41,7 @@ public:
   {
     this->type = QueryableType::Vector;
   }
+  
   VectorInternalQueryable(
     std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && queryableData,
     QueryableType type)
