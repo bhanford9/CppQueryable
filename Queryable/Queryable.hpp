@@ -7,7 +7,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "InternalIQueryable.hpp"
 #include "InternalQueryable.hpp"
 #include "IQueryable.hpp"
 #include "ISortedQueryable.hpp"
@@ -19,18 +18,22 @@
 #include "SelectBuilders/VectorSelectBuilder.hpp"
 #include "Utilities/Casting.hpp"
 
-template<typename T, typename ...TArgs>
+template<
+  typename T, 
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
 class IQueryable;
-template<typename T, typename ...TArgs>
+template<
+  typename T, 
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
 class ISortedQueryable;
-template<typename T, typename ...TArgs>
-class InternalIQueryable;
 
 template<
   typename TObj,
   template<typename, typename ...> typename TIterable,
   typename ...TArgs>
-class Queryable : public InternalIQueryable<TObj, TArgs...>
+class Queryable
 {
 protected:
   std::shared_ptr<InternalQueryable<TObj, TIterable, TArgs...>> queryable;
@@ -39,12 +42,12 @@ protected:
 public:
   virtual ~Queryable() { }
 
-  Queryable(const IQueryable<TObj, TArgs...> & other)
+  Queryable(const IQueryable<TObj, TIterable, TArgs...> & other)
   {
     queryable = other.template AsExtendedQueryable<TIterable>().queryable;
   }
 
-  Queryable(const ISortedQueryable<TObj, TArgs...> & other)
+  Queryable(const ISortedQueryable<TObj, TIterable, TArgs...> & other)
   {
     queryable = other.template AsExtendedQueryable<TIterable>().queryable;
   }
@@ -341,6 +344,12 @@ public:
     return this->queryable->ToVector();
   }
 
+  inline Queryable<TObj, TIterable, TArgs...> ToQueryable()
+  {
+    this->queryable->GetRealized();
+    return *this;
+  }
+
   template<typename T = TObj>
   inline T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
   {
@@ -428,7 +437,7 @@ public:
     typename TLessThan = std::less<TObj>,
     typename TAllocator = std::allocator<TObj>,
     typename ...TExceptionArgs>
-  InternalIQueryable<TObj, TArgs...> & Except(
+  Queryable<TObj, TIterable, TArgs...> & Except(
     const TExceptions<TObj, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
@@ -686,10 +695,10 @@ public:
     return this->queryable->Sum(retrieveValue);
   }
 
-  inline size_t Sum(std::function<size_t(TObj)> retrieveValue = [](TObj value) { return value; }) const
-  {
-    return this->queryable->Sum(retrieveValue);
-  }
+  // inline size_t Sum(std::function<size_t(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  // {
+  //   return this->queryable->Sum(retrieveValue);
+  // }
 
   // inline TObj Sum() const
   // {
@@ -706,7 +715,7 @@ public:
     this->queryable->TakeWhile(std::move(doTake));
   }
 
-  inline InternalIQueryable<TObj, TArgs...> & Where(std::function<bool(const TObj &)> condition)
+  inline Queryable<TObj, TIterable, TArgs...> & Where(std::function<bool(const TObj &)> condition)
   {
     this->queryable->Where(condition);
     return *this;

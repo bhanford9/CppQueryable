@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "IBaseQueryable.hpp"
-#include "InternalIQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableType.hpp"
 
@@ -19,71 +18,72 @@ template<
   typename ...TArgs>
 class Queryable;
 
-template<typename T, typename ...TArgs>
-class IBaseQueryable;
 
-template<typename T, typename ...TArgs>
-class InternalIQueryable;
+template<
+  typename TObj,
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
+class IBaseQueryable;
 
 // TODO --> if we template the allocator and less instead of using TArgs, we may be able to do more with less
 //   for example, GroupBy currently requires an allocator be passed in to account for TArgs...
-template<typename T, typename ...TArgs>
-class ISortedQueryable : public IBaseQueryable<T, TArgs...>
+template<
+  typename T,
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
+class ISortedQueryable : public IBaseQueryable<T, TIterable, TArgs...>
 {
 public:
-  ISortedQueryable() : IBaseQueryable<T, TArgs...>() { }
-  ISortedQueryable(const std::shared_ptr<InternalIQueryable<T, TArgs...>> & other) :
-    IBaseQueryable<T, TArgs...>(other)
+  ISortedQueryable() : IBaseQueryable<T, TIterable, TArgs...>() { }
+  ISortedQueryable(const std::shared_ptr<Queryable<T, TIterable, TArgs...>> & other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other)
   {
   }
-  ISortedQueryable(std::shared_ptr<InternalIQueryable<T, TArgs...>> && other) :
-    IBaseQueryable<T, TArgs...>(std::move(other))
+  ISortedQueryable(std::shared_ptr<Queryable<T, TIterable, TArgs...>> && other) :
+    IBaseQueryable<T, TIterable, TArgs...>(std::move(other))
   {
   }
-  ISortedQueryable(InternalIQueryable<T, TArgs...> * other) :
-    IBaseQueryable<T, TArgs...>(other)
+  ISortedQueryable(Queryable<T, TIterable, TArgs...> * other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other)
   {
   }
-  ISortedQueryable(const ISortedQueryable<T, TArgs...> & other) :
-    IBaseQueryable<T, TArgs...>(other.queryable)
+  ISortedQueryable(const ISortedQueryable<T, TIterable, TArgs...> & other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other.queryable)
   {
   }
-  ISortedQueryable(ISortedQueryable<T, TArgs...> && other) :
-    IBaseQueryable<T, TArgs...>(std::move(other.queryable))
+  ISortedQueryable(ISortedQueryable<T, TIterable, TArgs...> && other) :
+    IBaseQueryable<T, TIterable, TArgs...>(std::move(other.queryable))
   {
   }
 
-  void operator=(const ISortedQueryable<T, TArgs...> & other)
+  void operator=(const ISortedQueryable<T, TIterable, TArgs...> & other)
   {
     this->queryable = other.queryable;
   }
 
-  void operator=(ISortedQueryable<T, TArgs...> && other)
+  void operator=(ISortedQueryable<T, TIterable, TArgs...> && other)
   {
     this->queryable = std::move(other.queryable);
   }
 
   template<
-    template<typename, typename ...> typename TIterable,
     template<typename, typename ...> typename TExceptions,
     typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<T>,
     typename ...TExceptionArgs>
-  ISortedQueryable<T, TArgs...> Except(
+  ISortedQueryable<T, TIterable, TArgs...> Except(
     const TExceptions<T, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
   {
-    this->queryable->template Except<TIterable, TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
+    this->queryable->template Except<TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
     return *this;
   }
 
-  template<
-    template<typename, typename ...> typename TIterable, 
-    typename TKey,
-    typename TAllocator = std::allocator<T>>
+  template<typename TKey, typename TAllocator = std::allocator<T>>
   inline ISortedQueryable<
       Grouping<TKey, T, TAllocator>,
+      std::set,
       std::less<Grouping<TKey, T, TAllocator>>,
       std::allocator<Grouping<TKey, T, TAllocator>>> GroupBy(
     const std::function<TKey(T)> & getKey,
@@ -95,10 +95,11 @@ public:
       std::set,
       std::less<Grouping<TKey, T, TAllocator>>,
       std::allocator<Grouping<TKey, T, TAllocator>>> result =
-      this->queryable->template GroupBy<TIterable>(getKey, lessThan, allocator);
+      this->queryable->template GroupBy(getKey, lessThan, allocator);
     
     ISortedQueryable<
         Grouping<TKey, T, TAllocator>,
+        std::set,
         std::less<Grouping<TKey, T, TAllocator>>,
         std::allocator<Grouping<TKey, T, TAllocator>>> output(
       std::make_shared<Queryable<
@@ -111,33 +112,31 @@ public:
   }
 
   template<
-    template<typename, typename ...> typename TIterable,
     typename TOut,
     typename ...TNewArgs>
-  ISortedQueryable<TOut, TNewArgs...> Select(
+  ISortedQueryable<TOut, TIterable, TNewArgs...> Select(
     std::function<TOut(T)> retrieveValue,
     TNewArgs... iterableParameters)
   {
     Queryable<TOut, TIterable, TNewArgs...> result =
-      this->queryable->template Select<TIterable, TOut, TNewArgs...>(
+      this->queryable->template Select<TOut, TNewArgs...>(
         retrieveValue,
         iterableParameters...);
 
-    ISortedQueryable<TOut, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
+    ISortedQueryable<TOut, TIterable, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
     return output;
   }
 
   template<
-    template<typename, typename ...> typename TIterable,
     typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<T>>
-  ISortedQueryable<T, TLessThan, TAllocator> Sort(TLessThan lessThan = {})
+  ISortedQueryable<T, TIterable, TLessThan, TAllocator> Sort(TLessThan lessThan = {})
   {
     switch (this->queryable->GetType())
     {
       case QueryableType::MultiSet:
       {
-        ISortedQueryable<T, TLessThan, TAllocator> newMultiSet(
+        ISortedQueryable<T, std::multiset, TLessThan, TAllocator> newMultiSet(
           std::make_shared<Queryable<T, std::multiset, TLessThan, TAllocator>>(
             Queryable<T, std::multiset, TLessThan, TAllocator>::FromMultiSet2(
               this->queryable->ToMultiSet(
@@ -147,7 +146,7 @@ public:
       }
       case QueryableType::Set:
       {
-        ISortedQueryable<T, TLessThan, TAllocator> newSet(
+        ISortedQueryable<T, std::set, TLessThan, TAllocator> newSet(
           std::make_shared<Queryable<T, std::set, TLessThan, TAllocator>>(
             Queryable<T, std::set, TLessThan, TAllocator>::FromSet2(
               this->queryable->ToSet(
@@ -160,7 +159,7 @@ public:
     }
   }
 
-  inline ISortedQueryable<T, TArgs...> Where(std::function<bool(const T &)> condition)
+  inline ISortedQueryable<T, TIterable, TArgs...> Where(std::function<bool(const T &)> condition)
   {
     this->queryable->Where(condition);
     return *this;

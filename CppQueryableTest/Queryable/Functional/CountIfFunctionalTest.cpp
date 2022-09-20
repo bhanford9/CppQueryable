@@ -16,7 +16,7 @@ class CountIfFunctionalTest : public ::testing::Test
 protected:
   int expectedEvensWithDuplicates = 7;
   int expectedEvensWithoutDuplicates = 4;
-  IQueryable<size_t> queryable;
+  QueryableVector<size_t> queryable;
 
   CountIfFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))

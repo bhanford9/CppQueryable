@@ -20,7 +20,7 @@ using namespace QueryBuilder;
 class WhereFunctionalTest : public ::testing::Test
 {
 protected:
-  IQueryable<Person> queryable;
+  QueryableVector<Person> queryable;
 
   WhereFunctionalTest() :
     queryable(BuildQueryable2(PersonLibrary().GetPeople()))
@@ -46,7 +46,7 @@ protected:
 
 TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 {
-  IQueryable<int> localQueryable(BuildQueryable2(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
+  QueryableVector<int> localQueryable(BuildQueryable2(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
   std::vector<int> expected({ 4, 4, 76, 8, 76, 0 });
 
   std::vector<int> values = localQueryable

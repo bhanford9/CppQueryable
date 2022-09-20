@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "IBaseQueryable.hpp"
-#include "InternalIQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableType.hpp"
 
@@ -19,69 +18,71 @@ template<
   typename ...TArgs>
 class Queryable;
 
-template<typename T, typename ...TArgs>
+template<
+  typename T,
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
 class IBaseQueryable;
 
-template<typename T, typename ...TArgs>
-class InternalIQueryable;
-
-template<typename T, typename ...TArgs>
-class IQueryable : public IBaseQueryable<T, TArgs...>
+template<
+  typename T, 
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
+class IQueryable : public IBaseQueryable<T, TIterable, TArgs...>
 {
 public:
-  IQueryable() : IBaseQueryable<T, TArgs...>() { }
-  IQueryable(const std::shared_ptr<InternalIQueryable<T, TArgs...>> & other) :
-    IBaseQueryable<T, TArgs...>(other)
+  IQueryable() : IBaseQueryable<T, TIterable, TArgs...>() { }
+  IQueryable(const std::shared_ptr<Queryable<T, TIterable, TArgs...>> & other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other)
   {
   }
-  IQueryable(std::shared_ptr<InternalIQueryable<T, TArgs...>> && other) :
-    IBaseQueryable<T, TArgs...>(std::move(other))
+  IQueryable(std::shared_ptr<Queryable<T, TIterable, TArgs...>> && other) :
+    IBaseQueryable<T, TIterable, TArgs...>(std::move(other))
   {
   }
-  IQueryable(InternalIQueryable<T, TArgs...> * other) :
-    IBaseQueryable<T, TArgs...>(other)
+  IQueryable(Queryable<T, TIterable, TArgs...> * other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other)
   {
   }
-  IQueryable(const IQueryable<T, TArgs...> & other) :
-    IBaseQueryable<T, TArgs...>(other.queryable)
+  IQueryable(const IQueryable<T, TIterable, TArgs...> & other) :
+    IBaseQueryable<T, TIterable, TArgs...>(other.queryable)
   {
   }
-  IQueryable(IQueryable<T, TArgs...> && other) :
-    IBaseQueryable<T, TArgs...>(std::move(other.queryable))
+  IQueryable(IQueryable<T, TIterable, TArgs...> && other) :
+    IBaseQueryable<T, TIterable, TArgs...>(std::move(other.queryable))
   {
   }
 
-  void operator=(const IQueryable<T, TArgs...> & other)
+  void operator=(const IQueryable<T, TIterable, TArgs...> & other)
   {
     this->queryable = other.queryable;
   }
 
-  void operator=(IQueryable<T, TArgs...> && other)
+  void operator=(IQueryable<T, TIterable, TArgs...> && other)
   {
     this->queryable = std::move(other.queryable);
   }
 
   template<
-    template<typename, typename ...> typename TIterable,
     template<typename, typename ...> typename TExceptions,
     typename TLessThan = std::less<T>,
     typename TAllocator = std::allocator<T>,
     typename ...TExceptionArgs>
-  IQueryable<T, TArgs...> Except(
+  IQueryable<T, TIterable, TArgs...> Except(
     const TExceptions<T, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
   {
-    this->queryable->template Except<TIterable, TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
+    this->queryable->template Except<TExceptions, TLessThan, TAllocator>(exceptions, lessThan, allocator);
     return *this;
   }
 
   template<
-    template<typename, typename ...> typename TIterable, 
     typename TKey,
     typename TAllocator = std::allocator<T>>
   inline IQueryable<
       Grouping<TKey, T, TAllocator>,
+      std::set,
       std::less<Grouping<TKey, T, TAllocator>>,
       std::allocator<Grouping<TKey, T, TAllocator>>> GroupBy(
     const std::function<TKey(T)> & getKey,
@@ -93,10 +94,11 @@ public:
       std::set,
       std::less<Grouping<TKey, T, TAllocator>>,
       std::allocator<Grouping<TKey, T, TAllocator>>> result =
-      this->queryable->template GroupBy<TIterable>(getKey, lessThan, allocator);
+      this->queryable->GroupBy(getKey, lessThan, allocator);
     
     IQueryable<
         Grouping<TKey, T, TAllocator>,
+        std::set,
         std::less<Grouping<TKey, T, TAllocator>>,
         std::allocator<Grouping<TKey, T, TAllocator>>> output(
       std::make_shared<Queryable<
@@ -109,10 +111,9 @@ public:
   }
 
   template<
-    template<typename, typename ...> typename TIterable,
     typename TOut,
     typename ...TNewArgs>
-  IQueryable<TOut, TNewArgs...> Select(
+  IQueryable<TOut, TIterable, TNewArgs...> Select(
     std::function<TOut(T)> retrieveValue,
     TNewArgs... iterableParameters)
   {
@@ -121,20 +122,18 @@ public:
         retrieveValue,
         iterableParameters...);
 
-    IQueryable<TOut, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
+    IQueryable<TOut, TIterable, TNewArgs...> output(std::make_shared<Queryable<TOut, TIterable, TNewArgs...>>(result));
     return output;
   }
 
-  template<
-    template<typename, typename ...> typename TIterable,
-    typename TLessThan = std::less<T>>
-  IQueryable<T, TArgs...> Sort(TLessThan lessThan = {})
+  template<typename TLessThan = std::less<T>>
+  IQueryable<T, TIterable, TArgs...> Sort(TLessThan lessThan = {})
   {
     this->queryable->template Sort<TIterable, TLessThan>(lessThan);
     return *this;
   }
 
-  inline IQueryable<T, TArgs...> Where(std::function<bool(const T &)> condition)
+  inline IQueryable<T, TIterable, TArgs...> Where(std::function<bool(const T &)> condition)
   {
     this->queryable->Where(condition);
     return *this;

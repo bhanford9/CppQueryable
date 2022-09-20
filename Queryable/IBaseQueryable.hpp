@@ -8,7 +8,6 @@
 #include <set>
 #include <vector>
 
-#include "InternalIQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableType.hpp"
 #include "Utilities/Grouping.hpp"
@@ -19,42 +18,45 @@ template<
   typename ...TArgs>
 class Queryable;
 
-template<typename T, typename ...TArgs>
+template<
+  typename T,
+  template<typename, typename ...> typename TIterable,
+  typename ...TArgs>
 class IBaseQueryable
 {
 protected:
-  std::shared_ptr<InternalIQueryable<T, TArgs...>> queryable;
+  std::shared_ptr<Queryable<T, TIterable, TArgs...>> queryable;
 
 public:
   IBaseQueryable() { }
-  IBaseQueryable(const std::shared_ptr<InternalIQueryable<T, TArgs...>> & other) :
+  IBaseQueryable(const std::shared_ptr<Queryable<T, TIterable, TArgs...>> & other) :
     queryable(other)
   {
   }
-  IBaseQueryable(std::shared_ptr<InternalIQueryable<T, TArgs...>> && other) :
+  IBaseQueryable(std::shared_ptr<Queryable<T, TIterable, TArgs...>> && other) :
     queryable(std::move(other))
   {
   }
   // probably unsafe enough that it shouldn't be a thing
-  IBaseQueryable(InternalIQueryable<T, TArgs...> * other)
+  IBaseQueryable(Queryable<T, TIterable, TArgs...> * other)
   {
     this->queryable.reset(other);
   }
-  IBaseQueryable(const IBaseQueryable<T, TArgs...> & other) :
+  IBaseQueryable(const IBaseQueryable<T, TIterable, TArgs...> & other) :
     queryable(other.queryable)
   {
   }
-  IBaseQueryable(IBaseQueryable<T, TArgs...> && other) :
+  IBaseQueryable(IBaseQueryable<T, TIterable, TArgs...> && other) :
     queryable(std::move(other.queryable))
   {
   }
 
-  void operator=(const IBaseQueryable<T, TArgs...> & other)
+  void operator=(const IBaseQueryable<T, TIterable, TArgs...> & other)
   {
     this->queryable = other.queryable;
   }
 
-  void operator=(IBaseQueryable<T, TArgs...> && other)
+  void operator=(IBaseQueryable<T, TIterable, TArgs...> && other)
   {
     this->queryable = std::move(other.queryable);
   }
@@ -117,7 +119,7 @@ public:
   template<template<typename, typename ...> typename TContainer>
   inline Queryable<T, TContainer, TArgs...> & AsExtendedQueryable() const
   {
-    return this->queryable->template AsExtendedQueryable<TContainer>();
+    return *this->queryable;//->template AsExtendedQueryable<TContainer>();
   }
 
   template<typename TAllocator = std::allocator<T>>
@@ -150,13 +152,13 @@ public:
     return this->queryable->ToVector(allocator);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut = T>
+  template<typename TOut = T>
   inline TOut Aggregate(const std::function<TOut(TOut, T)> & accumulate, TOut * seed = NULL)
   {
     return this->queryable->template Aggregate<TIterable, TOut>(accumulate, seed);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TFinalized, typename TOut = T>
+  template<typename TFinalized, typename TOut = T>
   inline TFinalized Aggregate(
     const std::function<TOut(TOut, T)> & accumulate,
     const std::function<TFinalized(TOut)> & finalizer,
@@ -242,19 +244,19 @@ public:
     return this->queryable->Max(startSeed);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline TOut Max(std::function<TOut(T)> retrieveValue) const
   {
     return this->queryable->template Max<TIterable, TOut>(retrieveValue);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline TOut Max(std::function<TOut(T)> retrieveValue, TOut startSeed) const
   {
     return this->queryable->template Max<TIterable, TOut>(retrieveValue, startSeed);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline T MaxItem(std::function<TOut(T)> retrieveValue) const
   {
     return this->queryable->template MaxItem<TIterable, TOut>(retrieveValue);
@@ -270,19 +272,19 @@ public:
     return this->queryable->Min(startSeed);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline TOut Min(std::function<TOut(T)> retrieveValue) const
   {
     return this->queryable->template Min<TIterable, TOut>(retrieveValue);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   TOut Min(std::function<TOut(T)> retrieveValue, TOut startSeed) const
   {
     return this->queryable->template Min<TIterable, TOut>(retrieveValue, startSeed);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline T MinItem(std::function<TOut(T)> retrieveValue) const
   {
     return this->queryable->template MinItem<TIterable, TOut>(retrieveValue);
@@ -293,19 +295,19 @@ public:
     return this->queryable->Range(retrieveValue);
   }
 
-  template<template<typename, typename ...> typename TIterable, typename TOut>
+  template<typename TOut>
   inline TOut Range(std::function<TOut(T)> retrieveValue)
   {
     return this->queryable->template Range<TIterable, TOut>(retrieveValue);
   }
 
-  inline IBaseQueryable<T, TArgs...> & Skip(int count)
+  inline IBaseQueryable<T, TIterable, TArgs...> & Skip(int count)
   {
     this->queryable->Skip(count);
     return *this;
   }
 
-  inline IBaseQueryable<T, TArgs...> & SkipWhile(std::function<bool(T)> && doSkip)
+  inline IBaseQueryable<T, TIterable, TArgs...> & SkipWhile(std::function<bool(T)> && doSkip)
   {
     this->queryable->SkipWhile(std::move(doSkip));
     return *this;
@@ -316,13 +318,13 @@ public:
     return this->queryable->Sum(retrieveValue);
   }
 
-  inline IBaseQueryable<T, TArgs...> & Take(int count)
+  inline IBaseQueryable<T, TIterable, TArgs...> & Take(int count)
   {
     this->queryable->Take(count);
     return *this;
   }
 
-  inline IBaseQueryable<T, TArgs...> & TakeWhile(std::function<bool(T)> && doTake)
+  inline IBaseQueryable<T, TIterable, TArgs...> & TakeWhile(std::function<bool(T)> && doTake)
   {
     this->queryable->TakeWhile(std::move(doTake));
     return *this;

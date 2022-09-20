@@ -25,7 +25,7 @@ protected:
   int expectedCountUnordered = 8;
   int expectedCountOrdered = 6;
   int expectedCountOrderedSet = 5;
-  IQueryable<size_t> queryable;
+  IQueryable<size_t, std::vector> queryable;
 
   SkipWhileFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 })))
@@ -41,7 +41,7 @@ protected:
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 {
-  IBaseQueryable<size_t> result = this->queryable.SkipWhile([](size_t value) { return true; });
+  IBaseQueryable<size_t, std::vector> result = this->queryable.SkipWhile([](size_t value) { return true; });
 
   ASSERT_EQ(this->queryable.Count(), result.Count());
 
@@ -53,7 +53,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 {
-  IBaseQueryable<size_t> result = this->queryable
+  IBaseQueryable<size_t, std::vector> result = this->queryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
@@ -66,8 +66,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
-  IBaseQueryable<size_t> result = localQueryable
+  ISortedQueryable<size_t, std::set> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  IBaseQueryable<size_t, std::set> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
@@ -80,8 +80,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
-  IBaseQueryable<size_t> result = localQueryable
+  ISortedQueryable<size_t, std::multiset> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  IBaseQueryable<size_t, std::multiset> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrdered, result.Count());
@@ -94,8 +94,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
-  IBaseQueryable<size_t> result = localQueryable
+  IQueryable<size_t, std::deque> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  IBaseQueryable<size_t, std::deque> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
@@ -108,8 +108,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
-  IBaseQueryable<size_t> result = localQueryable
+  IQueryable<size_t, std::list> localQueryable = BuildQueryable2(this->queryable.ToList());
+  IBaseQueryable<size_t, std::list> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
@@ -124,8 +124,8 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileWhere)
 {
   int skipCount = 4;
   int expectedCount = 2;
-  IQueryable<size_t> localQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-  IBaseQueryable<size_t> result = localQueryable
+  IQueryable<size_t, std::vector> localQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  IBaseQueryable<size_t, std::vector> result = localQueryable
     .Where([](size_t value) { return value % 2 == 0; })
     .SkipWhile([](size_t value) { return value < 8; });
 

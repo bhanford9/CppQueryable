@@ -33,10 +33,10 @@ int main()
 
     //   PersonLibrary personLibrary;
     //   IQueryable<Person> people(BuildQueryable2(personLibrary.GetPeople()));
-    ISortedQueryable<size_t> numbers(BuildQueryable2(std::set<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
-    ISortedQueryable<double> newNumbers = numbers
+    ISortedQueryable<size_t, std::set> numbers(BuildQueryable2(std::set<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12})));
+    ISortedQueryable<double, std::set> newNumbers = numbers
         // .Where([](size_t value) { return value < 10; })
-        .Select<std::set, double>([](size_t value) { return ((double)value) / 2.0; });
+        .Select<double>([](size_t value) { return ((double)value) / 2.0; });
         // .Sort<std::set>();
 
     std::cout << "\n\n\n\nAFTER SORT\n\n\n" << std::endl;

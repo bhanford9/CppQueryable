@@ -23,7 +23,7 @@ using namespace QueryBuilder;
 class ForEachFunctionalTest : public ::testing::Test
 {
 protected:
-  IQueryable<size_t> queryable;
+  QueryableVector<size_t> queryable;
 
   ForEachFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
@@ -36,10 +36,10 @@ protected:
 
   template<
     typename TObj,
-    // template<typename, typename ...> typename TIterable,
+    template<typename, typename ...> typename TIterable,
     // typename TAllocator = std::allocator<TObj>,
     typename ...TArgs>
-  void TestForEach (IBaseQueryable<TObj, TArgs...> & localQueryable)
+  void TestForEach (Queryable<TObj, TIterable, TArgs...> & localQueryable)
   {
     std::vector<TObj> iterated(localQueryable.Count(), 0);
     size_t i = 0;
@@ -60,7 +60,7 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  IQueryable<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
   emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }
@@ -83,31 +83,31 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachMultiSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachWhere)
 {
-  IQueryable<size_t> IQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
+  QueryableVector<size_t> IQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
 
   int expectedCount = 6;
   int count = 0;

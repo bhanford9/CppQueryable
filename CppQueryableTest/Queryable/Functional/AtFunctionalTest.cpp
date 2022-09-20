@@ -20,7 +20,7 @@ protected:
   size_t expectedUnorderedAt = 34;
   size_t expectedOrderedAt = 45;
   size_t expectedSetAt = 867;
-  IQueryable<size_t> queryable;
+  QueryableVector<size_t> queryable;
 
   AtFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))

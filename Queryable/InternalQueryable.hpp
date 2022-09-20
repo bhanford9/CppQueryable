@@ -80,7 +80,7 @@ public:
     this->type = type;
   }
 
-  InternalQueryable(const InternalQueryable<TObj, TIterable, TArgs...>& queryable)
+  InternalQueryable(const InternalQueryable<TObj, TIterable, TArgs...> & queryable)
     : InternalQueryable(queryable.type)
   {
     this->persistentContainer = queryable.persistentContainer;
@@ -96,13 +96,13 @@ public:
     this->type = type;
   }
 
-  InternalQueryable(
-    const std::shared_ptr<QueryableSetData<TObj, TArgs...>> & queryableData,
-    QueryableType type)
-  {
-    this->items = queryableData;
-    this->type = type;
-  }
+  // InternalQueryable(
+  //   const std::shared_ptr<QueryableSetData<TObj, TArgs...>> & queryableData,
+  //   QueryableType type)
+  // {
+  //   this->items = queryableData;
+  //   this->type = type;
+  // }
 
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
@@ -111,6 +111,14 @@ public:
   inline QueryableType GetType()
   {
     return this->type;
+  }
+
+  inline InternalQueryable<TObj, TIterable, TArgs...> & GetRealized()
+  {
+    // TODO --> I think I can switch to returning this as QueryableData so casting is not necessary
+    std::shared_ptr<IQueryableData<TObj>> realized = this->items->GetRealizedQueryableData();
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    return *this;
   }
 
   inline void Clear()

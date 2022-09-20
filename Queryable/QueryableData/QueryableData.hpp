@@ -36,18 +36,20 @@ protected:
   bool forceToEnd = false;
   bool forceToBegin = false;
 
-  // this is a mess, but I can't find a better working solution...
+  // this is a mess, but a better working solution is escaping me...
   //  - when sorting, copies of the iterators are made and used for comparison
   //  - these iterators contain a copy of this data and therefore a copy of the underlying items
   //  - these iterators also change the underlying items, so I need them to actually change
   //    the same underlying structure
+  //
+  //  - there is a lot of coupling of the data and the actions on that data in here. might want
+  //    to split them apart better
   std::shared_ptr<TIterable<TObj, TArgs...>> items;
 
   TForwardIterator beginIterator;
   TForwardIterator endIterator;
   TReverseIterator rbeginIterator;
   TReverseIterator rendIterator;
-
 
   void DefaultInitialize()
   {
@@ -132,6 +134,18 @@ public:
     items(std::make_shared<TIterable<TObj, TArgs...>>(first, last, args...))
   {
       throw;
+  }
+
+  inline QueryableData<TObj, TIterable, TArgs...> & operator=(IQueryableData<TObj> && other)
+  {
+    this->Clear();
+    
+    for (const TObj & item : other)
+    {
+      this->Add(item);
+    }
+
+    return *this;
   }
 
   virtual ~QueryableData() { }

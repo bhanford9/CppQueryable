@@ -22,7 +22,7 @@ class SkipFunctionalTest : public ::testing::Test
 {
 protected:
   size_t SkipCount = 5;
-  IQueryable<size_t> queryable;
+  IQueryable<size_t, std::vector> queryable;
 
   SkipFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
@@ -33,8 +33,10 @@ protected:
   {
   }
 
-  template<typename TObj>
-  void TestSkip(IBaseQueryable<TObj> & localQueryable, size_t toSkip)
+  template<
+    typename TObj,
+    template<typename, typename ...> typename TIterable>
+  void TestSkip(IBaseQueryable<TObj, TIterable> & localQueryable, size_t toSkip)
   {
     std::vector<size_t> expected;
     for (size_t i = toSkip; i < localQueryable.Count(); i++)
@@ -42,7 +44,7 @@ protected:
       expected.push_back(localQueryable.At(i));
     }
 
-    IBaseQueryable<size_t> & result = localQueryable.Skip(toSkip);
+    IBaseQueryable<size_t, TIterable> & result = localQueryable.Skip(toSkip);
 
     ASSERT_EQ(expected.size(), result.Count());
     
@@ -58,8 +60,10 @@ protected:
     }
   }
 
-  template<typename TObj>
-  void TestSkipNegative(IBaseQueryable<TObj> & localQueryable, size_t toSkip)
+  template<
+    typename TObj,
+    template<typename, typename ...> typename TIterable>
+  void TestSkipNegative(IBaseQueryable<TObj, TIterable> & localQueryable, size_t toSkip)
   {
     std::vector<size_t> expected;
     size_t endIndex = localQueryable.Count() + toSkip;
@@ -68,7 +72,7 @@ protected:
       expected.push_back(localQueryable.At(i));
     }
 
-    IBaseQueryable<size_t> & result = localQueryable.Skip(toSkip);
+    IBaseQueryable<size_t, TIterable> & result = localQueryable.Skip(toSkip);
 
     ASSERT_EQ(expected.size(), result.Count());
 
@@ -87,25 +91,25 @@ TEST_F(SkipFunctionalTest, SkipVectorSkipMoreThanSize)
 }
 TEST_F(SkipFunctionalTest, SkipDeque)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  IQueryable<size_t, std::deque> localQueryable = BuildQueryable2(this->queryable.ToDeque());
   this->TestSkip(localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipList)
 {
-  IQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
+  IQueryable<size_t, std::list> localQueryable = BuildQueryable2(this->queryable.ToList());
   this->TestSkip(localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipMultiSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  ISortedQueryable<size_t, std::multiset> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
   this->TestSkip(localQueryable, this->SkipCount);
 }
 
 TEST_F(SkipFunctionalTest, SkipSet)
 {
-  ISortedQueryable<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  ISortedQueryable<size_t, std::set> localQueryable = BuildQueryable2(this->queryable.ToSet());
   this->TestSkip(localQueryable, this->SkipCount);
 }
 
@@ -147,8 +151,8 @@ TEST_F(SkipFunctionalTest, SkipWhere)
 {
   int skipCount = 3;
   size_t expectedCount = 3;
-  IQueryable<size_t> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-  IBaseQueryable<size_t> result = queryableVector
+  IQueryable<size_t, std::vector> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  IBaseQueryable<size_t, std::vector> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })
     .Skip(skipCount);
 

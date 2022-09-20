@@ -30,8 +30,7 @@ class GroupByFunctionalTest : public ::testing::Test
 protected:
   PersonLibrary personLibrary;
   AnimalLibrary animalLibrary;
-  IQueryable<Person> people;
-//   IQueryable<Animal> animals;
+  QueryableVector<Person> people;
   std::vector<PersonAndPet> petOwners;
 
   std::function<bool(PersonAndPet, PersonAndPet)> comparison =
@@ -43,11 +42,14 @@ protected:
 
   typedef Grouping<Gender, Person> TGenderPerson;
 
+  GroupByFunctionalTest() :
+    people(BuildQueryable2(this->personLibrary.GetPeople())),
+    petOwners(PersonAndPetLibrary().GetPetOwners())
+  {
+  }
+
   void SetUp() override
   {
-    this->people = BuildQueryable2(this->personLibrary.GetPeople());
-    // this->animals = BuildQueryable2(this->animalLibrary.GetAnimals());
-    this->petOwners = PersonAndPetLibrary().GetPetOwners();
   }
 
   void TearDown() override {}
@@ -61,7 +63,7 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   auto genderGroups = BuildQueryable2(this->people.ToDeque())
-    .GroupBy<std::deque, Gender>([](Person p) { return p.GetGender(); });
+    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(2, genderGroups.Count());
   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
@@ -96,7 +98,7 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 {
-  auto genderGroups = this->people.ToQueryableList()
+  auto genderGroups = BuildQueryable2(this->people.ToList())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
   auto males = BuildQueryable2(this->people.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
@@ -136,12 +138,12 @@ TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 {
-  auto genderGroups = this->people.ToQueryableMultiSet()
+  auto genderGroups = BuildQueryable2(this->people.ToMultiSet())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  IBaseQueryable<Person> males = BuildQueryable2(this->people.ToMultiSet())
+  QueryableMultiSet<Person> males = BuildQueryable2(this->people.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
 //   males.Sort();
-  IBaseQueryable<Person> females = BuildQueryable2(this->people.ToMultiSet())
+  QueryableMultiSet<Person> females = BuildQueryable2(this->people.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 //   females.Sort();
 
@@ -178,12 +180,12 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 {
-  auto genderGroups = this->people.ToQueryableSet()
+  auto genderGroups = BuildQueryable2(this->people.ToSet())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  IBaseQueryable<Person> males = BuildQueryable2(this->people.ToSet())
+  QueryableSet<Person> males = BuildQueryable2(this->people.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
 //   males = males.ToQueryableSet();
-  IBaseQueryable<Person> females = BuildQueryable2(this->people.ToSet())
+  QueryableSet<Person> females = BuildQueryable2(this->people.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 //   females = females.ToQueryableSet();
 
@@ -220,11 +222,11 @@ TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 {
-  auto genderGroups = this->people.ToQueryableVector()
+  auto genderGroups = BuildQueryable2(this->people.ToVector())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  IBaseQueryable<Person> males = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> males = BuildQueryable2(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  IBaseQueryable<Person> females = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> females = BuildQueryable2(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -260,14 +262,14 @@ TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 {
-  auto genderGroups = this->people.ToQueryableVector()
+  auto genderGroups = BuildQueryable2(this->people.ToVector())
     .GroupBy<Gender>(
         [](Person p) { return p.GetGender(); },
         [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; });
 
-  IBaseQueryable<Person> males = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> males = BuildQueryable2(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  IBaseQueryable<Person> females = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> females = BuildQueryable2(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -305,7 +307,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 {
   typedef Grouping<void*, Person> TVoidGroup;
-  auto voidGroups = this->people.ToQueryableVector()
+  auto voidGroups = BuildQueryable2(this->people.ToVector())
     .GroupBy<void*>([](Person p) { return (void*)NULL; });
 
   ASSERT_EQ(1, voidGroups.Count());
@@ -327,12 +329,12 @@ TEST_F(GroupByFunctionalTest, GroupByWhereTest)
 {
   typedef Grouping<double, Person> TAgePerson;
   auto ageGroupsOverThirty = BuildQueryable2(this->people.ToVector())
-    .GroupBy<std::vector, double>([](Person p) { return p.GetAge(); })
+    .GroupBy<double>([](Person p) { return p.GetAge(); })
     .Where([](TAgePerson group) { return group.GetKey() > 30; });
 
   auto overThirtyAgeGroups = BuildQueryable2(this->people.ToVector())
     .Where([](Person person) { return person.GetAge() > 30; })
-    .GroupBy<std::vector, double>([](Person p) { return p.GetAge(); });
+    .GroupBy<double>([](Person p) { return p.GetAge(); });
 
   // ASSERT_TRUE(ageGroupsOverThirty != NULL);
   ASSERT_EQ(3, ageGroupsOverThirty.Count());

@@ -21,9 +21,9 @@ using namespace QueryBuilder;
 class SortFunctionalTest : public ::testing::Test
 {
 protected:
-  IQueryable<size_t> queryable;
+  QueryableVector<size_t> queryable;
   PersonLibrary personLibrary;
-  IQueryable<Person> people;
+  QueryableVector<Person> people;
 
   SortFunctionalTest() :
     queryable(BuildQueryable2(std::vector<size_t>({ 1, 2, 3, 7, 45, 8, 23, 9 }))), //7, 3, 7, 4, 4, 76, 8, 45, 76, 34, 867, 1, 12 }))),
@@ -48,8 +48,8 @@ protected:
 
 TEST_F(SortFunctionalTest, DequeDefault)
 {
-  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToDeque());
-  local = local.Sort<std::deque>();
+  QueryableDeque<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
 
@@ -63,8 +63,8 @@ TEST_F(SortFunctionalTest, DequeDefault)
 
 TEST_F(SortFunctionalTest, ListDefault)
 {
-  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToList());
-  local.Sort<std::list>();
+  QueryableList<size_t> local = BuildQueryable2(this->queryable.ToList());
+  local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
 
@@ -78,8 +78,8 @@ TEST_F(SortFunctionalTest, ListDefault)
 
 TEST_F(SortFunctionalTest, MultiSetDefault)
 {
-  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
-  local.Sort<std::multiset>();
+  QueryableMultiSet<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
 
@@ -93,8 +93,8 @@ TEST_F(SortFunctionalTest, MultiSetDefault)
 
 TEST_F(SortFunctionalTest, SetDefault)
 {
-  ISortedQueryable<size_t> local = BuildQueryable2(this->queryable.ToSet());
-  local.Sort<std::set>();
+  QueryableSet<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
 
@@ -108,8 +108,8 @@ TEST_F(SortFunctionalTest, SetDefault)
 
 TEST_F(SortFunctionalTest, VectorDefault)
 {
-  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToVector());
-  local = local.Sort<std::vector>();
+  QueryableVector<size_t> local = BuildQueryable2(this->queryable.ToVector());
+  local.Sort();
 
   ASSERT_EQ(this->queryable.Count(), local.Count());
 
@@ -123,8 +123,8 @@ TEST_F(SortFunctionalTest, VectorDefault)
 
 TEST_F(SortFunctionalTest, DequeClass)
 {
-  IQueryable<Person> local = BuildQueryable2(this->people.ToDeque());
-  local.Sort<std::deque>();
+  QueryableDeque<Person> local = BuildQueryable2(this->people.ToDeque());
+  local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
 
@@ -136,7 +136,7 @@ TEST_F(SortFunctionalTest, DequeClass)
     previous = person;
   });
 
-  local.Sort<std::deque>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
@@ -149,8 +149,8 @@ TEST_F(SortFunctionalTest, DequeClass)
 
 TEST_F(SortFunctionalTest, ListClass)
 {
-  IQueryable<Person> local = BuildQueryable2(this->people.ToList());
-  local.Sort<std::list>();
+  QueryableList<Person> local = BuildQueryable2(this->people.ToList());
+  local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
 
@@ -162,7 +162,7 @@ TEST_F(SortFunctionalTest, ListClass)
     previous = person;
   });
 
-  local.Sort<std::list>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
@@ -175,8 +175,8 @@ TEST_F(SortFunctionalTest, ListClass)
 
 TEST_F(SortFunctionalTest, MultiSetClass)
 {
-  ISortedQueryable<Person> local = BuildQueryable2(this->people.ToMultiSet());
-  local.Sort<std::multiset>();
+  QueryableMultiSet<Person> local = BuildQueryable2(this->people.ToMultiSet());
+  local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
 
@@ -190,7 +190,7 @@ TEST_F(SortFunctionalTest, MultiSetClass)
 
 // have not figured out why this lambda doesn't build yet
 //
-//   local.Sort<std::multiset>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+//   local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
 //   previous = Person();
 //   previous.SetAge(-1);
@@ -203,8 +203,8 @@ TEST_F(SortFunctionalTest, MultiSetClass)
 
 TEST_F(SortFunctionalTest, VectorClass)
 {
-  IQueryable<Person> local = BuildQueryable2(this->people.ToVector());
-  local.Sort<std::vector>();
+  QueryableVector<Person> local = BuildQueryable2(this->people.ToVector());
+  local.Sort();
 
   ASSERT_EQ(this->people.Count(), local.Count());
 
@@ -216,7 +216,7 @@ TEST_F(SortFunctionalTest, VectorClass)
     previous = person;
   });
 
-  local.Sort<std::vector>([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
@@ -229,11 +229,11 @@ TEST_F(SortFunctionalTest, VectorClass)
 
 TEST_F(SortFunctionalTest, WhereSort)
 {
-  IQueryable<size_t> local = BuildQueryable2(this->queryable.ToVector());
+  QueryableVector<size_t> local = BuildQueryable2(this->queryable.ToVector());
 
   local
     .Where([](size_t value) { return (value % 2) == 0; })
-    .Sort<std::vector>();
+    .Sort();
 
     ASSERT_TRUE(this->queryable.Count() > local.Count());
 
