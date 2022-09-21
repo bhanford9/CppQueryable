@@ -23,8 +23,8 @@ public:
 
   virtual QueryableIterator<TObj> begin() = 0;
   virtual QueryableIterator<TObj> end() = 0;
-  // virtual QueryableIterator<TObj> rbegin() = 0;
-  // virtual QueryableIterator<TObj> rend() = 0;
+  virtual QueryableIterator<TObj> rbegin() = 0;
+  virtual QueryableIterator<TObj> rend() = 0;
   virtual void ForceBegin(IteratorType type) = 0;
   virtual void ForceEnd(IteratorType type) = 0;
 

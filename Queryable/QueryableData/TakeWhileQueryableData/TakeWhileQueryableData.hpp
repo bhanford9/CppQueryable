@@ -221,34 +221,34 @@ public:
     return retVal;
   }
 
-  // // remove the possibility to iterate if the first element does not pass condition
-  // virtual QueryableIterator<TObj> rbegin() override
-  // {
-  //   this->condition->Reset();
-  //   QueryableIterator<TObj> child = this->original->rbegin();
+  // remove the possibility to iterate if the first element does not pass condition
+  virtual QueryableIterator<TObj> rbegin() override
+  {
+    this->condition->Reset();
+    QueryableIterator<TObj> child = this->original->rbegin();
 
-  //   if (!this->condition->Passes(*child))
-  //   {
-  //       child = this->original->rend();
-  //   }
+    if (!this->condition->Passes(*child))
+    {
+        child = this->original->rend();
+    }
 
-  //   size_t startIndex = child.index;
-  //   QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
+    size_t startIndex = child.index;
+    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
 
-  //   return retVal;
-  // }
+    return retVal;
+  }
 
-  // // Rend only serves as a check of the last element while iterating begin.
-  // // This will never be used to increment/decrement
-  // virtual QueryableIterator<TObj> rend() override
-  // {
-  //   QueryableIterator<TObj> child = this->original->end();
+  // Rend only serves as a check of the last element while iterating begin.
+  // This will never be used to increment/decrement
+  virtual QueryableIterator<TObj> rend() override
+  {
+    QueryableIterator<TObj> child = this->original->end();
 
-  //   size_t startIndex = child.index;
-  //   QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
+    size_t startIndex = child.index;
+    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
-  //   return retVal;
-  // }
+    return retVal;
+  }
 };
 
 #endif

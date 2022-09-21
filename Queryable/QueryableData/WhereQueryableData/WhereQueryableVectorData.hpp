@@ -54,8 +54,8 @@ public:
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
       case IteratorType::EndForward: this->endIterator += addend; break;
-      // case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-      // case IteratorType::EndReverse: this->rendIterator += addend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      case IteratorType::EndReverse: this->rendIterator += addend; break;
     }
 
     return *this;
@@ -67,8 +67,8 @@ public:
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
       case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-      // case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-      // case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
     }
 
     return *this;

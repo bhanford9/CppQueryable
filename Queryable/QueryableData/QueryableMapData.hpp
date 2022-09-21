@@ -66,8 +66,8 @@ public:
     {
       case IteratorType::BeginForward: { this->value = this->beginIterator->first; return this->value; }
       case IteratorType::EndForward: { this->value = this->endIterator->first; return this->value; }
-      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+      case IteratorType::BeginReverse: { this->value = this->rbeginIterator->first; return this->value; }
+      case IteratorType::EndReverse: default: { this->value = this->rendIterator->first; return this->value; }
     }
 
     return this->value;
@@ -80,8 +80,8 @@ public:
     {
       case IteratorType::BeginForward: { this->value = this->beginIterator->first; return this->value; }
       case IteratorType::EndForward: { this->value = this->endIterator->first; return this->value; }
-      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+      case IteratorType::BeginReverse: { this->value = this->rbeginIterator->first; return this->value; }
+      case IteratorType::EndReverse: default: { this->value = this->rendIterator->first; return this->value; }
     }
 
     return this->value;
