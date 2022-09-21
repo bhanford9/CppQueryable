@@ -18,6 +18,7 @@
 #include "SelectBuilders/SetSelectBuilder.hpp"
 #include "SelectBuilders/VectorSelectBuilder.hpp"
 #include "Utilities/Casting.hpp"
+#include "Utilities/StaticBuilders/QueryableStaticBuilder.hpp"
 
 template<
   typename T, 
@@ -88,214 +89,6 @@ public:
   TLessThan GetValueCompare()
   {
     return this->queryable->GetValueCompare();
-  }
-
-  // These can't actually be implemented here
-  // Queryable(const TIterable<TObj, TArgs...> & items);
-  // Queryable(TIterable<TObj, TArgs...> && items);
-
-  // All these reinterpret_casts should not be necessary. Need to figure out why the inheritance
-  // is not allowing the shared_ptr<child> to be used as shared_ptr<parent>
-  //
-  // I don't think I like all these being in here either.
-  //   - FrontInternal* should not be accessible to anyone outside the library and can be put in its own location
-  //   - FromIterable* is basically what QueryBuilder is doing, so it can probably be moved there
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::deque, TAllocator> FromInternalDeque(DequeInternalQueryable<TObj, TAllocator> && other)
-  {
-    Queryable<TObj, std::deque, TAllocator> queryable(
-      std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque, TAllocator>>(
-          std::make_shared<DequeInternalQueryable<TObj, TAllocator>>(other))));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::list, TAllocator> FromInternalList(ListInternalQueryable<TObj, TAllocator> && other)
-  {
-    Queryable<TObj, std::list, TAllocator> queryable(
-      std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list, TAllocator>>(
-          std::make_shared<ListInternalQueryable<TObj, TAllocator>>(other))));
-    return queryable;
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromInternalMultiSet (MultiSetInternalQueryable<TObj, TLessThan, TAllocator> && other)
-  {
-    Queryable<TObj, std::multiset, TLessThan, TAllocator> queryable(
-      std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan, TAllocator>>(
-          std::make_shared<MultiSetInternalQueryable<TObj, TLessThan, TAllocator>>(other))));
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::set, TLessThan, TAllocator> FromInternalSet (SetInternalQueryable<TObj, TLessThan, TAllocator> && other)
-  {
-    Queryable<TObj, std::set, TLessThan, TAllocator> queryable(
-      std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
-          std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(other))));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::vector, TAllocator> FromInternalVector(VectorInternalQueryable<TObj, TAllocator> && other)
-  {
-    Queryable<TObj, std::vector, TAllocator> queryable(
-      std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector, TAllocator>>(
-          std::make_shared<VectorInternalQueryable<TObj, TAllocator>>(other))));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::deque, TAllocator> FromInternalDeque(const DequeInternalQueryable<TObj, TAllocator> & other)
-  {
-    Queryable<TObj, std::deque, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque, TAllocator>>(
-        std::make_shared<DequeInternalQueryable<TObj, TAllocator>>(other)));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::list, TAllocator> FromInternalList(const ListInternalQueryable<TObj, TAllocator> & other)
-  {
-    Queryable<TObj, std::list, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list, TAllocator>>(
-        std::make_shared<ListInternalQueryable<TObj, TAllocator>>(other)));
-    return queryable;
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromInternalMultiSet (const MultiSetInternalQueryable<TObj, TLessThan, TAllocator> & other)
-  {
-    Queryable<TObj, std::multiset, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan, TAllocator>>(
-        std::make_shared<MultiSetInternalQueryable<TObj, TLessThan, TAllocator>>(other)));
-    return queryable;
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::set, TLessThan, TAllocator> FromInternalSet (const SetInternalQueryable<TObj, TLessThan, TAllocator> & other)
-  {
-    Queryable<TObj, std::set, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
-        std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(other)));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::vector, TAllocator> FromInternalVector(const VectorInternalQueryable<TObj, TAllocator> & other)
-  {
-    Queryable<TObj, std::vector, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector, TAllocator>>(
-        std::make_shared<VectorInternalQueryable<TObj, TAllocator>>(other)));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::deque, TAllocator> FromDeque2(const std::deque<TObj, TAllocator> & iterable)
-  {
-    Queryable<TObj, std::deque, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque, TAllocator>>(
-        std::make_shared<DequeInternalQueryable<TObj, TAllocator>>(iterable)));
-    return queryable;
-  }
-  static Queryable<TObj, std::deque> FromDeque(const std::deque<TObj> & iterable)
-  {
-    Queryable<TObj, std::deque> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::deque>>(
-        std::make_shared<DequeInternalQueryable<TObj>>(iterable)));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::list, TAllocator> FromList2(const std::list<TObj, TAllocator> & iterable)
-  {
-    Queryable<TObj, std::list, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list, TAllocator>>(
-        std::make_shared<ListInternalQueryable<TObj, TAllocator>>(iterable)));
-    return queryable;
-  }
-  static Queryable<TObj, std::list> FromList(const std::list<TObj> & iterable)
-  {
-    Queryable<TObj, std::list> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::list>>(
-        std::make_shared<ListInternalQueryable<TObj>>(iterable)));
-    return queryable;
-  }
-
-  template<typename TKey, typename TValue = TObj>
-  static Queryable<TKey, std::map, TValue> FromMap(const std::map<TKey, TValue> & iterable)
-  {
-    Queryable<TKey, std::map, TValue> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TKey, std::map, TValue>>(
-        std::make_shared<MapInternalQueryable<TKey, TValue>>(iterable)));
-    return queryable;
-  }
-
-  template<
-    typename TKey,
-    typename TValue = TObj,
-    typename TLessThan = std::less<TKey>,
-    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  static Queryable<TKey, std::map, TValue, TLessThan, TAllocator> FromMap2(const std::map<TKey, TValue, TLessThan, TAllocator> & iterable)
-  {
-    Queryable<TKey, std::map, TValue, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TKey, std::map, TValue, TLessThan, TAllocator>>(
-        std::make_shared<MapInternalQueryable<TKey, TValue, TLessThan, TAllocator>>(iterable)));
-    return queryable;
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromMultiSet2(const std::multiset<TObj, TLessThan, TAllocator> & iterable)
-  {
-    Queryable<TObj, std::multiset, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan, TAllocator>>(
-        std::make_shared<MultiSetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
-    return queryable;
-  }
-
-  static Queryable<TObj, std::multiset> FromMultiSet(const std::multiset<TObj> & iterable)
-  {
-    Queryable<TObj, std::multiset> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset>>(
-        std::make_shared<MultiSetInternalQueryable<TObj>>(iterable)));
-    return queryable;
-  }
-
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::set, TLessThan, TAllocator> FromSet2(const std::set<TObj, TLessThan, TAllocator> & iterable)
-  {
-    Queryable<TObj, std::set, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan, TAllocator>>(
-        std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
-    return queryable;
-  }
-
-  static Queryable<TObj, std::set> FromSet(const std::set<TObj> & iterable)
-  {
-    Queryable<TObj, std::set> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set>>(
-        std::make_shared<SetInternalQueryable<TObj>>(iterable)));
-    return queryable;
-  }
-
-  template<typename TAllocator = std::allocator<TObj>>
-  static Queryable<TObj, std::vector, TAllocator> FromVector2(const std::vector<TObj, TAllocator> & iterable)
-  {
-    Queryable<TObj, std::vector, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector, TAllocator>>(
-        std::make_shared<VectorInternalQueryable<TObj, TAllocator>>(iterable)));
-    return queryable;
-  }
-  static Queryable<TObj, std::vector> FromVector(const std::vector<TObj> & iterable)
-  {
-    Queryable<TObj, std::vector> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::vector>>(
-        std::make_shared<VectorInternalQueryable<TObj>>(iterable)));
-    return queryable;
   }
 
   template<typename TAllocator = std::allocator<TObj>>
@@ -523,10 +316,11 @@ public:
       }
     });
 
+    // TODO --> Grouping should maybe be an unordered_set instead
     SetInternalQueryable<TGrouping> setGroupedQueryable(std::move(groups));
 
     Queryable<TGrouping, std::set, std::less<TGrouping>, std::allocator<TGrouping>> queryable =
-      Queryable<TGrouping, std::set>::FromInternalSet(std::move(setGroupedQueryable));
+      Builders::FromInternalSet(std::move(setGroupedQueryable));
 
     return queryable;
   }

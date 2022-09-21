@@ -61,73 +61,10 @@ public:
     this->queryable = std::move(other.queryable);
   }
 
-  inline Queryable<T, std::deque, TArgs...> & AsQueryableDeque() const
-  {
-    return this->queryable->template AsQueryableDeque();
-  }
-
-  inline Queryable<T, std::deque, TArgs...> ToQueryableDeque() const
-  {
-    // Investiage speed of doing it this way and whether iterators would be simpler
-    return Queryable<T, std::deque, TArgs...>::FromDeque(this->queryable->ToDeque());
-  }
-
-  inline Queryable<T, std::list, TArgs...> & AsQueryableList() const
-  {
-    return this->queryable->template AsQueryableList();
-  }
-
-  inline Queryable<T, std::list, TArgs...> ToQueryableList() const
-  {
-    // Investiage speed of doing it this way and whether iterators would be simpler
-    return Queryable<T, std::list, TArgs...>::FromList(this->queryable->ToList());
-  }
-
-  template<typename TKey, typename TValue>
-  inline Queryable<TKey, std::map, TValue, TArgs...> ToQueryableMap(
-    std::function<TKey(T)> getKey,
-    std::function<TValue(T)> getValue) const
-  {
-    return Queryable<TKey, std::map, TValue, TArgs...>::FromMap(this->queryable->ToMap(getKey, getValue));
-  }
-
-  inline Queryable<T, std::multiset, TArgs...> & AsQueryableMultiSet() const
-  {
-    return this->queryable->template AsQueryableMultiSet();
-  }
-
-  inline Queryable<T, std::multiset, TArgs...> ToQueryableMultiSet() const
-  {
-    // Investiage speed of doing it this way and whether iterators would be simpler
-    return Queryable<T, std::multiset, TArgs...>::FromMultiSet(this->queryable->ToMultiSet());
-  }
-
-  inline Queryable<T, std::set, TArgs...> & AsQueryableSet() const
-  {
-    return this->queryable->template AsQueryableSet();
-  }
-
-  inline Queryable<T, std::set, TArgs...> ToQueryableSet() const
-  {
-    // Investiage speed of doing it this way and whether iterators would be simpler
-    return Queryable<T, std::set, TArgs...>::FromSet(this->queryable->ToSet());
-  }
-
-  inline Queryable<T, std::vector, TArgs...> & AsQueryableVector() const
-  {
-    return this->queryable->template AsQueryableVector();
-  }
-
-  inline Queryable<T, std::vector, TArgs...> ToQueryableVector() const
-  {
-    // Investiage speed of doing it this way and whether iterators would be simpler
-    return Queryable<T, std::vector, TArgs...>::FromVector(this->queryable->ToVector());
-  }
-
   template<template<typename, typename ...> typename TContainer>
   inline Queryable<T, TContainer, TArgs...> & AsExtendedQueryable() const
   {
-    return *this->queryable;//->template AsExtendedQueryable<TContainer>();
+    return *this->queryable;
   }
 
   template<typename TAllocator = std::allocator<T>>

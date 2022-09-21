@@ -11,6 +11,7 @@
 #include "IBaseQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableType.hpp"
+#include "Utilities/StaticBuilders/QueryableStaticBuilder.hpp"
 
 template<
   typename TObj,
@@ -138,7 +139,7 @@ public:
       {
         ISortedQueryable<T, std::multiset, TLessThan, TAllocator> newMultiSet(
           std::make_shared<Queryable<T, std::multiset, TLessThan, TAllocator>>(
-            Queryable<T, std::multiset, TLessThan, TAllocator>::FromMultiSet2(
+            Builders::FromMultiSet(
               this->queryable->ToMultiSet(
                 lessThan,
                 this->queryable->template GetAllocator<std::multiset, TAllocator>()))));
@@ -148,7 +149,7 @@ public:
       {
         ISortedQueryable<T, std::set, TLessThan, TAllocator> newSet(
           std::make_shared<Queryable<T, std::set, TLessThan, TAllocator>>(
-            Queryable<T, std::set, TLessThan, TAllocator>::FromSet2(
+            Builders::FromSet(
               this->queryable->ToSet(
                 lessThan,
                 this->queryable->template GetAllocator<std::set, TAllocator>()))));

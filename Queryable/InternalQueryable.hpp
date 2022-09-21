@@ -102,8 +102,6 @@ public:
   // This will likely mean that these need to stop being possible and instead make them static methods for each underlying type
   // The same will need to be done for QueryableData
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
-  InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
-  InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
 
   inline QueryableType GetType()
   {

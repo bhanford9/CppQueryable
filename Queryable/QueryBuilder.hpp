@@ -33,110 +33,99 @@
 #include "Queryables/SetQueryable.hpp"
 #include "Queryables/VectorQueryable.hpp"
 
+#include "Utilities/StaticBuilders/QueryableStaticBuilder.hpp"
+
 namespace QueryBuilder
 {
   // This will work out better if the public facing types are the aliases and the actual
   // child classes are only used internally to the library
   template<typename T, typename ...TArgs>
-  IQueryable<T, std::deque, TArgs...> BuildQueryable2(std::deque<T, TArgs...> items)
+  IQueryable<T, std::deque, TArgs...> BuildQueryable2(const std::deque<T, TArgs...> & items)
   {
-    IQueryable<T, std::deque, TArgs...> queryable(
+    return IQueryable<T, std::deque, TArgs...>(
       std::make_shared<QueryableDeque<T, TArgs...>>(
-        QueryableDeque<T, TArgs...>::FromDeque(items)));
-    return queryable;
+        Builders::FromDeque(items)));
   }
   template<typename T>
-  IQueryable<T, std::deque> BuildQueryable2(std::deque<T> items)
+  IQueryable<T, std::deque> BuildQueryable2(const std::deque<T> & items)
   {
-    IQueryable<T, std::deque> queryable(
+    return IQueryable<T, std::deque>(
       std::make_shared<QueryableDeque<T>>(
-        QueryableDeque<T>::FromDeque(items)));
-    return queryable;
+        Builders::FromDeque(items)));
   }
 
   template<typename T, typename ...TArgs>
-  IQueryable<T, std::list, TArgs...> BuildQueryable2(std::list<T, TArgs...> items)
+  IQueryable<T, std::list, TArgs...> BuildQueryable2(const std::list<T, TArgs...> & items)
   {
-    IQueryable<T, std::list, TArgs...> queryable(
+    return IQueryable<T, std::list, TArgs...>(
       std::make_shared<QueryableList<T, TArgs...>>(
-        QueryableList<T, TArgs...>::FromList(items)));
-    return queryable;
+        Builders::FromList(items)));
   }
   template<typename T>
-  IQueryable<T, std::list> BuildQueryable2(std::list<T> items)
+  IQueryable<T, std::list> BuildQueryable2(const std::list<T> & items)
   {
-    IQueryable<T, std::list> queryable(
+    return IQueryable<T, std::list>(
       std::make_shared<QueryableList<T>>(
-        QueryableList<T>::FromList(items)));
-    return queryable;
+        Builders::FromList(items)));
   }
 
-  template<typename TKey, typename TValue, typename ...TArgs>
-  inline IQueryable<TKey, std::map, TValue, TArgs...> BuildQueryable2(std::map<TKey, TValue, TArgs...> items)
-  {
-    IQueryable<TKey, std::map, TValue, TArgs...> queryable(
-      std::make_shared<QueryableMap<TKey, TValue, TArgs...>>(
-        QueryableMap<TKey, TValue, TArgs...>::FromMap2(items)));
-    return queryable;
-  }
-  // template<typename TKey, typename TValue>
-  // inline IQueryable<TKey, std::map, TValue> BuildQueryable2(std::map<TKey, TValue> items)
+  // template<typename TKey, typename TValue, typename ...TArgs>
+  // inline IQueryable<TKey, std::map, TValue, TArgs...> BuildQueryable2(const std::map<TKey, TValue, TArgs...> & items)
   // {
-  //   IQueryable<TKey, std::map, TValue> queryable(
+  //   return IQueryable<TKey, std::map, TValue, TArgs...>(
+  //     std::make_shared<QueryableMap<TKey, TValue, TArgs...>>(
+  //       Builders::FromMap2(items)));
+  // }
+  // template<typename TKey, typename TValue>
+  // inline IQueryable<TKey, std::map, TValue> BuildQueryable2(const std::map<TKey, TValue> & items)
+  // {
+  //   return IQueryable<TKey, std::map, TValue>(
   //     std::make_shared<QueryableMap<TKey, TValue>>(
   //       QueryableMap<TKey, TValue>::FromMap2(items)));
-  //   return queryable;
   // }
 
   template<typename T, typename ...TArgs>
-  ISortedQueryable<T, std::multiset, TArgs...> BuildQueryable2(std::multiset<T, TArgs...> items)
+  ISortedQueryable<T, std::multiset, TArgs...> BuildQueryable2(const std::multiset<T, TArgs...> & items)
   {
-    ISortedQueryable<T, std::multiset, TArgs...> queryable(
+    return ISortedQueryable<T, std::multiset, TArgs...>(
       std::make_shared<QueryableMultiSet<T, TArgs...>>(
-        QueryableMultiSet<T, TArgs...>::FromMultiSet2(items)));
-    return queryable;
+        Builders::FromMultiSet<T, TArgs...>(items)));
   }
   template<typename T>
-  ISortedQueryable<T, std::multiset> BuildQueryable2(std::multiset<T> items)
+  ISortedQueryable<T, std::multiset> BuildQueryable2(const std::multiset<T> & items)
   {
-    ISortedQueryable<T, std::multiset> queryable(
+    return ISortedQueryable<T, std::multiset>(
       std::make_shared<QueryableMultiSet<T>>(
-        QueryableMultiSet<T>::FromMultiSet(items)));
-    return queryable;
-  }
+        Builders::FromMultiSet(items)));  }
 
   template<typename T, typename ...TArgs>
-  ISortedQueryable<T, std::set, TArgs...> BuildQueryable2(std::set<T, TArgs...> items)
+  ISortedQueryable<T, std::set, TArgs...> BuildQueryable2(const std::set<T, TArgs...> & items)
   {
-    ISortedQueryable<T, std::set, TArgs...> queryable(
+    return ISortedQueryable<T, std::set, TArgs...>(
       std::make_shared<QueryableSet<T, TArgs...>>(
-        QueryableSet<T, TArgs...>::FromSet2(items)));
-    return queryable;
+        Builders::FromSet<T, TArgs...>(items)));
   }
   template<typename T>
-  ISortedQueryable<T, std::set> BuildQueryable2(std::set<T> items)
+  ISortedQueryable<T, std::set> BuildQueryable2(const std::set<T> & items)
   {
-    ISortedQueryable<T, std::set> queryable(
+    return ISortedQueryable<T, std::set>(
       std::make_shared<QueryableSet<T>>(
-        QueryableSet<T>::FromSet(items)));
-    return queryable;
+        Builders::FromSet(items)));
   }
 
   template<typename T, typename ...TArgs>
-  IQueryable<T, std::vector, TArgs...> BuildQueryable2(std::vector<T, TArgs...> items)
+  IQueryable<T, std::vector, TArgs...> BuildQueryable2(const std::vector<T, TArgs...> & items)
   {
-    IQueryable<T, std::vector, TArgs...> queryable(
+    return IQueryable<T, std::vector, TArgs...>(
       std::make_shared<QueryableVector<T, TArgs...>>(
-        QueryableVector<T, TArgs...>::FromVector(items)));
-    return queryable;
+        Builders::FromVector(items)));
   }
   template<typename T>
-  IQueryable<T, std::vector> BuildQueryable2(std::vector<T> items)
+  IQueryable<T, std::vector> BuildQueryable2(const std::vector<T> & items)
   {
-    IQueryable<T, std::vector> queryable(
+    return IQueryable<T, std::vector>(
       std::make_shared<QueryableVector<T>>(
-        QueryableVector<T>::FromVector(items)));
-    return queryable;
+        Builders::FromVector(items)));
   }
 };
 
