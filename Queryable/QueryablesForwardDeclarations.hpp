@@ -27,6 +27,13 @@ template<
 class ListInternalQueryable;
 
 template<
+  typename TKey,
+  typename TObj,
+  typename TLessThan = std::less<TKey>,
+  typename TAllocator = std::allocator<std::pair<TKey, TObj>>>
+class MapInternalQueryable;
+
+template<
   typename TObj,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>

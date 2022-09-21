@@ -7,19 +7,16 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <map>
 #include <memory>
 #include <set>
 #include <vector>
 
 #include "QueryablesForwardDeclarations.hpp"
-#include "QueryableData/GroupQueryableData/GroupQueryableDequeData.hpp"
-#include "QueryableData/GroupQueryableData/GroupQueryableListData.hpp"
-#include "QueryableData/GroupQueryableData/GroupQueryableMultiSetData.hpp"
-#include "QueryableData/GroupQueryableData/GroupQueryableSetData.hpp"
-#include "QueryableData/GroupQueryableData/GroupQueryableVectorData.hpp"
 #include "QueryableData/IQueryableData.hpp"
 #include "QueryableData/QueryableDequeData.hpp"
 #include "QueryableData/QueryableListData.hpp"
+#include "QueryableData/QueryableMapData.hpp"
 #include "QueryableData/QueryableMultiSetData.hpp"
 #include "QueryableData/QueryableSetData.hpp"
 #include "QueryableData/QueryableVectorData.hpp"
@@ -35,7 +32,12 @@
 #include "QueryableData/WhereQueryableData/WhereQueryableMultiSetData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableSetData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
+#include "InternalQueryables/DequeInternalQueryable.hpp"
+#include "InternalQueryables/ListInternalQueryable.hpp"
+#include "InternalQueryables/MapInternalQueryable.hpp"
+#include "InternalQueryables/MultiSetInternalQueryable.hpp"
 #include "InternalQueryables/SetInternalQueryable.hpp"
+#include "InternalQueryables/VectorInternalQueryable.hpp"
 #include "QueryableType.hpp"
 #include "SelectBuilders/SelectBuilder.hpp"
 #include "Sorters/DequeSorter.hpp"
@@ -96,14 +98,9 @@ public:
     this->type = type;
   }
 
-  // InternalQueryable(
-  //   const std::shared_ptr<QueryableSetData<TObj, TArgs...>> & queryableData,
-  //   QueryableType type)
-  // {
-  //   this->items = queryableData;
-  //   this->type = type;
-  // }
-
+  // For std::map, we need TObj to be a std::pair when se iterate, by it needs to come into here as std::map<TKey, TValue
+  // This will likely mean that these need to stop being possible and instead make them static methods for each underlying type
+  // The same will need to be done for QueryableData
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
   InternalQueryable(const TIterable<TObj, TArgs...> & iterable);
   InternalQueryable(TIterable<TObj, TArgs...> && iterable); // TODO --> implement for each subclass
@@ -175,20 +172,6 @@ public:
     return {this->rbegin(), this->ernd()};
   }
 
-  template<
-    template<typename, typename, typename ...> typename TInternalQueryable,
-    template<typename, typename ...> typename TNewIterable,
-    typename ...TNewArgs>
-  inline InternalQueryable<TObj, TNewIterable, TNewArgs...> CopyAs(TNewArgs... args)
-  {
-    // TODO --> it would be nice to ensure that TInternalQueryable inherits InternalQueryable
-    //   on the other hand, this should not be accessible to any users
-    return TInternalQueryable<TObj, TNewIterable<TObj, TNewArgs...>, TNewArgs...>(
-      this->items->begin(),
-      this->items->end(),
-      args...);
-  }
-
   template<typename TAllocator = std::allocator<TObj>>
   inline std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
@@ -210,6 +193,27 @@ public:
     for (TObj item : *this->items.get())
     {
       newItems.push_back(item);
+    }
+
+    return newItems;
+  }
+
+  template<
+    typename TKey,
+    typename TValue = TObj,
+    typename TLessThan = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
+    std::function<TKey(TObj)> getKey,
+    std::function<TValue(TObj)> getValue,
+    TLessThan keyCompare = {},
+    TAllocator pairAllocator = {})
+  {
+    std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
+
+    for (TObj item : *this->items.get())
+    {
+      newItems[getKey(item)] = getValue(item);
     }
 
     return newItems;
@@ -269,6 +273,21 @@ public:
   {
     std::list<TObj, TAllocator> copy = this->ToList(allocator);
     ListInternalQueryable<TObj, TAllocator> retValue(copy);
+    return retValue;
+  }
+
+  template<
+    typename TKey,
+    typename TValue = TObj,
+    typename TLessThan = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  inline InternalQueryable<TKey, std::map, TValue, TLessThan, TAllocator> ToQueryableMap(
+    std::function<TKey(TObj)> getKey,
+    std::function<TValue(TObj)> getValue,
+    TLessThan keyCompare = {},
+    TAllocator pairAllocator = {})
+  {
+    MapInternalQueryable<TKey, TValue, TLessThan, TAllocator> retValue(this->ToMap(getKey, getValue, keyCompare, pairAllocator));
     return retValue;
   }
 

@@ -5,6 +5,7 @@ enum class QueryableType
 {
   Deque,
   List,
+  Map,
   MultiSet,
   Set,
   Vector,

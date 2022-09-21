@@ -11,7 +11,6 @@
 
 // things left to investigate adding support for
 // array
-// map
 // multimap
 // forward_list
 // stack
@@ -36,37 +35,6 @@
 
 namespace QueryBuilder
 {
-
-//   template<typename T, typename TAllocator = std::allocator<T>>
-//   DequeInternalQueryable<T, TAllocator> BuildQueryable(std::deque<T, TAllocator> items)
-//   {
-//     return DequeInternalQueryable<T, TAllocator>(items);
-//   }
-
-//   template<typename T, typename TAllocator = std::allocator<T>>
-//   ListInternalQueryable<T, TAllocator> BuildQueryable(std::list<T, TAllocator> items)
-//   {
-//     return ListInternalQueryable<T, TAllocator>(items);
-//   }
-
-//   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-//   MultiSetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::multiset<T, TLessThan, TAllocator> items)
-//   {
-//     return MultiSetInternalQueryable<T, TLessThan, TAllocator>(items);
-//   }
-
-//   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
-//   SetInternalQueryable<T, TLessThan, TAllocator> BuildQueryable(std::set<T, TLessThan, TAllocator> items)
-//   {
-//     return SetInternalQueryable<T, TLessThan, TAllocator>(items);
-//   }
-
-//   template<typename T, typename TAllocator = std::allocator<T>>
-//   VectorInternalQueryable<T, TAllocator> BuildQueryable(std::vector<T, TAllocator> items)
-//   {
-//     return VectorInternalQueryable<T, TAllocator>(items);
-//   }
-
   // This will work out better if the public facing types are the aliases and the actual
   // child classes are only used internally to the library
   template<typename T, typename ...TArgs>
@@ -102,6 +70,23 @@ namespace QueryBuilder
         QueryableList<T>::FromList(items)));
     return queryable;
   }
+
+  template<typename TKey, typename TValue, typename ...TArgs>
+  inline IQueryable<TKey, std::map, TValue, TArgs...> BuildQueryable2(std::map<TKey, TValue, TArgs...> items)
+  {
+    IQueryable<TKey, std::map, TValue, TArgs...> queryable(
+      std::make_shared<QueryableMap<TKey, TValue, TArgs...>>(
+        QueryableMap<TKey, TValue, TArgs...>::FromMap2(items)));
+    return queryable;
+  }
+  // template<typename TKey, typename TValue>
+  // inline IQueryable<TKey, std::map, TValue> BuildQueryable2(std::map<TKey, TValue> items)
+  // {
+  //   IQueryable<TKey, std::map, TValue> queryable(
+  //     std::make_shared<QueryableMap<TKey, TValue>>(
+  //       QueryableMap<TKey, TValue>::FromMap2(items)));
+  //   return queryable;
+  // }
 
   template<typename T, typename ...TArgs>
   ISortedQueryable<T, std::multiset, TArgs...> BuildQueryable2(std::multiset<T, TArgs...> items)

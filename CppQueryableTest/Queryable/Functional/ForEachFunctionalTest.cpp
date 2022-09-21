@@ -69,11 +69,15 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 {
   std::vector<size_t> iterated(this->queryable.Count(), 0);
   size_t i = 0;
+  
+  std::cout << "\nstart foreach" << std::endl;
 
   this->queryable.ForEach([&](size_t value)
   {
     iterated[i++] = value;
   });
+
+  std::cout << "\nstop foreach" << std::endl;
 
   for (i = 0; i < this->queryable.Count(); i++)
   {

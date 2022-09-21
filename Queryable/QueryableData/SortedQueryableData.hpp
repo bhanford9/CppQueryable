@@ -14,43 +14,28 @@ template<
   typename ...TArgs>
 class SortedQueryableData : public QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>
 {
-protected:
-//   TCompare comparator; // TODO --> I don't think this is actually necessary
-
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   SortedQueryableData(TCompare comparator = {})
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>()
   {
     std::cout << "BAD: SortedQueryableData default constructor" << std::endl;
-    // this->comparator = comparator;
     this->items = TIterable<T, TCompare, TAllocator, TArgs...>(comparator);
   }
-
-  // SortedQueryableData(
-  //   TIterable<T, TCompare, TAllocator, TArgs...> items,
-  //   TCompare comparator = {})
-  //   : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
-  // {
-  //   this->comparator = comparator;
-  // }
 
   SortedQueryableData(const TIterable<T, TCompare, TAllocator, TArgs...> & items)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
   {
-    // this->comparator = comparator;
   }
 
   SortedQueryableData(TIterable<T, TCompare, TAllocator, TArgs...> && items)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(std::move(items))
   {
-    // this->comparator = comparator;
   }
 
   SortedQueryableData(const SortedQueryableData<T, TIterable, TCompare, TAllocator, TArgs...> & data)
     : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(data)
   {
-    // this->comparator = data.comparator;
   }
 
   SortedQueryableData(
@@ -59,24 +44,39 @@ public:
     TCompare comparator = {})
   {
     // TODO SFINAE require this constructor
-    // this->comparator = comparator;
     this->items = std::make_shared<TIterable<T, TCompare, TAllocator, TArgs...>>(first, last, comparator);
     this->size = this->items->size();
   }
 
   virtual ~SortedQueryableData() { }
 
-  // TODO -> don't think this actually needs overriden
-//   virtual T & Get(IteratorType type) override
-//   {
-//     switch (type)
-//     {
-//         case IteratorType::BeginForward: { *this->beginValue = *this->beginIterator; return *this->beginValue; }
-//         case IteratorType::EndForward: { *this->endValue = *this->endIterator; return *this->endValue; }
-//         case IteratorType::BeginReverse: { *this->beginValue = *this->rbeginIterator; return *this->beginValue; }
-//         case IteratorType::EndReverse: default: { *this->endValue = *this->rendIterator; return *this->endValue; }
-//     }
-//   }
+  virtual T & Get(IteratorType type) override
+  {
+      // std::cout << "Get" << std::endl;
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
+    // std::cout << "Get: " << this->value << std::endl;
+  }
+
+  virtual const T & ConstGet(IteratorType type) override
+  {
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
+  }
 };
 
 #endif

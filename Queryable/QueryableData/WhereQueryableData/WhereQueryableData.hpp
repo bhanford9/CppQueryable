@@ -26,7 +26,7 @@ protected:
   typedef typename std::vector<TObj>::iterator TVectorIterator;
 
   using TForwardIterator = typename QueryableData<TObj, TIterable, TArgs...>::TForwardIterator;
-  using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
+  // using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
 
   Condition<TObj> condition;
   std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> original;
@@ -241,33 +241,33 @@ public:
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
-  virtual QueryableIterator<TObj> rbegin() override
-  {
-    QueryableIterator<TObj> child = this->original->rbegin();
+  // // we return a copy of ourself, so we need to make sure to set our type
+  // // so that the next time its used, the correct underlying iterator is used
+  // // may want to consider copy, then set, then move out
+  // virtual QueryableIterator<TObj> rbegin() override
+  // {
+  //   QueryableIterator<TObj> child = this->original->rbegin();
 
-    size_t startIndex = child.index;
-    bool isForcingToEnd = false;
-    this->IncrementPastFalseConditions(IteratorType::BeginReverse, startIndex, isForcingToEnd);
-    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
+  //   size_t startIndex = child.index;
+  //   bool isForcingToEnd = false;
+  //   this->IncrementPastFalseConditions(IteratorType::BeginReverse, startIndex, isForcingToEnd);
+  //   QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
 
-    return retVal;
-  }
+  //   return retVal;
+  // }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
-  virtual QueryableIterator<TObj> rend() override
-  {
-    QueryableIterator<TObj> child = this->original->end();
+  // // we return a copy of ourself, so we need to make sure to set our type
+  // // so that the next time its used, the correct underlying iterator is used
+  // // may want to consider copy, then set, then move out
+  // virtual QueryableIterator<TObj> rend() override
+  // {
+  //   QueryableIterator<TObj> child = this->original->end();
 
-    size_t startIndex = child.index;
-    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
+  //   size_t startIndex = child.index;
+  //   QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
-    return retVal;
-  }
+  //   return retVal;
+  // }
 };
 
 #endif

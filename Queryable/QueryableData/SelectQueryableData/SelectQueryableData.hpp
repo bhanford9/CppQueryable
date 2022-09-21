@@ -105,8 +105,9 @@ public:
     //   case IteratorType::EndReverse: default: return *this->rendIterator;
       case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
       case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndReverse: default: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      // case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      // case IteratorType::EndReverse: 
+      default: { this->value = this->selector(this->original->Get(type)); return this->value; }
     }
     // std::cout << "Select Data Get" << std::endl;
     // this->value = this->selector(this->original->Get(type));
@@ -123,8 +124,9 @@ public:
     //   case IteratorType::EndReverse: default: return *this->rendIterator;
       case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
       case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndReverse: default: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      // case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
+      // case IteratorType::EndReverse:
+      default: { this->value = this->selector(this->original->Get(type)); return this->value; }
     }
     // std::cout << "Select Data ConstGet" << std::endl;
     // this->value = this->selector(this->original->ConstGet(type));
@@ -176,19 +178,19 @@ public:
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> rbegin() override
-  {
-    this->original->rbegin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginReverse);
-    return retVal;
-  }
+  // virtual QueryableIterator<TCurrent> rbegin() override
+  // {
+  //   this->original->rbegin();
+  //   QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginReverse);
+  //   return retVal;
+  // }
 
-  virtual QueryableIterator<TCurrent> rend() override
-  {
-    this->original->rend();
-    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndReverse);
-    return retVal;
-  }
+  // virtual QueryableIterator<TCurrent> rend() override
+  // {
+  //   this->original->rend();
+  //   QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndReverse);
+  //   return retVal;
+  // }
 };
 
 #endif

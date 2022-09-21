@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -225,6 +226,28 @@ public:
     return queryable;
   }
 
+  template<typename TKey, typename TValue = TObj>
+  static Queryable<TKey, std::map, TValue> FromMap(const std::map<TKey, TValue> & iterable)
+  {
+    Queryable<TKey, std::map, TValue> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TKey, std::map, TValue>>(
+        std::make_shared<MapInternalQueryable<TKey, TValue>>(iterable)));
+    return queryable;
+  }
+
+  template<
+    typename TKey,
+    typename TValue = TObj,
+    typename TLessThan = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  static Queryable<TKey, std::map, TValue, TLessThan, TAllocator> FromMap2(const std::map<TKey, TValue, TLessThan, TAllocator> & iterable)
+  {
+    Queryable<TKey, std::map, TValue, TLessThan, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TKey, std::map, TValue, TLessThan, TAllocator>>(
+        std::make_shared<MapInternalQueryable<TKey, TValue, TLessThan, TAllocator>>(iterable)));
+    return queryable;
+  }
+
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
   static Queryable<TObj, std::multiset, TLessThan, TAllocator> FromMultiSet2(const std::multiset<TObj, TLessThan, TAllocator> & iterable)
   {
@@ -233,14 +256,7 @@ public:
         std::make_shared<MultiSetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
     return queryable;
   }
-  // template<typename TLessThan = std::less<TObj>>
-  // static Queryable<TObj, std::multiset, TLessThan> FromMultiSet(const std::multiset<TObj, TLessThan> & iterable)
-  // {
-  //   Queryable<TObj, std::multiset, TLessThan> queryable(
-  //     FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::multiset, TLessThan>>(
-  //       std::make_shared<MultiSetInternalQueryable<TObj, TLessThan>>(iterable)));
-  //   return queryable;
-  // }
+
   static Queryable<TObj, std::multiset> FromMultiSet(const std::multiset<TObj> & iterable)
   {
     Queryable<TObj, std::multiset> queryable(
@@ -257,14 +273,7 @@ public:
         std::make_shared<SetInternalQueryable<TObj, TLessThan, TAllocator>>(iterable)));
     return queryable;
   }
-  // template<typename TLessThan = std::less<TObj>>
-  // static Queryable<TObj, std::set, TLessThan> FromSet(const std::set<TObj, TLessThan> & iterable)
-  // {
-  //   Queryable<TObj, std::set, TLessThan> queryable(
-  //     FutureStd::reinterpret_pointer_cast<InternalQueryable<TObj, std::set, TLessThan>>(
-  //       std::make_shared<SetInternalQueryable<TObj, TLessThan>>(iterable)));
-  //   return queryable;
-  // }
+
   static Queryable<TObj, std::set> FromSet(const std::set<TObj> & iterable)
   {
     Queryable<TObj, std::set> queryable(
@@ -309,6 +318,20 @@ public:
   inline std::list<TObj> ToList() const
   {
     return this->queryable->ToList();
+  }
+
+  template<
+    typename TKey,
+    typename TValue = TObj,
+    typename TLessThan = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
+    std::function<TKey(TObj)> getKey,
+    std::function<TValue(TObj)> getValue,
+    TLessThan keyCompare = {},
+    TAllocator pairAllocator = {})
+  {
+    return this->queryable->ToMap(getKey, getValue, keyCompare, pairAllocator);
   }
 
   template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>

@@ -83,6 +83,14 @@ public:
     return Queryable<T, std::list, TArgs...>::FromList(this->queryable->ToList());
   }
 
+  template<typename TKey, typename TValue>
+  inline Queryable<TKey, std::map, TValue, TArgs...> ToQueryableMap(
+    std::function<TKey(T)> getKey,
+    std::function<TValue(T)> getValue) const
+  {
+    return Queryable<TKey, std::map, TValue, TArgs...>::FromMap(this->queryable->ToMap(getKey, getValue));
+  }
+
   inline Queryable<T, std::multiset, TArgs...> & AsQueryableMultiSet() const
   {
     return this->queryable->template AsQueryableMultiSet();
@@ -134,6 +142,20 @@ public:
     return this->queryable->ToList(allocator);
   }
 
+  template<
+    typename TKey,
+    typename TValue = T,
+    typename TLessThan = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
+    std::function<TKey(T)> getKey,
+    std::function<TValue(T)> getValue,
+    TLessThan keyCompare = {},
+    TAllocator pairAllocator = {})
+  {
+    return this->queryable->ToMap(getKey, getValue, keyCompare, pairAllocator);
+  }
+
   template<typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
   inline std::multiset<T, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
@@ -155,7 +177,7 @@ public:
   template<typename TOut = T>
   inline TOut Aggregate(const std::function<TOut(TOut, T)> & accumulate, TOut * seed = NULL)
   {
-    return this->queryable->template Aggregate<TIterable, TOut>(accumulate, seed);
+    return this->queryable->template Aggregate<TOut>(accumulate, seed);
   }
 
   template<typename TFinalized, typename TOut = T>
@@ -164,7 +186,7 @@ public:
     const std::function<TFinalized(TOut)> & finalizer,
     TOut * seed = NULL)
   {
-    return this->queryable->template Aggregate<TIterable, TFinalized, TOut>(accumulate, finalizer, seed);
+    return this->queryable->template Aggregate<TFinalized, TOut>(accumulate, finalizer, seed);
   }
 
   inline bool All(std::function<bool(T)> condition) const

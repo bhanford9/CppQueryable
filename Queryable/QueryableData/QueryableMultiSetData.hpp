@@ -18,9 +18,6 @@ public:
   QueryableMultiSetData(TCompare comparator = {})
     : SortedQueryableData<T, std::multiset, TCompare, TAllocator>() { }
 
-  // QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> items)
-  //   : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items) { }
-
   QueryableMultiSetData(const std::multiset<T, TCompare, TAllocator> & items)
     : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items) { }
 

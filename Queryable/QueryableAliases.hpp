@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <list>
+#include <map>
 #include <memory>
 #include <set>
 #include <vector>
@@ -18,6 +19,12 @@ template<
   typename TObj,
   typename ...TArgs>
 using QueryableList = Queryable<TObj, std::list, TArgs...>;
+
+template<
+  typename TKey,
+  typename TValue,
+  typename ...TArgs>
+using QueryableMap = Queryable<TKey, std::map, TValue, TArgs...>;
 
 template<
   typename TObj,

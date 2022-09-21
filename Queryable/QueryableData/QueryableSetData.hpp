@@ -18,9 +18,6 @@ public:
   QueryableSetData(TCompare comparator = {})
     : SortedQueryableData<T, std::set, TCompare, TAllocator>() { std::cout << "queryable set data default constructor" << std::endl;}
 
-  // QueryableSetData(std::set<T, TCompare, TAllocator> items)
-  //   : SortedQueryableData<T, std::set, TCompare, TAllocator>(items) { }
-
   QueryableSetData(const std::set<T, TCompare, TAllocator> & items)
     : SortedQueryableData<T, std::set, TCompare, TAllocator>(items)
     {

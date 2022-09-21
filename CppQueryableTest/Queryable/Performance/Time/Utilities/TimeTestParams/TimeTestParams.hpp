@@ -18,7 +18,7 @@ private:
 
   size_t containerSize = 0;
   size_t iterations = 0;
-  size_t16_t load = 1;
+  size_t load = 1;
 
   TimeStats standardStats;
   TimeStats queryableStats;
@@ -66,7 +66,7 @@ public:
   TimeTestParams(
     size_t iterations,
     size_t containerSize,
-    size_t16_t load = 1,
+    size_t load = 1,
     TriggerType triggerType = TriggerType::NotApplicable,
     bool doLog = true,
     bool doRecordStats = false) : TimeTestParams()
@@ -87,7 +87,7 @@ public:
 
   size_t GetContainerSize() const { return this->containerSize; }
   size_t GetIterations() const { return this->iterations; }
-  size_t16_t GetLoad() const { return this->load; }
+  size_t GetLoad() const { return this->load; }
 
   TimeStats GetStandardStats() const { return this->standardStats; }
   TimeStats GetQueryableStats() const { return this->queryableStats; }
@@ -104,7 +104,7 @@ public:
 
   void SetContainerSize(size_t containerSize) { this->containerSize = containerSize; }
   void SetIterations(size_t iterations) { this->iterations = iterations; }
-  void SetLOod(size_t16_t load) { this->load = load; }
+  void SetLOod(size_t load) { this->load = load; }
 
   void SetStandardStats(TimeStats stats) { this->standardStats = stats; }
   void SetQueryableStats(TimeStats stats) { this->queryableStats = stats; }

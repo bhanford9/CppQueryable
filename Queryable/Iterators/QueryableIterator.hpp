@@ -35,14 +35,14 @@ public:
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, IteratorType type) : QueryableIterator()
   {
     // std::cout << "QueryableIterator constructor 1" << std::endl;
-    this->queryableData = queryableData->Clone();
+    this->queryableData = queryableData;
     this->type = type;
   }
 
   QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, int startingIndex, IteratorType type)
   {
     // std::cout << "QueryableIterator constructor 2, starting index: " << startingIndex << std::endl;
-    this->queryableData = queryableData->Clone();
+    this->queryableData = queryableData;
     this->index = startingIndex;
     this->type = type;
   }

@@ -28,7 +28,7 @@ class QueryableData : public IQueryableData<TObj>
 {
 public:
   using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
-  using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
+  // using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
   static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
   TObj value;
@@ -48,15 +48,15 @@ protected:
 
   TForwardIterator beginIterator;
   TForwardIterator endIterator;
-  TReverseIterator rbeginIterator;
-  TReverseIterator rendIterator;
+  // TReverseIterator rbeginIterator;
+  // TReverseIterator rendIterator;
 
   void DefaultInitialize()
   {
     this->beginIterator = this->items->begin();
     this->endIterator = this->items->end();
-    this->rbeginIterator = this->items->rbegin();
-    this->rendIterator = this->items->rend();
+    // this->rbeginIterator = this->items->rbegin();
+    // this->rendIterator = this->items->rend();
     this->size = 0;
   }
 
@@ -64,7 +64,7 @@ public:
 
   QueryableData()
   {
-    // std::cout << "\nQueryableData Constructor 1" << std::endl;
+    // std::cout << "QueryableData Constructor 1" << std::endl;
     this->items = std::make_shared<TIterable<TObj, TArgs...>>();
     this->DefaultInitialize();
   }
@@ -82,7 +82,7 @@ public:
     //   to have the child calculate the size after constructions... may be the cleanest
     //   since the user never sees this class anyway
     this->size = this->items->size();
-    // std::cout << "\nQueryableData Constructor 2: " << this->size << std::endl;
+    // std::cout << "QueryableData Constructor 2: " << this->size << std::endl;
   }
   QueryableData(TIterable<TObj, TArgs...> && items)
   {
@@ -100,7 +100,7 @@ public:
     //   to have the child calculate the size after constructions... may be the cleanest
     //   since the user never sees this class anyway
     this->size = items.size();
-    // std::cout << "\nQueryableData Constructor 3: " << this->size << std::endl;
+    // std::cout << "QueryableData Constructor 3: " << this->size << std::endl;
   }
   QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
   {
@@ -109,8 +109,8 @@ public:
 
     this->beginIterator = data.beginIterator;
     this->endIterator = data.endIterator;
-    this->rbeginIterator = data.rbeginIterator;
-    this->rendIterator = data.rendIterator;
+    // this->rbeginIterator = data.rbeginIterator;
+    // this->rendIterator = data.rendIterator;
 
     this->value = data.value;
     this->size = data.size;
@@ -167,9 +167,9 @@ public:
     switch (type)
     {
       case IteratorType::BeginForward: return this->beginIterator != this->endIterator;
-      case IteratorType::BeginReverse: return this->rbeginIterator != this->rendIterator;
+      // case IteratorType::BeginReverse: return this->rbeginIterator != this->rendIterator;
       case IteratorType::EndForward:
-      case IteratorType::EndReverse:
+      // case IteratorType::EndReverse:
       default:
         return true;
     }
@@ -182,9 +182,9 @@ public:
     switch (type)
     {
       case IteratorType::EndForward: return this->beginIterator != this->endIterator;
-      case IteratorType::EndReverse: return this->rbeginIterator != this->rendIterator;
+      // case IteratorType::EndReverse: return this->rbeginIterator != this->rendIterator;
       case IteratorType::BeginForward:
-      case IteratorType::BeginReverse:
+      // case IteratorType::BeginReverse:
       default:
         return true;
     }
@@ -208,8 +208,8 @@ public:
     {
       case IteratorType::BeginForward: ++this->beginIterator; break;
       case IteratorType::EndForward: ++this->endIterator; break;
-      case IteratorType::BeginReverse: ++this->rbeginIterator; break;
-      case IteratorType::EndReverse: ++this->rendIterator; break;
+      // case IteratorType::BeginReverse: ++this->rbeginIterator; break;
+      // case IteratorType::EndReverse: ++this->rendIterator; break;
     }
     // std::cout << "[NEXT] underlying begin value after: " << *this->beginIterator << std::endl;
 
@@ -225,36 +225,12 @@ public:
     {
       case IteratorType::BeginForward: --this->beginIterator; break;
       case IteratorType::EndForward: --this->endIterator; break;
-      case IteratorType::BeginReverse: --this->rbeginIterator; break;
-      case IteratorType::EndReverse: --this->rendIterator; break;
+      // case IteratorType::BeginReverse: --this->rbeginIterator; break;
+      // case IteratorType::EndReverse: --this->rendIterator; break;
     }
       // std::cout << "[PREV] underlying begin value after: " << std::endl;
     iterated = 1;
     return *this;
-  }
-
-  virtual TObj & Get(IteratorType type) override
-  {
-      // std::cout << "Get" << std::endl;
-    switch (type)
-    {
-      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-      case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
-    }
-    // std::cout << "Get: " << this->value << std::endl;
-  }
-
-  virtual const TObj & ConstGet(IteratorType type) override
-  {
-    switch (type)
-    {
-      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-      case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
-    }
   }
 
   virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
@@ -265,8 +241,8 @@ public:
     {
       case IteratorType::BeginForward: while (addend--) ++this->beginIterator; break;
       case IteratorType::EndForward: while (addend--) ++this->endIterator; break;
-      case IteratorType::BeginReverse: while (addend--) ++this->rbeginIterator; break;
-      case IteratorType::EndReverse: while (addend--) ++this->rendIterator; break;
+      // case IteratorType::BeginReverse: while (addend--) ++this->rbeginIterator; break;
+      // case IteratorType::EndReverse: while (addend--) ++this->rendIterator; break;
     }
 
     return *this;
@@ -279,8 +255,8 @@ public:
     {
       case IteratorType::BeginForward: while (subtrahend--) --this->beginIterator; break;
       case IteratorType::EndForward: while (subtrahend--) --this->endIterator; break;
-      case IteratorType::BeginReverse: while (subtrahend--) --this->rbeginIterator; break;
-      case IteratorType::EndReverse: while (subtrahend--) --this->rendIterator; break;
+      // case IteratorType::BeginReverse: while (subtrahend--) --this->rbeginIterator; break;
+      // case IteratorType::EndReverse: while (subtrahend--) --this->rendIterator; break;
     }
 
     return *this;
@@ -332,26 +308,27 @@ public:
     this->forceToBegin = false;
     this->forceToEnd = false;
     QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
+
     return retVal;
   }
 
-  virtual QueryableIterator<TObj> rbegin() override
-  {
-    this->rbeginIterator = this->items->rbegin();
-    this->forceToBegin = false;
-    this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginReverse);
-    return retVal;
-  }
+  // virtual QueryableIterator<TObj> rbegin() override
+  // {
+  //   this->rbeginIterator = this->items->rbegin();
+  //   this->forceToBegin = false;
+  //   this->forceToEnd = false;
+  //   QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginReverse);
+  //   return retVal;
+  // }
 
-  virtual QueryableIterator<TObj> rend() override
-  {
-    this->rendIterator = this->items->rend();
-    this->forceToBegin = false;
-    this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
-    return retVal;
-  }
+  // virtual QueryableIterator<TObj> rend() override
+  // {
+  //   this->rendIterator = this->items->rend();
+  //   this->forceToBegin = false;
+  //   this->forceToEnd = false;
+  //   QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
+  //   return retVal;
+  // }
 
   virtual void ForceEnd(IteratorType type) override
   {
@@ -370,12 +347,12 @@ public:
       case IteratorType::EndForward:
         this->endIterator = this->items->end();
         break;
-      case IteratorType::BeginReverse:
-        this->rendIterator = this->items->rend();
-        break;
-      case IteratorType::EndReverse:
-        this->rendIterator = this->items->rend();
-        break;
+      // case IteratorType::BeginReverse:
+      //   this->rendIterator = this->items->rend();
+      //   break;
+      // case IteratorType::EndReverse:
+      //   this->rendIterator = this->items->rend();
+      //   break;
     }
   }
 
@@ -391,12 +368,12 @@ public:
       case IteratorType::EndForward:
         this->endIterator = this->items->begin();
         break;
-      case IteratorType::BeginReverse:
-        this->rendIterator = this->items->rbegin();
-        break;
-      case IteratorType::EndReverse:
-        this->rendIterator = this->items->rbegin();
-        break;
+      // case IteratorType::BeginReverse:
+      //   this->rendIterator = this->items->rbegin();
+      //   break;
+      // case IteratorType::EndReverse:
+      //   this->rendIterator = this->items->rbegin();
+      //   break;
     }
   }
 };

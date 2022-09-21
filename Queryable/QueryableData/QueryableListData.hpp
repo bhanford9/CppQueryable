@@ -45,6 +45,34 @@ public:
     this->items->push_back(item);
     this->size++;
   }
+
+  virtual T & Get(IteratorType type) override
+  {
+      // std::cout << "Get" << std::endl;
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
+    // std::cout << "Get: " << this->value << std::endl;
+  }
+
+  virtual const T & ConstGet(IteratorType type) override
+  {
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
+  }
 };
 
 #endif

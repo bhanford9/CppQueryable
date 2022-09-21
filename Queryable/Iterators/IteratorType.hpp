@@ -5,8 +5,8 @@ enum class IteratorType
 {
   BeginForward,
   EndForward,
-  BeginReverse,
-  EndReverse
+  // BeginReverse,
+  // EndReverse
 };
 
 #endif

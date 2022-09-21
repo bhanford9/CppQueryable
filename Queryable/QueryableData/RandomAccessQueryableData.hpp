@@ -14,19 +14,11 @@ template<
   typename ...TArgs>
 class RandomAccessQueryableData : public QueryableData<T, TIterable, TAllocator, TArgs...>
 {
-// protected:
-//   TAllocator allocator;
-
 public:
   RandomAccessQueryableData() :
     QueryableData<T, TIterable, TAllocator, TArgs...>()
   {
   }
-
-  // RandomAccessQueryableData(TIterable<T, TAllocator, TArgs...> items)
-  //   : QueryableData<T, TIterable, TAllocator, TArgs...>(items)
-  // {
-  // }
 
   RandomAccessQueryableData(
     const TIterable<T, TAllocator, TArgs...> & items) :
@@ -51,39 +43,6 @@ public:
   {
   }
 
-//   RandomAccessQueryableData(
-//     const TIterable<T, TAllocator, TArgs...> & items,
-//     TAllocator allocator = {}) :
-//     QueryableData<T, TIterable, TAllocator, TArgs...>(items),
-//     allocator(allocator)
-//   {
-//     this->value = this->allocator.allocate(1);
-//   }
-
-//   RandomAccessQueryableData(
-//     TIterable<T, TAllocator, TArgs...> && items,
-//     TAllocator allocator = {}) :
-//     QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(items)),
-//     allocator(allocator)
-//   {
-//     this->value = this->allocator.allocate(1);
-//   }
-
-//   RandomAccessQueryableData(
-//     const RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> & data,
-//     TAllocator allocator = {}) :
-//     QueryableData<T, TIterable, TAllocator, TArgs...>(data)
-//   {
-//     this->value = this->allocator.allocate(1);
-//   }
-
-//   RandomAccessQueryableData(RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> && data)
-//     : QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(data)),
-//     allocator(allocator)
-//   {
-//     this->value = this->allocator.allocate(1);
-//   }
-
   virtual ~RandomAccessQueryableData()
   {
   }
@@ -95,8 +54,8 @@ public:
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
       case IteratorType::EndForward: this->endIterator += addend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-      case IteratorType::EndReverse: this->rendIterator += addend; break;
+      // case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
+      // case IteratorType::EndReverse: this->rendIterator += addend; break;
     }
 
     // std::cout << "Random Access add result: " << *this->beginIterator << std::endl;
@@ -111,11 +70,39 @@ public:
     {
       case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
       case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-      case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-      case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
+      // case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
+      // case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
     }
 
     return *this;
+  }
+
+  virtual T & Get(IteratorType type) override
+  {
+      // std::cout << "Get" << std::endl;
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
+    // std::cout << "Get: " << this->value << std::endl;
+  }
+
+  virtual const T & ConstGet(IteratorType type) override
+  {
+    switch (type)
+    {
+      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
+      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
+      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
+      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    }
+
+    return this->value;
   }
 
   void Add(T item) override
