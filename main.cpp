@@ -30,24 +30,24 @@ using namespace QueryBuilder;
 
 int main()
 {
-    // auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
+    auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
 
-    // auto queryable = BuildQueryable2(data);
+    auto queryable = BuildQueryable2(data);
 
-    // auto myMap = queryable.ToMap<size_t, std::string>(
-    //     [](size_t value) { return value; },
-    //     [](size_t value) { return "Half Value: " + std::to_string(value / 2.0); });
+    auto myMap = queryable.ToMap<size_t, std::string>(
+        [](size_t value) { return value; },
+        [](size_t value) { return "Half Value: " + std::to_string(value / 2.0); });
 
-    // for (auto kvp : myMap)
-    // {
-    //     std::cout << "key: " << kvp.first << ", value: " << kvp.second << std::endl;
-    // }
+    for (auto kvp : myMap)
+    {
+        std::cout << "key: " << kvp.first << ", value: " << kvp.second << std::endl;
+    }
 
-    // std::cout << "\n\n" << std::endl;
+    std::cout << "\n\n" << std::endl;
 
-    // auto mapQueryable = BuildQueryable2(myMap);
+    auto mapQueryable = BuildQueryable2(myMap);
 
-    // mapQueryable.ForEach([&](size_t key) { std::cout << key << ", value: " << myMap[key] << std::endl; });
+    mapQueryable.ForEach([&](std::pair<const size_t, std::string> kvp) { std::cout << kvp.first << ", value: " << kvp.second << std::endl; });
 
     // auto result = mapQueryable.Average();
 

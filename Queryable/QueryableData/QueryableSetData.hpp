@@ -48,7 +48,7 @@ public:
   {
     this->items->insert(item);
 
-    // because its a set, the tiem may not have actually been added. Insert
+    // because its a set, the item may not have actually been added. Insert
     // returns true/false whether the item was added, but the size method is
     // also a constant time action, so its cleaner to use it
     this->size = this->items->size();

@@ -24,7 +24,7 @@ template<
   typename TKey,
   typename TValue,
   typename ...TArgs>
-using QueryableMap = Queryable<TKey, std::map, TValue, TArgs...>;
+using QueryableMap = Queryable<std::pair<TKey, TValue>, std::map, TArgs...>;
 
 template<
   typename TObj,

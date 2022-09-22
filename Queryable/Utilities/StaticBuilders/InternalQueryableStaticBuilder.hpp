@@ -15,7 +15,7 @@
 namespace InternalBuilders
 {
   
-  
+
   // COPYING FACTORY
 
   template<typename T, typename TAllocator = std::allocator<T>>
@@ -42,6 +42,25 @@ namespace InternalBuilders
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::list>>(
       std::make_shared<ListInternalQueryable<T>>(list));
+  }
+
+  template<
+    typename TKey,
+    typename TValue,
+    typename TKeyCompare = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
+  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
+    const std::map<TKey, TValue, TKeyCompare, TAllocator> & map)
+  {
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
+      std::make_shared<MapInternalQueryable<TKey, TValue, TKeyCompare, TAllocator>>(map));
+  }
+  template<typename TKey, typename TValue>
+  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map>> FromMap(
+    const std::map<TKey, TValue> & map)
+  {
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map>>(
+      std::make_shared<MapInternalQueryable<TKey, TValue>>(map));
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
@@ -95,26 +114,45 @@ namespace InternalBuilders
   static std::shared_ptr<InternalQueryable<T, std::deque, TAllocator>> FromDeque(std::deque<T, TAllocator> && deque)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::deque, TAllocator>>(
-      std::make_shared<DequeInternalQueryable<T, TAllocator>>(deque));
+      std::make_shared<DequeInternalQueryable<T, TAllocator>>(std::move(deque)));
   }
   template<typename T>
   static std::shared_ptr<InternalQueryable<T, std::deque>> FromDeque(std::deque<T> && deque)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::deque>>(
-      std::make_shared<DequeInternalQueryable<T>>(deque));
+      std::make_shared<DequeInternalQueryable<T>>(std::move(deque)));
   }
   
   template<typename T, typename TAllocator = std::allocator<T>>
   static std::shared_ptr<InternalQueryable<T, std::list, TAllocator>> FromList(std::list<T, TAllocator> && list)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::list, TAllocator>>(
-      std::make_shared<ListInternalQueryable<T, TAllocator>>(list));
+      std::make_shared<ListInternalQueryable<T, TAllocator>>(std::move(list)));
   }  
   template<typename T>
   static std::shared_ptr<InternalQueryable<T, std::list>> FromList(std::list<T> && list)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::list>>(
-      std::make_shared<ListInternalQueryable<T>>(list));
+      std::make_shared<ListInternalQueryable<T>>(std::move(list)));
+  }
+
+  template<
+    typename TKey,
+    typename TValue,
+    typename TKeyCompare = std::less<TKey>,
+    typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
+  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
+    std::map<TKey, TValue, TKeyCompare, TAllocator> && map)
+  {
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
+      std::make_shared<MapInternalQueryable<TKey, TValue, TKeyCompare, TAllocator>>(std::move(map)));
+  }
+  template<typename TKey, typename TValue>
+  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map>> FromMap(
+    std::map<TKey, TValue> && map)
+  {
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map>>(
+      std::make_shared<MapInternalQueryable<TKey, TValue>>(std::move(map)));
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
@@ -122,14 +160,14 @@ namespace InternalBuilders
     std::multiset<T, TLessThan, TAllocator> && multiset)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::multiset, TLessThan, TAllocator>>(
-      std::make_shared<MultiSetInternalQueryable<T, TLessThan, TAllocator>>(multiset));
+      std::make_shared<MultiSetInternalQueryable<T, TLessThan, TAllocator>>(std::move(multiset)));
   }
   template<typename T>
   static std::shared_ptr<InternalQueryable<T, std::multiset>> FromMultiSet(
     std::multiset<T> && multiset)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::multiset>>(
-      std::make_shared<MultiSetInternalQueryable<T>>(multiset));
+      std::make_shared<MultiSetInternalQueryable<T>>(std::move(multiset)));
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>
@@ -137,27 +175,27 @@ namespace InternalBuilders
     std::set<T, TLessThan, TAllocator> && set)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::set, TLessThan, TAllocator>>(
-      std::make_shared<SetInternalQueryable<T, TLessThan, TAllocator>>(set));
+      std::make_shared<SetInternalQueryable<T, TLessThan, TAllocator>>(std::move(set)));
   }
   template<typename T>
   static std::shared_ptr<InternalQueryable<T, std::set>> FromSet(
     std::set<T> && set)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::set>>(
-      std::make_shared<SetInternalQueryable<T>>(set));
+      std::make_shared<SetInternalQueryable<T>>(std::move(set)));
   }
 
   template<typename T, typename TAllocator = std::allocator<T>>
   static std::shared_ptr<InternalQueryable<T, std::vector, TAllocator>> FromVector(std::vector<T, TAllocator> && vector)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::vector, TAllocator>>(
-      std::make_shared<VectorInternalQueryable<T, TAllocator>>(vector));
+      std::make_shared<VectorInternalQueryable<T, TAllocator>>(std::move(vector)));
   }
   template<typename T>
   static std::shared_ptr<InternalQueryable<T, std::vector>> FromVector(std::vector<T> && vector)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<T, std::vector>>(
-      std::make_shared<VectorInternalQueryable<T>>(vector));
+      std::make_shared<VectorInternalQueryable<T>>(std::move(vector)));
   }
 }
 

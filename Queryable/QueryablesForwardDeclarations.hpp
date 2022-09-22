@@ -30,7 +30,7 @@ template<
   typename TKey,
   typename TObj,
   typename TLessThan = std::less<TKey>,
-  typename TAllocator = std::allocator<std::pair<TKey, TObj>>>
+  typename TAllocator = std::allocator<std::pair<const TKey, TObj>>>
 class MapInternalQueryable;
 
 template<

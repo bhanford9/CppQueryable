@@ -201,13 +201,13 @@ public:
     typename TValue = TObj,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
+  inline std::map<const TKey, TValue, TLessThan, TAllocator> ToMap(
     std::function<TKey(TObj)> getKey,
     std::function<TValue(TObj)> getValue,
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
-    std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
+    std::map<const TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
     for (TObj item : *this->items.get())
     {
@@ -279,7 +279,7 @@ public:
     typename TValue = TObj,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  inline InternalQueryable<TKey, std::map, TValue, TLessThan, TAllocator> ToQueryableMap(
+  inline InternalQueryable<const TKey, std::map, TValue, TLessThan, TAllocator> ToQueryableMap(
     std::function<TKey(TObj)> getKey,
     std::function<TValue(TObj)> getValue,
     TLessThan keyCompare = {},

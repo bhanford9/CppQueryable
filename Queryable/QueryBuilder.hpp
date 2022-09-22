@@ -27,11 +27,6 @@
 #include "InternalQueryables/VectorInternalQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableAliases.hpp"
-#include "Queryables/DequeQueryable.hpp"
-#include "Queryables/ListQueryable.hpp"
-#include "Queryables/MultiSetQueryable.hpp"
-#include "Queryables/SetQueryable.hpp"
-#include "Queryables/VectorQueryable.hpp"
 
 #include "Utilities/StaticBuilders/QueryableStaticBuilder.hpp"
 
@@ -69,20 +64,20 @@ namespace QueryBuilder
         Builders::FromList(items)));
   }
 
-  // template<typename TKey, typename TValue, typename ...TArgs>
-  // inline IQueryable<TKey, std::map, TValue, TArgs...> BuildQueryable2(const std::map<TKey, TValue, TArgs...> & items)
-  // {
-  //   return IQueryable<TKey, std::map, TValue, TArgs...>(
-  //     std::make_shared<QueryableMap<TKey, TValue, TArgs...>>(
-  //       Builders::FromMap2(items)));
-  // }
-  // template<typename TKey, typename TValue>
-  // inline IQueryable<TKey, std::map, TValue> BuildQueryable2(const std::map<TKey, TValue> & items)
-  // {
-  //   return IQueryable<TKey, std::map, TValue>(
-  //     std::make_shared<QueryableMap<TKey, TValue>>(
-  //       QueryableMap<TKey, TValue>::FromMap2(items)));
-  // }
+  template<typename TKey, typename TValue, typename ...TArgs>
+  inline IQueryable<std::pair<const TKey, TValue>, std::map, TArgs...> BuildQueryable2(const std::map<const TKey, TValue, TArgs...> & items)
+  {
+    return IQueryable<std::pair<const TKey, TValue>, std::map, TArgs...>(
+      std::make_shared<QueryableMap<const TKey, TValue, TArgs...>>(
+        Builders::FromMap(items)));
+  }
+  template<typename TKey, typename TValue>
+  inline IQueryable<std::pair<const TKey, TValue>, std::map> BuildQueryable2(const std::map<const TKey, TValue> & items)
+  {
+    return IQueryable<std::pair<const TKey, TValue>, std::map>(
+      std::make_shared<QueryableMap<const TKey, TValue>>(
+        Builders::FromMap(items)));
+  }
 
   template<typename T, typename ...TArgs>
   ISortedQueryable<T, std::multiset, TArgs...> BuildQueryable2(const std::multiset<T, TArgs...> & items)

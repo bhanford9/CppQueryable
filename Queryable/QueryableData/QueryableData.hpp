@@ -112,7 +112,7 @@ public:
     this->rbeginIterator = data.rbeginIterator;
     this->rendIterator = data.rendIterator;
 
-    this->value = data.value;
+    // this->value = data.value;
     this->size = data.size;
 
     this->forceToEnd = data.forceToEnd;
@@ -138,6 +138,7 @@ public:
 
   inline QueryableData<TObj, TIterable, TArgs...> & operator=(IQueryableData<TObj> && other)
   {
+    std::cout << "this shouldn't be necessary" << std::endl;
     this->Clear();
     
     for (const TObj & item : other)
