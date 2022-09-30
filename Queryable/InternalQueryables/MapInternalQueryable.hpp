@@ -7,6 +7,7 @@
 #include "../InternalQueryable.hpp"
 #include "../QueryableType.hpp"
 #include "../QueryableData/QueryableMapData.hpp"
+#include "../QueryableData/WhereQueryableData/WhereQueryableMapData.hpp"
 // #include "../QueryableData/SkipWhileQueryableData/SkipWhileQueryableMapData.hpp"
 // #include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableMapData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
@@ -68,7 +69,11 @@ public:
 
   virtual void Where(std::function<bool(const std::pair<const TKey, TValue> &)> condition) override
   {
-    // this->items = std::move(std::make_shared<WhereQueryableMapData<TKey, TValue, TLessThan, TAllocator>>(std::move(this->items), std::move(condition)));
+    std::cout << "Map Internal Queryable Where Method" << std::endl;
+    this->items = std::move(
+      std::make_shared<WhereQueryableMapData<TKey, TValue, TLessThan, TAllocator>>(
+        std::move(this->items),
+        std::move(condition)));
   }
   
   virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<std::pair<const TKey, TValue>>> && condition) override

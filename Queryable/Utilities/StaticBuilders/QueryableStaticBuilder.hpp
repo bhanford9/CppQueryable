@@ -137,9 +137,9 @@ namespace Builders
   }
 
   template<typename TKey, typename TValue>
-  static Queryable<std::pair<TKey, TValue>, std::map> FromMap(const std::map<TKey, TValue> & iterable)
+  static Queryable<std::pair<const TKey, TValue>, std::map> FromMap(const std::map<TKey, TValue> & iterable)
   {
-    return Queryable<std::pair<TKey, TValue>, std::map>(InternalBuilders::FromMap(iterable));
+    return Queryable<std::pair<const TKey, TValue>, std::map>(InternalBuilders::FromMap(iterable));
   }
 
   template<
@@ -147,9 +147,9 @@ namespace Builders
     typename TValue,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  static Queryable<std::pair<TKey, TValue>, std::map, TLessThan, TAllocator> FromMap(const std::map<TKey, TValue, TLessThan, TAllocator> & iterable)
+  static Queryable<std::pair<const TKey, TValue>, std::map, TLessThan, TAllocator> FromMap(const std::map<TKey, TValue, TLessThan, TAllocator> & iterable)
   {
-    return Queryable<std::pair<TKey, TValue>, std::map, TLessThan, TAllocator>(InternalBuilders::FromMap(iterable));
+    return Queryable<std::pair<const TKey, TValue>, std::map, TLessThan, TAllocator>(InternalBuilders::FromMap(iterable));
   }
 
   template<typename T, typename TLessThan = std::less<T>, typename TAllocator = std::allocator<T>>

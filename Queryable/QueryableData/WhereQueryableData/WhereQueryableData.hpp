@@ -211,9 +211,6 @@ public:
     return *this;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> begin() override
   {
     // std::cout << "WhereQueryableData::begin" << std::endl;
@@ -227,9 +224,6 @@ public:
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> end() override
   {
     // std::cout << "WhereQueryableData::end" << std::endl;
@@ -241,9 +235,6 @@ public:
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rbegin() override
   {
     QueryableIterator<TObj> child = this->original->rbegin();
@@ -256,9 +247,6 @@ public:
     return retVal;
   }
 
-  // we return a copy of ourself, so we need to make sure to set our type
-  // so that the next time its used, the correct underlying iterator is used
-  // may want to consider copy, then set, then move out
   virtual QueryableIterator<TObj> rend() override
   {
     QueryableIterator<TObj> child = this->original->end();

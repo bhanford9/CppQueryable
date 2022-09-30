@@ -100,6 +100,24 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
     ASSERT_TRUE(p.GetGender() == Gender::Female);
 }
 
+TEST_F(WhereFunctionalTest, WhereMapSetFemale)
+{
+  std::map<std::string, Gender> kvps = BuildQueryable2(
+    this->queryable.ToMap<std::string, Gender>(
+      [](Person p) { return p.GetName(); },
+      [](Person p) { return p.GetGender(); }))
+    .Where([](std::pair<const std::string, Gender> kvp) { return kvp.second == Gender::Female; })
+    .ToMap(
+      [](std::pair<const std::string, Gender> kvp) { return kvp.first; },
+      [](std::pair<const std::string, Gender> kvp) { return kvp.second; });
+
+  for (std::pair<const std::string, Gender> kvp : kvps)
+  {
+    std::cout << "Name: " << kvp.first << ", Gender: " << (kvp.second == Gender::Female ? "Female" : "Male") << std::endl;
+    ASSERT_TRUE(kvp.second == Gender::Female);
+  }
+}
+
 TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
   using TCompare = std::function<bool(Person, Person)>;

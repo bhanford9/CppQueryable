@@ -29,7 +29,7 @@ class QueryableMapData : public QueryableData<std::pair<const TKey, T>, std::map
 
   typedef typename std::vector<std::pair<const TKey, T>>::iterator TVectorIterator;
 protected:
-  std::pair<TKey, T> mapValue;
+  std::pair<const TKey, T> mapValue;
   std::shared_ptr<std::map<TKey, T, TCompare, TAllocator>> mapItems;
   
   using TForwardIterator = typename std::map<TKey, T, TCompare, TAllocator>::iterator;
@@ -40,10 +40,10 @@ protected:
   TReverseIterator mapREndIterator;
 
 public:
-  QueryableMapData(TCompare comparator = {})
+  QueryableMapData(TCompare comparator = {}, TAllocator allocator = {})
     : QueryableData<std::pair<const TKey, T>, std::map, TCompare, TAllocator>()
     {
-      std::cout << "queryable map data default constructor" << std::endl;
+      this->mapItems = std::make_shared<std::map<TKey, T, TCompare, TAllocator>>(comparator, allocator);
       this->DefaultInitialize();
     }
 

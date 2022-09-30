@@ -48,18 +48,18 @@ namespace InternalBuilders
     typename TKey,
     typename TValue,
     typename TKeyCompare = std::less<TKey>,
-    typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
-  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  static std::shared_ptr<InternalQueryable<std::pair<const TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
     const std::map<TKey, TValue, TKeyCompare, TAllocator> & map)
   {
-    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<const TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
       std::make_shared<MapInternalQueryable<TKey, TValue, TKeyCompare, TAllocator>>(map));
   }
   template<typename TKey, typename TValue>
-  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map>> FromMap(
+  static std::shared_ptr<InternalQueryable<std::pair<const TKey, TValue>, std::map>> FromMap(
     const std::map<TKey, TValue> & map)
   {
-    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map>>(
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<const TKey, TValue>, std::map>>(
       std::make_shared<MapInternalQueryable<TKey, TValue>>(map));
   }
 
@@ -140,18 +140,18 @@ namespace InternalBuilders
     typename TKey,
     typename TValue,
     typename TKeyCompare = std::less<TKey>,
-    typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
-  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
+    typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
+  static std::shared_ptr<InternalQueryable<std::pair<const TKey, TValue>, std::map, TKeyCompare, TAllocator>> FromMap(
     std::map<TKey, TValue, TKeyCompare, TAllocator> && map)
   {
-    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<const TKey, TValue>, std::map, TKeyCompare, TAllocator>>(
       std::make_shared<MapInternalQueryable<TKey, TValue, TKeyCompare, TAllocator>>(std::move(map)));
   }
   template<typename TKey, typename TValue>
-  static std::shared_ptr<InternalQueryable<std::pair<TKey, TValue>, std::map>> FromMap(
+  static std::shared_ptr<InternalQueryable<std::pair<const TKey, TValue>, std::map>> FromMap(
     std::map<TKey, TValue> && map)
   {
-    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<TKey, TValue>, std::map>>(
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<std::pair<const TKey, TValue>, std::map>>(
       std::make_shared<MapInternalQueryable<TKey, TValue>>(std::move(map)));
   }
 

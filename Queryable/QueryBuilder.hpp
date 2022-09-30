@@ -65,17 +65,17 @@ namespace QueryBuilder
   }
 
   template<typename TKey, typename TValue, typename ...TArgs>
-  inline IQueryable<std::pair<const TKey, TValue>, std::map, TArgs...> BuildQueryable2(const std::map<const TKey, TValue, TArgs...> & items)
+  inline IQueryable<std::pair<const TKey, TValue>, std::map, TArgs...> BuildQueryable2(const std::map<TKey, TValue, TArgs...> & items)
   {
     return IQueryable<std::pair<const TKey, TValue>, std::map, TArgs...>(
-      std::make_shared<QueryableMap<const TKey, TValue, TArgs...>>(
+      std::make_shared<QueryableMap<TKey, TValue, TArgs...>>(
         Builders::FromMap(items)));
   }
   template<typename TKey, typename TValue>
-  inline IQueryable<std::pair<const TKey, TValue>, std::map> BuildQueryable2(const std::map<const TKey, TValue> & items)
+  inline IQueryable<std::pair<const TKey, TValue>, std::map> BuildQueryable2(const std::map<TKey, TValue> & items)
   {
     return IQueryable<std::pair<const TKey, TValue>, std::map>(
-      std::make_shared<QueryableMap<const TKey, TValue>>(
+      std::make_shared<QueryableMap<TKey, TValue>>(
         Builders::FromMap(items)));
   }
 

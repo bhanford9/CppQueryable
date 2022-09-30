@@ -98,7 +98,7 @@ public:
     this->type = type;
   }
 
-  // For std::map, we need TObj to be a std::pair when se iterate, by it needs to come into here as std::map<TKey, TValue
+  // For std::map, we need TObj to be a std::pair when we iterate, by it needs to come into here as std::map<TKey, TValue
   // This will likely mean that these need to stop being possible and instead make them static methods for each underlying type
   // The same will need to be done for QueryableData
   InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
@@ -201,15 +201,15 @@ public:
     typename TValue = TObj,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  inline std::map<const TKey, TValue, TLessThan, TAllocator> ToMap(
+  inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
     std::function<TKey(TObj)> getKey,
     std::function<TValue(TObj)> getValue,
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
-    std::map<const TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
+    std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
-    for (TObj item : *this->items.get())
+    for (const TObj & item : *this->items.get())
     {
       newItems[getKey(item)] = getValue(item);
     }

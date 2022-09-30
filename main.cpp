@@ -12,6 +12,7 @@
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
+#include "Queryable/QueryableData/WhereQueryableData/WhereQueryableMapData.hpp"
 #include "Queryable/QueryableData/QueryableData.hpp"
 // #include "Queryable/IQueryable.hpp"
 #include "Queryable/ISortedQueryable.hpp"
@@ -47,7 +48,13 @@ int main()
 
     auto mapQueryable = BuildQueryable2(myMap);
 
-    mapQueryable.ForEach([&](std::pair<const size_t, std::string> kvp) { std::cout << kvp.first << ", value: " << kvp.second << std::endl; });
+    mapQueryable
+        .Where([&](std::pair<const size_t, std::string> kvp)
+        {
+            // std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
+            return (kvp.first % 2) == 0;
+        })
+        .ForEach([&](std::pair<const size_t, std::string> kvp) { std::cout << kvp.first << ", value: " << kvp.second << std::endl; });
 
     // auto result = mapQueryable.Average();
 
