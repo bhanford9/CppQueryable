@@ -14,11 +14,11 @@
 template<
   typename TObj,
   typename TAllocator>
-class DequeInternalQueryable : public InternalQueryable<TObj, std::deque, TAllocator>
+class DequeInternalQueryable : public InternalQueryable<TObj, std::deque, TObj, TAllocator>
 {
 public:
   DequeInternalQueryable(TAllocator allocator = {}) :
-    InternalQueryable<TObj, std::deque, TAllocator>(QueryableType::Deque)
+    InternalQueryable<TObj, std::deque, TObj, TAllocator>(QueryableType::Deque)
   {
     std::deque<TObj> localDeque(allocator);
     this->items = std::make_shared<QueryableDequeData<TObj, TAllocator>>(localDeque);
@@ -42,15 +42,15 @@ public:
     this->items = other.items;
   }
 
-  DequeInternalQueryable(const InternalQueryable<TObj, std::deque, TAllocator> & other)
-    : InternalQueryable<TObj, std::deque, TAllocator>(other)
+  DequeInternalQueryable(const InternalQueryable<TObj, std::deque, TObj, TAllocator> & other)
+    : InternalQueryable<TObj, std::deque, TObj, TAllocator>(other)
   {
     this->type = QueryableType::Deque;
   }
   DequeInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, std::deque, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, std::deque, TObj, TAllocator>(std::move(queryableData), type)
   {
   }
 

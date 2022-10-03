@@ -13,32 +13,32 @@
 template<
   typename TObj,
   typename ...TArgs>
-using QueryableDeque = Queryable<TObj, std::deque, TArgs...>;
+using QueryableDeque = Queryable<TObj, std::deque, TObj, TArgs...>;
 
 template<
   typename TObj,
   typename ...TArgs>
-using QueryableList = Queryable<TObj, std::list, TArgs...>;
+using QueryableList = Queryable<TObj, std::list, TObj, TArgs...>;
 
 template<
   typename TKey,
   typename TValue,
   typename ...TArgs>
-using QueryableMap = Queryable<std::pair<const TKey, TValue>, std::map, TArgs...>;
+using QueryableMap = Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TArgs...>;
 
 template<
   typename TObj,
   typename ...TArgs>
-using QueryableMultiSet = Queryable<TObj, std::multiset, TArgs...>;
+using QueryableMultiSet = Queryable<TObj, std::multiset, TObj, TArgs...>;
 
 template<
   typename TObj,
   typename ...TArgs>
-using QueryableSet = Queryable<TObj, std::set, TArgs...>;
+using QueryableSet = Queryable<TObj, std::set, TObj, TArgs...>;
 
 template<
   typename TObj,
   typename ...TArgs>
-using QueryableVector = Queryable<TObj, std::vector, TArgs...>;
+using QueryableVector = Queryable<TObj, std::vector, TObj, TArgs...>;
 
 #endif

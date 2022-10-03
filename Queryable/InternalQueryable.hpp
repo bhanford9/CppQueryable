@@ -62,16 +62,39 @@
 // This might be for the best anyway because time/space customizations can be made for each
 // container type to help keep things as close to the std lib as possible
 
+// With the rearchitecture to support Maps, I think TArgs is going to be vital at this layer
+// I am hoping it will be able to hold more than just the TCompare and TAllocator now
+// For Vector, TArgs will hold:
+//   TIterating: TStoring
+//   TAllocator: TAllocator
+// For Set, TArgs will hold:
+//   TIterating: TStoring
+//   TCompare: TCompare
+//   TAllocator: TAllocator
+// For Map, TArgs will hold:
+//   TIterating: std::pair<TKey, TValue>
+//   TValue: TValue
+//   TCompare: TKeyCompare
+//   TAllocator: TPairAllocator
+//
+// Maps are a twisted mess in comparison, but it should end up working nicely 
+//
+// Looks like this wont work because the thing we are iterating over is not TStoring, it is TIterating
+//   When we have a functor passed in, it needs to take the type of TIterating, not TStoring
+// This is going to cause the templated TIterating to propogate all the way up which is going to be ugly
+// The aliases can clean it up, but the return types of the methods will still be of the type 
+//   IBaseQueryable<TStoring, TIterable, TIterating, TArgs...>
 template<
-  typename TObj,
+  typename TStoring,
   template<typename, typename ...> typename TIterable,
+  typename TIterating,
   typename ...TArgs>
 class InternalQueryable
 {
 protected:
   // TODO --> consider making this unique and having all of the
   //   QueryableData's implement their own clones
-  std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> items;
+  std::shared_ptr<QueryableData<TStoring, TIterable, TIterating, TArgs...>> items;
   PersistentContainer persistentContainer;
   QueryableType type;
 
@@ -82,7 +105,7 @@ public:
     this->type = type;
   }
 
-  InternalQueryable(const InternalQueryable<TObj, TIterable, TArgs...> & queryable)
+  InternalQueryable(const InternalQueryable<TStoring, TIterable, TIterating, TArgs...> & queryable)
     : InternalQueryable(queryable.type)
   {
     this->persistentContainer = queryable.persistentContainer;
@@ -91,28 +114,29 @@ public:
   }
 
   InternalQueryable(
-    std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && queryableData,
+    std::shared_ptr<QueryableData<TStoring, TIterable, TIterating, TArgs...>> && queryableData,
     QueryableType type)
   {
     this->items = std::move(queryableData);
     this->type = type;
   }
 
-  // For std::map, we need TObj to be a std::pair when we iterate, by it needs to come into here as std::map<TKey, TValue
+  // For std::map, we need TStoring to be a std::pair when we iterate, by it needs to come into here as std::map<TKey, TValue
   // This will likely mean that these need to stop being possible and instead make them static methods for each underlying type
   // The same will need to be done for QueryableData
-  InternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TArgs... args);
+  InternalQueryable(const QueryableIterator<TIterating> & first, const QueryableIterator<TIterating> & last, TArgs... args);
 
   inline QueryableType GetType()
   {
     return this->type;
   }
 
-  inline InternalQueryable<TObj, TIterable, TArgs...> & GetRealized()
+  inline InternalQueryable<TStoring, TIterable, TIterating, TArgs...> & GetRealized()
   {
     // TODO --> I think I can switch to returning this as QueryableData so casting is not necessary
-    std::shared_ptr<IQueryableData<TObj>> realized = this->items->GetRealizedQueryableData();
-    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    std::shared_ptr<IQueryableData<TIterating>> realized = this->items->GetRealizedQueryableData();
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, TIterable, TIterating, TArgs...>>(
+      this->items->GetRealizedQueryableData());
     return *this;
   }
 
@@ -122,7 +146,7 @@ public:
   }
 
   // TODO --> this may need to be protected for internal use only
-  inline void Add(TObj obj)
+  inline void Add(TIterating obj)
   {
     this->items.get()->Add(obj);
   }
@@ -139,43 +163,43 @@ public:
     return this->items->GetValueCompare();
   }
 
-  inline QueryableIterator<TObj> begin()
+  inline QueryableIterator<TIterating> begin()
   {
     // std::cout << "\nInternalQueryable::begin" << std::endl;
     return this->items->begin();
   }
 
-  inline QueryableIterator<TObj> end()
+  inline QueryableIterator<TIterating> end()
   {
     return this->items->end();
   }
 
-  inline QueryableIterator<TObj> rbegin()
+  inline QueryableIterator<TIterating> rbegin()
   {
     return this->items->rbegin();
   }
 
-  inline QueryableIterator<TObj> rend()
+  inline QueryableIterator<TIterating> rend()
   {
     return this->items->rend();
   }
 
-  inline std::pair<QueryableIterator<TObj>, QueryableIterator<TObj>> ForwardIterators()
+  inline std::pair<QueryableIterator<TIterating>, QueryableIterator<TIterating>> ForwardIterators()
   {
     return {this->begin(), this->end()};
   }
 
-  inline std::pair<QueryableIterator<TObj>, QueryableIterator<TObj>> ReverseIterators()
+  inline std::pair<QueryableIterator<TIterating>, QueryableIterator<TIterating>> ReverseIterators()
   {
     return {this->rbegin(), this->ernd()};
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  inline std::deque<TObj, TAllocator> ToDeque(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  inline std::deque<TStoring, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
-    std::deque<TObj, TAllocator> newItems(allocator);
+    std::deque<TStoring, TAllocator> newItems(allocator);
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems.push_back(item);
     }
@@ -183,12 +207,12 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  inline std::list<TObj, TAllocator> ToList(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  inline std::list<TStoring, TAllocator> ToList(TAllocator allocator = {}) const
   {
-    std::list<TObj, TAllocator> newItems(allocator);
+    std::list<TStoring, TAllocator> newItems(allocator);
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems.push_back(item);
     }
@@ -198,18 +222,18 @@ public:
 
   template<
     typename TKey,
-    typename TValue = TObj,
+    typename TValue = TStoring,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
   inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
-    std::function<TKey(TObj)> getKey,
-    std::function<TValue(TObj)> getValue,
+    std::function<TKey(TStoring)> getKey,
+    std::function<TValue(TStoring)> getValue,
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
     std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
-    for (const TObj & item : *this->items.get())
+    for (const TIterating & item : *this->items.get())
     {
       newItems[getKey(item)] = getValue(item);
     }
@@ -217,12 +241,12 @@ public:
     return newItems;
   }
 
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  inline std::multiset<TObj, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
+  inline std::multiset<TStoring, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::multiset<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
+    std::multiset<TStoring, TLessThan, TAllocator> newItems(lessThan, allocator);
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems.insert(item);
     }
@@ -230,12 +254,12 @@ public:
     return newItems;
   }
 
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  inline std::set<TObj, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
+  inline std::set<TStoring, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::set<TObj, TLessThan, TAllocator> newItems(lessThan, allocator);
+    std::set<TStoring, TLessThan, TAllocator> newItems(lessThan, allocator);
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems.insert(item);
     }
@@ -243,13 +267,13 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  inline std::vector<TObj, TAllocator> ToVector(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  inline std::vector<TStoring, TAllocator> ToVector(TAllocator allocator = {}) const
   {
     // probably be better to use the constructor that takes the iterators as parameters
-    std::vector<TObj, TAllocator> newItems(allocator);
+    std::vector<TStoring, TAllocator> newItems(allocator);
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems.push_back(item);
     }
@@ -258,30 +282,30 @@ public:
   }
 
   // TODO --> determine best way to return
-  template<typename TAllocator = std::allocator<TObj>>
-  DequeInternalQueryable<TObj, TAllocator> ToQueryableDeque(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  DequeInternalQueryable<TStoring, TAllocator> ToQueryableDeque(TAllocator allocator = {}) const
   {
-    std::deque<TObj, TAllocator> copy = this->ToDeque(allocator);
-    DequeInternalQueryable<TObj, TAllocator> retValue(copy);
+    std::deque<TStoring, TAllocator> copy = this->ToDeque(allocator);
+    DequeInternalQueryable<TStoring, TAllocator> retValue(copy);
     return retValue;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::list, TAllocator> ToQueryableList(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  ListInternalQueryable<TStoring, TAllocator> ToQueryableList(TAllocator allocator = {}) const
   {
-    std::list<TObj, TAllocator> copy = this->ToList(allocator);
-    ListInternalQueryable<TObj, TAllocator> retValue(copy);
+    std::list<TStoring, TAllocator> copy = this->ToList(allocator);
+    ListInternalQueryable<TStoring, TAllocator> retValue(copy);
     return retValue;
   }
 
   template<
     typename TKey,
-    typename TValue = TObj,
+    typename TValue = TStoring,
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  inline InternalQueryable<const TKey, std::map, TValue, TLessThan, TAllocator> ToQueryableMap(
-    std::function<TKey(TObj)> getKey,
-    std::function<TValue(TObj)> getValue,
+  inline MapInternalQueryable<TKey, TValue, TLessThan, TAllocator> ToQueryableMap(
+    std::function<TKey(TStoring)> getKey,
+    std::function<TValue(TStoring)> getValue,
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
@@ -289,28 +313,28 @@ public:
     return retValue;
   }
 
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> ToQueryableMultiSet(
+  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
+  MultiSetInternalQueryable<TStoring, TLessThan, TAllocator> ToQueryableMultiSet(
     TLessThan lessThan = {},
     TAllocator allocator = {}) const
   {
-    MultiSetInternalQueryable<TObj, TLessThan, TAllocator> retValue(this->ToMultiSet(lessThan, allocator));
+    MultiSetInternalQueryable<TStoring, TLessThan, TAllocator> retValue(this->ToMultiSet(lessThan, allocator));
     return retValue;
   }
 
-  template<typename TLessThan = std::less<TObj>, typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::set, TLessThan, TAllocator> ToQueryableSet(
+  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
+  SetInternalQueryable<TStoring, TLessThan, TAllocator> ToQueryableSet(
     TLessThan lessThan = {},
     TAllocator allocator = {}) const
   {
-    SetInternalQueryable<TObj, TLessThan, TAllocator> retValue(this->ToSet(lessThan, allocator));
+    SetInternalQueryable<TStoring, TLessThan, TAllocator> retValue(this->ToSet(lessThan, allocator));
     return retValue;
   }
 
-  template<typename TAllocator = std::allocator<TObj>>
-  InternalQueryable<TObj, std::vector, TAllocator> ToQueryableVector(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TStoring>>
+  VectorInternalQueryable<TStoring, TAllocator> ToQueryableVector(TAllocator allocator = {}) const
   {
-    VectorInternalQueryable<TObj, TAllocator> retValue(this->ToVector(allocator));
+    VectorInternalQueryable<TStoring, TAllocator> retValue(this->ToVector(allocator));
     return retValue;
   }
 
@@ -319,7 +343,7 @@ public:
     return this->items.get()->begin() == this->items.get()->end();
   }
 
-  inline TObj & At(int index) const
+  inline TIterating & At(int index) const
   {
     if (index < 0)
     {
@@ -327,7 +351,7 @@ public:
     }
 
     int i = 0;
-    for (TObj & obj : *this->items.get())
+    for (TIterating & obj : *this->items.get())
     {
       if (index == i++)
       {
@@ -343,11 +367,11 @@ public:
     return this->items.get()->Count();
   }
 
-  inline size_t CountIf(std::function<bool(TObj)> condition) const
+  inline size_t CountIf(std::function<bool(TIterating)> condition) const
   {
     size_t count = 0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (condition(item))
       {
@@ -358,19 +382,19 @@ public:
     return count;
   }
 
-  void ForEach(std::function<void(TObj)> action) const
+  void ForEach(std::function<void(TIterating)> action) const
   {
-    for (const TObj & item : *this->items.get())
+    for (const TIterating & item : *this->items.get())
     {
       action(item);
     }
   }
 
-  virtual void Where(std::function<bool(const TObj &)> condition) = 0;
+  virtual void Where(std::function<bool(const TIterating &)> condition) = 0;
 
-  inline TObj First(std::function<bool(TObj)> condition)
+  inline TIterating First(std::function<bool(TIterating)> condition)
   {
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (condition(item))
       {
@@ -381,7 +405,7 @@ public:
     throw std::runtime_error("No item fitting the condition was found.");
   }
 
-  inline TObj First()
+  inline TIterating First()
   {
     if (!this->IsEmpty())
     {
@@ -391,7 +415,7 @@ public:
     throw std::runtime_error("Cannot get first item of empty collection.");
   }
 
-  inline TObj Last(std::function<bool(TObj)> condition)
+  inline TIterating Last(std::function<bool(TIterating)> condition)
   {
     for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); ++it)
     {
@@ -404,7 +428,7 @@ public:
     throw std::runtime_error("No item fitting the condition was found.");
   }
 
-  inline TObj Last()
+  inline TIterating Last()
   {
     if (!this->IsEmpty())
     {
@@ -416,62 +440,62 @@ public:
 
   inline void Skip(int count)
   {
-    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
-      std::make_shared<WhileCondition<TObj, int>>(
+    std::shared_ptr<IWhileCondition<TIterating>> whileCondition =
+      std::make_shared<WhileCondition<TIterating, int>>(
         count,
-        [](const TObj & value, int & current) { return current-- > 0; },
+        [](const TIterating & value, int & current) { return current-- > 0; },
         [count](int current) mutable { return count; });
     
     this->InternalSkipWhile(std::move(whileCondition));
   }
 
-  inline void SkipWhile(std::function<bool(TObj)> && doSkip)
+  inline void SkipWhile(std::function<bool(TIterating)> && doSkip)
   {
-    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
-      std::make_shared<WhileCondition<TObj, int>>(std::move(doSkip));    
+    std::shared_ptr<IWhileCondition<TIterating>> whileCondition =
+      std::make_shared<WhileCondition<TIterating, int>>(std::move(doSkip));    
     this->InternalSkipWhile(std::move(whileCondition));
   }
 
   inline void Take(int count)
   {
-    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
-      std::make_shared<WhileCondition<TObj, int>>(
+    std::shared_ptr<IWhileCondition<TIterating>> whileCondition =
+      std::make_shared<WhileCondition<TIterating, int>>(
         count,
-        [](const TObj & value, int & current) { return current-- > 0; },
+        [](const TIterating & value, int & current) { return current-- > 0; },
         [count](int current) mutable { return count; });
     
     this->InternalTakeWhile(std::move(whileCondition));
   }
 
-  inline void TakeWhile(std::function<bool(TObj)> && doTake)
+  inline void TakeWhile(std::function<bool(TIterating)> && doTake)
   {
-    std::shared_ptr<IWhileCondition<TObj>> whileCondition =
-      std::make_shared<WhileCondition<TObj, int>>(std::move(doTake));    
+    std::shared_ptr<IWhileCondition<TIterating>> whileCondition =
+      std::make_shared<WhileCondition<TIterating, int>>(std::move(doTake));    
     this->InternalTakeWhile(std::move(whileCondition));
   }
 
   // make private?
-  inline virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
-  inline virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) = 0;
+  inline virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<TIterating>> && condition) = 0;
+  inline virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TIterating>> && condition) = 0;
   
   // TODO these can be done with iterators instead
-  // inline bool Equal(const TIterable<TObj, TArgs...> & collection) const
+  // inline bool Equal(const TIterable<TStoring, TArgs...> & collection) const
   // {
   //   return this->Equal(collection, collection.size());
   // }
   //
   // inline bool Equal(
-  //   const TIterable<TObj, TArgs...> & collection,
-  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  //   const TIterable<TStoring, TArgs...> & collection,
+  //   const std::function<bool(TStoring, TStoring)> & areEqual) const
   // {
   //   return this->Equal(collection, collection.size(), areEqual);
   // }
   //
   // // forward_list does not contain size() method and don't want to require it
   // // it would be faster to do a pre-check for containers that do have constant size methods
-  // inline bool Equal(const TIterable<TObj, TArgs...> & collection, size_t collectionSize) const
+  // inline bool Equal(const TIterable<TStoring, TArgs...> & collection, size_t collectionSize) const
   // {
-  //   static_assert(is_equatable<TObj>::value, "Type must be equatable");
+  //   static_assert(is_equatable<TStoring>::value, "Type must be equatable");
   //
   //   bool selfEmpty = this->items->end() == this->items->begin();
   //   bool otherEmpty = collection.end() == collection.begin();
@@ -482,7 +506,7 @@ public:
   //   }
   //
   //   auto localIterator = this->items->begin();
-  //   for (TObj item : collection)
+  //   for (TStoring item : collection)
   //   {
   //     if (localIterator == this->items->end() || !(*localIterator == item))
   //     {
@@ -501,9 +525,9 @@ public:
   // }
   //
   // inline bool Equal(
-  //   const TIterable<TObj, TArgs...> & collection,
+  //   const TIterable<TStoring, TArgs...> & collection,
   //   size_t collectionSize,
-  //   const std::function<bool(TObj, TObj)> & areEqual) const
+  //   const std::function<bool(TStoring, TStoring)> & areEqual) const
   // {
   //   bool selfEmpty = this->items->end() == this->items->begin();
   //   bool otherEmpty = collection.end() == collection.begin();
@@ -514,7 +538,7 @@ public:
   //   }
   //
   //   auto localIterator = this->items->begin();
-  //   for (TObj item : collection)
+  //   for (TStoring item : collection)
   //   {
   //     if (localIterator == this->items->end() || !areEqual(*localIterator, item))
   //     {
@@ -539,9 +563,9 @@ public:
   // unwanted items from being added without needing to immediately apply the
   // where condition to the rest of the inital collection
   // template<template<typename...> typename TContainer>
-  // InternalQueryable<TObj, TContainer>* Concat(TContainer<TObj> collection, bool preserveFilter = false)
+  // InternalQueryable<TStoring, TContainer>* Concat(TContainer<TStoring> collection, bool preserveFilter = false)
   // {
-  //   for (TObj obj : collection)
+  //   for (TStoring obj : collection)
   //   {
   //     if (!preserveFilter || this->items.get()->PassesCondition(obj))
   //     {
@@ -552,22 +576,22 @@ public:
   //   return this;
   // }
 
-  inline double Sum(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  inline double Sum(std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; }) const
   {
     double sum = 0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       sum += retrieveValue(item);
     }
 
     return sum;
   }
-  inline size_t Sum(std::function<size_t(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  inline size_t Sum(std::function<size_t(TIterating)> retrieveValue = [](TIterating value) { return value; }) const
   {
     size_t sum = 0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       sum += retrieveValue(item);
     }
@@ -575,12 +599,12 @@ public:
     return sum;
   }
 
-  inline double Average(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  inline double Average(std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; }) const
   {
     double sum = 0;
     size_t count = 0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       sum += retrieveValue(item);
       count++;
@@ -591,12 +615,12 @@ public:
 
   inline double Average(
     std::function<double(double, size_t)> divisor,
-    std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+    std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; }) const
   {
     double sum  = 0;
     size_t count = 0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       sum += retrieveValue(item);
       count++;
@@ -606,15 +630,15 @@ public:
   }
 
   template<typename T>
-  inline TObj MaxItem(std::function<T(TObj)> retrieveValue) const
+  inline TIterating MaxItem(std::function<T(TIterating)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    T maxValue = T();
-    TObj maxItem = TObj();
+    T maxValue;
+    TIterating maxItem;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -635,20 +659,20 @@ public:
   }
 
   template<typename T>
-  inline T Max(std::function<T(TObj)> retrieveValue) const
+  inline T Max(std::function<T(TIterating)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MaxItem(retrieveValue));
   }
 
-  inline TObj Max() const
+  inline TStoring Max() const
   {
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+    static_assert(is_less_comparable<TIterating>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    TObj maxItem = TObj();
+    TIterating maxItem;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (isFirst)
       {
@@ -665,13 +689,13 @@ public:
   }
 
   template<typename T>
-  inline T Max(std::function<T(TObj)> retrieveValue, T startSeed) const
+  inline T Max(std::function<T(TIterating)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     T max = startSeed;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -684,13 +708,13 @@ public:
     return max;
   }
 
-  inline TObj Max(TObj startSeed) const
+  inline TIterating Max(TIterating startSeed) const
   {
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+    static_assert(is_less_comparable<TIterating>::value, "Type must be 'less than' comparable");
 
-    TObj max = startSeed;
+    TIterating max = startSeed;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (max < item)
       {
@@ -702,15 +726,15 @@ public:
   }
 
   template<typename T>
-  inline TObj MinItem(std::function<T(TObj)> retrieveValue) const
+  inline TIterating MinItem(std::function<T(TIterating)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
     T minValue = T();
-    TObj minItem = TObj();
+    TIterating minItem;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -731,20 +755,20 @@ public:
   }
 
   template<typename T>
-  inline T Min(std::function<T(TObj)> retrieveValue) const
+  inline T Min(std::function<T(TIterating)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     return retrieveValue(this->MinItem(retrieveValue));
   }
 
-  inline TObj Min() const
+  inline TIterating Min() const
   {
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+    static_assert(is_less_comparable<TIterating>::value, "Type must be 'less than' comparable");
 
     bool isFirst = true;
-    TObj minItem = TObj();
+    TIterating minItem;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (isFirst)
       {
@@ -761,13 +785,13 @@ public:
   }
 
   template<typename T>
-  inline T Min(std::function<T(TObj)> retrieveValue, T startSeed) const
+  inline T Min(std::function<T(TIterating)> retrieveValue, T startSeed) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
     T min = startSeed;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       T newValue = retrieveValue(item);
 
@@ -780,13 +804,13 @@ public:
     return min;
   }
 
-  inline TObj Min(TObj startSeed) const
+  inline TIterating Min(TIterating startSeed) const
   {
-    static_assert(is_less_comparable<TObj>::value, "Type must be 'less than' comparable");
+    static_assert(is_less_comparable<TIterating>::value, "Type must be 'less than' comparable");
 
-    TObj min = startSeed;
+    TIterating min = startSeed;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (item < min)
       {
@@ -798,7 +822,7 @@ public:
   }
 
   template<typename T>
-  inline T Range(std::function<T(TObj)> retrieveValue) const
+  inline T Range(std::function<T(TIterating)> retrieveValue) const
   {
     static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
     static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
@@ -807,7 +831,7 @@ public:
     T max;
     T min;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       T value = retrieveValue(item);
 
@@ -832,13 +856,13 @@ public:
     return max - min;
   }
 
-  inline double Range(std::function<double(TObj)> retrieveValue = [](TObj value) { return value; }) const
+  inline double Range(std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; }) const
   {
     bool isFirst = true;
     double max = 0.0;
     double min = 0.0;
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       double value = retrieveValue(item);
 
@@ -864,7 +888,7 @@ public:
   }
 
   // TODO : templates are supposed to be faster than std::function. will require static asserts though
-  inline bool Any(std::function<bool(TObj)> condition) const
+  inline bool Any(std::function<bool(TIterating)> condition) const
   {
     for (auto item = this->items->begin(); item != this->items->end(); ++item)
     {
@@ -878,9 +902,9 @@ public:
   }
 
   // TODO : templates are supposed to be faster than std::function. will require static asserts though
-  inline bool All(std::function<bool(TObj)> condition) const
+  inline bool All(std::function<bool(TIterating)> condition) const
   {
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       if (!condition(item))
       {
@@ -893,18 +917,18 @@ public:
 
   template<typename T, typename ...TNewArgs>
   void Select(
-    std::function<T(TObj)> retrieveValue,
-    SelectBuilder<TObj, T, TIterable, TNewArgs...> * selectBuilder,
+    std::function<T(TIterating)> retrieveValue,
+    SelectBuilder<TIterating, T, TIterable, TNewArgs...> * selectBuilder,
     TNewArgs... iterableParameters)
   {
     selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
   }
 
-  inline bool Contains(const TObj & item) const
+  inline bool Contains(const TIterating & item) const
   {
-    static_assert(is_equatable<TObj>::value, "Item must be equatable");
+    static_assert(is_equatable<TIterating>::value, "Item must be equatable");
 
-    for (const TObj & localItem : *this->items.get())
+    for (const TIterating & localItem : *this->items.get())
     {
       if (localItem == item)
       {
@@ -915,28 +939,28 @@ public:
     return false;
   }
 
-  template<typename TLessThan = std::less<TObj>>
+  template<typename TLessThan = std::less<TStoring>>
   void Sort(TLessThan lessThan = {})
   {
     // sorting is fragile wrt to container type in cpp. Need to have a simple QueryableData container to be able to sort properly
-    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
 
     switch (this->GetType())
     {
       case QueryableType::Deque:
         this->items->Sort(
-          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
-            std::make_shared<DequeSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+          FutureStd::reinterpret_pointer_cast<ISorter<TStoring, TIterable, TArgs...>>(
+            std::make_shared<DequeSorter<TStoring, TLessThan, TArgs...>>(lessThan)));
         break;
       case QueryableType::List:
         this->items->Sort(
-          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
-            std::make_shared<ListSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+          FutureStd::reinterpret_pointer_cast<ISorter<TStoring, TIterable, TArgs...>>(
+            std::make_shared<ListSorter<TStoring, TLessThan, TArgs...>>(lessThan)));
         break;
       case QueryableType::Vector:
         this->items->Sort(
-          FutureStd::reinterpret_pointer_cast<ISorter<TObj, TIterable, TArgs...>>(
-            std::make_shared<VectorSorter<TObj, TLessThan, TArgs...>>(lessThan)));
+          FutureStd::reinterpret_pointer_cast<ISorter<TStoring, TIterable, TArgs...>>(
+            std::make_shared<VectorSorter<TStoring, TLessThan, TArgs...>>(lessThan)));
         break;
       case QueryableType::MultiSet:
       case QueryableType::Set:
@@ -949,35 +973,36 @@ public:
   //   from the std lib containers... Don't need to have them passed in
   template<
     template<typename, typename ...> typename TExceptions,
-    typename TLessThan = std::less<TObj>,
-    typename TAllocator = std::allocator<TObj>,
+    typename TLessThan = std::less<TStoring>,
+    typename TAllocator = std::allocator<TIterating>,
     typename ...TExceptionArgs>
   void Except(
-    const TExceptions<TObj, TExceptionArgs...> & exceptions,
+    const TExceptions<TStoring, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
   {
-    static_assert(can_iterate<TExceptions<TObj, TExceptionArgs...>>::value, "Class must be able to be iterated over");
+    static_assert(can_iterate<TExceptions<TStoring, TExceptionArgs...>>::value, "Class must be able to be iterated over");
 
     // O(nlogn) minimize and sort the exceptions coming in
-    std::set<TObj, TLessThan, TAllocator> sortedExceptions(
+    std::set<TStoring, TLessThan, TAllocator> sortedExceptions(
       exceptions.begin(),
       exceptions.end(),
       lessThan,
       allocator);
 
     // TODO --> This should not be necessary and I am pretty sure there is a bug somewhere causing the need for it
-    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TObj, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, TIterable, TIterating, TArgs...>>(
+      this->items->GetRealizedQueryableData());
 
     // O(m) make a copy of current items
-    TIterable<TObj, TArgs...> copy(this->items->begin(), this->items->end());
+    TIterable<TStoring, TArgs...> copy(this->items->begin(), this->items->end());
 
     // O(m) clear current items (may be better to re-instantiate instead?)
     this->items->Clear();
 
     auto last = sortedExceptions.end();
     // O(mlogn) add back any that don't exist within exceptions
-    for (const TObj & item : copy)
+    for (const TIterating & item : copy)
     {
       if (sortedExceptions.find(item) == last)
       {
@@ -999,8 +1024,8 @@ public:
 
     // TODO --> if  nXm < max(nlog(n), mlog(m)) then sorting is not worth it
     // TODO --> don't call toVector if the type is already a random access iterator
-    // std::vector<TObj> localSorted = this->Sort(comparator).ToVector();
-    // std::vector<TObj> inputSorted = collection->ToVector();
+    // std::vector<TStoring> localSorted = this->Sort(comparator).ToVector();
+    // std::vector<TStoring> inputSorted = collection->ToVector();
     // std::sort(inputSorted.begin(), inputSorted.end(), comparator);
     //
     // int localCount = localSorted.size();
@@ -1011,23 +1036,23 @@ public:
     //   return *this;
     // }
     //
-    // std::vector<TObj> result;
+    // std::vector<TStoring> result;
     // int localIndex = 0;
     // int inputIndex = 0;
     //
-    // std::function<bool(TObj, TObj)> equal = [&](TObj a, TObj b)
+    // std::function<bool(TStoring, TStoring)> equal = [&](TStoring a, TStoring b)
     // {
     //   return !comparator(a, b) && !comparator(b, a);
     // };
     //
     // while (localIndex < localCount && inputIndex < inputCount)
     // {
-    //   TObj localItem = localSorted[localIndex];
-    //   TObj inputItem = inputSorted[inputIndex];
+    //   TStoring localItem = localSorted[localIndex];
+    //   TStoring inputItem = inputSorted[inputIndex];
     //
     //   if (equal(localItem, inputItem))
     //   {
-    //     TObj equalValue = localItem;
+    //     TStoring equalValue = localItem;
     //
     //     while (++localIndex < localCount && equal(equalValue, localSorted[localIndex]));
     //     while (++inputIndex < inputCount && equal(equalValue, inputSorted[inputIndex]));
@@ -1062,8 +1087,8 @@ public:
   // TODO: changing std::function to a templated member is supposed to be faster
   // TODO: not sure I like this implementation:
   //   - No guarantee that we can create a T (i.e., default constructor)
-  template<typename T = TObj>
-  inline T Aggregate(const std::function<T(T, TObj)> & accumulate, T * seed = NULL)
+  template<typename T = TIterating>
+  inline T Aggregate(const std::function<T(T, TIterating)> & accumulate, T * seed = NULL)
   {
     T aggregatedValue;
 
@@ -1072,7 +1097,7 @@ public:
       aggregatedValue = *seed;
     }
 
-    for (TObj item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       aggregatedValue = accumulate(aggregatedValue, item);
     }
@@ -1081,9 +1106,9 @@ public:
   }
 
   // TODO: changing std::function to a templated member is supposed to be faster
-  template<typename TFinalized, typename T = TObj>
+  template<typename TFinalized, typename T = TIterating>
   inline TFinalized Aggregate(
-    const std::function<T(T, TObj)> & accumulate,
+    const std::function<T(T, TIterating)> & accumulate,
     const std::function<TFinalized(T)> & finalizer,
     T * seed = NULL)
   {
@@ -1096,9 +1121,9 @@ public:
   //   typename TResult>
   // InternalQueryable<TResult> & Join(
   //   InternalQueryable<TJoinObj> & collection,
-  //   std::function<TJoinOn(TObj)> getLocalJoinOn,
+  //   std::function<TJoinOn(TStoring)> getLocalJoinOn,
   //   std::function<TJoinOn(TJoinObj)> getInputJoinOn,
-  //   std::function<TResult(TObj, TJoinObj)> createFrom,
+  //   std::function<TResult(TStoring, TJoinObj)> createFrom,
   //   std::function<bool(TResult, TResult)> outCompare,
   //   QueryableType returnType = QueryableType::Default)
   // {
@@ -1123,7 +1148,7 @@ public:
   //   {
   //     int inputIndex = 0;
   //
-  //     for (TObj localItem : *this->items.get())
+  //     for (TStoring localItem : *this->items.get())
   //     {
   //       TJoinOn localValue;
   //       TJoinOn inputValue;
@@ -1173,7 +1198,7 @@ public:
   //   this->persistentContainer.Set(data);
   //   std::shared_ptr<TReturn> result = this->persistentContainer.GetAs<TReturn>();
   //
-  //   for (TObj item : *this->items.get())
+  //   for (TStoring item : *this->items.get())
   //   {
   //     result.get()->Add(static_cast<TOut>(item));
   //   }

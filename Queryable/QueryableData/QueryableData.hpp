@@ -21,17 +21,18 @@
 #include "../../DataStructures/Person.hpp"
 
 template<
-  typename TObj,
+  typename TStoring,
   template<typename, typename ...> typename TIterable,
+  typename TIterating,
   typename ...TArgs>
-class QueryableData : public IQueryableData<TObj>
+class QueryableData : public IQueryableData<TIterating>
 {
 public:
-  using TForwardIterator = typename TIterable<TObj, TArgs...>::iterator;
-  using TReverseIterator = typename TIterable<TObj, TArgs...>::reverse_iterator;
-  static_assert(can_iterate<TIterable<TObj, TArgs...>>::value, "Class must be able to be iterated over");
+  using TForwardIterator = typename TIterable<TStoring, TArgs...>::iterator;
+  using TReverseIterator = typename TIterable<TStoring, TArgs...>::reverse_iterator;
+  static_assert(can_iterate<TIterable<TStoring, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  TObj value;
+  TIterating value;
   size_t size = 0;
   bool forceToEnd = false;
   bool forceToBegin = false;
@@ -44,7 +45,7 @@ protected:
   //
   //  - there is a lot of coupling of the data and the actions on that data in here. might want
   //    to split them apart better
-  std::shared_ptr<TIterable<TObj, TArgs...>> items;
+  std::shared_ptr<TIterable<TStoring, TArgs...>> items;
 
   TForwardIterator beginIterator;
   TForwardIterator endIterator;
@@ -65,12 +66,12 @@ public:
   QueryableData()
   {
     // std::cout << "QueryableData Constructor 1" << std::endl;
-    this->items = std::make_shared<TIterable<TObj, TArgs...>>();
+    this->items = std::make_shared<TIterable<TStoring, TArgs...>>();
     this->DefaultInitialize();
   }
-  QueryableData(const TIterable<TObj, TArgs...> & items)
+  QueryableData(const TIterable<TStoring, TArgs...> & items)
   {
-    this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
+    this->items = std::make_shared<TIterable<TStoring, TArgs...>>(items);
     this->DefaultInitialize();
 
     // TODO --> almost all containers have a size method. Either require that the
@@ -84,10 +85,10 @@ public:
     this->size = this->items->size();
     // std::cout << "QueryableData Constructor 2: " << this->size << std::endl;
   }
-  QueryableData(TIterable<TObj, TArgs...> && items)
+  QueryableData(TIterable<TStoring, TArgs...> && items)
   {
     // std::cout << "\nQueryableData Constructor 3" << std::endl;
-    this->items = std::make_shared<TIterable<TObj, TArgs...>>(items);
+    this->items = std::make_shared<TIterable<TStoring, TArgs...>>(items);
 
     this->DefaultInitialize();
 
@@ -102,7 +103,7 @@ public:
     this->size = items.size();
     // std::cout << "QueryableData Constructor 3: " << this->size << std::endl;
   }
-  QueryableData(const QueryableData<TObj, TIterable, TArgs...> & data)
+  QueryableData(const QueryableData<TStoring, TIterable, TIterating, TArgs...> & data)
   {
     // std::cout << "QueryableData Copy Constructor 2: " << data.size << std::endl;
     this->items = data.items;
@@ -119,7 +120,7 @@ public:
     this->forceToBegin = data.forceToBegin;
   }
 
-  QueryableData(std::shared_ptr<QueryableData<TObj, TIterable, TArgs...>> && data)
+  QueryableData(std::shared_ptr<QueryableData<TStoring, TIterable, TIterating, TArgs...>> && data)
   {
       throw;
     this->items = std::move(data->items);
@@ -130,18 +131,18 @@ public:
     this->forceToBegin = data->forceToBegin;
   }
 
-  QueryableData(QueryableIterator<TObj> first, QueryableIterator<TObj> last, TArgs... args) :
-    items(std::make_shared<TIterable<TObj, TArgs...>>(first, last, args...))
+  QueryableData(QueryableIterator<TIterating> first, QueryableIterator<TIterating> last, TArgs... args) :
+    items(std::make_shared<TIterable<TStoring, TArgs...>>(first, last, args...))
   {
       throw;
   }
 
-  inline QueryableData<TObj, TIterable, TArgs...> & operator=(IQueryableData<TObj> && other)
+  inline QueryableData<TStoring, TIterable, TIterating, TArgs...> & operator=(IQueryableData<TIterating> && other)
   {
     std::cout << "this shouldn't be necessary" << std::endl;
     this->Clear();
     
-    for (const TObj & item : other)
+    for (const TIterating & item : other)
     {
       this->Add(item);
     }
@@ -194,7 +195,7 @@ public:
   }
 
 // pass a boolean by reference and return true/false whether force to end has been set
-  virtual IQueryableData<TObj> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
+  virtual IQueryableData<TIterating> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "[NEXT] underlying begin value before" << std::endl;
 
@@ -218,7 +219,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Prev(IteratorType type, size_t & iterated) override
+  virtual IQueryableData<TIterating> & Prev(IteratorType type, size_t & iterated) override
   {
     // std::cout << "[PREV] underlying begin value before: " << std::endl;
 
@@ -234,7 +235,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Add(int addend, IteratorType type) override
+  virtual IQueryableData<TIterating> & Add(int addend, IteratorType type) override
   {
     // std::cout << "\nBAD" << std::endl;
     // this is the worse possible way to implement this and should be overriden for random access iterators
@@ -249,7 +250,7 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TObj> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<TIterating> & Subtract(int subtrahend, IteratorType type) override
   {
     // this is the worse possible way to implement this and should be overriden for random access iterators
     switch (type)
@@ -263,7 +264,7 @@ public:
     return *this;
   }
 
-  virtual void Add(TObj obj) override = 0;
+  virtual void Add(TIterating obj) override = 0;
 
   virtual size_t Count() override
   {
@@ -281,53 +282,53 @@ public:
     this->size = 0;
   }
 
-  virtual std::shared_ptr<IQueryableData<TObj>> GetRealizedQueryableData() override
+  virtual std::shared_ptr<IQueryableData<TIterating>> GetRealizedQueryableData() override
   {
     return this->Clone();
   }
 
-  virtual void Sort(std::shared_ptr<ISorter<TObj, TIterable, TArgs...>> sorter)
+  virtual void Sort(std::shared_ptr<ISorter<TStoring, TIterable, TArgs...>> sorter)
   {
     //   std::cout << "in default sorter" << std::endl;
     sorter->Sort(*this->items);
   }
 
-  virtual QueryableIterator<TObj> begin() override
+  virtual QueryableIterator<TIterating> begin() override
   {
     // std::cout << "Standard Queryable begin" << std::endl;
     this->beginIterator = this->items->begin();
     this->forceToBegin = false;
     this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginForward);
+    QueryableIterator<TIterating> retVal(this->Clone(), 0, IteratorType::BeginForward);
     return retVal;
   }
 
-  virtual QueryableIterator<TObj> end() override
+  virtual QueryableIterator<TIterating> end() override
   {
     // std::cout << "Standard Queryable end" << std::endl;
     this->endIterator = this->items->end();
     this->forceToBegin = false;
     this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndForward);
+    QueryableIterator<TIterating> retVal(this->Clone(), this->size, IteratorType::EndForward);
 
     return retVal;
   }
 
-  virtual QueryableIterator<TObj> rbegin() override
+  virtual QueryableIterator<TIterating> rbegin() override
   {
     this->rbeginIterator = this->items->rbegin();
     this->forceToBegin = false;
     this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), 0, IteratorType::BeginReverse);
+    QueryableIterator<TIterating> retVal(this->Clone(), 0, IteratorType::BeginReverse);
     return retVal;
   }
 
-  virtual QueryableIterator<TObj> rend() override
+  virtual QueryableIterator<TIterating> rend() override
   {
     this->rendIterator = this->items->rend();
     this->forceToBegin = false;
     this->forceToEnd = false;
-    QueryableIterator<TObj> retVal(this->Clone(), this->size, IteratorType::EndReverse);
+    QueryableIterator<TIterating> retVal(this->Clone(), this->size, IteratorType::EndReverse);
     return retVal;
   }
 

@@ -10,23 +10,23 @@
 #include "WhereQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class WhereQueryableDequeData : public WhereQueryableData<TObj, std::deque, TAllocator>
+class WhereQueryableDequeData : public WhereQueryableData<TObj, std::deque, TObj, TAllocator>
 {
 public:
   WhereQueryableDequeData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableDequeData(
-    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> && data,
     std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableDequeData(const WhereQueryableDequeData<TObj, TAllocator> & other)
-    : WhereQueryableData<TObj, std::deque, TAllocator>(other)
+    : WhereQueryableData<TObj, std::deque, TObj, TAllocator>(other)
   {
   }
 

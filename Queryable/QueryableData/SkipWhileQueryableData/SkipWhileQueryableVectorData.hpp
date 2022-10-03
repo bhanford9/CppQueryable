@@ -10,32 +10,32 @@
 #include "SkipWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class SkipWhileQueryableVectorData : public SkipWhileQueryableData<TObj, std::vector, TAllocator>
+class SkipWhileQueryableVectorData : public SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>
 {
 public:
   SkipWhileQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Vector Data Constructor 0" << std::endl;
   }
   SkipWhileQueryableVectorData(
-    std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Vector Data Constructor 1" << std::endl;
   }
   SkipWhileQueryableVectorData(
-    const std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::vector, TAllocator>(data, std::move(condition))
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Vector Data Constructor 3" << std::endl;
   }
   SkipWhileQueryableVectorData(const SkipWhileQueryableVectorData<TObj, TAllocator> & other)
-    : SkipWhileQueryableData<TObj, std::vector, TAllocator>(other)
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
   {
     // std::cout << "SkipWhileQueryable Vector Data Constructor 2" << std::endl;
   }

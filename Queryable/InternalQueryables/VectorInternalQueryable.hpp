@@ -14,11 +14,11 @@
 #include "../Utilities/IWhileCondition.hpp"
 
 template<typename TObj, typename TAllocator>
-class VectorInternalQueryable : public InternalQueryable<TObj, std::vector, TAllocator>
+class VectorInternalQueryable : public InternalQueryable<TObj, std::vector, TObj, TAllocator>
 {
 public:
   VectorInternalQueryable(TAllocator allocator = {}) :
-    InternalQueryable<TObj, std::vector, TAllocator>(QueryableType::Vector)
+    InternalQueryable<TObj, std::vector, TObj, TAllocator>(QueryableType::Vector)
   {
     std::vector<TObj> localVector(allocator);
     this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>(localVector);
@@ -31,21 +31,21 @@ public:
   }
 
   VectorInternalQueryable(const VectorInternalQueryable<TObj, TAllocator> & other)
-    : InternalQueryable<TObj, std::vector, TAllocator>(other)
+    : InternalQueryable<TObj, std::vector, TObj, TAllocator>(other)
   {
     this->type = QueryableType::Vector;
   }
 
-  VectorInternalQueryable(const InternalQueryable<TObj, std::vector, TAllocator> & other)
-    : InternalQueryable<TObj, std::vector, TAllocator>(other)
+  VectorInternalQueryable(const InternalQueryable<TObj, std::vector, TObj, TAllocator> & other)
+    : InternalQueryable<TObj, std::vector, TObj, TAllocator>(other)
   {
     this->type = QueryableType::Vector;
   }
   
   VectorInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, std::vector, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, std::vector, TObj, TAllocator>(std::move(queryableData), type)
   {
   }
 

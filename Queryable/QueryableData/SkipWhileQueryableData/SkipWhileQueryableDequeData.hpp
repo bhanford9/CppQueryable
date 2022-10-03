@@ -10,32 +10,32 @@
 #include "SkipWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class SkipWhileQueryableDequeData : public SkipWhileQueryableData<TObj, std::deque, TAllocator>
+class SkipWhileQueryableDequeData : public SkipWhileQueryableData<TObj, std::deque, TObj, TAllocator>
 {
 public:
   SkipWhileQueryableDequeData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Deque Data Constructor 0" << std::endl;
   }
   SkipWhileQueryableDequeData(
-    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Deque Data Constructor 1" << std::endl;
   }
   SkipWhileQueryableDequeData(
-    const std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::deque, TAllocator>(data, std::move(condition))
+    : SkipWhileQueryableData<TObj, std::deque, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "SkipWhileQueryable Deque Data Constructor 3" << std::endl;
   }
   SkipWhileQueryableDequeData(const SkipWhileQueryableDequeData<TObj, TAllocator> & other)
-    : SkipWhileQueryableData<TObj, std::deque, TAllocator>(other)
+    : SkipWhileQueryableData<TObj, std::deque, TObj, TAllocator>(other)
   {
     // std::cout << "SkipWhileQueryable Deque Data Constructor 2" << std::endl;
   }

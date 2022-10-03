@@ -51,12 +51,12 @@ public:
     this->items = other.items;
   }
 
-  SetInternalQueryable(const InternalQueryable<TObj, std::set, TLessThan, TAllocator> & other)
+  SetInternalQueryable(const InternalQueryable<TObj, std::set, TObj, TLessThan, TAllocator> & other)
     : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(other, QueryableType::Set)
   {
   }
   SetInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::set, TLessThan, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, std::set, TObj, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
       : SortedInternalQueryable<TObj, std::set, TLessThan, TAllocator>(std::move(queryableData), type)
   {

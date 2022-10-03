@@ -38,12 +38,12 @@ public:
     this->items = other.items;
   }
 
-  MultiSetInternalQueryable(const InternalQueryable<TObj, std::multiset, TLessThan, TAllocator> & other)
+  MultiSetInternalQueryable(const InternalQueryable<TObj, std::multiset, TObj, TLessThan, TAllocator> & other)
     : SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(other, QueryableType::MultiSet)
   {
   }
   MultiSetInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::multiset, TLessThan, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, std::multiset, TObj, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
       : SortedInternalQueryable<TObj, std::multiset, TLessThan, TAllocator>(std::move(queryableData), type)
   {

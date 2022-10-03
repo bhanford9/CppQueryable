@@ -17,11 +17,14 @@ template<
   typename TValue,
   typename TLessThan,
   typename TAllocator>
-class MapInternalQueryable : public InternalQueryable<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator>
+class MapInternalQueryable : public InternalQueryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>
 {
 public:
   MapInternalQueryable(TLessThan lessThan = {}, TAllocator allocator = {}) :
-    InternalQueryable<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator>(QueryableType::Map, lessThan, allocator)
+    InternalQueryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>(
+      QueryableType::Map,
+      lessThan,
+      allocator)
   {
     std::map<TKey, TValue, TLessThan, TAllocator> localMap(lessThan, allocator);
     this->items = std::make_shared<QueryableMapData<TKey, TValue, TLessThan, TAllocator>>(localMap);
@@ -45,14 +48,15 @@ public:
     this->items = other.items;
   }
 
-  MapInternalQueryable(const InternalQueryable<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator> & other)
-    : InternalQueryable<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator>(other, QueryableType::Map)
+  MapInternalQueryable(
+    const InternalQueryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator> & other)
+      : InternalQueryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>(other, QueryableType::Map)
   {
   }
   MapInternalQueryable(
-    std::shared_ptr<QueryableData<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<std::pair<const TKey, TValue>, std::map,TLessThan, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>(std::move(queryableData), type)
   {
   }
 

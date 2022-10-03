@@ -12,34 +12,34 @@ template<
   template<typename, typename ...> typename TIterable,
   typename TAllocator = std::allocator<T>,
   typename ...TArgs>
-class RandomAccessQueryableData : public QueryableData<T, TIterable, TAllocator, TArgs...>
+class RandomAccessQueryableData : public QueryableData<T, TIterable, T, TAllocator, TArgs...>
 {
 public:
   RandomAccessQueryableData() :
-    QueryableData<T, TIterable, TAllocator, TArgs...>()
+    QueryableData<T, TIterable, T, TAllocator, TArgs...>()
   {
   }
 
   RandomAccessQueryableData(
     const TIterable<T, TAllocator, TArgs...> & items) :
-    QueryableData<T, TIterable, TAllocator, TArgs...>(items)
+    QueryableData<T, TIterable, T, TAllocator, TArgs...>(items)
   {
   }
 
   RandomAccessQueryableData(
     TIterable<T, TAllocator, TArgs...> && items) :
-    QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(items))
+    QueryableData<T, TIterable, T, TAllocator, TArgs...>(std::move(items))
   {
   }
 
   RandomAccessQueryableData(
     const RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> & data) :
-    QueryableData<T, TIterable, TAllocator, TArgs...>(data)
+    QueryableData<T, TIterable, T, TAllocator, TArgs...>(data)
   {
   }
 
   RandomAccessQueryableData(RandomAccessQueryableData<T, TIterable, TAllocator, TArgs...> && data)
-    : QueryableData<T, TIterable, TAllocator, TArgs...>(std::move(data))
+    : QueryableData<T, TIterable, T, TAllocator, TArgs...>(std::move(data))
   {
   }
 

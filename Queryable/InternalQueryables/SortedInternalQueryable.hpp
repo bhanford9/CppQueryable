@@ -13,43 +13,37 @@ template<
   template<typename, typename ...> typename TIterable,
   typename TLessThan,
   typename TAllocator>
-class SortedInternalQueryable : public InternalQueryable<TObj, TIterable, TLessThan, TAllocator>
+class SortedInternalQueryable : public InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>
 {
 protected:
   SortedInternalQueryable() { }
 
 public:
   SortedInternalQueryable(QueryableType type, TLessThan lessThan = {}, TAllocator allocator = {}) :
-    InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(type)
+    InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>(type)
   {
   }
 
   SortedInternalQueryable(
-    const InternalQueryable<TObj, TIterable, TLessThan, TAllocator> & other,
+    const InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator> & other,
     QueryableType type)
-    : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(other)
+    : InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>(other)
   {
     this->type = type;
   }
   SortedInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, TIterable, TLessThan, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, TIterable, TObj, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>(std::move(queryableData), type)
   {
   }
   SortedInternalQueryable(
     std::shared_ptr<QueryableSetData<TObj, TLessThan, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>(std::move(queryableData), type)
   {
     std::cout << "Sorted Move Constructor" << std::endl;
   }
-  // SortedInternalQueryable(
-  //   const QueryableSetData<TObj, TLessThan, TAllocator> & queryableData,
-  //   QueryableType type)
-  //     : InternalQueryable<TObj, TIterable, TLessThan, TAllocator>(std::make_shared<>(queryableData))
-  // {
-  // }
 };
 
 #endif

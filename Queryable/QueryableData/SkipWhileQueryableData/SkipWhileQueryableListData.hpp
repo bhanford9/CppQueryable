@@ -10,32 +10,32 @@
 #include "SkipWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class SkipWhileQueryableListData : public SkipWhileQueryableData<TObj, std::list, TAllocator>
+class SkipWhileQueryableListData : public SkipWhileQueryableData<TObj, std::list, TObj, TAllocator>
 {
 public:
   SkipWhileQueryableListData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable List Data Constructor 0" << std::endl;
   }
   SkipWhileQueryableListData(
-    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "SkipWhileQueryable List Data Constructor 1" << std::endl;
   }
   SkipWhileQueryableListData(
-    const std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::list, TAllocator>(data, std::move(condition))
+    : SkipWhileQueryableData<TObj, std::list, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "SkipWhileQueryable List Data Constructor 3" << std::endl;
   }
   SkipWhileQueryableListData(const SkipWhileQueryableListData<TObj, TAllocator> & other)
-    : SkipWhileQueryableData<TObj, std::list, TAllocator>(other)
+    : SkipWhileQueryableData<TObj, std::list, TObj, TAllocator>(other)
   {
     // std::cout << "SkipWhileQueryable List Data Constructor 2" << std::endl;
   }

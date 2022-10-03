@@ -10,32 +10,32 @@
 #include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class TakeWhileQueryableDequeData : public TakeWhileQueryableData<TObj, std::deque, TAllocator>
+class TakeWhileQueryableDequeData : public TakeWhileQueryableData<TObj, std::deque, TObj, TAllocator>
 {
 public:
   TakeWhileQueryableDequeData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Deque Data Constructor 0" << std::endl;
   }
   TakeWhileQueryableDequeData(
-    std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Deque Data Constructor 1" << std::endl;
   }
   TakeWhileQueryableDequeData(
-    const std::shared_ptr<QueryableData<TObj, std::deque, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::deque, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(data, std::move(condition))
+    : TakeWhileQueryableData<TObj, std::deque, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Deque Data Constructor 3" << std::endl;
   }
   TakeWhileQueryableDequeData(const TakeWhileQueryableDequeData<TObj, TAllocator> & other)
-    : TakeWhileQueryableData<TObj, std::deque, TAllocator>(other)
+    : TakeWhileQueryableData<TObj, std::deque, TObj, TAllocator>(other)
   {
     // std::cout << "TakeWhileQueryable Deque Data Constructor 2" << std::endl;
   }

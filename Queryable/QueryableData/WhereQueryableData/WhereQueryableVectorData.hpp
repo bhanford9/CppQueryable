@@ -10,32 +10,32 @@
 #include "WhereQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class WhereQueryableVectorData : public WhereQueryableData<TObj, std::vector, TAllocator>
+class WhereQueryableVectorData : public WhereQueryableData<TObj, std::vector, TObj, TAllocator>
 {
 public:
   WhereQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::function<bool(TObj)> && condition)
-    : WhereQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "WhereQueryable Vector Data Constructor 0" << std::endl;
   }
   WhereQueryableVectorData(
-    std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> && data,
     std::function<bool(TObj)> && condition)
-    : WhereQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "WhereQueryable Vector Data Constructor 1" << std::endl;
   }
   WhereQueryableVectorData(
-    const std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> & data,
     std::function<bool(TObj)> && condition)
-    : WhereQueryableData<TObj, std::vector, TAllocator>(data, std::move(condition))
+    : WhereQueryableData<TObj, std::vector, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "WhereQueryable Vector Data Constructor 3" << std::endl;
   }
   WhereQueryableVectorData(const WhereQueryableVectorData<TObj, TAllocator> & other)
-    : WhereQueryableData<TObj, std::vector, TAllocator>(other)
+    : WhereQueryableData<TObj, std::vector, TObj, TAllocator>(other)
   {
     // std::cout << "WhereQueryable Vector Data Constructor 2" << std::endl;
   }

@@ -10,32 +10,32 @@
 #include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class TakeWhileQueryableListData : public TakeWhileQueryableData<TObj, std::list, TAllocator>
+class TakeWhileQueryableListData : public TakeWhileQueryableData<TObj, std::list, TObj, TAllocator>
 {
 public:
   TakeWhileQueryableListData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable List Data Constructor 0" << std::endl;
   }
   TakeWhileQueryableListData(
-    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable List Data Constructor 1" << std::endl;
   }
   TakeWhileQueryableListData(
-    const std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::list, TAllocator>(data, std::move(condition))
+    : TakeWhileQueryableData<TObj, std::list, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "TakeWhileQueryable List Data Constructor 3" << std::endl;
   }
   TakeWhileQueryableListData(const TakeWhileQueryableListData<TObj, TAllocator> & other)
-    : TakeWhileQueryableData<TObj, std::list, TAllocator>(other)
+    : TakeWhileQueryableData<TObj, std::list, TObj, TAllocator>(other)
   {
     // std::cout << "TakeWhileQueryable List Data Constructor 2" << std::endl;
   }

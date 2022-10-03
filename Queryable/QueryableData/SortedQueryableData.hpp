@@ -12,29 +12,29 @@ template<
   typename TCompare = std::less<T>,
   typename TAllocator = std::allocator<T>,
   typename ...TArgs>
-class SortedQueryableData : public QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>
+class SortedQueryableData : public QueryableData<T, TIterable, T, TCompare, TAllocator, TArgs...>
 {
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   SortedQueryableData(TCompare comparator = {})
-    : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>()
+    : QueryableData<T, TIterable, T, TCompare, TAllocator, TArgs...>()
   {
     std::cout << "BAD: SortedQueryableData default constructor" << std::endl;
     this->items = TIterable<T, TCompare, TAllocator, TArgs...>(comparator);
   }
 
   SortedQueryableData(const TIterable<T, TCompare, TAllocator, TArgs...> & items)
-    : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(items)
+    : QueryableData<T, TIterable, T, TCompare, TAllocator, TArgs...>(items)
   {
   }
 
   SortedQueryableData(TIterable<T, TCompare, TAllocator, TArgs...> && items)
-    : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(std::move(items))
+    : QueryableData<T, TIterable, T, TCompare, TAllocator, TArgs...>(std::move(items))
   {
   }
 
   SortedQueryableData(const SortedQueryableData<T, TIterable, TCompare, TAllocator, TArgs...> & data)
-    : QueryableData<T, TIterable, TCompare, TAllocator, TArgs...>(data)
+    : QueryableData<T, TIterable, T, TCompare, TAllocator, TArgs...>(data)
   {
   }
 

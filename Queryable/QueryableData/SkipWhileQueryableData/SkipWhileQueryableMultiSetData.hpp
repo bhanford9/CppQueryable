@@ -11,23 +11,23 @@ template<
   typename TObj,
   typename TCompare = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class SkipWhileQueryableMultiSetData : public SkipWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>
+class SkipWhileQueryableMultiSetData : public SkipWhileQueryableData<TObj, std::multiset, TObj, TCompare, TAllocator>
 {
 public:
   SkipWhileQueryableMultiSetData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::multiset, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   SkipWhileQueryableMultiSetData(
-    std::shared_ptr<QueryableData<TObj, std::multiset, TCompare, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::multiset, TObj, TCompare, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : SkipWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : SkipWhileQueryableData<TObj, std::multiset, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   SkipWhileQueryableMultiSetData(const SkipWhileQueryableMultiSetData<TObj, TCompare, TAllocator> & other)
-    : SkipWhileQueryableData<TObj, std::multiset, TCompare, TAllocator>(other)
+    : SkipWhileQueryableData<TObj, std::multiset, TObj, TCompare, TAllocator>(other)
   {
   }
 

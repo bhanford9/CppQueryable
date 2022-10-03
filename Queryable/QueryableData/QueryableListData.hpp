@@ -10,7 +10,7 @@
 template<
   typename T,
   typename TAllocator = std::allocator<T>>
-class QueryableListData : public QueryableData<T, std::list, TAllocator>
+class QueryableListData : public QueryableData<T, std::list, T, TAllocator>
 {
 protected:
 
@@ -19,19 +19,19 @@ protected:
     items.push_back(item);
   }
 public:
-  QueryableListData() : QueryableData<T, std::list, TAllocator>() { }
+  QueryableListData() : QueryableData<T, std::list, T, TAllocator>() { }
 
   // QueryableListData(std::list<T, TAllocator> items)
   //   : QueryableData<T, std::list, TAllocator>(items) { }
 
   QueryableListData(const std::list<T, TAllocator> & items)
-    : QueryableData<T, std::list, TAllocator>(items) { }
+    : QueryableData<T, std::list, T, TAllocator>(items) { }
 
   QueryableListData(std::list<T, TAllocator> && items)
-    : QueryableData<T, std::list, TAllocator>(std::move(items)) { }
+    : QueryableData<T, std::list, T, TAllocator>(std::move(items)) { }
 
   QueryableListData(const QueryableListData& data)
-    : QueryableData<T, std::list, TAllocator>(data) { }
+    : QueryableData<T, std::list, T, TAllocator>(data) { }
 
   virtual ~QueryableListData() { }
 

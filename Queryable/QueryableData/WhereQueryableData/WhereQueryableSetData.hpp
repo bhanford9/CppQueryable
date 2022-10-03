@@ -11,23 +11,23 @@ template<
   typename TObj,
   typename TCompare = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class WhereQueryableSetData : public WhereQueryableData<TObj, std::set, TCompare, TAllocator>
+class WhereQueryableSetData : public WhereQueryableData<TObj, std::set, TObj, TCompare, TAllocator>
 {
 public:
   WhereQueryableSetData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableSetData(
-    std::shared_ptr<QueryableData<TObj, std::set, TCompare, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::set, TObj, TCompare, TAllocator>> && data,
     std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableSetData(const WhereQueryableSetData<TObj, TCompare, TAllocator> & other)
-    : WhereQueryableData<TObj, std::set, TCompare, TAllocator>(other)
+    : WhereQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(other)
   {
   }
 

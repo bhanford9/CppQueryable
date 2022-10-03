@@ -14,11 +14,11 @@
 template<
   typename TObj,
   typename TAllocator>
-class ListInternalQueryable : public InternalQueryable<TObj, std::list, TAllocator>
+class ListInternalQueryable : public InternalQueryable<TObj, std::list, TObj, TAllocator>
 {
 public:
   ListInternalQueryable(TAllocator allocator = {}) :
-    InternalQueryable<TObj, std::list, TAllocator>(QueryableType::List)
+    InternalQueryable<TObj, std::list, TObj, TAllocator>(QueryableType::List)
   {
     std::list<TObj> localList(allocator);
     this->items = std::make_shared<QueryableListData<TObj, TAllocator>>(localList);
@@ -36,15 +36,15 @@ public:
     this->items = other.items;
   }
 
-  ListInternalQueryable(const InternalQueryable<TObj, std::list, TAllocator> & other)
-    : InternalQueryable<TObj, std::list, TAllocator>(other)
+  ListInternalQueryable(const InternalQueryable<TObj, std::list, TObj, TAllocator> & other)
+    : InternalQueryable<TObj, std::list, TObj, TAllocator>(other)
   {
     this->type = QueryableType::List;
   }
   ListInternalQueryable(
-    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && queryableData,
+    std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> && queryableData,
     QueryableType type)
-      : InternalQueryable<TObj, std::list, TAllocator>(std::move(queryableData), type)
+      : InternalQueryable<TObj, std::list, TObj, TAllocator>(std::move(queryableData), type)
   {
   }
 

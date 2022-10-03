@@ -10,32 +10,32 @@
 #include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class TakeWhileQueryableVectorData : public TakeWhileQueryableData<TObj, std::vector, TAllocator>
+class TakeWhileQueryableVectorData : public TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>
 {
 public:
   TakeWhileQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Vector Data Constructor 0" << std::endl;
   }
   TakeWhileQueryableVectorData(
-    std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::vector, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(data), std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Vector Data Constructor 1" << std::endl;
   }
   TakeWhileQueryableVectorData(
-    const std::shared_ptr<QueryableData<TObj, std::vector, TAllocator>> & data,
+    const std::shared_ptr<QueryableData<TObj, std::vector, TObj, TAllocator>> & data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::vector, TAllocator>(data, std::move(condition))
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(data, std::move(condition))
   {
     // std::cout << "TakeWhileQueryable Vector Data Constructor 3" << std::endl;
   }
   TakeWhileQueryableVectorData(const TakeWhileQueryableVectorData<TObj, TAllocator> & other)
-    : TakeWhileQueryableData<TObj, std::vector, TAllocator>(other)
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
   {
     // std::cout << "TakeWhileQueryable Vector Data Constructor 2" << std::endl;
   }

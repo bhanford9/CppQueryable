@@ -11,23 +11,23 @@ template<
   typename TObj,
   typename TCompare = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
-class TakeWhileQueryableSetData : public TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>
+class TakeWhileQueryableSetData : public TakeWhileQueryableData<TObj, std::set, TObj, TCompare, TAllocator>
 {
 public:
   TakeWhileQueryableSetData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   TakeWhileQueryableSetData(
-    std::shared_ptr<QueryableData<TObj, std::set, TCompare, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::set, TObj, TCompare, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
-    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : TakeWhileQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(std::move(data), std::move(condition))
   {
   }
   TakeWhileQueryableSetData(const TakeWhileQueryableSetData<TObj, TCompare, TAllocator> & other)
-    : TakeWhileQueryableData<TObj, std::set, TCompare, TAllocator>(other)
+    : TakeWhileQueryableData<TObj, std::set, TObj, TCompare, TAllocator>(other)
   {
   }
 

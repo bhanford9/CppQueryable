@@ -11,7 +11,7 @@
 template<
   typename TObj,
   typename TAllocator = std::allocator<TObj>>
-class WhereQueryableListData : public WhereQueryableData<TObj, std::list, TAllocator>
+class WhereQueryableListData : public WhereQueryableData<TObj, std::list, TObj, TAllocator>
 {
 protected:
 
@@ -23,17 +23,17 @@ public:
   WhereQueryableListData(
     std::shared_ptr<IQueryableData<TObj>> data,
     std::function<bool(TObj)> condition)
-    : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableListData(
-    std::shared_ptr<QueryableData<TObj, std::list, TAllocator>> && data,
+    std::shared_ptr<QueryableData<TObj, std::list, TObj, TAllocator>> && data,
     std::function<bool(TObj)> && condition)
-    : WhereQueryableData<TObj, std::list, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TObj, std::list, TObj, TAllocator>(std::move(data), std::move(condition))
   {
   }
   WhereQueryableListData(const WhereQueryableListData<TObj, TAllocator> & other)
-    : WhereQueryableData<TObj, std::list, TAllocator>(other)
+    : WhereQueryableData<TObj, std::list, TObj, TAllocator>(other)
   {
   }
 
