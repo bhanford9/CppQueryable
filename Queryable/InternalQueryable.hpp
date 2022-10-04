@@ -226,8 +226,8 @@ public:
     typename TLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
   inline std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
-    std::function<TKey(TStoring)> getKey,
-    std::function<TValue(TStoring)> getValue,
+    std::function<TKey(TIterating)> getKey,
+    std::function<TValue(TIterating)> getValue,
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {

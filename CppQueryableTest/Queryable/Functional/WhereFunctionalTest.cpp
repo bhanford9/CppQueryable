@@ -107,13 +107,12 @@ TEST_F(WhereFunctionalTest, WhereMapSetFemale)
       [](Person p) { return p.GetName(); },
       [](Person p) { return p.GetGender(); }))
     .Where([](std::pair<const std::string, Gender> kvp) { return kvp.second == Gender::Female; })
-    .ToMap(
+    .ToMap<std::string, Gender>(
       [](std::pair<const std::string, Gender> kvp) { return kvp.first; },
       [](std::pair<const std::string, Gender> kvp) { return kvp.second; });
 
   for (std::pair<const std::string, Gender> kvp : kvps)
   {
-    std::cout << "Name: " << kvp.first << ", Gender: " << (kvp.second == Gender::Female ? "Female" : "Male") << std::endl;
     ASSERT_TRUE(kvp.second == Gender::Female);
   }
 }

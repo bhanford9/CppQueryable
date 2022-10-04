@@ -73,7 +73,6 @@ public:
 
   virtual void Where(std::function<bool(const std::pair<const TKey, TValue> &)> condition) override
   {
-    std::cout << "Map Internal Queryable Where Method" << std::endl;
     this->items = std::move(
       std::make_shared<WhereQueryableMapData<TKey, TValue, TLessThan, TAllocator>>(
         std::move(this->items),
