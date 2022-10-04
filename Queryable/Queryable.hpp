@@ -495,9 +495,10 @@ public:
     }
   }
 
-  inline void Skip(int count)
+  inline Queryable<TStoring, TIterable, TIterating, TArgs...> & Skip(int count)
   {
     this->queryable->Skip(count);
+    return *this;
   }
 
   inline void SkipWhile(std::function<bool(TIterating)> && doSkip)

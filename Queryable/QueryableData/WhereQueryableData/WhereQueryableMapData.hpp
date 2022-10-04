@@ -18,13 +18,17 @@ public:
   WhereQueryableMapData(
     std::shared_ptr<IQueryableData<std::pair<const TKey, TValue>>> data,
     std::function<bool(std::pair<const TKey, TValue>)> condition)
-    : WhereQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
+      std::move(data),
+      std::move(condition))
   {
   }
   WhereQueryableMapData(
     std::shared_ptr<QueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>> && data,
     std::function<bool(std::pair<const TKey, TValue>)> condition)
-    : WhereQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(std::move(data), std::move(condition))
+    : WhereQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
+      std::move(data),
+      std::move(condition))
   {
   }
   WhereQueryableMapData(const WhereQueryableMapData<TKey, TValue, TCompare, TAllocator> & other)
@@ -51,7 +55,7 @@ public:
 
     for (const std::pair<const TKey, TValue> & value : *this)
     {
-        data[value.first] = value.second;
+      data[value.first] = value.second;
     }
 
     return std::make_shared<QueryableMapData<TKey, TValue, TCompare, TAllocator>>(std::move(data));
