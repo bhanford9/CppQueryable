@@ -93,6 +93,7 @@ TEST_F(SkipFunctionalTest, SkipVectorSkipMoreThanSize)
 {
   this->TestSkip(this->queryable, this->queryable.Count() + 1);
 }
+
 TEST_F(SkipFunctionalTest, SkipDeque)
 {
   QueryableDeque<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());

@@ -501,9 +501,10 @@ public:
     return *this;
   }
 
-  inline void SkipWhile(std::function<bool(TIterating)> && doSkip)
+  inline Queryable<TStoring, TIterable, TIterating, TArgs...> & SkipWhile(std::function<bool(TIterating)> && doSkip)
   {    
     this->queryable->SkipWhile(std::move(doSkip));
+    return *this;
   }
 
   template<typename TLessThan = std::less<TStoring>>
