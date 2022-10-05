@@ -1,47 +1,47 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEMAPDATA_H
-#define CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEMAPDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEMAPDATA_H
+#define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEMAPDATA_H
 
 #include <iostream>
 #include <map>
 
 #include "../../Utilities/Condition.hpp"
-#include "SkipWhileQueryableData.hpp"
+#include "TakeWhileQueryableData.hpp"
 
 template<
   typename TKey,
   typename TValue,
   typename TCompare = std::less<TKey>,
   typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-class SkipWhileQueryableMapData :
-  public SkipWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>
+class TakeWhileQueryableMapData :
+  public TakeWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>
 {
 public:
-  SkipWhileQueryableMapData(
+  TakeWhileQueryableMapData(
     std::shared_ptr<IQueryableData<std::pair<const TKey, TValue>>> data,
     std::shared_ptr<IWhileCondition<std::pair<const TKey, TValue>>> && condition)
-    : SkipWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
+    : TakeWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
       std::move(data),
       std::move(condition))
   {
   }
-  SkipWhileQueryableMapData(
+  TakeWhileQueryableMapData(
     std::shared_ptr<QueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>> && data,
     std::shared_ptr<IWhileCondition<std::pair<const TKey, TValue>>> && condition)
-    : SkipWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
+    : TakeWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(
       std::move(data),
       std::move(condition))
   {
   }
-  SkipWhileQueryableMapData(const SkipWhileQueryableMapData<TKey, TValue, TCompare, TAllocator> & other)
-    : SkipWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(other)
+  TakeWhileQueryableMapData(const TakeWhileQueryableMapData<TKey, TValue, TCompare, TAllocator> & other)
+    : TakeWhileQueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(other)
   {
   }
 
-  virtual ~SkipWhileQueryableMapData() { }
+  virtual ~TakeWhileQueryableMapData() { }
 
   virtual std::shared_ptr<IQueryableData<std::pair<const TKey, TValue>>> Clone() override
   {
-    return std::make_shared<SkipWhileQueryableMapData<TKey, TValue, TCompare, TAllocator>>(*this);
+    return std::make_shared<TakeWhileQueryableMapData<TKey, TValue, TCompare, TAllocator>>(*this);
   }
 
   virtual void InternalAdd(std::pair<const TKey, TValue> item) override
@@ -51,7 +51,7 @@ public:
 
   virtual std::shared_ptr<IQueryableData<std::pair<const TKey, TValue>>> GetRealizedQueryableData() override
   {
-    // If all QueryableData's have a constructor that skips begin, end, Args... then this method can be a one liner
+    // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
 
     std::map<TKey, TValue, TCompare, TAllocator> data(this->items->key_comp(), this->items->get_allocator());
 

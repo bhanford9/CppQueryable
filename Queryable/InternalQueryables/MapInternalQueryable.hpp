@@ -9,7 +9,7 @@
 #include "../QueryableData/QueryableMapData.hpp"
 #include "../QueryableData/WhereQueryableData/WhereQueryableMapData.hpp"
 #include "../QueryableData/SkipWhileQueryableData/SkipWhileQueryableMapData.hpp"
-// #include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableMapData.hpp"
+#include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableMapData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
 template<
@@ -88,9 +88,9 @@ public:
   
   virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<std::pair<const TKey, TValue>>> && condition) override
   {
-    // this->items = std::move(std::make_shared<TakeWhileQueryableMapData<TKey, TValue, TLessThan, TAllocator>>(
-    //   std::move(this->items),
-    //   std::move(condition)));
+    this->items = std::move(std::make_shared<TakeWhileQueryableMapData<TKey, TValue, TLessThan, TAllocator>>(
+      std::move(this->items),
+      std::move(condition)));
   }
 };
 

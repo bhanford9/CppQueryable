@@ -528,14 +528,16 @@ public:
   //   return this->queryable->Sum();
   // }
 
-  inline void Take(int count)
+  inline Queryable<TStoring, TIterable, TIterating, TArgs...> & Take(int count)
   {
     this->queryable->Take(count);
+    return *this;
   }
 
-  inline void TakeWhile(std::function<bool(TIterating)> && doTake)
+  inline Queryable<TStoring, TIterable, TIterating, TArgs...> & TakeWhile(std::function<bool(TIterating)> && doTake)
   {    
     this->queryable->TakeWhile(std::move(doTake));
+    return *this;
   }
 
   inline Queryable<TStoring, TIterable, TIterating, TArgs...> & Where(std::function<bool(const TIterating &)> condition)

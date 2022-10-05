@@ -246,7 +246,7 @@ public:
     QueryableIterator<TIterating> child = this->original->end();
 
     size_t startIndex = child.index;
-    QueryableIterator<TObj> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
+    QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
 
     return retVal;
   }
