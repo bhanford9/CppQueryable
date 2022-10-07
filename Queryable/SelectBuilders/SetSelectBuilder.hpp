@@ -12,7 +12,7 @@ template<
   typename TCurrent,
   typename TLessThan = std::less<TCurrent>,
   typename TAllocator = std::allocator<TCurrent>>
-class SetSelectBuilder : public SelectBuilder<TOriginal, TCurrent, std::set, TLessThan, TAllocator>
+class SetSelectBuilder : public SelectBuilder<TOriginal, TCurrent, std::set, TOriginal, TCurrent, TLessThan, TAllocator>
 {
 public:
   virtual void Build(

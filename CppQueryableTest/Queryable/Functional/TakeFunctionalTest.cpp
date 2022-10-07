@@ -25,7 +25,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   TakeFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -99,25 +99,25 @@ protected:
 
 TEST_F(TakeFunctionalTest, TakeVectorTakeMoreThanSize)
 {
-  QueryableVector<size_t> localQueryable = BuildQueryable2(this->queryable.ToVector());
+  QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
   this->TestTake(localQueryable, this->queryable.Count() + 1);
 }
 
 TEST_F(TakeFunctionalTest, TakeDeque)
 {
-  QueryableDeque<size_t> localQueryable(BuildQueryable2(this->queryable.ToDeque()));
+  QueryableDeque<size_t> localQueryable(BuildQueryable(this->queryable.ToDeque()));
   this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeList)
 {
-  QueryableList<size_t> localQueryable(BuildQueryable2(this->queryable.ToList()));
+  QueryableList<size_t> localQueryable(BuildQueryable(this->queryable.ToList()));
   this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeMap)
 {
-  QueryableMap<size_t, std::string> localQueryable(BuildQueryable2<size_t, std::string>(
+  QueryableMap<size_t, std::string> localQueryable(BuildQueryable<size_t, std::string>(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); })));
@@ -126,19 +126,19 @@ TEST_F(TakeFunctionalTest, TakeMap)
 
 TEST_F(TakeFunctionalTest, TakeMultiSet)
 {
-  QueryableMultiSet<size_t> localQueryable(BuildQueryable2(this->queryable.ToMultiSet()));
+  QueryableMultiSet<size_t> localQueryable(BuildQueryable(this->queryable.ToMultiSet()));
   this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeSet)
 {
-  QueryableSet<size_t> localQueryable(BuildQueryable2(this->queryable.ToSet()));
+  QueryableSet<size_t> localQueryable(BuildQueryable(this->queryable.ToSet()));
   this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeVector)
 {
-  QueryableVector<size_t> localQueryable = BuildQueryable2(this->queryable.ToVector());
+  QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
   this->TestTake(localQueryable, this->takeCount);
 }
 
@@ -175,7 +175,7 @@ TEST_F(TakeFunctionalTest, TakeWhere)
 {
   int takeCount = 3;
   int expectedCount = 3;
-  QueryableVector<size_t> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })
     .Take(takeCount);

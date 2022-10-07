@@ -27,7 +27,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   SumFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 })))
   {
   }
 
@@ -40,7 +40,7 @@ protected:
 
 TEST_F(SumFunctionalTest, SumUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
   double sum = emptyQueryable.Sum([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0, sum);
 }
@@ -48,7 +48,7 @@ TEST_F(SumFunctionalTest, SumUninitialized)
 // TEST_F(SumFunctionalTest, SumUninitializedDefault)
 // {
 //   Point expected(0, 0);
-//   IQueryable<Point> emptyQueryable(BuildQueryable2(std::vector<Point>()));
+//   IQueryable<Point> emptyQueryable(BuildQueryable(std::vector<Point>()));
 //   Point sum = emptyQueryable.Sum();
 //   ASSERT_EQ(expected.X, sum.X);
 //   ASSERT_EQ(expected.Y, sum.Y);
@@ -57,7 +57,7 @@ TEST_F(SumFunctionalTest, SumUninitialized)
 // TEST_F(SumFunctionalTest, SumOperatorOverload)
 // {
 //   Point expected(20, 10);
-//   IQueryable<Point> points = BuildQueryable2(std::vector<Point>({
+//   IQueryable<Point> points = BuildQueryable(std::vector<Point>({
 //     Point(2, 4),
 //     Point(3, 5),
 //     Point(7, 1),
@@ -84,56 +84,56 @@ TEST_F(SumFunctionalTest, SumVectorDefault)
 
 TEST_F(SumFunctionalTest, SumDeque)
 {
-  QueryableDeque<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
   size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumDequeDefault)
 {
-  QueryableDeque<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
   size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumList)
 {
-  QueryableList<size_t> local = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumListDefault)
 {
-  QueryableList<size_t> local = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSet)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
   size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSetDefault)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
   size_t sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSet)
 {
-  QueryableSet<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
   size_t sum = local.Sum([](size_t value) { return value; });
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSetDefault)
 {
-  QueryableSet<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
   size_t sum = local.Sum();
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }

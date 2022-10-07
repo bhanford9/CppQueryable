@@ -28,7 +28,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   SkipWhileFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 4, 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 9, 867, 12 })))
   {
   }
 
@@ -53,7 +53,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 {
-  QueryableDeque<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> localQueryable = BuildQueryable(this->queryable.ToDeque());
   QueryableDeque<size_t> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
@@ -68,7 +68,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 {
   // somethings not right with Skip While. It seems to iterate over the collection several times
-  QueryableList<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> localQueryable = BuildQueryable(this->queryable.ToList());
   QueryableList<size_t> result = localQueryable
     .SkipWhile([&](size_t value) { std::cout << "value: " << value << std::endl; return value < this->threshold; });
 
@@ -82,7 +82,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileList)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMap)
 {
-  QueryableMap<size_t, std::string> localQueryable = BuildQueryable2<size_t, std::string>(
+  QueryableMap<size_t, std::string> localQueryable = BuildQueryable<size_t, std::string>(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }));
@@ -99,7 +99,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMap)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {
-  QueryableMultiSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> localQueryable = BuildQueryable(this->queryable.ToMultiSet());
   QueryableMultiSet<size_t> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
@@ -113,7 +113,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 {
-  QueryableSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> localQueryable = BuildQueryable(this->queryable.ToSet());
   QueryableSet<size_t> result = localQueryable
     .SkipWhile([&](size_t value) { return value < this->threshold; });
 
@@ -142,7 +142,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileWhere)
 {
   int skipCount = 4;
   int expectedCount = 2;
-  QueryableVector<size_t> localQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  QueryableVector<size_t> localQueryable = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = localQueryable
     .Where([](size_t value) { return value % 2 == 0; })
     .SkipWhile([](size_t value) { return value < 8; });

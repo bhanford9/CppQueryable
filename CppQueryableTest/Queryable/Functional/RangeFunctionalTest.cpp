@@ -26,7 +26,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   RangeFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -39,7 +39,7 @@ protected:
 
 TEST_F(RangeFunctionalTest, RangeUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
   double range = emptyQueryable
     .Range<double>([](Person p) { return p.GetAge(); });
   ASSERT_EQ(0.0, range);
@@ -47,7 +47,7 @@ TEST_F(RangeFunctionalTest, RangeUninitialized)
 
 TEST_F(RangeFunctionalTest, RangeUninitializedDefault)
 {
-  QueryableVector<Point> emptyQueryable(BuildQueryable2(std::vector<Point>()));
+  QueryableVector<Point> emptyQueryable(BuildQueryable(std::vector<Point>()));
   Point range = emptyQueryable
     .Range<Point>([](Point p) { return Point(p.X, p.Y); });
   ASSERT_EQ(0.0, range.X);
@@ -57,7 +57,7 @@ TEST_F(RangeFunctionalTest, RangeUninitializedDefault)
 TEST_F(RangeFunctionalTest, RangePoint)
 {
   Point expected(6, -4);
-  QueryableVector<Point> points = BuildQueryable2(std::vector<Point>({
+  QueryableVector<Point> points = BuildQueryable(std::vector<Point>({
     Point(2, 4),
     Point(3, 5),
     Point(7, 1),
@@ -73,7 +73,7 @@ TEST_F(RangeFunctionalTest, RangePoint)
 
 TEST_F(RangeFunctionalTest, RangeDeque)
 {
-  QueryableDeque<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
   size_t range = local
     .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -81,14 +81,14 @@ TEST_F(RangeFunctionalTest, RangeDeque)
 
 TEST_F(RangeFunctionalTest, RangeDequeDefault)
 {
-  QueryableDeque<size_t> local = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
   size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeList)
 {
-  QueryableList<size_t> local = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   size_t range = local
     .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -96,14 +96,14 @@ TEST_F(RangeFunctionalTest, RangeList)
 
 TEST_F(RangeFunctionalTest, RangeListDefault)
 {
-  QueryableList<size_t> local = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeMultiSet)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
   size_t range = local
     .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -111,14 +111,14 @@ TEST_F(RangeFunctionalTest, RangeMultiSet)
 
 TEST_F(RangeFunctionalTest, RangeMultiSetDefault)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
   size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }
 
 TEST_F(RangeFunctionalTest, RangeSet)
 {
-  QueryableSet<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
   size_t range = local
     .Range<size_t>([](size_t value) { return value; });
   ASSERT_EQ(this->expectedRange, range);
@@ -126,7 +126,7 @@ TEST_F(RangeFunctionalTest, RangeSet)
 
 TEST_F(RangeFunctionalTest, RangeSetDefault)
 {
-  QueryableSet<size_t> local = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
   size_t range = local.Range();
   ASSERT_EQ(this->expectedRange, range);
 }

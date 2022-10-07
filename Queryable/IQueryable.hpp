@@ -117,22 +117,22 @@ public:
     return output;
   }
 
-  template<
-    typename TOut,
-    typename ...TNewArgs>
-  IQueryable<TOut, TIterable, TIterating, TNewArgs...> Select(
-    std::function<TOut(TIterating)> retrieveValue,
-    TNewArgs... iterableParameters)
-  {
-    Queryable<TOut, TIterable, TIterating, TNewArgs...> result =
-      this->queryable->template Select<TIterable, TOut, TNewArgs...>(
-        retrieveValue,
-        iterableParameters...);
+  // template<
+  //   typename TOut,
+  //   typename ...TNewArgs>
+  // IQueryable<TOut, TIterable, TIterating, TNewArgs...> Select(
+  //   std::function<TOut(TIterating)> retrieveValue,
+  //   TNewArgs... iterableParameters)
+  // {
+  //   Queryable<TOut, TIterable, TIterating, TNewArgs...> result =
+  //     this->queryable->template Select<TIterable, TOut, TNewArgs...>(
+  //       retrieveValue,
+  //       iterableParameters...);
 
-    IQueryable<TOut, TIterable, TIterating, TNewArgs...> output(
-      std::make_shared<Queryable<TOut, TIterable, TIterating, TNewArgs...>>(result));
-    return output;
-  }
+  //   IQueryable<TOut, TIterable, TIterating, TNewArgs...> output(
+  //     std::make_shared<Queryable<TOut, TIterable, TIterating, TNewArgs...>>(result));
+  //   return output;
+  // }
 
   template<typename TLessThan = std::less<TStoring>>
   IQueryable<TStoring, TIterable, TIterating, TArgs...> Sort(TLessThan lessThan = {})

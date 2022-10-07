@@ -43,7 +43,7 @@ protected:
   typedef Grouping<Gender, Person> TGenderPerson;
 
   GroupByFunctionalTest() :
-    people(BuildQueryable2(this->personLibrary.GetPeople())),
+    people(BuildQueryable(this->personLibrary.GetPeople())),
     petOwners(PersonAndPetLibrary().GetPetOwners())
   {
   }
@@ -57,12 +57,12 @@ protected:
 
 TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 {
-  auto males = BuildQueryable2(this->people.ToDeque())
+  auto males = BuildQueryable(this->people.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  auto females = BuildQueryable2(this->people.ToDeque())
+  auto females = BuildQueryable(this->people.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-  auto genderGroups = BuildQueryable2(this->people.ToDeque())
+  auto genderGroups = BuildQueryable(this->people.ToDeque())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -98,11 +98,11 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 {
-  auto genderGroups = BuildQueryable2(this->people.ToList())
+  auto genderGroups = BuildQueryable(this->people.ToList())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  auto males = BuildQueryable2(this->people.ToList())
+  auto males = BuildQueryable(this->people.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  auto females = BuildQueryable2(this->people.ToList())
+  auto females = BuildQueryable(this->people.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -138,12 +138,12 @@ TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 {
-  auto genderGroups = BuildQueryable2(this->people.ToMultiSet())
+  auto genderGroups = BuildQueryable(this->people.ToMultiSet())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableMultiSet<Person> males = BuildQueryable2(this->people.ToMultiSet())
+  QueryableMultiSet<Person> males = BuildQueryable(this->people.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
 //   males.Sort();
-  QueryableMultiSet<Person> females = BuildQueryable2(this->people.ToMultiSet())
+  QueryableMultiSet<Person> females = BuildQueryable(this->people.ToMultiSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 //   females.Sort();
 
@@ -180,12 +180,12 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 {
-  auto genderGroups = BuildQueryable2(this->people.ToSet())
+  auto genderGroups = BuildQueryable(this->people.ToSet())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableSet<Person> males = BuildQueryable2(this->people.ToSet())
+  QueryableSet<Person> males = BuildQueryable(this->people.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
 //   males = males.ToQueryableSet();
-  QueryableSet<Person> females = BuildQueryable2(this->people.ToSet())
+  QueryableSet<Person> females = BuildQueryable(this->people.ToSet())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 //   females = females.ToQueryableSet();
 
@@ -222,11 +222,11 @@ TEST_F(GroupByFunctionalTest, SetDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 {
-  auto genderGroups = BuildQueryable2(this->people.ToVector())
+  auto genderGroups = BuildQueryable(this->people.ToVector())
     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableVector<Person> males = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  QueryableVector<Person> females = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -262,14 +262,14 @@ TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 {
-  auto genderGroups = BuildQueryable2(this->people.ToVector())
+  auto genderGroups = BuildQueryable(this->people.ToVector())
     .GroupBy<Gender>(
         [](Person p) { return p.GetGender(); },
         [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; });
 
-  QueryableVector<Person> males = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  QueryableVector<Person> females = BuildQueryable2(this->people.ToVector())
+  QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
   ASSERT_EQ(2, genderGroups.Count());
@@ -307,7 +307,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 {
   typedef Grouping<void*, Person> TVoidGroup;
-  auto voidGroups = BuildQueryable2(this->people.ToVector())
+  auto voidGroups = BuildQueryable(this->people.ToVector())
     .GroupBy<void*>([](Person p) { return (void*)NULL; });
 
   ASSERT_EQ(1, voidGroups.Count());
@@ -328,11 +328,11 @@ TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 TEST_F(GroupByFunctionalTest, GroupByWhereTest)
 {
   typedef Grouping<double, Person> TAgePerson;
-  auto ageGroupsOverThirty = BuildQueryable2(this->people.ToVector())
+  auto ageGroupsOverThirty = BuildQueryable(this->people.ToVector())
     .GroupBy<double>([](Person p) { return p.GetAge(); })
     .Where([](TAgePerson group) { return group.GetKey() > 30; });
 
-  auto overThirtyAgeGroups = BuildQueryable2(this->people.ToVector())
+  auto overThirtyAgeGroups = BuildQueryable(this->people.ToVector())
     .Where([](Person person) { return person.GetAge() > 30; })
     .GroupBy<double>([](Person p) { return p.GetAge(); });
 

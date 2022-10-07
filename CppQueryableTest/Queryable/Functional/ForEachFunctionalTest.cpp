@@ -26,7 +26,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   ForEachFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
   {
   }
 
@@ -60,7 +60,7 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
   emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }
@@ -87,31 +87,31 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 
 TEST_F(ForEachFunctionalTest, ForEachDeque)
 {
-  QueryableDeque<size_t> localQueryable = BuildQueryable2(this->queryable.ToDeque());
+  QueryableDeque<size_t> localQueryable = BuildQueryable(this->queryable.ToDeque());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
-  QueryableList<size_t> localQueryable = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> localQueryable = BuildQueryable(this->queryable.ToList());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachMultiSet)
 {
-  QueryableMultiSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> localQueryable = BuildQueryable(this->queryable.ToMultiSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachSet)
 {
-  QueryableSet<size_t> localQueryable = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> localQueryable = BuildQueryable(this->queryable.ToSet());
   this->TestForEach(localQueryable);
 }
 
 TEST_F(ForEachFunctionalTest, ForEachWhere)
 {
-  QueryableVector<size_t> IQueryable = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
+  QueryableVector<size_t> IQueryable = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
 
   int expectedCount = 6;
   int count = 0;

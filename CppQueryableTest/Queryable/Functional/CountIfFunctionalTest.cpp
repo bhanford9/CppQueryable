@@ -19,7 +19,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   CountIfFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
   {
   }
 
@@ -48,25 +48,25 @@ TEST_F(CountIfFunctionalTest, CountIfVector)
 
 TEST_F(CountIfFunctionalTest, CountIfSet)
 {
-  int count = BuildQueryable2(this->queryable.ToSet()).CountIf(this->IsEven);
+  int count = BuildQueryable(this->queryable.ToSet()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfMultiSet)
 {
-  int count = BuildQueryable2(this->queryable.ToMultiSet()).CountIf(this->IsEven);
+  int count = BuildQueryable(this->queryable.ToMultiSet()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfDeque)
 {
-  int count = BuildQueryable2(this->queryable.ToDeque()).CountIf(this->IsEven);
+  int count = BuildQueryable(this->queryable.ToDeque()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfList)
 {
-  int count = BuildQueryable2(this->queryable.ToList()).CountIf(this->IsEven);
+  int count = BuildQueryable(this->queryable.ToList()).CountIf(this->IsEven);
   ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 

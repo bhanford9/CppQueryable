@@ -27,8 +27,8 @@ protected:
 
   SelectFunctionalTest() :
     personLibrary(),
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }))),
-    people(BuildQueryable2(this->personLibrary.GetPeople()))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 867, 1, 12 }))),
+    people(BuildQueryable(this->personLibrary.GetPeople()))
   {
   }
 
@@ -41,7 +41,7 @@ protected:
 
 // TEST_F(SelectFunctionalTest, SelectUninitialized)
 // {
-//   IQueryable<Person> local(BuildQueryable2(std::vector<Person>()));
+//   IQueryable<Person> local(BuildQueryable(std::vector<Person>()));
 //   IQueryable<std::string> result = local
 //     .Select<std::string>([](Person p) { return p.GetName(); });
 //   ASSERT_EQ(0, result.Count());
@@ -49,7 +49,7 @@ protected:
 
 TEST_F(SelectFunctionalTest, DequeDefaultOut)
 {
-  QueryableDeque<Person> local = BuildQueryable2(this->people.ToDeque());
+  QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
   QueryableDeque<Gender> result = local
     .Select<Gender>([](Person p) { return p.GetGender(); });
 
@@ -64,7 +64,7 @@ TEST_F(SelectFunctionalTest, DequeDefaultOut)
 
 TEST_F(SelectFunctionalTest, ListDefaultOut)
 {
-  QueryableList<Person> local = BuildQueryable2(this->people.ToList());
+  QueryableList<Person> local = BuildQueryable(this->people.ToList());
   QueryableList<Gender> result = local
     .Select<Gender>([](Person p) { return p.GetGender(); });
 
@@ -79,8 +79,8 @@ TEST_F(SelectFunctionalTest, ListDefaultOut)
 
 TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 {
-  QueryableMultiSet<Person> local1 = BuildQueryable2(this->people.ToMultiSet());
-  QueryableMultiSet<Person> local2 = BuildQueryable2(this->people.ToMultiSet());
+  QueryableMultiSet<Person> local1 = BuildQueryable(this->people.ToMultiSet());
+  QueryableMultiSet<Person> local2 = BuildQueryable(this->people.ToMultiSet());
   QueryableMultiSet<double> ages = local1
     .Select<double>([](Person p) { return p.GetAge(); })
     .ToQueryable();
@@ -105,8 +105,8 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 
 TEST_F(SelectFunctionalTest, SetDefaultOut)
 {
-  QueryableSet<Person> local1 = BuildQueryable2(this->people.ToSet());
-  QueryableSet<Person> local2 = BuildQueryable2(this->people.ToSet());
+  QueryableSet<Person> local1 = BuildQueryable(this->people.ToSet());
+  QueryableSet<Person> local2 = BuildQueryable(this->people.ToSet());
   QueryableSet<double> ages = local1
     .Select<double>([](Person p) { return p.GetAge(); })
     .ToQueryable();
@@ -136,7 +136,7 @@ TEST_F(SelectFunctionalTest, SetDefaultOut)
 
 TEST_F(SelectFunctionalTest, VectorDefaultOut)
 {
-  QueryableVector<Person> local = BuildQueryable2(this->people.ToVector());
+  QueryableVector<Person> local = BuildQueryable(this->people.ToVector());
   QueryableVector<Gender> result = local
     .Select<Gender>([](Person p) { return p.GetGender(); });
 
@@ -151,8 +151,8 @@ TEST_F(SelectFunctionalTest, VectorDefaultOut)
 
 TEST_F(SelectFunctionalTest, SelectWhere)
 {
-  QueryableVector<Person> local1 = BuildQueryable2(this->people.ToVector());
-  QueryableVector<Person> local2 = BuildQueryable2(this->people.ToVector());
+  QueryableVector<Person> local1 = BuildQueryable(this->people.ToVector());
+  QueryableVector<Person> local2 = BuildQueryable(this->people.ToVector());
 
   QueryableVector<double> ages1 = local1
     .Select<double>([](Person p) { return p.GetAge() / 10; })

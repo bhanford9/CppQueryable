@@ -128,7 +128,7 @@ namespace Builders
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::deque, TStoring, TAllocator> FromDeque(const std::deque<TStoring, TAllocator> & iterable)
   {
-    return Queryable<TStoring, std::deque, TStoring, TAllocator>(InternalBuilders::FromDeque(iterable));
+    return Queryable<TStoring, std::deque, TStoring, TAllocator>(InternalBuilders::FromDeque<TStoring, TAllocator>(iterable));
   }
   template<typename TStoring>
   static Queryable<TStoring, std::deque, TStoring> FromDeque(const std::deque<TStoring> & iterable)
@@ -139,7 +139,7 @@ namespace Builders
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::list, TStoring, TAllocator> FromList(const std::list<TStoring, TAllocator> & iterable)
   {
-    return Queryable<TStoring, std::list, TStoring, TAllocator>(InternalBuilders::FromList(iterable));
+    return Queryable<TStoring, std::list, TStoring, TAllocator>(InternalBuilders::FromList<TStoring, TAllocator>(iterable));
   }
   template<typename TStoring>
   static Queryable<TStoring, std::list, TStoring> FromList(const std::list<TStoring> & iterable)
@@ -162,14 +162,14 @@ namespace Builders
     const std::map<TKey, TValue, TLessThan, TAllocator> & iterable)
   {
     return Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TLessThan, TAllocator>(
-      InternalBuilders::FromMap(iterable));
+      InternalBuilders::FromMap<TKey, TValue, TLessThan, TAllocator>(iterable));
   }
 
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator> FromMultiSet(
     const std::multiset<TStoring, TLessThan, TAllocator> & iterable)
   {
-    return Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator>(InternalBuilders::FromMultiSet(iterable));
+    return Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator>(InternalBuilders::FromMultiSet<TStoring, TLessThan, TAllocator>(iterable));
   }
 
   template<typename TStoring>
@@ -182,7 +182,7 @@ namespace Builders
   static Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> FromSet(
     const std::set<TStoring, TLessThan, TAllocator> & iterable)
   {
-    return Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator>(InternalBuilders::FromSet(iterable));
+    return Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator>(InternalBuilders::FromSet<TStoring, TLessThan, TAllocator>(iterable));
   }
 
   template<typename TStoring>
@@ -195,7 +195,7 @@ namespace Builders
   static Queryable<TStoring, std::vector, TStoring, TAllocator> FromVector(
     const std::vector<TStoring, TAllocator> & iterable)
   {
-    return Queryable<TStoring, std::vector, TStoring, TAllocator>(InternalBuilders::FromVector(iterable));
+    return Queryable<TStoring, std::vector, TStoring, TAllocator>(InternalBuilders::FromVector<TStoring, TAllocator>(iterable));
   }
   template<typename TStoring>
   static Queryable<TStoring, std::vector, TStoring> FromVector(const std::vector<TStoring> & iterable)

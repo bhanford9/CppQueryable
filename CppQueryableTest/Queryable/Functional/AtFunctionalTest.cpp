@@ -23,7 +23,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   AtFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -80,25 +80,25 @@ TEST_F(AtFunctionalTest, AtVector)
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToSet()).At(this->atIndex);
+  size_t value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToMultiSet()).At(this->atIndex);
+  size_t value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  size_t value = BuildQueryable2(this->queryable.ToDeque()).At(this->atIndex);
+  size_t value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  size_t value = BuildQueryable2(this->queryable.ToList()).At(this->atIndex);
+  size_t value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 

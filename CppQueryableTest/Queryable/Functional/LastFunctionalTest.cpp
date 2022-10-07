@@ -34,7 +34,7 @@ protected:
     expectedUnorderedUnder40(9),
     expectedOrderedUnder40(34),
     threshold(40),
-    queryable(BuildQueryable2(std::vector<size_t>({ 4, 7, 4, 3, 76, 8, 45, expectedOrderedLast, 76, 0, expectedOrderedUnder40, expectedUnorderedLast })))
+    queryable(BuildQueryable(std::vector<size_t>({ 4, 7, 4, 3, 76, 8, 45, expectedOrderedLast, 76, 0, expectedOrderedUnder40, expectedUnorderedLast })))
   {
   }
 
@@ -47,7 +47,7 @@ protected:
 
 TEST_F(LastFunctionalTest, LastVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
 
   try
   {
@@ -67,31 +67,31 @@ TEST_F(LastFunctionalTest, LastVector)
 
 TEST_F(LastFunctionalTest, LastSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToSet()).Last();
+  size_t value = BuildQueryable(this->queryable.ToSet()).Last();
   ASSERT_EQ(this->expectedOrderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastMultiSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToMultiSet()).Last();
+  size_t value = BuildQueryable(this->queryable.ToMultiSet()).Last();
   ASSERT_EQ(this->expectedOrderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastDeque)
 {
-  size_t value = BuildQueryable2(this->queryable.ToDeque()).Last();
+  size_t value = BuildQueryable(this->queryable.ToDeque()).Last();
   ASSERT_EQ(this->expectedUnorderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastList)
 {
-  size_t value = BuildQueryable2(this->queryable.ToList()).Last();
+  size_t value = BuildQueryable(this->queryable.ToList()).Last();
   ASSERT_EQ(this->expectedUnorderedLast, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
 
   try
   {
@@ -123,28 +123,28 @@ TEST_F(LastFunctionalTest, LastWhereVector)
 
 TEST_F(LastFunctionalTest, LastWhereSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToSet())
+  size_t value = BuildQueryable(this->queryable.ToSet())
     .Last([&](size_t value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereMultiSet)
 {
-  size_t value = BuildQueryable2(this->queryable.ToMultiSet())
+  size_t value = BuildQueryable(this->queryable.ToMultiSet())
     .Last([&](size_t value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereDeque)
 {
-  size_t value = BuildQueryable2(this->queryable.ToDeque())
+  size_t value = BuildQueryable(this->queryable.ToDeque())
     .Last([&](size_t value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereList)
 {
-  size_t value = BuildQueryable2(this->queryable.ToList())
+  size_t value = BuildQueryable(this->queryable.ToList())
     .Last([&](size_t value) { return value < this->threshold; });
   ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }

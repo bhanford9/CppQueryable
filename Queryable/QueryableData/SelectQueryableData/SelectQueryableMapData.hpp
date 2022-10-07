@@ -1,74 +1,113 @@
-#ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEMULTISETDATA_H
-#define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEMULTISETDATA_H
+#ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEMAPDATA_H
+#define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEMAPDATA_H
 
 #include <iostream>
-#include <set>
+#include <map>
 #include <vector>
 
 #include "../QueryableData.hpp"
 
+// After you call select on a map, you are not conceptually dealing with a map structure anymore
+//   so I have decided to just have it inherit a vector structure instead
+// This has caused me to wonder if all of the Select classes could be implemented this way
+//   it may be better to do so simply for consistency between types
+//   it would also take away the need for different select classes
+//   need to think through if there is significant benefit of persisting stdlib container type
+
 template<
-  typename TSource,
+  typename TSourceKey,
   typename TDestination,
-  typename TDestinationAllocator = std::allocator<TDestination>,
-  typename TSourceLessThan = std::less<TSource>, // source defined last so it can be passed in as TArgs...
-  typename TSourceAllocator = std::allocator<TSource>>
-class SelectQueryableMultiSetData : 
-  public QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>
+  typename TDestinationAllocator,
+  typename TSourceValue, // source defined last so it can be passed in as TArgs...
+  typename TSourceKeyLessThan,// = std::less<TSourceKey>,
+  typename TSourceAllocator>// = std::allocator<std::pair<const TSourceKey, TSourceValue>>>
+class SelectQueryableMapData :
+  public QueryableData<
+    TDestination,
+    std::vector,
+    TDestination,
+    TDestinationAllocator>
 {
 private:
-  std::function<TDestination(TSource)> selector;
-  std::shared_ptr<QueryableData<TSource, std::multiset, TSource, TSourceLessThan, TSourceAllocator>> original;
+  std::function<TDestination(std::pair<const TSourceKey, TSourceValue>)> selector;
+  std::shared_ptr<
+    QueryableData<
+      TSourceKey,
+      std::map,
+      std::pair<const TSourceKey, TSourceValue>,
+      TSourceValue,
+      TSourceKeyLessThan,
+      TSourceAllocator>>
+    original;
 
 // TODO --> I think an allocator and lessthan comparer need to be able to be passed in as destination parameters
 
 public:
-  SelectQueryableMultiSetData(
-    std::shared_ptr<QueryableData<TSource, std::multiset, TSource, TSourceLessThan, TSourceAllocator>> && data,
-    std::function<TDestination(TSource)> selector)
+  SelectQueryableMapData(
+    std::shared_ptr<
+      QueryableData<
+        TSourceKey,
+        std::map,
+        std::pair<const TSourceKey, TSourceValue>,
+        TSourceValue,
+        TSourceKeyLessThan,
+        TSourceAllocator>> && data,
+    std::function<TDestination(std::pair<const TSourceKey, TSourceValue>)> selector)
     : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
+    // std::cout << "select queryable map data move constructor" << std::endl;
     selector = selector;
     original = std::move(data);
     this->size = original->Count();
   }
 
-  SelectQueryableMultiSetData(
-    const std::shared_ptr<QueryableData<TSource, std::multiset, TSource, TSourceLessThan, TSourceAllocator>> & data,
-    std::function<TDestination(TSource)> selector)
+  SelectQueryableMapData(
+    const std::shared_ptr<
+      QueryableData<
+        TSourceKey,
+        std::map,
+        std::pair<const TSourceKey, TSourceValue>,
+        TSourceValue,
+        TSourceKeyLessThan,
+        TSourceAllocator>> & data,
+    std::function<TDestination(std::pair<const TSourceKey, TSourceValue>)> selector)
     : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
-    selector = selector;
-    original = data;
+    // std::cout << "select queryable map data copy constructor 1" << std::endl;
+    this->selector = selector;
+    this->original = data;
     this->size = original->Count();
   }
 
-  SelectQueryableMultiSetData(
+  SelectQueryableMapData(
     const
-      SelectQueryableMultiSetData<
-        TSource,
+      SelectQueryableMapData<
+        TSourceKey,
         TDestination,
         TDestinationAllocator,
-        TSourceLessThan,
+        TSourceValue,
+        TSourceKeyLessThan,
         TSourceAllocator> &
       data)
     : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
-    selector = data.selector;
-    original = data.original;
+    // std::cout << "select queryable map data copy constructor 2" << std::endl;
+    this->selector = data.selector;
+    this->original = data.original;
     this->size = original->Count();
   }
 
-  virtual ~SelectQueryableMultiSetData() { }
+  virtual ~SelectQueryableMapData() { }
 
   virtual std::shared_ptr<IQueryableData<TDestination>> Clone() override
   {
     return std::make_shared<
-      SelectQueryableMultiSetData<
-        TSource,
+      SelectQueryableMapData<
+        TSourceKey,
         TDestination,
         TDestinationAllocator,
-        TSourceLessThan,
+        TSourceValue,
+        TSourceKeyLessThan,
         TSourceAllocator>>(*this);
   }
 
@@ -84,12 +123,14 @@ public:
 
   virtual TDestination & Get(IteratorType type) override
   {
+    // std::cout << "map select get" << std::endl;
     this->value = this->selector(this->original->Get(type));
     return this->value;
   }
 
   virtual const TDestination & ConstGet(IteratorType type) override
   {
+    // std::cout << "map select const get" << std::endl;
     this->value = this->selector(this->original->Get(type));
     return this->value;
   }
@@ -126,7 +167,7 @@ public:
   void Add(TDestination item) override
   {
     // this wont easily or quickly work... might want to nix it
-    this->items->insert(item);
+    this->items->push_back(item);
     this->size++;
   }
 
@@ -135,9 +176,9 @@ public:
     // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
     std::vector<TDestination, TDestinationAllocator> data(this->items->get_allocator());
 
-    for (const TSource & value : *this)
+    for (TDestination & value : *this)
     {
-      data.insert(this->selector(value));
+      data.push_back(value);
     }
 
     return std::make_shared<QueryableVectorData<TDestination, TDestinationAllocator>>(std::move(data));
@@ -145,30 +186,30 @@ public:
   
   virtual QueryableIterator<TDestination> begin() override
   {
-    // std::cout << "MultiSet Select Data begin" << std::endl;
-    QueryableIterator<TSource> child = this->original->begin();
+    // std::cout << "Map Select Data begin" << std::endl;
+    QueryableIterator<std::pair<const TSourceKey, TSourceValue>> child = this->original->begin();
     QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::BeginForward);
     return retVal;
   }
 
   virtual QueryableIterator<TDestination> end() override
   {
-    // std::cout << "MultiSet Select Data end" << std::endl;
-    QueryableIterator<TSource> child = this->original->end();
+    // std::cout << "Map Select Data end" << std::endl;
+    QueryableIterator<std::pair<const TSourceKey, TSourceValue>> child = this->original->end();
     QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::EndForward);
     return retVal;
   }
 
   virtual QueryableIterator<TDestination> rbegin() override
   {
-    QueryableIterator<TSource> child = this->original->rbegin();
+    QueryableIterator<std::pair<const TSourceKey, TSourceValue>> child = this->original->rbegin();
     QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::BeginReverse);
     return retVal;
   }
 
   virtual QueryableIterator<TDestination> rend() override
   {
-    QueryableIterator<TSource> child = this->original->rend();
+    QueryableIterator<std::pair<const TSourceKey, TSourceValue>> child = this->original->rend();
     QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::EndReverse);
     return retVal;
   }

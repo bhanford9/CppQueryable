@@ -33,7 +33,7 @@ int main()
 {
     auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
 
-    auto queryable = BuildQueryable2(data);
+    auto queryable = BuildQueryable(data);
 
     auto myMap = queryable.ToMap<size_t, std::string>(
         [](size_t value) { return value; },
@@ -46,15 +46,24 @@ int main()
 
     std::cout << "\n\n" << std::endl;
 
-    auto mapQueryable = BuildQueryable2(myMap);
+    QueryableMap<size_t, std::string> mapQueryable = BuildQueryable(myMap);
 
     mapQueryable
-        .Where([&](std::pair<const size_t, std::string> kvp)
+        .Select<bool>([&](std::pair<const size_t, std::string> kvp)
         {
-            // std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
+            std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
             return (kvp.first % 2) == 0;
         })
-        .ForEach([&](std::pair<const size_t, std::string> kvp) { std::cout << kvp.first << ", value: " << kvp.second << std::endl; });
+        .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
+
+    // I think this may be a problem... To Vector should return std::vector<TIterating>
+    BuildQueryable(BuildQueryable(data).ToList())
+        .Select<bool>([&](size_t value)
+        {
+            std::cout << "--- value: " << value << ", result: " << (value % 2) << std::endl;
+            return (value % 2) == 0;
+        })
+        .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
 
     // auto result = mapQueryable.Average();
 

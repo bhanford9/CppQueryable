@@ -1,87 +1,66 @@
 #ifndef CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDATA_H
 #define CPPQUERYABLE_QUERYABLE_SELECTQUERYABLEDATA_H
 
-#include <algorithm>
-#include <deque>
-#include <exception>
-#include <functional>
 #include <iostream>
-#include <list>
-#include <memory>
-#include <set>
+#include <deque>
 #include <vector>
 
-#include "../../TypeConstraintUtil.hpp"
-#include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
 
+// template<
+//   typename TOriginal,
+//   typename TCurrent,
+//   template<typename, typename ...> typename TIterable,
+//   typename ...TArgs>
+
 template<
-  typename TOriginal,
-  typename TCurrent,
+  typename TSource,
+  typename TDestination,
   template<typename, typename ...> typename TIterable,
-  typename ...TArgs>
-class SelectQueryableData : public QueryableData<TCurrent, TIterable, TArgs...>
+  typename TSourceIterating,
+  typename TDestinationAllocator = std::allocator<TDestination>,
+  typename ...TArgs> // source defined last so it can be passed in as TArgs...
+class SelectQueryableData : public QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>
 {
-  // static_assert(can_iterate<TIterable<TOriginal, TArgs...>>::value, "Class must be able to be iterated over");
-protected:
-  std::function<TCurrent(TOriginal)> selector;
-  std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> original;
+private:
+  std::function<TDestination(TSourceIterating)> selector;
+  std::shared_ptr<QueryableData<TSource, TIterable, TSourceIterating, TArgs...>> original;
 
 public:
   SelectQueryableData(
-    std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> && data,
-    std::function<TCurrent(TOriginal) > selector) :
-      selector(selector),
-      original(std::move(data))
+    std::shared_ptr<QueryableData<TSource, TIterable, TSourceIterating, TArgs...>> && data,
+    std::function<TDestination(TSourceIterating)> selector)
+    : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
-    // std::cout << "select queryable parent data moving" << std::endl;
+    this->selector = selector;
+    this->original = std::move(data);
     this->size = original->Count();
   }
+
   SelectQueryableData(
-    const std::shared_ptr<QueryableData<TOriginal, TIterable, TArgs...>> & data,
-    std::function<TCurrent(TOriginal) > selector) :
-      selector(selector),
-      original(data)
+    const std::shared_ptr<QueryableData<TSource, TIterable, TSourceIterating, TArgs...>> & data,
+    std::function<TDestination(TSourceIterating)> selector)
+    : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
-    // std::cout << "select queryable parent data copying" << std::endl;
+    this->selector = selector;
+    this->original = data;
     this->size = original->Count();
   }
-  SelectQueryableData(const SelectQueryableData<TOriginal, TCurrent, TIterable, TArgs...> & data) :
-    selector(data.selector),
-    original(data.original)
+
+  SelectQueryableData(const SelectQueryableData<TSource, TDestination, TIterable, TSourceIterating, TDestinationAllocator, TArgs...> & data)
+    : QueryableData<TDestination, std::vector, TDestination, TDestinationAllocator>()
   {
+    this->selector = data.selector;
+    this->original = data.original;
     this->size = original->Count();
   }
 
   virtual ~SelectQueryableData() { }
 
-
-
-
-
-    // TODO --> this is going to fail for select->sort
-  // virtual TIterable<TCurrent, TArgs...> & GetContainer() override
-  // {
-  //   return *this->items;
-  // }
-
-
-
-  // cpp sorting algorithms are dependent on swaping references of values within the container.
-  // The corresponding referenced value is a completely different thing after Select has been
-  // done, but the entire contianer is not realized due to the deferred nature of the selection.
-  //
-  // In order for this to work, some kind of ToRealizedQueryableData will need to be in place
-  // for all QueryableData objects that performs any of the "deferred" actions in the chain of
-  // QueryableDatas and returns it as its most basic type of QueryableData
-  //
-  // Every child class will need to do its own Sort implemnetation so it can inately know what
-  // kind of base QueryableData instantiation to resolve to.
-//   virtual void Sort(std::shared_ptr<ISorter<TOriginal, TIterable, TArgs...>> sorter)
-//   {
-//     this->original->Sort(sorter);
-//   }
-
+  virtual std::shared_ptr<IQueryableData<TDestination>> Clone() override
+  {
+    return std::make_shared<SelectQueryableData<TSource, TDestination, TIterable, TSourceIterating, TDestinationAllocator, TArgs...>>(*this);
+  }
 
   virtual bool CanIncrement(IteratorType type) override
   {
@@ -93,47 +72,19 @@ public:
     return this->original->CanDecrement(type);
   }
 
-  // I think this will make it so sorting won't work for Deque/Vector after calling Select
-  // potential fix may be check this scenario and ToList it before trying to sort
-  virtual TCurrent & Get(IteratorType type) override
+  virtual TDestination & Get(IteratorType type) override
   {
-    switch (type)
-    {
-    //   case IteratorType::BeginForward: return *this->beginIterator;
-    //   case IteratorType::EndForward: return *this->endIterator;
-    //   case IteratorType::BeginReverse: return *this->rbeginIterator;
-    //   case IteratorType::EndReverse: default: return *this->rendIterator;
-      case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndReverse: 
-      default: { this->value = this->selector(this->original->Get(type)); return this->value; }
-    }
-    // std::cout << "Select Data Get" << std::endl;
-    // this->value = this->selector(this->original->Get(type));
-    // return this->value;
+    this->value = this->selector(this->original->Get(type));
+    return this->value;
   }
 
-  virtual const TCurrent & ConstGet(IteratorType type) override
+  virtual const TDestination & ConstGet(IteratorType type) override
   {
-    switch (type)
-    {
-    //   case IteratorType::BeginForward: return *this->beginIterator;
-    //   case IteratorType::EndForward: return *this->endIterator;
-    //   case IteratorType::BeginReverse: return *this->rbeginIterator;
-    //   case IteratorType::EndReverse: default: return *this->rendIterator;
-      case IteratorType::BeginForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndForward: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::BeginReverse: { this->value = this->selector(this->original->Get(type)); return this->value; }
-      case IteratorType::EndReverse:
-      default: { this->value = this->selector(this->original->Get(type)); return this->value; }
-    }
-    // std::cout << "Select Data ConstGet" << std::endl;
-    // this->value = this->selector(this->original->ConstGet(type));
-    // return this->value;
+    this->value = this->selector(this->original->Get(type));
+    return this->value;
   }
-
-  virtual IQueryableData<TCurrent> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
+  
+  virtual IQueryableData<TDestination> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
   {
     // std::cout << "Select Can Increment: " << this->original->CanIncrement(type) << std::endl;
     // std::cout << "Select Data Next before value: " << this->original->Get(type) << std::endl;
@@ -141,54 +92,74 @@ public:
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Prev(IteratorType type, size_t & iterated) override
+  virtual IQueryableData<TDestination> & Prev(IteratorType type, size_t & iterated) override
   {
     // std::cout << "Select Data Prev" << std::endl;
     this->original->Prev(type, iterated);
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Add(int addend, IteratorType type) override
+  virtual IQueryableData<TDestination> & Add(int addend, IteratorType type) override
   {
     // std::cout << "Select Data Add" << std::endl;
     this->original->Add(addend, type);
     return *this;
   }
 
-  virtual IQueryableData<TCurrent> & Subtract(int subtrahend, IteratorType type) override
+  virtual IQueryableData<TDestination> & Subtract(int subtrahend, IteratorType type) override
   {
     // std::cout << "Select Data Subtract" << std::endl;
     this->original->Add(subtrahend, type);
     return *this;
   }
 
-  virtual QueryableIterator<TCurrent> begin() override
+  void Add(TDestination item) override
   {
-    // std::cout << "Select Data begin" << std::endl;
-    QueryableIterator<TOriginal> child = this->original->begin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::BeginForward);
+    // this wont easily or quickly work... might want to nix it
+    this->items->push_back(item);
+    this->size++;
+  }
+
+  virtual std::shared_ptr<IQueryableData<TDestination>> GetRealizedQueryableData() override
+  {
+    // If all QueryableData's have a constructor that takes begin, end, Args... then this method can be a one liner
+    std::vector<TDestination, TDestinationAllocator> data(this->items->get_allocator());
+
+    for (TDestination value : *this)
+    {
+      data.push_back(value);
+    }
+
+    return std::make_shared<QueryableVectorData<TDestination, TDestinationAllocator>>(std::move(data));
+  }
+  
+  virtual QueryableIterator<TDestination> begin() override
+  {
+    // std::cout << "Deque Select Data begin" << std::endl;
+    QueryableIterator<TSourceIterating> child = this->original->begin();
+    QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::BeginForward);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> end() override
+  virtual QueryableIterator<TDestination> end() override
   {
-    // std::cout << "Select Data end" << std::endl;
-    QueryableIterator<TOriginal> child = this->original->end();
-    QueryableIterator<TCurrent> retVal(this->Clone(), child.index, IteratorType::EndForward);
+    // std::cout << "Deque Select Data end" << std::endl;
+    QueryableIterator<TSourceIterating> child = this->original->end();
+    QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::EndForward);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> rbegin() override
+  virtual QueryableIterator<TDestination> rbegin() override
   {
-    this->original->rbegin();
-    QueryableIterator<TCurrent> retVal(this->Clone(), 0, IteratorType::BeginReverse);
+    QueryableIterator<TSourceIterating> child = this->original->rbegin();
+    QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::BeginReverse);
     return retVal;
   }
 
-  virtual QueryableIterator<TCurrent> rend() override
+  virtual QueryableIterator<TDestination> rend() override
   {
-    this->original->rend();
-    QueryableIterator<TCurrent> retVal(this->Clone(), this->original->Count(), IteratorType::EndReverse);
+    QueryableIterator<TSourceIterating> child = this->original->rend();
+    QueryableIterator<TDestination> retVal(this->Clone(), child.index, IteratorType::EndReverse);
     return retVal;
   }
 };

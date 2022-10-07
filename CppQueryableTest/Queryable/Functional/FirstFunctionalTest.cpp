@@ -29,7 +29,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   FirstFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ expectedUnorderedFirst, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 })))
+    queryable(BuildQueryable(std::vector<size_t>({ expectedUnorderedFirst, 4, 7, 4, 3, 76, 8, 45, 34, 76, 0, 867 })))
   {
   }
 
@@ -42,7 +42,7 @@ protected:
 
 TEST_F(FirstFunctionalTest, FirstVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
 
   try
   {
@@ -62,31 +62,31 @@ TEST_F(FirstFunctionalTest, FirstVector)
 
 TEST_F(FirstFunctionalTest, FirstSet)
 {
-  size_t value = ISortedQueryable<size_t, std::set>(BuildQueryable2(this->queryable.ToSet())).First();
+  size_t value = ISortedQueryable<size_t, std::set>(BuildQueryable(this->queryable.ToSet())).First();
   ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstMultiSet)
 {
-  size_t value = ISortedQueryable<size_t, std::multiset>(BuildQueryable2(this->queryable.ToMultiSet())).First();
+  size_t value = ISortedQueryable<size_t, std::multiset>(BuildQueryable(this->queryable.ToMultiSet())).First();
   ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstDeque)
 {
-  size_t value = IQueryable<size_t, std::deque>(BuildQueryable2(this->queryable.ToDeque())).First();
+  size_t value = IQueryable<size_t, std::deque>(BuildQueryable(this->queryable.ToDeque())).First();
   ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstList)
 {
-  size_t value = IQueryable<size_t, std::list>(BuildQueryable2(this->queryable.ToList())).First();
+  size_t value = IQueryable<size_t, std::list>(BuildQueryable(this->queryable.ToList())).First();
   ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable2(std::vector<Person>()));
+  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
 
   try
   {
@@ -118,28 +118,28 @@ TEST_F(FirstFunctionalTest, FirstWhereVector)
 
 TEST_F(FirstFunctionalTest, FirstWhereSet)
 {
-  size_t value = ISortedQueryable<size_t, std::set>(BuildQueryable2(this->queryable.ToSet()))
+  size_t value = ISortedQueryable<size_t, std::set>(BuildQueryable(this->queryable.ToSet()))
     .First([&](size_t value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereMultiSet)
 {
-  size_t value = ISortedQueryable<size_t, std::multiset>(BuildQueryable2(this->queryable.ToMultiSet()))
+  size_t value = ISortedQueryable<size_t, std::multiset>(BuildQueryable(this->queryable.ToMultiSet()))
     .First([&](size_t value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereDeque)
 {
-  size_t value = IQueryable<size_t, std::deque>(BuildQueryable2(this->queryable.ToDeque()))
+  size_t value = IQueryable<size_t, std::deque>(BuildQueryable(this->queryable.ToDeque()))
     .First([&](size_t value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereList)
 {
-  size_t value = IQueryable<size_t, std::list>(BuildQueryable2(this->queryable.ToList()))
+  size_t value = IQueryable<size_t, std::list>(BuildQueryable(this->queryable.ToList()))
     .First([&](size_t value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
 }

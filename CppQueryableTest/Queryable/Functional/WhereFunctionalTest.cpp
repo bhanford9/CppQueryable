@@ -23,7 +23,7 @@ protected:
   QueryableVector<Person> queryable;
 
   WhereFunctionalTest() :
-    queryable(BuildQueryable2(PersonLibrary().GetPeople()))
+    queryable(BuildQueryable(PersonLibrary().GetPeople()))
   {
   }
 
@@ -46,7 +46,7 @@ protected:
 
 TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 {
-  QueryableVector<int> localQueryable(BuildQueryable2(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
+  QueryableVector<int> localQueryable(BuildQueryable(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
   std::vector<int> expected({ 4, 4, 76, 8, 76, 0 });
 
   std::vector<int> values = localQueryable
@@ -92,7 +92,7 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
 {
   using TCompare = std::function<bool(Person, Person)>;
   std::set<Person, TCompare> people =
-    BuildQueryable2(this->queryable.ToSet<TCompare>([](Person a, Person b) { return a < b; }))
+    BuildQueryable(this->queryable.ToSet<TCompare>([](Person a, Person b) { return a < b; }))
       .Where([](Person p) { return p.GetGender() == Gender::Female; })
       .ToSet<TCompare>([](Person a, Person b) { return a < b; });
 
@@ -102,7 +102,7 @@ TEST_F(WhereFunctionalTest, WhereSetFemale)
 
 TEST_F(WhereFunctionalTest, WhereMapSetFemale)
 {
-  std::map<std::string, Gender> kvps = BuildQueryable2(
+  std::map<std::string, Gender> kvps = BuildQueryable(
     this->queryable.ToMap<std::string, Gender>(
       [](Person p) { return p.GetName(); },
       [](Person p) { return p.GetGender(); }))
@@ -120,7 +120,7 @@ TEST_F(WhereFunctionalTest, WhereMapSetFemale)
 TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
   using TCompare = std::function<bool(Person, Person)>;
-  std::multiset<Person, TCompare> people = BuildQueryable2(this->queryable.ToMultiSet<TCompare>([](Person a, Person b) { return a < b; }))
+  std::multiset<Person, TCompare> people = BuildQueryable(this->queryable.ToMultiSet<TCompare>([](Person a, Person b) { return a < b; }))
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToMultiSet<TCompare>([](Person a, Person b) { return a < b; });
 
@@ -130,7 +130,7 @@ TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 
 TEST_F(WhereFunctionalTest, WhereDequeFemale)
 {
-  std::deque<Person> people = BuildQueryable2(this->queryable.ToDeque())
+  std::deque<Person> people = BuildQueryable(this->queryable.ToDeque())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToDeque();
 
@@ -140,7 +140,7 @@ TEST_F(WhereFunctionalTest, WhereDequeFemale)
 
 TEST_F(WhereFunctionalTest, WhereListFemale)
 {
-  std::list<Person> people = BuildQueryable2(this->queryable.ToList())
+  std::list<Person> people = BuildQueryable(this->queryable.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Female; })
     .ToList();
 

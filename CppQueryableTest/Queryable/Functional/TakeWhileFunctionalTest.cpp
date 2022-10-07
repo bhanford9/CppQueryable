@@ -28,7 +28,7 @@ protected:
   QueryableVector<size_t> queryable;
 
   TakeWhileFunctionalTest() :
-    queryable(BuildQueryable2(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
+    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
   {
   }
 
@@ -61,7 +61,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileVectorAlwaysTrue)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileDeque)
 {
-  QueryableDeque<size_t> queryableDeque(BuildQueryable2(this->queryable.ToDeque()));
+  QueryableDeque<size_t> queryableDeque(BuildQueryable(this->queryable.ToDeque()));
   QueryableDeque<size_t> & result = queryableDeque
     .TakeWhile([&](size_t value) { return value < this->threshold; });
 
@@ -76,7 +76,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileDeque)
 TEST_F(TakeWhileFunctionalTest, TakeWhileList)
 {
   // somethings not right with Take While. It seems to iterate over the collection several times
-  QueryableList<size_t> queryableList = BuildQueryable2(this->queryable.ToList());
+  QueryableList<size_t> queryableList = BuildQueryable(this->queryable.ToList());
   QueryableList<size_t> result = queryableList
     .TakeWhile([&](size_t value) { return value < this->threshold; });
 
@@ -90,7 +90,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileList)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileMap)
 {
-  QueryableMap<size_t, std::string> queryableMap = BuildQueryable2<size_t, std::string>(
+  QueryableMap<size_t, std::string> queryableMap = BuildQueryable<size_t, std::string>(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }));
@@ -107,7 +107,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileMap)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 {
-  QueryableMultiSet<size_t> queryableSet = BuildQueryable2(this->queryable.ToMultiSet());
+  QueryableMultiSet<size_t> queryableSet = BuildQueryable(this->queryable.ToMultiSet());
   QueryableMultiSet<size_t> result = queryableSet
     .TakeWhile([&](size_t value) { return value < this->threshold; });
 
@@ -121,7 +121,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileSet)
 {
-  QueryableSet<size_t> queryableSet = BuildQueryable2(this->queryable.ToSet());
+  QueryableSet<size_t> queryableSet = BuildQueryable(this->queryable.ToSet());
   QueryableSet<size_t> result = queryableSet
     .TakeWhile([&](size_t value) { return value < this->threshold; });
 
@@ -150,7 +150,7 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileWhere)
 {
   int takeCount = 0;
   int expectedCount = 4;
-  QueryableVector<size_t> queryableVector = BuildQueryable2(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+  QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })
     .TakeWhile([](size_t value) { return value < 8; });

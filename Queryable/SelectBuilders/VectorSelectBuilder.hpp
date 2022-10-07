@@ -11,7 +11,7 @@ template<
   typename TOriginal,
   typename TCurrent,
   typename TAllocator = std::allocator<TCurrent>>
-class VectorSelectBuilder : public SelectBuilder<TOriginal, TCurrent, std::vector, TAllocator>
+class VectorSelectBuilder : public SelectBuilder<TOriginal, TCurrent, std::vector, TOriginal, TCurrent, TAllocator>
 {
 public:
   virtual void Build(

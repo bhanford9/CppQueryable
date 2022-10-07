@@ -95,7 +95,7 @@ protected:
 //     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
 //   }
 
-//   QueryableDeque<size_t> local = BuildQueryable2(data);
+//   QueryableDeque<size_t> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -143,7 +143,7 @@ protected:
 //     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
 //   }
 
-//   QueryableList<size_t> local = BuildQueryable2(data);
+//   QueryableList<size_t> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -195,7 +195,7 @@ protected:
 //     data.insert(i);
 //   }
 
-//   QueryableMultiSet<size_t> local = BuildQueryable2(data);
+//   QueryableMultiSet<size_t> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -247,7 +247,7 @@ protected:
 //     data.insert(i);
 //   }
 
-//   QueryableSet<size_t> local = BuildQueryable2(data);
+//   QueryableSet<size_t> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -295,7 +295,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
     data.push_back(i == this->triggerIndex ? this->triggerValue : dataSample[i % 12]);
   }
 
-  QueryableVector<size_t> local = BuildQueryable2(data);
+  QueryableVector<size_t> local = BuildQueryable(data);
 
   this->queryableStats = RunTimeAndLog(
     [&]()
@@ -354,7 +354,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 //     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
 //   }
 
-//   QueryableDeque<Person> local = BuildQueryable2(data);
+//   QueryableDeque<Person> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -414,7 +414,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 //   }
 
 
-//   QueryableList<Person> local = BuildQueryable2(data);
+//   QueryableList<Person> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -469,7 +469,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 //     data.insert(person);
 //   }
 
-//   QueryableMultiSet<Person> local = BuildQueryable2(data);
+//   QueryableMultiSet<Person> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -524,7 +524,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 //     data.insert(person);
 //   }
 
-//   QueryableSet<Person> local = BuildQueryable2(data);
+//   QueryableSet<Person> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()
@@ -583,7 +583,7 @@ TEST_P(AnyTimeTest, VectorNumberTest)
 //     data.push_back(i == this->triggerIndex ? personTriggerValue : dataSample[i % 6]);
 //   }
 
-//   QueryableVector<Person> local = BuildQueryable2(data);
+//   QueryableVector<Person> local = BuildQueryable(data);
 
 //   this->queryableStats = RunTimeAndLog(
 //     [&]()

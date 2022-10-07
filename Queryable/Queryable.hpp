@@ -11,12 +11,12 @@
 #include "InternalQueryable.hpp"
 #include "IQueryable.hpp"
 #include "ISortedQueryable.hpp"
-#include "SelectBuilders/SelectBuilder.hpp"
-#include "SelectBuilders/DequeSelectBuilder.hpp"
-#include "SelectBuilders/ListSelectBuilder.hpp"
-#include "SelectBuilders/MultiSetSelectBuilder.hpp"
-#include "SelectBuilders/SetSelectBuilder.hpp"
-#include "SelectBuilders/VectorSelectBuilder.hpp"
+// #include "SelectBuilders/SelectBuilder.hpp"
+// #include "SelectBuilders/DequeSelectBuilder.hpp"
+// #include "SelectBuilders/ListSelectBuilder.hpp"
+// #include "SelectBuilders/MultiSetSelectBuilder.hpp"
+// #include "SelectBuilders/SetSelectBuilder.hpp"
+// #include "SelectBuilders/VectorSelectBuilder.hpp"
 #include "Utilities/Casting.hpp"
 #include "Utilities/StaticBuilders/QueryableStaticBuilder.hpp"
 
@@ -408,91 +408,132 @@ public:
     return this->queryable->Range(retrieveValue);
   }
 
-  template<typename T, typename ...TNewArgs>
-    Queryable<T, TIterable, TIterating, TNewArgs...> Select(
-    std::function<T(TIterating)> retrieveValue,
-    TNewArgs... iterableParameters)
+  template<typename TDestination, typename TDestinationAllocator = std::allocator<TDestination>>
+    Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> Select(
+    std::function<TDestination(TIterating)> retrieveValue,
+    TDestinationAllocator allocator = {})
   {
-    // TODO --> this is terribly ugly, find a better way to handle it
-    switch (this->queryable->GetType())
-    {
-      case QueryableType::Deque:
-      {
-        DequeSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
-        this->queryable->Select(
-          retrieveValue,
-          reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
-          iterableParameters...);
+    Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> mapQueryable(
+      this->queryable->template Select<TDestination, TDestinationAllocator>(retrieveValue));
 
-        std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+    return mapQueryable;
+    // switch (this->queryable->GetType())
+    // {
+    //   // case QueryableType::Deque:
+    //   //   Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> dequeQueryable(
+    //   //     this->queryable->DequeSelect(retrieveValue));
+    //   //   return dequeQueryable;
+    //   // break;
+    //   // case QueryableType::List:
+    //   //   Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> listQueryable(
+    //   //     this->queryable->ListSelect(retrieveValue));
+    //   //   return listQueryable;
+    //   // break;
+    //   case QueryableType::Map:
+    //   {
+    //     Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> mapQueryable(
+    //       this->queryable->template MapSelect<TDestination, TDestinationAllocator>(retrieveValue));
 
-        Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::List:
-      {
-        ListSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
-        this->queryable->Select(
-          retrieveValue,
-          reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
-          iterableParameters...);
+    //     return mapQueryable;
+    //   }
+    //   break;
+    //   // case QueryableType::MultiSet:
+    //   //   Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> multisetQueryable(
+    //   //     this->queryable->MultiSetSelect(retrieveValue));
+    //   //   return multisetQueryable;
+    //   // break;
+    //   // case QueryableType::Set:
+    //   //   Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> setQueryable(
+    //   //     this->queryable->SetSelect(retrieveValue));
+    //   //   return setQueryable;
+    //   // break;
+    //   // case QueryableType::Vector:
+    //   //   Queryable<TDestination, std::vector, TDestination, TDestinationAllocator> vectorQueryable(
+    //   //     this->queryable->VectorSelect(retrieveValue));
+    //   //   return vectorQueryable;
+    //   // break;
+    //   // case QueryableType::Deque:
+    //   // {
+    //   //   DequeSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
+    //   //   this->queryable->Select(
+    //   //     retrieveValue,
+    //   //     reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
+    //   //     iterableParameters...);
 
-        std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+    //   //   std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
+    //   //     FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
 
-        Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::MultiSet:
-      {
-        MultiSetSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
-        this->queryable->Select(
-          retrieveValue,
-          reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
-          iterableParameters...);
+    //   //   Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
+    //   //   return newQueryable;
+    //   //   break;
+    //   // }
+    //   // case QueryableType::List:
+    //   // {
+    //   //   ListSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
+    //   //   this->queryable->Select(
+    //   //     retrieveValue,
+    //   //     reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
+    //   //     iterableParameters...);
 
-        std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+    //   //   std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
+    //   //     FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
 
-        Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Set:
-      {
-        SetSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
-        this->queryable->Select(
-          retrieveValue,
-          reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
-          iterableParameters...);
+    //   //   Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
+    //   //   return newQueryable;
+    //   //   break;
+    //   // }
+    //   // case QueryableType::MultiSet:
+    //   // {
+    //   //   MultiSetSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
+    //   //   this->queryable->Select(
+    //   //     retrieveValue,
+    //   //     reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
+    //   //     iterableParameters...);
 
-        std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+    //   //   std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
+    //   //     FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
 
-        Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-        return newQueryable;
-        break;
-      }
-      case QueryableType::Vector:
-      {
-        VectorSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
-        this->queryable->Select(
-          retrieveValue,
-          reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
-          iterableParameters...);
+    //   //   Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
+    //   //   return newQueryable;
+    //   //   break;
+    //   // }
+    //   // case QueryableType::Set:
+    //   // {
+    //   //   SetSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
+    //   //   this->queryable->Select(
+    //   //     retrieveValue,
+    //   //     reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
+    //   //     iterableParameters...);
 
-        std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
-          FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+    //   //   std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
+    //   //     FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
 
-        Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
-        return newQueryable;
-        break;
-      }
-      default: throw std::runtime_error("should not reach here");
-    }
+    //   //   Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
+    //   //   return newQueryable;
+    //   //   break;
+    //   // }
+    //   // case QueryableType::Vector:
+    //   // {
+    //   //   VectorSelectBuilder<TStoring, T, TNewArgs...> selectBuilder;
+    //   //   this->queryable->Select(
+    //   //     retrieveValue,
+    //   //     reinterpret_cast<SelectBuilder<TStoring, T, TIterable, TIterating, TNewArgs...>*>(&selectBuilder),
+    //   //     iterableParameters...);
+
+    //   //   std::shared_ptr<InternalQueryable<T, TIterable, TIterating, TNewArgs...>> newInternalQueryable(
+    //   //     FutureStd::reinterpret_pointer_cast<InternalQueryable<T, TIterable, TIterating, TNewArgs...>>(selectBuilder.Get()));
+
+    //   //   Queryable<T, TIterable, TIterating, TNewArgs...> newQueryable(std::move(newInternalQueryable));
+    //   //   return newQueryable;
+    //   //   break;
+    //   // }
+    //   case QueryableType::Deque:
+    //   case QueryableType::List:
+    //   case QueryableType::MultiSet:
+    //   case QueryableType::Set:
+    //   case QueryableType::Vector:
+    //   default: throw std::runtime_error("should not reach here");
+    // }
   }
 
   inline Queryable<TStoring, TIterable, TIterating, TArgs...> & Skip(int count)
