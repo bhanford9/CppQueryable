@@ -50,7 +50,7 @@ protected:
 TEST_F(SelectFunctionalTest, DequeDefaultOut)
 {
   QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
-  QueryableDeque<Gender> result = local
+  QueryableVector<Gender> result = local
     .Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
@@ -65,7 +65,7 @@ TEST_F(SelectFunctionalTest, DequeDefaultOut)
 TEST_F(SelectFunctionalTest, ListDefaultOut)
 {
   QueryableList<Person> local = BuildQueryable(this->people.ToList());
-  QueryableList<Gender> result = local
+  QueryableVector<Gender> result = local
     .Select<Gender>([](Person p) { return p.GetGender(); });
 
   ASSERT_EQ(local.Count(), result.Count());
@@ -81,12 +81,10 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 {
   QueryableMultiSet<Person> local1 = BuildQueryable(this->people.ToMultiSet());
   QueryableMultiSet<Person> local2 = BuildQueryable(this->people.ToMultiSet());
-  QueryableMultiSet<double> ages = local1
-    .Select<double>([](Person p) { return p.GetAge(); })
-    .ToQueryable();
-  QueryableMultiSet<std::string> names = local2
-    .Select<std::string>([](Person p) { return p.GetName(); })
-    .ToQueryable();
+  QueryableVector<double> ages = local1
+    .Select<double>([](Person p) { return p.GetAge(); });
+  QueryableVector<std::string> names = local2
+    .Select<std::string>([](Person p) { return p.GetName(); });
 
   ASSERT_EQ(local1.Count(), ages.Count());
   ASSERT_EQ(local1.Count(), names.Count());
@@ -97,7 +95,6 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
   {
     double currentAge = ages.At(i);
     std::string currentName = names.At(i);
-    ASSERT_GE(currentAge, previousAge);
     ASSERT_STREQ(local2.At(i++).GetName().c_str(), currentName.c_str());
     previousAge = currentAge;
   });
@@ -107,25 +104,15 @@ TEST_F(SelectFunctionalTest, SetDefaultOut)
 {
   QueryableSet<Person> local1 = BuildQueryable(this->people.ToSet());
   QueryableSet<Person> local2 = BuildQueryable(this->people.ToSet());
-  QueryableSet<double> ages = local1
+  QueryableVector<double> ages = local1
     .Select<double>([](Person p) { return p.GetAge(); })
     .ToQueryable();
-  QueryableSet<std::string> names = local2
+  QueryableVector<std::string> names = local2
     .Select<std::string>([](Person p) { return p.GetName(); })
     .ToQueryable();
 
-  // all the names are unique, so it is expected that their size is consistent with the originals
-  // there are duplicate ages, so it is expected that their size is inconsistent with the originals
-  ASSERT_NE(local1.Count(), ages.Count());
   ASSERT_EQ(local2.Count(), names.Count());
   ASSERT_EQ(local1.Count(), names.Count());
-
-  double previousAge = -1;
-  ages.ForEach([&](double age)
-  {
-    ASSERT_TRUE(age > previousAge);
-    previousAge = age;
-  });
 
   int i = 0;
   local2.ForEach([&](Person p)

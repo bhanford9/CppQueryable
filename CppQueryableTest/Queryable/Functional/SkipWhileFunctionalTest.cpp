@@ -70,7 +70,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileList)
   // somethings not right with Skip While. It seems to iterate over the collection several times
   QueryableList<size_t> localQueryable = BuildQueryable(this->queryable.ToList());
   QueryableList<size_t> result = localQueryable
-    .SkipWhile([&](size_t value) { std::cout << "value: " << value << std::endl; return value < this->threshold; });
+    .SkipWhile([&](size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 

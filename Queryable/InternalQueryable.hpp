@@ -21,12 +21,6 @@
 #include "QueryableData/QueryableSetData.hpp"
 #include "QueryableData/QueryableVectorData.hpp"
 #include "QueryableData/SelectQueryableData/SelectQueryableData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableDequeData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableListData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableMapData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableMultiSetData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableSetData.hpp"
-#include "QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableDequeData.hpp"
 #include "QueryableData/WhereQueryableData/WhereQueryableListData.hpp"
@@ -40,7 +34,6 @@
 #include "InternalQueryables/SetInternalQueryable.hpp"
 #include "InternalQueryables/VectorInternalQueryable.hpp"
 #include "QueryableType.hpp"
-#include "SelectBuilders/SelectBuilder.hpp"
 #include "Sorters/DequeSorter.hpp"
 #include "Sorters/ListSorter.hpp"
 #include "Sorters/VectorSorter.hpp"
@@ -916,54 +909,6 @@ public:
     return true;
   }
 
-  // template<typename T, typename ...TNewArgs>
-  // void Select(
-  //   std::function<T(TIterating)> retrieveValue,
-  //   SelectBuilder<TIterating, T, TIterable, TNewArgs...> * selectBuilder,
-  //   TNewArgs... iterableParameters)
-  // {
-  //   selectBuilder->Build(this->items, retrieveValue, iterableParameters...);
-  // }
-
-  // TODO --> might need to use ITerable instead of explicitly specifying std::deque
-  template<typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
-  std::shared_ptr<InternalQueryable<TDestination, std::deque, TDestination, TAllocatorDestination>> DequeSelect(
-    std::function<TDestination(TIterating)> & selector)
-  {
-    std::shared_ptr<SelectQueryableDequeData<TStoring, TDestination, TAllocatorDestination, TArgs...>> selectData =
-      std::make_shared<SelectQueryableDequeData<TStoring, TDestination, TAllocatorDestination, TArgs...>>(
-        this->items,
-        selector);
-
-    std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> dequeQueryable =
-      std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
-        std::move(selectData),
-        QueryableType::Vector);
-
-    return
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
-        dequeQueryable);
-  }
-  
-  template<typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
-  std::shared_ptr<InternalQueryable<TDestination, std::list, TDestination, TAllocatorDestination>> ListSelect(
-    std::function<TDestination(TIterating)> & selector)
-  {
-    std::shared_ptr<SelectQueryableListData<TStoring, TDestination, TAllocatorDestination, TArgs...>> selectData =
-      std::make_shared<SelectQueryableListData<TStoring, TDestination, TAllocatorDestination, TArgs...>>(
-        this->items,
-        selector);
-
-    std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> listQueryable =
-      std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
-        std::move(selectData),
-        QueryableType::Vector);
-
-    return
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
-        listQueryable);
-  }
-
   template<typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
   std::shared_ptr<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>> Select(
     std::function<TDestination(TIterating)> & selector)
@@ -973,7 +918,6 @@ public:
         this->items,
         selector);
 
-    // the map's select class is actually a vector queryable holding a map queryable
     std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> mapQueryable =
       std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
         std::move(selectData),
@@ -982,65 +926,6 @@ public:
     return
       FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
         mapQueryable);
-  }
-  
-  template<
-    typename TDestination,
-    typename TAllocatorDestination = std::allocator<TDestination>>
-  std::shared_ptr<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>> MultiSetSelect(
-    std::function<TDestination(TIterating)> & selector)
-  {
-    std::shared_ptr<SelectQueryableMultiSetData<TStoring, TDestination, TAllocatorDestination, TArgs...>> selectData =
-      std::make_shared<SelectQueryableMultiSetData<TStoring, TDestination, TAllocatorDestination, TArgs...>>(
-        this->items,
-        selector);
-
-    std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> multisetQueryable =
-      std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
-        std::move(selectData),
-        QueryableType::Vector);
-
-    return
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
-        multisetQueryable);
-  }
-
-  template<typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
-  std::shared_ptr<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>> SetSelect(
-    std::function<TDestination(TIterating)> & selector)
-  {
-    std::shared_ptr<SelectQueryableSetData<TStoring, TDestination, TAllocatorDestination, TArgs...>> selectData =
-      std::make_shared<SelectQueryableSetData<TStoring, TDestination, TAllocatorDestination, TArgs...>>(
-        this->items,
-        selector);
-
-    std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> setQueryable =
-      std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
-        std::move(selectData),
-        QueryableType::Vector);
-
-    return
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
-        setQueryable);
-  }
-  
-  template<typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
-  std::shared_ptr<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>> VectorSelect(
-    std::function<TDestination(TIterating)> & selector)
-  {
-    std::shared_ptr<SelectQueryableVectorData<TStoring, TDestination, TAllocatorDestination, TArgs...>> selectData =
-      std::make_shared<SelectQueryableVectorData<TStoring, TDestination, TAllocatorDestination, TArgs...>>(
-        this->items,
-        selector);
-
-    std::shared_ptr<VectorInternalQueryable<TDestination, TAllocatorDestination>> vectorQueryable =
-      std::make_shared<VectorInternalQueryable<TDestination, TAllocatorDestination>>(
-        std::move(selectData),
-        QueryableType::Vector);
-
-    return
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TDestination, std::vector, TDestination, TAllocatorDestination>>(
-        vectorQueryable);
   }
 
   inline bool Contains(const TIterating & item) const
@@ -1062,7 +947,8 @@ public:
   void Sort(TLessThan lessThan = {})
   {
     // sorting is fragile wrt to container type in cpp. Need to have a simple QueryableData container to be able to sort properly
-    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, TIterable, TArgs...>>(this->items->GetRealizedQueryableData());
+    this->items = FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, TIterable, TIterating, TArgs...>>(
+      this->items->GetRealizedQueryableData());
 
     switch (this->GetType())
     {

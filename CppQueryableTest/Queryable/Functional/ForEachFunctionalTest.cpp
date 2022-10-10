@@ -35,16 +35,16 @@ protected:
   }
 
   template<
-    typename TObj,
+    typename TStoring,
     template<typename, typename ...> typename TIterable,
-    // typename TAllocator = std::allocator<TObj>,
+    typename TIterating,
     typename ...TArgs>
-  void TestForEach (Queryable<TObj, TIterable, TArgs...> & localQueryable)
+  void TestForEach (Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable)
   {
-    std::vector<TObj> iterated(localQueryable.Count(), 0);
+    std::vector<TStoring> iterated(localQueryable.Count(), 0);
     size_t i = 0;
 
-    localQueryable.ForEach([&](TObj value)
+    localQueryable.ForEach([&](TStoring value)
     {
       iterated[i++] = value;
     });
@@ -69,15 +69,11 @@ TEST_F(ForEachFunctionalTest, ForEachVector)
 {
   std::vector<size_t> iterated(this->queryable.Count(), 0);
   size_t i = 0;
-  
-  std::cout << "\nstart foreach" << std::endl;
 
   this->queryable.ForEach([&](size_t value)
   {
     iterated[i++] = value;
   });
-
-  std::cout << "\nstop foreach" << std::endl;
 
   for (i = 0; i < this->queryable.Count(); i++)
   {

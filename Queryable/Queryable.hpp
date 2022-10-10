@@ -290,21 +290,21 @@ public:
     typename TKey,
     typename TAllocator = std::allocator<TStoring>>
   inline Queryable<
-      Grouping<TKey, TStoring, TAllocator>,
+      Grouping<TKey, TIterating, TAllocator>,
       std::set,
-      TIterating,
-      std::less<Grouping<TKey, TStoring, TAllocator>>,
-      std::allocator<Grouping<TKey, TStoring, TAllocator>>> GroupBy(
+      Grouping<TKey, TIterating, TAllocator>,
+      std::less<Grouping<TKey, TIterating, TAllocator>>,
+      std::allocator<Grouping<TKey, TIterating, TAllocator>>> GroupBy(
     const std::function<TKey(TIterating)> & getKey,
     std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
     TAllocator allocator = {})
   {
-    using TGrouping = Grouping<TKey, TStoring, TAllocator>;
+    using TGrouping = Grouping<TKey, TIterating, TAllocator>;
     using TSetIter = typename std::set<TGrouping>::iterator;
 
     std::set<TGrouping> groups;
     
-    this->ForEach([&](TStoring value)
+    this->ForEach([&](TIterating value)
     {
       std::pair<TSetIter, bool> result = 
         groups.insert(TGrouping(
@@ -321,9 +321,9 @@ public:
     });
 
     // TODO --> Grouping should maybe be an unordered_set instead
-    SetInternalQueryable<TGrouping> setGroupedQueryable(std::move(groups));
+    SetInternalQueryable<TGrouping, std::less<TGrouping>, std::allocator<TGrouping>> setGroupedQueryable(std::move(groups));
 
-    Queryable<TGrouping, std::set, TIterating, std::less<TGrouping>, std::allocator<TGrouping>> queryable =
+    Queryable<TGrouping, std::set, TGrouping, std::less<TGrouping>, std::allocator<TGrouping>> queryable =
       Builders::FromInternalSet(std::move(setGroupedQueryable));
 
     return queryable;

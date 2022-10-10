@@ -22,105 +22,105 @@ class Queryable;
 namespace Builders
 {
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::deque, TAllocator> FromInternalDeque(
+  static Queryable<TStoring, std::deque, TStoring, TAllocator> FromInternalDeque(
     DequeInternalQueryable<TStoring, TAllocator> && other)
   {
-    Queryable<TStoring, std::deque, TAllocator> queryable(
+    Queryable<TStoring, std::deque, TStoring, TAllocator> queryable(
       std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::deque, TAllocator>>(
+        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::deque, TStoring, TAllocator>>(
           std::make_shared<DequeInternalQueryable<TStoring, TAllocator>>(other))));
     return queryable;
   }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::list, TAllocator> FromInternalList(
+  static Queryable<TStoring, std::list, TStoring, TAllocator> FromInternalList(
     ListInternalQueryable<TStoring, TAllocator> && other)
   {
-    Queryable<TStoring, std::list, TAllocator> queryable(
+    Queryable<TStoring, std::list, TStoring, TAllocator> queryable(
       std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::list, TAllocator>>(
+        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::list, TStoring, TAllocator>>(
           std::make_shared<ListInternalQueryable<TStoring, TAllocator>>(other))));
     return queryable;
   }
 
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::multiset, TLessThan, TAllocator> FromInternalMultiSet(
+  static Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator> FromInternalMultiSet(
     MultiSetInternalQueryable<TStoring, TLessThan, TAllocator> && other)
   {
-    Queryable<TStoring, std::multiset, TLessThan, TAllocator> queryable(
+    Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator> queryable(
       std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::multiset, TLessThan, TAllocator>>(
+        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator>>(
           std::make_shared<MultiSetInternalQueryable<TStoring, TLessThan, TAllocator>>(other))));
   }
 
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::set, TLessThan, TAllocator> FromInternalSet(
+  static Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> FromInternalSet(
     SetInternalQueryable<TStoring, TLessThan, TAllocator> && other)
   {
-    Queryable<TStoring, std::set, TLessThan, TAllocator> queryable(
+    Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> queryable(
       std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::set, TLessThan, TAllocator>>(
+        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::set, TStoring, TLessThan, TAllocator>>(
           std::make_shared<SetInternalQueryable<TStoring, TLessThan, TAllocator>>(other))));
     return queryable;
   }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::vector, TAllocator> FromInternalVector(
+  static Queryable<TStoring, std::vector, TStoring, TAllocator> FromInternalVector(
     VectorInternalQueryable<TStoring, TAllocator> && other)
   {
-    Queryable<TStoring, std::vector, TAllocator> queryable(
+    Queryable<TStoring, std::vector, TStoring, TAllocator> queryable(
       std::move(
-        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TAllocator>>(
+        FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>>(
           std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(other))));
     return queryable;
   }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::deque, TAllocator> FromInternalDeque(
+  static Queryable<TStoring, std::deque, TStoring, TAllocator> FromInternalDeque(
     const DequeInternalQueryable<TStoring, TAllocator> & other)
   {
-    Queryable<TStoring, std::deque, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::deque, TAllocator>>(
+    Queryable<TStoring, std::deque, TStoring, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::deque, TStoring, TAllocator>>(
         std::make_shared<DequeInternalQueryable<TStoring, TAllocator>>(other)));
     return queryable;
   }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::list, TAllocator> FromInternalList(
+  static Queryable<TStoring, std::list, TStoring, TAllocator> FromInternalList(
     const ListInternalQueryable<TStoring, TAllocator> & other)
   {
-    Queryable<TStoring, std::list, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::list, TAllocator>>(
+    Queryable<TStoring, std::list, TStoring, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::list, TStoring, TAllocator>>(
         std::make_shared<ListInternalQueryable<TStoring, TAllocator>>(other)));
     return queryable;
   }
 
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::multiset, TLessThan, TAllocator> FromInternalMultiSet(
+  static Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator> FromInternalMultiSet(
     const MultiSetInternalQueryable<TStoring, TLessThan, TAllocator> & other)
   {
-    Queryable<TStoring, std::multiset, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::multiset, TLessThan, TAllocator>>(
+    Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator>>(
         std::make_shared<MultiSetInternalQueryable<TStoring, TLessThan, TAllocator>>(other)));
     return queryable;
   }
 
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::set, TLessThan, TAllocator> FromInternalSet(
+  static Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> FromInternalSet(
     const SetInternalQueryable<TStoring, TLessThan, TAllocator> & other)
   {
-    Queryable<TStoring, std::set, TLessThan, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::set, TLessThan, TAllocator>>(
+    Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::set, TStoring, TLessThan, TAllocator>>(
         std::make_shared<SetInternalQueryable<TStoring, TLessThan, TAllocator>>(other)));
     return queryable;
   }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
-  static Queryable<TStoring, std::vector, TAllocator> FromInternalVector(
+  static Queryable<TStoring, std::vector, TStoring, TAllocator> FromInternalVector(
     const VectorInternalQueryable<TStoring, TAllocator> & other)
   {
-    Queryable<TStoring, std::vector, TAllocator> queryable(
-      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TAllocator>>(
+    Queryable<TStoring, std::vector, TStoring, TAllocator> queryable(
+      FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>>(
         std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(other)));
     return queryable;
   }
@@ -130,27 +130,11 @@ namespace Builders
   {
     return Queryable<TStoring, std::deque, TStoring, TAllocator>(InternalBuilders::FromDeque<TStoring, TAllocator>(iterable));
   }
-  template<typename TStoring>
-  static Queryable<TStoring, std::deque, TStoring> FromDeque(const std::deque<TStoring> & iterable)
-  {
-    return Queryable<TStoring, std::deque, TStoring>(InternalBuilders::FromDeque(iterable));
-  }
 
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::list, TStoring, TAllocator> FromList(const std::list<TStoring, TAllocator> & iterable)
   {
     return Queryable<TStoring, std::list, TStoring, TAllocator>(InternalBuilders::FromList<TStoring, TAllocator>(iterable));
-  }
-  template<typename TStoring>
-  static Queryable<TStoring, std::list, TStoring> FromList(const std::list<TStoring> & iterable)
-  {
-    return Queryable<TStoring, std::list, TStoring>(InternalBuilders::FromList(iterable));
-  }
-
-  template<typename TKey, typename TValue>
-  static Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue> FromMap(const std::map<TKey, TValue> & iterable)
-  {
-    return Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue>(InternalBuilders::FromMap(iterable));
   }
 
   template<
@@ -172,12 +156,6 @@ namespace Builders
     return Queryable<TStoring, std::multiset, TStoring, TLessThan, TAllocator>(InternalBuilders::FromMultiSet<TStoring, TLessThan, TAllocator>(iterable));
   }
 
-  template<typename TStoring>
-  static Queryable<TStoring, std::multiset, TStoring> FromMultiSet(const std::multiset<TStoring> & iterable)
-  {
-    return Queryable<TStoring, std::multiset, TStoring>(InternalBuilders::FromMultiSet(iterable));
-  }
-
   template<typename TStoring, typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator> FromSet(
     const std::set<TStoring, TLessThan, TAllocator> & iterable)
@@ -185,22 +163,11 @@ namespace Builders
     return Queryable<TStoring, std::set, TStoring, TLessThan, TAllocator>(InternalBuilders::FromSet<TStoring, TLessThan, TAllocator>(iterable));
   }
 
-  template<typename TStoring>
-  static Queryable<TStoring, std::set, TStoring> FromSet(const std::set<TStoring> & iterable)
-  {
-    return Queryable<TStoring, std::set, TStoring>(InternalBuilders::FromSet(iterable));
-  }
-
   template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
   static Queryable<TStoring, std::vector, TStoring, TAllocator> FromVector(
     const std::vector<TStoring, TAllocator> & iterable)
   {
     return Queryable<TStoring, std::vector, TStoring, TAllocator>(InternalBuilders::FromVector<TStoring, TAllocator>(iterable));
-  }
-  template<typename TStoring>
-  static Queryable<TStoring, std::vector, TStoring> FromVector(const std::vector<TStoring> & iterable)
-  {
-    return Queryable<TStoring, std::vector, TStoring>(InternalBuilders::FromVector(iterable));
   }
 }
 

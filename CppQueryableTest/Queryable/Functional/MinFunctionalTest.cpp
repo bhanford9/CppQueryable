@@ -56,12 +56,12 @@ TEST_F(MinFunctionalTest, MinUninitialized)
   ASSERT_DOUBLE_EQ(0.0, min);
 }
 
-TEST_F(MinFunctionalTest, MinUninitializedDefault)
-{
-  QueryableVector<double> emptyQueryable(BuildQueryable(std::vector<double>()));
-  double min = emptyQueryable.Min();
-  ASSERT_DOUBLE_EQ(0.0, min);
-}
+// TEST_F(MinFunctionalTest, MinUninitializedDefault)
+// {
+//   QueryableVector<double> emptyQueryable(BuildQueryable(std::vector<double>()));
+//   double min = emptyQueryable.Min();
+//   ASSERT_DOUBLE_EQ(0.0, min);
+// }
 
 TEST_F(MinFunctionalTest, MinSeededUninitialized)
 {

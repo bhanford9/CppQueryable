@@ -57,12 +57,12 @@ TEST_F(MaxFunctionalTest, MaxUninitialized)
   ASSERT_DOUBLE_EQ(0.0, max);
 }
 
-TEST_F(MaxFunctionalTest, MaxUninitializedDefault)
-{
-  QueryableVector<double> emptyQueryable(BuildQueryable(std::vector<double>()));
-  double max = emptyQueryable.Max();
-  ASSERT_DOUBLE_EQ(0.0, max);
-}
+// TEST_F(MaxFunctionalTest, MaxUninitializedDefault)
+// {
+//   QueryableVector<double> emptyQueryable(BuildQueryable(std::vector<double>()));
+//   double max = emptyQueryable.Max();
+//   ASSERT_DOUBLE_EQ(0.0, max);
+// }
 
 TEST_F(MaxFunctionalTest, MaxSeededUninitialized)
 {

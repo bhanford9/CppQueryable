@@ -46,7 +46,7 @@ int main()
 
     std::cout << "\n\n" << std::endl;
 
-    QueryableMap<size_t, std::string> mapQueryable = BuildQueryable(myMap);
+    QueryableMap<size_t, std::string> mapQueryable = BuildQueryable<size_t, std::string>(myMap);
 
     mapQueryable
         .Select<bool>([&](std::pair<const size_t, std::string> kvp)
