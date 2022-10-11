@@ -66,6 +66,18 @@ TEST_F(ContainsFunctionalTest, ListContains)
   ASSERT_FALSE(local.Contains(99));
 }
 
+TEST_F(ContainsFunctionalTest, MapContains)
+{
+  size_t count = this->queryable.Count();
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  ASSERT_GT(count, local.Count());
+  ASSERT_TRUE(local.Contains(local.First([](std::pair<const size_t, std::string> kvp) { return kvp.first == 76; })));
+  ASSERT_FALSE(local.Contains(std::pair<const size_t, std::string>(76, "38")));
+}
+
 TEST_F(ContainsFunctionalTest, MultiSetContains)
 {
   size_t count = this->queryable.Count();
@@ -79,7 +91,7 @@ TEST_F(ContainsFunctionalTest, SetContains)
 {
   size_t count = this->queryable.Count();
   QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  ASSERT_TRUE(count > local.Count());
+  ASSERT_GT(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
   ASSERT_FALSE(local.Contains(99));
 }
@@ -95,12 +107,10 @@ TEST_F(ContainsFunctionalTest, VectorContains)
 
 TEST_F(ContainsFunctionalTest, WhereContains)
 {
-  // TODO --> figure out why WHERE cannot be done in succession
-  // TODO --> figure out what is desired when WHERE is done is succession
   ASSERT_TRUE(this->queryable
     .Where([](size_t value) { return value % 2 == 1; })
     .Contains(1));
-  // ASSERT_FALSE(this->queryable
-  //   .Where([](size_t value) { return value % 2 == 1; })
-  //   .Contains(8));
+  ASSERT_FALSE(this->queryable
+    .Where([](size_t value) { return value % 2 == 1; })
+    .Contains(8));
 }

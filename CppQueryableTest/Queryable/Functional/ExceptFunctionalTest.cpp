@@ -5,6 +5,7 @@
 #include <exception>
 #include <iostream>
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -188,6 +189,48 @@ TEST_F(ExceptFunctionalTest, ExceptListVectorDefault)
   ASSERT_EQ(this->oddCount, result.size());
 }
 
+TEST_F(ExceptFunctionalTest, ExceptMapSetDefault)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  
+  std::set<std::pair<const size_t, std::string>> evens = BuildQueryable(
+    this->queryableEvens
+      .ToMap<size_t, std::string>(
+        [](size_t value) { return value; },
+        [](size_t value) { return std::to_string(value / 2.0); }))
+    .ToSet();
+
+  std::set<std::pair<const size_t, std::string>> result = local
+    .Except(evens)
+    .ToSet();
+
+  ASSERT_EQ(this->oddCount, result.size());
+}
+
+TEST_F(ExceptFunctionalTest, ExceptMapVectorDefault)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  
+  std::vector<std::pair<const size_t, std::string>> evens = BuildQueryable(
+    this->queryableEvens
+      .ToMap<size_t, std::string>(
+        [](size_t value) { return value; },
+        [](size_t value) { return std::to_string(value / 2.0); }))
+    .ToVector();
+
+  std::vector<std::pair<const size_t, std::string>> result = local
+    .Except(evens)
+    .ToVector();
+
+  ASSERT_EQ(this->oddCount, result.size());
+}
+
 TEST_F(ExceptFunctionalTest, ExceptMultiSetDequeDefault)
 {
   QueryableMultiSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToMultiSet());
@@ -297,7 +340,6 @@ TEST_F(ExceptFunctionalTest, ExceptVectorListDefault)
 
   ASSERT_EQ(this->oddCount, result.size());
 }
-
 
 TEST_F(ExceptFunctionalTest, ExceptVectorMultiSetDefault)
 {

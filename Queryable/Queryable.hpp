@@ -94,26 +94,16 @@ public:
     return this->queryable->GetValueCompare();
   }
 
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::deque<TStoring, TAllocator> ToDeque(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::deque<TIterating, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
     return this->queryable->ToDeque(allocator);
   }
 
-  inline std::deque<TStoring> ToDeque() const
-  {
-    return this->queryable->ToDeque();
-  }
-
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::list<TStoring, TAllocator> ToList(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::list<TIterating, TAllocator> ToList(TAllocator allocator = {}) const
   {
     return this->queryable->ToList(allocator);
-  }
-
-  inline std::list<TStoring> ToList() const
-  {
-    return this->queryable->ToList();
   }
 
   template<
@@ -130,37 +120,22 @@ public:
     return this->queryable->ToMap(getKey, getValue, keyCompare, pairAllocator);
   }
 
-  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  inline std::multiset<TStoring, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TIterating>, typename TAllocator = std::allocator<TIterating>>
+  inline std::multiset<TIterating, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
     return this->queryable->ToMultiSet(lessThan, allocator);
   }
 
-  inline std::multiset<TStoring> ToMultiSet() const
-  {
-    return this->queryable->ToMultiSet();
-  }
-
-  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  inline std::set<TStoring, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TIterating>, typename TAllocator = std::allocator<TIterating>>
+  inline std::set<TIterating, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
     return this->queryable->ToSet(lessThan, allocator);
   }
 
-  inline std::set<TStoring> ToSet() const
-  {
-    return this->queryable->ToSet();
-  }
-
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::vector<TStoring, TAllocator> ToVector(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::vector<TIterating, TAllocator> ToVector(TAllocator allocator = {}) const
   {
     return this->queryable->ToVector(allocator);
-  }
-
-  inline std::vector<TStoring> ToVector() const
-  {
-    return this->queryable->ToVector();
   }
 
   inline Queryable<TStoring, TIterable, TIterating, TArgs...> ToQueryable()
@@ -211,7 +186,7 @@ public:
     return this->queryable->Average(divisor, retrieveValue);
   }
 
-  inline bool Contains(const TStoring & item) const
+  inline bool Contains(const TIterating & item) const
   {
     return this->queryable->Contains(item);
   }
@@ -253,11 +228,11 @@ public:
 
   template<
     template<typename, typename ...> typename TExceptions,
-    typename TLessThan = std::less<TStoring>,
-    typename TAllocator = std::allocator<TStoring>,
+    typename TLessThan = std::less<TIterating>,
+    typename TAllocator = std::allocator<TIterating>,
     typename ...TExceptionArgs>
   Queryable<TStoring, TIterable, TIterating, TArgs...> & Except(
-    const TExceptions<TStoring, TExceptionArgs...> & exceptions,
+    const TExceptions<TIterating, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
   {

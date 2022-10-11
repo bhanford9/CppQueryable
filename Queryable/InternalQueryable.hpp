@@ -188,10 +188,10 @@ public:
     return {this->rbegin(), this->ernd()};
   }
 
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::deque<TStoring, TAllocator> ToDeque(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::deque<TIterating, TAllocator> ToDeque(TAllocator allocator = {}) const
   {
-    std::deque<TStoring, TAllocator> newItems(allocator);
+    std::deque<TIterating, TAllocator> newItems(allocator);
 
     for (TIterating item : *this->items.get())
     {
@@ -201,10 +201,10 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::list<TStoring, TAllocator> ToList(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::list<TIterating, TAllocator> ToList(TAllocator allocator = {}) const
   {
-    std::list<TStoring, TAllocator> newItems(allocator);
+    std::list<TIterating, TAllocator> newItems(allocator);
 
     for (TIterating item : *this->items.get())
     {
@@ -235,10 +235,10 @@ public:
     return newItems;
   }
 
-  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  inline std::multiset<TStoring, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TIterating>, typename TAllocator = std::allocator<TIterating>>
+  inline std::multiset<TIterating, TLessThan, TAllocator> ToMultiSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::multiset<TStoring, TLessThan, TAllocator> newItems(lessThan, allocator);
+    std::multiset<TIterating, TLessThan, TAllocator> newItems(lessThan, allocator);
 
     for (TIterating item : *this->items.get())
     {
@@ -248,10 +248,10 @@ public:
     return newItems;
   }
 
-  template<typename TLessThan = std::less<TStoring>, typename TAllocator = std::allocator<TStoring>>
-  inline std::set<TStoring, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
+  template<typename TLessThan = std::less<TIterating>, typename TAllocator = std::allocator<TIterating>>
+  inline std::set<TIterating, TLessThan, TAllocator> ToSet(TLessThan lessThan = {}, TAllocator allocator = {}) const
   {
-    std::set<TStoring, TLessThan, TAllocator> newItems(lessThan, allocator);
+    std::set<TIterating, TLessThan, TAllocator> newItems(lessThan, allocator);
 
     for (TIterating item : *this->items.get())
     {
@@ -261,11 +261,11 @@ public:
     return newItems;
   }
 
-  template<typename TAllocator = std::allocator<TStoring>>
-  inline std::vector<TStoring, TAllocator> ToVector(TAllocator allocator = {}) const
+  template<typename TAllocator = std::allocator<TIterating>>
+  inline std::vector<TIterating, TAllocator> ToVector(TAllocator allocator = {}) const
   {
     // probably be better to use the constructor that takes the iterators as parameters
-    std::vector<TStoring, TAllocator> newItems(allocator);
+    std::vector<TIterating, TAllocator> newItems(allocator);
 
     for (TIterating item : *this->items.get())
     {
@@ -978,18 +978,18 @@ public:
   //   from the std lib containers... Don't need to have them passed in
   template<
     template<typename, typename ...> typename TExceptions,
-    typename TLessThan = std::less<TStoring>,
+    typename TLessThan = std::less<TIterating>,
     typename TAllocator = std::allocator<TIterating>,
     typename ...TExceptionArgs>
   void Except(
-    const TExceptions<TStoring, TExceptionArgs...> & exceptions,
+    const TExceptions<TIterating, TExceptionArgs...> & exceptions,
     TLessThan lessThan = {},
     TAllocator allocator = {})
   {
-    static_assert(can_iterate<TExceptions<TStoring, TExceptionArgs...>>::value, "Class must be able to be iterated over");
+    static_assert(can_iterate<TExceptions<TIterating, TExceptionArgs...>>::value, "Class must be able to be iterated over");
 
     // O(nlogn) minimize and sort the exceptions coming in
-    std::set<TStoring, TLessThan, TAllocator> sortedExceptions(
+    std::set<TIterating, TLessThan, TAllocator> sortedExceptions(
       exceptions.begin(),
       exceptions.end(),
       lessThan,

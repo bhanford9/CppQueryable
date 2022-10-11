@@ -118,6 +118,16 @@ TEST_F(AverageFunctionalTest, AverageListDefault)
   ASSERT_EQ(this->expectedAverage, average);
 }
 
+TEST_F(AverageFunctionalTest, AverageMap)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  size_t average = local.Average([](std::pair<const size_t, std::string> kvp) { return kvp.first; });
+  ASSERT_EQ(this->expectedNoDupsAverage, average);
+}
+
 TEST_F(AverageFunctionalTest, AverageMultiSet)
 {
   QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());

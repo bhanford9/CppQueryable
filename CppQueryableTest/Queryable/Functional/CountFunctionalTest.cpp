@@ -36,23 +36,6 @@ protected:
 //   ASSERT_EQ(0, emptyQueryable.Count());
 // }
 
-TEST_F(CountFunctionalTest, CountVector)
-{
-  ASSERT_EQ(this->expectedWithDuplicates, this->queryable.Count());
-}
-
-TEST_F(CountFunctionalTest, CountSet)
-{
-  int count = BuildQueryable(this->queryable.ToSet()).Count();
-  ASSERT_EQ(this->expectedWithoutDuplicates, count);
-}
-
-TEST_F(CountFunctionalTest, CountMultiSet)
-{
-  int count = BuildQueryable(this->queryable.ToMultiSet()).Count();
-  ASSERT_EQ(this->expectedWithDuplicates, count);
-}
-
 TEST_F(CountFunctionalTest, CountDeque)
 {
   int count = BuildQueryable(this->queryable.ToDeque()).Count();
@@ -63,6 +46,33 @@ TEST_F(CountFunctionalTest, CountList)
 {
   int count = BuildQueryable(this->queryable.ToList()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
+}
+
+TEST_F(CountFunctionalTest, CounMap)
+{
+  int count = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }))
+    .Count();
+  ASSERT_EQ(this->expectedWithoutDuplicates, count);
+}
+
+TEST_F(CountFunctionalTest, CountMultiSet)
+{
+  int count = BuildQueryable(this->queryable.ToMultiSet()).Count();
+  ASSERT_EQ(this->expectedWithDuplicates, count);
+}
+
+TEST_F(CountFunctionalTest, CountSet)
+{
+  int count = BuildQueryable(this->queryable.ToSet()).Count();
+  ASSERT_EQ(this->expectedWithoutDuplicates, count);
+}
+
+TEST_F(CountFunctionalTest, CountVector)
+{
+  ASSERT_EQ(this->expectedWithDuplicates, this->queryable.Count());
 }
 
 TEST_F(CountFunctionalTest, CountWhere)
