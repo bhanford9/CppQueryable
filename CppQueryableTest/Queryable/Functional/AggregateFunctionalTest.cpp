@@ -114,6 +114,26 @@ TEST_F(AggregateFunctionalTest, AggregateList)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
+TEST_F(AggregateFunctionalTest, AggregateMap)
+{
+  std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
+  QueryableMap<std::string, Person> local = BuildQueryable(
+    this->people.ToMap<std::string, Person>(
+      [](Person p) { return p.GetName(); },
+      [](Person p) { return p; }));
+  std::string result = local
+    .Where([](std::pair<const std::string, Person> p) { return p.first.find("Person 1") != std::string::npos; })
+    .Aggregate<std::string>([](std::string s, std::pair<const std::string, Person> p)
+    {
+      std::string newStr = p.first + " (" +
+        (p.second.IsMale() ? "Male" : "Female") +
+        ") - Height: " + std::to_string(p.second.GetHeight()) + "in";
+      return s + newStr + "\n";
+    });
+
+  ASSERT_STREQ(expected.c_str(), result.c_str());
+}
+
 TEST_F(AggregateFunctionalTest, AggregateMultiSet)
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";

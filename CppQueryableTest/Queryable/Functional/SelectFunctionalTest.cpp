@@ -77,6 +77,24 @@ TEST_F(SelectFunctionalTest, ListDefaultOut)
   });
 }
 
+TEST_F(SelectFunctionalTest, MapDefaultOut)
+{
+  QueryableMap<std::string, Gender> local = BuildQueryable(
+    this->people.ToMap<std::string, Gender>(
+      [](Person p) { return p.GetName(); },
+      [](Person p) { return p.GetGender(); }));
+  QueryableVector<Gender> result = local
+    .Select<Gender>([](std::pair<const std::string, Gender> kvp) { return kvp.second; });
+
+  ASSERT_EQ(local.Count(), result.Count());
+
+  int i = 0;
+  local.ForEach([&](std::pair<const std::string, Gender> kvp)
+  {
+    ASSERT_TRUE(kvp.second == result.At(i++));
+  });
+}
+
 TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 {
   QueryableMultiSet<Person> local1 = BuildQueryable(this->people.ToMultiSet());

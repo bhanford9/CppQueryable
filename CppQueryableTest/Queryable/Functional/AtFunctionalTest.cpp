@@ -72,24 +72,6 @@ TEST_F(AtFunctionalTest, AtVectorIndexNegative)
   }
 }
 
-TEST_F(AtFunctionalTest, AtVector)
-{
-  size_t value = this->queryable.At(this->atIndex);
-  ASSERT_EQ(this->expectedUnorderedAt, value);
-}
-
-TEST_F(AtFunctionalTest, AtSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
-  ASSERT_EQ(this->expectedSetAt, value);
-}
-
-TEST_F(AtFunctionalTest, AtMultiSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
-  ASSERT_EQ(this->expectedOrderedAt, value);
-}
-
 TEST_F(AtFunctionalTest, AtDeque)
 {
   size_t value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
@@ -99,6 +81,36 @@ TEST_F(AtFunctionalTest, AtDeque)
 TEST_F(AtFunctionalTest, AtList)
 {
   size_t value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
+  ASSERT_EQ(this->expectedUnorderedAt, value);
+}
+
+TEST_F(AtFunctionalTest, AtMap)
+{
+  std::pair<const size_t, std::string> value = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }))
+      .At(this->atIndex);
+
+  ASSERT_EQ(this->expectedSetAt, value.first);
+  ASSERT_EQ(std::to_string(this->expectedSetAt / 2.0), value.second);
+}
+
+TEST_F(AtFunctionalTest, AtMultiSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
+  ASSERT_EQ(this->expectedOrderedAt, value);
+}
+
+TEST_F(AtFunctionalTest, AtSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
+  ASSERT_EQ(this->expectedSetAt, value);
+}
+
+TEST_F(AtFunctionalTest, AtVector)
+{
+  size_t value = this->queryable.At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 

@@ -79,6 +79,26 @@ TEST_F(AllFunctionalTest, AllListTrue)
   ASSERT_TRUE(all);
 }
 
+TEST_F(AllFunctionalTest, AllMapFalse)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  bool all = local.All([](std::pair<const size_t, std::string> kvp) { return kvp.first > 5; });
+  ASSERT_FALSE(all);
+}
+
+TEST_F(AllFunctionalTest, AllMapTrue)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  bool all = local.All([](std::pair<const size_t, std::string> kvp) { return kvp.first < 5000; });
+  ASSERT_TRUE(all);
+}
+
 TEST_F(AllFunctionalTest, AllMultiSetFalse)
 {
   QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());

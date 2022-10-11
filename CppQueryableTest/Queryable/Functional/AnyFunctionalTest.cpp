@@ -77,6 +77,26 @@ TEST_F(AnyFunctionalTest, AnyListFalse)
 
 TEST_F(AnyFunctionalTest, AnyListTrue)
 {
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  bool any = local.Any([](std::pair<const size_t, std::string> kvp) { return kvp.first > 12; });
+  ASSERT_TRUE(any);
+}
+
+TEST_F(AnyFunctionalTest, AnyMapFalse)
+{
+  QueryableMap<size_t, std::string> local = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
+  bool any = local.Any([](std::pair<const size_t, std::string> kvp) { return kvp.first > 5000; });
+  ASSERT_FALSE(any);
+}
+
+TEST_F(AnyFunctionalTest, AnyMapTrue)
+{
   QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   bool any = local.Any([](size_t value) { return value > 12; });
   ASSERT_TRUE(any);
