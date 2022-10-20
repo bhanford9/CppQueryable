@@ -263,7 +263,7 @@ public:
 
   template<
     typename TKey,
-    typename TAllocator = std::allocator<TStoring>>
+    typename TAllocator = std::allocator<TIterating>>
   inline Queryable<
       Grouping<TKey, TIterating, TAllocator>,
       std::set,

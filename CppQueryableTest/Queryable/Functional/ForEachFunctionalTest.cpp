@@ -41,12 +41,12 @@ protected:
     typename ...TArgs>
   void TestForEach (Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable)
   {
-    std::vector<TStoring> iterated(localQueryable.Count(), 0);
+    std::vector<TIterating> iterated;
     size_t i = 0;
 
-    localQueryable.ForEach([&](TStoring value)
+    localQueryable.ForEach([&](TIterating value)
     {
-      iterated[i++] = value;
+      iterated.push_back(value);
     });
 
     for (i = 0; i < localQueryable.Count(); i++)
@@ -90,6 +90,15 @@ TEST_F(ForEachFunctionalTest, ForEachDeque)
 TEST_F(ForEachFunctionalTest, ForEachList)
 {
   QueryableList<size_t> localQueryable = BuildQueryable(this->queryable.ToList());
+  this->TestForEach(localQueryable);
+}
+
+TEST_F(ForEachFunctionalTest, ForEachMap)
+{
+  QueryableMap<size_t, std::string> localQueryable = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }));
   this->TestForEach(localQueryable);
 }
 

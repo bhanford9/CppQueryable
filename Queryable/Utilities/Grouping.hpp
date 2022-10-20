@@ -7,6 +7,14 @@
 #include "../InternalQueryables/VectorInternalQueryable.hpp"
 #include "../Iterators/QueryableIterator.hpp"
 
+// map gets tripped up here because it cannot return a copy of std::pair when iterating
+// to get around this, will need Grouping to be its own Internal Queryable which contains
+// a vector Internal Queryable within it (similar to how Select works) so the internal
+// thing can still behave as needed while the wrapper can adjust as needed...
+//   but hen why does map.ToVector().ForEach work? or does it?
+//   ... it does not :(
+//   
+//   My only potential idea right now would be to try making the QueryableData's 'value' field a pointer
 template<
     typename TKey,
     typename TValue,

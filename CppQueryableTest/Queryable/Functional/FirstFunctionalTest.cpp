@@ -54,24 +54,6 @@ TEST_F(FirstFunctionalTest, FirstVectorUninitialized)
   }
 }
 
-TEST_F(FirstFunctionalTest, FirstVector)
-{
-  size_t value = this->queryable.First();
-  ASSERT_EQ(this->expectedUnorderedFirst, value);
-}
-
-TEST_F(FirstFunctionalTest, FirstSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToSet()).First();
-  ASSERT_EQ(this->expectedOrderedFirst, value);
-}
-
-TEST_F(FirstFunctionalTest, FirstMultiSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToMultiSet()).First();
-  ASSERT_EQ(this->expectedOrderedFirst, value);
-}
-
 TEST_F(FirstFunctionalTest, FirstDeque)
 {
   size_t value = BuildQueryable(this->queryable.ToDeque()).First();
@@ -81,6 +63,34 @@ TEST_F(FirstFunctionalTest, FirstDeque)
 TEST_F(FirstFunctionalTest, FirstList)
 {
   size_t value = BuildQueryable(this->queryable.ToList()).First();
+  ASSERT_EQ(this->expectedUnorderedFirst, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstMap)
+{
+  size_t value = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }))
+    .First().first;
+  ASSERT_EQ(this->expectedOrderedFirst, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstMultiSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToMultiSet()).First();
+  ASSERT_EQ(this->expectedOrderedFirst, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToSet()).First();
+  ASSERT_EQ(this->expectedOrderedFirst, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstVector)
+{
+  size_t value = this->queryable.First();
   ASSERT_EQ(this->expectedUnorderedFirst, value);
 }
 
@@ -110,26 +120,6 @@ TEST_F(FirstFunctionalTest, FirstWhereConditionFails)
   }
 }
 
-TEST_F(FirstFunctionalTest, FirstWhereVector)
-{
-  size_t value = this->queryable.First([&](size_t value) { return value > this->threshold; });
-  ASSERT_EQ(this->expectedUnorderedOver40, value);
-}
-
-TEST_F(FirstFunctionalTest, FirstWhereSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToSet())
-    .First([&](size_t value) { return value > this->threshold; });
-  ASSERT_EQ(this->expectedOrderedOver40, value);
-}
-
-TEST_F(FirstFunctionalTest, FirstWhereMultiSet)
-{
-  size_t value = BuildQueryable(this->queryable.ToMultiSet())
-    .First([&](size_t value) { return value > this->threshold; });
-  ASSERT_EQ(this->expectedOrderedOver40, value);
-}
-
 TEST_F(FirstFunctionalTest, FirstWhereDeque)
 {
   size_t value = BuildQueryable(this->queryable.ToDeque())
@@ -141,6 +131,36 @@ TEST_F(FirstFunctionalTest, FirstWhereList)
 {
   size_t value = BuildQueryable(this->queryable.ToList())
     .First([&](size_t value) { return value > this->threshold; });
+  ASSERT_EQ(this->expectedUnorderedOver40, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereMap)
+{
+  size_t value = BuildQueryable(
+    this->queryable.ToMap<size_t, std::string>(
+      [](size_t value) { return value; },
+      [](size_t value) { return std::to_string(value / 2.0); }))
+    .First([&](std::pair<const size_t, std::string> kvp) { return kvp.first > this->threshold; }).first;
+  ASSERT_EQ(this->expectedOrderedOver40, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereMultiSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToMultiSet())
+    .First([&](size_t value) { return value > this->threshold; });
+  ASSERT_EQ(this->expectedOrderedOver40, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereSet)
+{
+  size_t value = BuildQueryable(this->queryable.ToSet())
+    .First([&](size_t value) { return value > this->threshold; });
+  ASSERT_EQ(this->expectedOrderedOver40, value);
+}
+
+TEST_F(FirstFunctionalTest, FirstWhereVector)
+{
+  size_t value = this->queryable.First([&](size_t value) { return value > this->threshold; });
   ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 

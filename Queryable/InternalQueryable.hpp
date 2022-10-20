@@ -227,7 +227,7 @@ public:
   {
     std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
-    for (const TIterating & item : *this->items.get())
+    for (TIterating item : *this->items.get())
     {
       newItems[getKey(item)] = getValue(item);
     }
