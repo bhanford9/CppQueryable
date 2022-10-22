@@ -74,14 +74,14 @@ public:
 
   virtual TDestination & Get(IteratorType type) override
   {
-    this->value = this->selector(this->original->Get(type));
-    return this->value;
+    *this->value = this->selector(this->original->Get(type));
+    return *this->value;
   }
 
   virtual const TDestination & ConstGet(IteratorType type) override
   {
-    this->value = this->selector(this->original->Get(type));
-    return this->value;
+    *this->value = this->selector(this->original->Get(type));
+    return *this->value;
   }
   
   virtual IQueryableData<TDestination> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override

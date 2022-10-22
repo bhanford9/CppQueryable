@@ -146,8 +146,8 @@ public:
   {
     //   std::cout << "Where Queryable Get" << std::endl;
     return this->original->Get(type);
-    // *this->value = this->original->Get(type);
-    // return *this->value;
+    //  *this->value = *this->original->Get(type);
+    // return  *this->value;
   }
 
   virtual bool CanIncrement(IteratorType type) override

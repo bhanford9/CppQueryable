@@ -49,7 +49,7 @@ public:
 
   virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
-    // std::cout << "Random Access + Operator, adding: " << addend << std::endl;
+    std::cout << "Random Access + Operator, adding: " << addend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
@@ -82,27 +82,27 @@ public:
       // std::cout << "Get" << std::endl;
     switch (type)
     {
-      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-      case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
     }
 
-    return this->value;
-    // std::cout << "Get: " << this->value << std::endl;
+    return *this->value;
+    // std::cout << "Get: " << *this->value << std::endl;
   }
 
   virtual const T & ConstGet(IteratorType type) override
   {
     switch (type)
     {
-      case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-      case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-      case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
     }
 
-    return this->value;
+    return *this->value;
   }
 
   void Add(T item) override

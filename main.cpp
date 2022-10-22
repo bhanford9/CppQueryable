@@ -31,39 +31,65 @@ using namespace QueryBuilder;
 
 int main()
 {
-    auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
+    std::vector<std::pair<const int, std::string>> pairs;
+    std::map<int, std::string> mapping;
+    mapping[5] = "Hello";
+    mapping[9] = "World";
+    // pairs.push_back(std::pair<int, std::string>(5, "hello"));
+    // pairs.push_back(std::pair<int, std::string>(9, "world"));
 
-    auto queryable = BuildQueryable(data);
+    std::map<const int, std::string>::iterator iter = mapping.begin();
 
-    auto myMap = queryable.ToMap<size_t, std::string>(
-        [](size_t value) { return value; },
-        [](size_t value) { return "Half Value: " + std::to_string(value / 2.0); });
-
-    for (auto kvp : myMap)
+    for (std::pair<const int, std::string> p : mapping)
     {
-        std::cout << "key: " << kvp.first << ", value: " << kvp.second << std::endl;
+        pairs.push_back(p);
     }
+    std::vector<std::pair<const int, std::string>>::iterator viter = pairs.begin();
 
-    std::cout << "\n\n" << std::endl;
+    std::pair<const int, std::string> p = *viter;
 
-    QueryableMap<size_t, std::string> mapQueryable = BuildQueryable<size_t, std::string>(myMap);
+    // std::pair<int, std::string> * mainPair = pairs.get_allocator().allocate(1);
 
-    mapQueryable
-        .Select<bool>([&](std::pair<const size_t, std::string> kvp)
-        {
-            std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
-            return (kvp.first % 2) == 0;
-        })
-        .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
+    // for (std::pair<int, std::string> cpy : pairs)
+    // {
+    //     *mainPair = cpy;
+    //     std::cout << "pair: " << mainPair->first << ", " << mainPair->second << std::endl;
+    // }
 
-    // I think this may be a problem... To Vector should return std::vector<TIterating>
-    BuildQueryable(BuildQueryable(data).ToList())
-        .Select<bool>([&](size_t value)
-        {
-            std::cout << "--- value: " << value << ", result: " << (value % 2) << std::endl;
-            return (value % 2) == 0;
-        })
-        .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
+    std::cout << "pair: " << p.first << ", " << p.second << std::endl;
+    // auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
+
+    // auto queryable = BuildQueryable(data);
+
+    // auto myMap = queryable.ToMap<size_t, std::string>(
+    //     [](size_t value) { return value; },
+    //     [](size_t value) { return "Half Value: " + std::to_string(value / 2.0); });
+
+    // for (auto kvp : myMap)
+    // {
+    //     std::cout << "key: " << kvp.first << ", value: " << kvp.second << std::endl;
+    // }
+
+    // std::cout << "\n\n" << std::endl;
+
+    // QueryableMap<size_t, std::string> mapQueryable = BuildQueryable<size_t, std::string>(myMap);
+
+    // mapQueryable
+    //     .Select<bool>([&](std::pair<const size_t, std::string> kvp)
+    //     {
+    //         std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
+    //         return (kvp.first % 2) == 0;
+    //     })
+    //     .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
+
+    // // I think this may be a problem... To Vector should return std::vector<TIterating>
+    // BuildQueryable(BuildQueryable(data).ToList())
+    //     .Select<bool>([&](size_t value)
+    //     {
+    //         std::cout << "--- value: " << value << ", result: " << (value % 2) << std::endl;
+    //         return (value % 2) == 0;
+    //     })
+    //     .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
 
     // auto result = mapQueryable.Average();
 

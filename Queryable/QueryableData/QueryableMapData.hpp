@@ -131,35 +131,35 @@ public:
       // std::cout << "Map Get" << std::endl;
     switch (type)
     {
-    //   case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-    //   case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-    //   case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-    //   case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+    //   case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+    //   case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+    //   case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+    //   case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
       case IteratorType::BeginForward: { return *this->beginIterator; }
       case IteratorType::EndForward: { return *this->endIterator; }
       case IteratorType::BeginReverse: { return *this->rbeginIterator; }
       case IteratorType::EndReverse: default: { return *this->rendIterator; }
     }
 
-    return this->value;
-    // std::cout << "Map Get: " << this->value << std::endl;
+    return *this->value;
+    // std::cout << "Map Get: " << *this->value << std::endl;
   }
 
   virtual const std::pair<const TKey, TValue> & ConstGet(IteratorType type) override
   {
     switch (type)
     {
-      // case IteratorType::BeginForward: { this->value = *this->beginIterator; return this->value; }
-      // case IteratorType::EndForward: { this->value = *this->endIterator; return this->value; }
-      // case IteratorType::BeginReverse: { this->value = *this->rbeginIterator; return this->value; }
-      // case IteratorType::EndReverse: default: { this->value = *this->rendIterator; return this->value; }
+      // case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      // case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      // case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      // case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
       case IteratorType::BeginForward: { return *this->beginIterator; }
       case IteratorType::EndForward: { return *this->endIterator; }
       case IteratorType::BeginReverse: { return *this->rbeginIterator; }
       case IteratorType::EndReverse: default: { return *this->rendIterator; }
     }
 
-    return this->value;
+    return *this->value;
   }
 
 //   virtual bool CanIncrement(IteratorType type) override

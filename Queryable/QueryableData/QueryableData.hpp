@@ -30,9 +30,14 @@ class QueryableData : public IQueryableData<TIterating>
 public:
   using TForwardIterator = typename TIterable<TStoring, TArgs...>::iterator;
   using TReverseIterator = typename TIterable<TStoring, TArgs...>::reverse_iterator;
+
+  // need to see if I can pull this off such that maps can be converted to vectors using the const_iterator
+  using TConstIterator = typename TIterable<TStoring, TArgs...>::const_iterator;
+  using TConstReverseIterator = typename TIterable<TStoring, TArgs...>::const_reverse_iterator;
+
   static_assert(can_iterate<TIterable<TStoring, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  TIterating value;
+  TIterating * value = nullptr;
   size_t size = 0;
   bool forceToEnd = false;
   bool forceToBegin = false;
@@ -51,6 +56,10 @@ protected:
   TForwardIterator endIterator;
   TReverseIterator rbeginIterator;
   TReverseIterator rendIterator;
+  TConstIterator cbeginIterator;
+  TConstIterator cendIterator;
+  TConstReverseIterator crbeginIterator;
+  TConstReverseIterator crEndIterator;
 
   void DefaultInitialize()
   {
@@ -58,7 +67,12 @@ protected:
     this->endIterator = this->items->end();
     this->rbeginIterator = this->items->rbegin();
     this->rendIterator = this->items->rend();
+    this->cbeginIterator = this->items->cbegin();
+    this->cendIterator = this->items->cend();
+    this->crbeginIterator = this->items->crbegin();
+    this->crEndIterator = this->items->crend();
     this->size = 0;
+    this->value = this->items->get_allocator().allocate(1);
   }
 
 public:
@@ -113,11 +127,12 @@ public:
     this->rbeginIterator = data.rbeginIterator;
     this->rendIterator = data.rendIterator;
 
-    // this->value = data.value;
+    // *this->value = data.value;
     this->size = data.size;
 
     this->forceToEnd = data.forceToEnd;
     this->forceToBegin = data.forceToBegin;
+    this->value = data.value;
   }
 
   QueryableData(std::shared_ptr<QueryableData<TStoring, TIterable, TIterating, TArgs...>> && data)
@@ -129,6 +144,7 @@ public:
 
     this->forceToEnd = data->forceToEnd;
     this->forceToBegin = data->forceToBegin;
+    this->value = data->value;
   }
 
   QueryableData(QueryableIterator<TIterating> first, QueryableIterator<TIterating> last, TArgs... args) :
