@@ -79,13 +79,17 @@ public:
 
   virtual T & Get(IteratorType type) override
   {
-      // std::cout << "Get" << std::endl;
+    std::cout << "RAQ Get" << std::endl;
     switch (type)
     {
-      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
-      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
-      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
-      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
+      case IteratorType::BeginForward: { this->value = &(*this->beginIterator); return *this->value; }
+      case IteratorType::EndForward: { this->value = &(*this->endIterator); return *this->value; }
+      case IteratorType::BeginReverse: { this->value = &(*this->rbeginIterator); return *this->value; }
+      case IteratorType::EndReverse: default: { this->value = &(*this->rendIterator); return *this->value; }
+      // case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      // case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      // case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      // case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
     }
 
     return *this->value;
@@ -94,12 +98,17 @@ public:
 
   virtual const T & ConstGet(IteratorType type) override
   {
+    std::cout << "RAQ Const Get" << std::endl;
     switch (type)
     {
-      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
-      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
-      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
-      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
+      case IteratorType::BeginForward: { this->value = &(*this->beginIterator); return *this->value; }
+      case IteratorType::EndForward: { this->value = &(*this->endIterator); return *this->value; }
+      case IteratorType::BeginReverse: { this->value = &(*this->rbeginIterator); return *this->value; }
+      case IteratorType::EndReverse: default: { this->value = &(*this->rendIterator); return *this->value; }
+      // case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      // case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      // case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      // case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
     }
 
     return *this->value;

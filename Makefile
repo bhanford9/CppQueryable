@@ -1,6 +1,6 @@
 CXX = g++ 
 CPPFLAGS = -Wall #-Werror
-DEBUG = -g -ggdb3# -c
+DEBUG = -O0 -g -ggdb3 # -c
 
 # Prerequisits
 # 1. export PROJECTS_PATH environment variable to the full path to the directory housing CppQueryable project
@@ -131,8 +131,8 @@ DirTests: $(REFS_REF) $(SRC_COMPILE_REF)
 
 	/bin/rm -f $(OBJS)
 	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test.o
-	-$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
-	/bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
+	# -$(foreach testcase, $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases, $(testcase);)
+	# /bin/rm -f $(PROGRAM_TEST_DIR)/$(directory)/$(key)Test_testcases
 
 .PHONY: memtests
 memtests: $(TEST_PROGRAM)

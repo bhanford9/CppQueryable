@@ -225,13 +225,16 @@ public:
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
+    std::cout << "internal to map" << std::endl;
     std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
     for (TIterating item : *this->items.get())
     {
+      std::cout << "iterating" << std::endl;
       newItems[getKey(item)] = getValue(item);
     }
 
+    std::cout << "returning from to map" << std::endl;
     return newItems;
   }
 
@@ -376,9 +379,9 @@ public:
     return count;
   }
 
-  void ForEach(std::function<void(TIterating)> action) const
+  void ForEach(std::function<void(const TIterating &)> action) const
   {
-    for (const TIterating & item : *this->items.get())
+    for (const auto & item : *this->items.get())
     {
       action(item);
     }

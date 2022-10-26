@@ -40,6 +40,7 @@ public:
           std::vector<TValue, TValueAllocator>(1, value, allocator)),
         QueryableType::Vector)
   {
+    std::cout << "constructor 1" << std::endl;
     this->key = key;
     this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
   }
@@ -49,27 +50,31 @@ public:
     const std::vector<TValue, TValueAllocator> & values,
     std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
     TValueAllocator allocator = {})
-    : VectorInternalQueryable<TValue, TValueAllocator>(values)
+    : VectorInternalQueryable<TValue, TValueAllocator>(
+        std::make_shared<QueryableConstVectorData<TValue, TValueAllocator>>(values),
+        QueryableType::Vector)
   {
+    std::cout << "constructor 2" << std::endl;
     this->key = key;
     this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
   }
 
-  Grouping(
-    const TKey & key,
-    const QueryableIterator<TValue> & first,
-    const QueryableIterator<TValue> & last,
-    std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
-    TValueAllocator allocator = {})
-      : VectorInternalQueryable<TValue, TValueAllocator>(first, last, allocator)
-  {
-    this->key = key;    
-    this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
-  }
+  // Grouping(
+  //   const TKey & key,
+  //   const QueryableIterator<TValue> & first,
+  //   const QueryableIterator<TValue> & last,
+  //   std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
+  //   TValueAllocator allocator = {})
+  //     : VectorInternalQueryable<TValue, TValueAllocator>(first, last, allocator)
+  // {
+  //   this->key = key;    
+  //   this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
+  // }
 
   Grouping(const Grouping<TKey, TValue, TValueAllocator> & other)
     : VectorInternalQueryable<TValue, TValueAllocator>(other)
   {
+    std::cout << "grouping copy constructor" << std::endl;
     this->key = other.key;    
     this->keyLessThan = other.keyLessThan;
   }
@@ -77,6 +82,7 @@ public:
   Grouping(Grouping<TKey, TValue, TValueAllocator> && other)
     : VectorInternalQueryable<TValue, TValueAllocator>(std::move(other))
   {
+    std::cout << "grouping move constructor" << std::endl;
     this->key = std::move(other.key);
     this->keyLessThan = std::move(other.keyLessThan);
   }

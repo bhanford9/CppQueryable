@@ -82,10 +82,10 @@ public:
       // std::cout << "Get" << std::endl;
     switch (type)
     {
-      case IteratorType::BeginForward: { *this->value = *this->cbeginIterator; return *this->value; }
-      case IteratorType::EndForward: { *this->value = *this->cendIterator; return *this->value; }
-      case IteratorType::BeginReverse: { *this->value = *this->crbeginIterator; return *this->value; }
-      case IteratorType::EndReverse: default: { *this->value = *this->crendIterator; return *this->value; }
+      case IteratorType::BeginForward: { return (T&)*this->cbeginIterator; }
+      case IteratorType::EndForward: { return (T&)*this->cendIterator; }
+      case IteratorType::BeginReverse: { return (T&)*this->crbeginIterator; }
+      case IteratorType::EndReverse: default: { return (T&)*this->crendIterator; }
     }
 
     return *this->value;
@@ -96,10 +96,10 @@ public:
   {
     switch (type)
     {
-      case IteratorType::BeginForward: { *this->value = *this->cbeginIterator; return *this->value; }
-      case IteratorType::EndForward: { *this->value = *this->cendIterator; return *this->value; }
-      case IteratorType::BeginReverse: { *this->value = *this->crbeginIterator; return *this->value; }
-      case IteratorType::EndReverse: default: { *this->value = *this->crendIterator; return *this->value; }
+      case IteratorType::BeginForward: { return *this->cbeginIterator; }
+      case IteratorType::EndForward: { return *this->cendIterator; }
+      case IteratorType::BeginReverse: { return *this->crbeginIterator; }
+      case IteratorType::EndReverse: default: { return *this->crendIterator; }
     }
 
     return *this->value;

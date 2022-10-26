@@ -59,7 +59,7 @@ protected:
   TConstIterator cbeginIterator;
   TConstIterator cendIterator;
   TConstReverseIterator crbeginIterator;
-  TConstReverseIterator crEndIterator;
+  TConstReverseIterator crendIterator;
 
   void DefaultInitialize()
   {
@@ -70,16 +70,18 @@ protected:
     this->cbeginIterator = this->items->cbegin();
     this->cendIterator = this->items->cend();
     this->crbeginIterator = this->items->crbegin();
-    this->crEndIterator = this->items->crend();
+    this->crendIterator = this->items->crend();
     this->size = 0;
+    std::cout << "creating value" << std::endl;
     this->value = this->items->get_allocator().allocate(1);
+    std::cout << "value created" << std::endl;
   }
 
 public:
 
   QueryableData()
   {
-    // std::cout << "QueryableData Constructor 1" << std::endl;
+    std::cout << "QueryableData Constructor 1" << std::endl;
     this->items = std::make_shared<TIterable<TStoring, TArgs...>>();
     this->DefaultInitialize();
   }
@@ -97,11 +99,11 @@ public:
     //   to have the child calculate the size after constructions... may be the cleanest
     //   since the user never sees this class anyway
     this->size = this->items->size();
-    // std::cout << "QueryableData Constructor 2: " << this->size << std::endl;
+    std::cout << "QueryableData Constructor 2: " << this->size << std::endl;
   }
   QueryableData(TIterable<TStoring, TArgs...> && items)
   {
-    // std::cout << "\nQueryableData Constructor 3" << std::endl;
+    std::cout << "\nQueryableData Constructor 3" << std::endl;
     this->items = std::make_shared<TIterable<TStoring, TArgs...>>(items);
 
     this->DefaultInitialize();
@@ -119,7 +121,7 @@ public:
   }
   QueryableData(const QueryableData<TStoring, TIterable, TIterating, TArgs...> & data)
   {
-    // std::cout << "QueryableData Copy Constructor 2: " << data.size << std::endl;
+    std::cout << "QueryableData Copy Constructor 2: " << data.size << std::endl;
     this->items = data.items;
 
     this->beginIterator = data.beginIterator;
@@ -133,6 +135,7 @@ public:
     this->forceToEnd = data.forceToEnd;
     this->forceToBegin = data.forceToBegin;
     this->value = data.value;
+    std::cout << "queryable data copy consturct 2 leaving" << std::endl;
   }
 
   QueryableData(std::shared_ptr<QueryableData<TStoring, TIterable, TIterating, TArgs...>> && data)

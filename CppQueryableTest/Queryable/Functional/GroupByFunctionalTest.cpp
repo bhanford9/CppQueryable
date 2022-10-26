@@ -55,279 +55,125 @@ protected:
   void TearDown() override {}
 };
 
-TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
-{
-  auto males = BuildQueryable(this->people.ToDeque())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  auto females = BuildQueryable(this->people.ToDeque())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
+// TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
+// {
+//   auto males = BuildQueryable(this->people.ToDeque())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+//   auto females = BuildQueryable(this->people.ToDeque())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-  auto genderGroups = BuildQueryable(this->people.ToDeque())
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+//   auto genderGroups = BuildQueryable(this->people.ToDeque())
+//     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
 
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+//   ASSERT_EQ(2, genderGroups.Count());
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups.ForEach([&](Grouping<Gender, Person> group)
-  {
-    ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      ASSERT_EQ(females.Count(), group.Count());
-    }
+//   genderGroups.ForEach([&](Grouping<Gender, Person> group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
 
-    int i = 0;
-    for (Person person : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-}
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
 
-TEST_F(GroupByFunctionalTest, ListDefaultsTest)
-{
-  auto genderGroups = BuildQueryable(this->people.ToList())
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  auto males = BuildQueryable(this->people.ToList())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  auto females = BuildQueryable(this->people.ToList())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
+// TEST_F(GroupByFunctionalTest, ListDefaultsTest)
+// {
+//   auto genderGroups = BuildQueryable(this->people.ToList())
+//     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+//   auto males = BuildQueryable(this->people.ToList())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+//   auto females = BuildQueryable(this->people.ToList())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+//   ASSERT_EQ(2, genderGroups.Count());
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  genderGroups.ForEach([&](Grouping<Gender, Person> group)
-  {
-    ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      ASSERT_EQ(females.Count(), group.Count());
-    }
+//   genderGroups.ForEach([&](Grouping<Gender, Person> group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
 
-    int i = 0;
-    for (Person person : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-}
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
 
 TEST_F(GroupByFunctionalTest, MapDefaultsTest)
 {
+  std::cout << "1" << std::endl;
   auto genderGroups = BuildQueryable(
     this->people.ToMap<std::string, Person>(
-      [](Person p) { return p.GetName(); },
+      [](Person p) { std::cout << "getting name" << std::endl; return p.GetName(); },
       [](Person p) { return p; }))
-    .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { return kvp.second.GetGender(); });
+    .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { std::cout << "in group by" << std::endl; return kvp.second.GetGender(); });
+  std::cout << "2" << std::endl;
   auto males = BuildQueryable(this->people.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+  std::cout << "3" << std::endl;
   auto females = BuildQueryable(this->people.ToList())
     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+  std::cout << "4" << std::endl;
 
-  for (const auto & item : BuildQueryable(
-    this->people.ToMap<std::string, Person>(
-      [](Person p) { return p.GetName(); },
-      [](Person p) { return p; }))
-    .ToVector())
+  for (const auto & group : genderGroups.ToVector())
   {
-    std::cout << "key: " << item.first << ", " << item.second << std::endl;
+    std::cout << "key: " << (group.GetKey() == Gender::Male ? "M" : "F") << std::endl;
   }
 
-  // genderGroups.ForEach([&](auto group)
+  std::cout << "5" << std::endl;
+
+  ASSERT_EQ(2, genderGroups.Count());
+  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+
+  std::cout << "6" << std::endl;
+
+  // for (const auto & item : BuildQueryable(
+  //   this->people.ToMap<std::string, Person>(
+  //     [](Person p) { return p.GetName(); },
+  //     [](Person p) { return p; }))
+  //   .ToVector())
   // {
-  //   ASSERT_GT(group.Count(), 0);
-  //   if (group.GetKey() == Gender::Male)
-  //   {
-  //     ASSERT_EQ(males.Count(), group.Count());
-  //   }
-  //   else
-  //   {
-  //     ASSERT_EQ(females.Count(), group.Count());
-  //   }
-
-  //   int i = 0;
-  //   for (std::pair<const std::string, Person> kvp : group)
-  //   {
-  //     if (group.GetKey() == Gender::Male)
-  //     {
-  //       ASSERT_TRUE(kvp.second == males.At(i++));
-  //     }
-  //     else
-  //     {
-  //       ASSERT_TRUE(kvp.second == females.At(i++));
-  //     }
-  //   }
-  // });
-}
-
-TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
-{
-  auto genderGroups = BuildQueryable(this->people.ToMultiSet())
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableMultiSet<Person> males = BuildQueryable(this->people.ToMultiSet())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-//   males.Sort();
-  QueryableMultiSet<Person> females = BuildQueryable(this->people.ToMultiSet())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
-//   females.Sort();
-
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
-
-  genderGroups.ForEach([&](TGenderPerson group)
-  {
-    ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      ASSERT_EQ(females.Count(), group.Count());
-    }
-
-    int i = 0;
-    for (Person person : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-}
-
-TEST_F(GroupByFunctionalTest, SetDefaultsTest)
-{
-  auto genderGroups = BuildQueryable(this->people.ToSet())
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableSet<Person> males = BuildQueryable(this->people.ToSet())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-//   males = males.ToQueryableSet();
-  QueryableSet<Person> females = BuildQueryable(this->people.ToSet())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
-//   females = females.ToQueryableSet();
-
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
-
-  genderGroups.ForEach([&](TGenderPerson group)
-  {
-    ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      ASSERT_EQ(females.Count(), group.Count());
-    }
-
-    int i = 0;
-    for (Person person : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-}
-
-TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
-{
-  auto genderGroups = BuildQueryable(this->people.ToVector())
-    .GroupBy<Gender>([](Person p) { return p.GetGender(); });
-  QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
-
-  ASSERT_EQ(2, genderGroups.Count());
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
-
-  genderGroups.ForEach([&](TGenderPerson group)
-  {
-    ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      ASSERT_EQ(females.Count(), group.Count());
-    }
-
-    int i = 0;
-    for (Person person : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        ASSERT_TRUE(person == males.At(i++));
-      }
-      else
-      {
-        ASSERT_TRUE(person == females.At(i++));
-      }
-    }
-  });
-}
-
-TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
-{
-  auto genderGroups = BuildQueryable(this->people.ToVector())
-    .GroupBy<Gender>(
-        [](Person p) { return p.GetGender(); },
-        [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; });
-
-  QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
-
-  ASSERT_EQ(2, genderGroups.Count());
-  // order of keys are swapped
-  ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Male);
-  ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Female);
+  //   std::cout << "key: " << item.first << ", " << item.second << std::endl;
+  // }
 
   genderGroups.ForEach([&](auto group)
   {
@@ -342,74 +188,242 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
     }
 
     int i = 0;
-    for (Person person : group)
+    for (const auto & kvp : group)
     {
       if (group.GetKey() == Gender::Male)
       {
-        ASSERT_TRUE(person == males.At(i++));
+        ASSERT_TRUE(kvp.second == males.At(i++));
       }
       else
       {
-        ASSERT_TRUE(person == females.At(i++));
+        ASSERT_TRUE(kvp.second == females.At(i++));
       }
     }
   });
 }
 
-TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
-{
-  typedef Grouping<void*, Person> TVoidGroup;
-  auto voidGroups = BuildQueryable(this->people.ToVector())
-    .GroupBy<void*>([](Person p) { return (void*)NULL; });
+// TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
+// {
+//   auto genderGroups = BuildQueryable(this->people.ToMultiSet())
+//     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+//   QueryableMultiSet<Person> males = BuildQueryable(this->people.ToMultiSet())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+// //   males.Sort();
+//   QueryableMultiSet<Person> females = BuildQueryable(this->people.ToMultiSet())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
+// //   females.Sort();
 
-  ASSERT_EQ(1, voidGroups.Count());
-  ASSERT_TRUE(voidGroups.At(0).GetKey() == NULL);
+//   ASSERT_EQ(2, genderGroups.Count());
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  voidGroups.ForEach([&](TVoidGroup group)
-  {
-    ASSERT_EQ(this->people.Count(), group.Count());
+//   genderGroups.ForEach([&](TGenderPerson group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
 
-    int i = 0;
-    for (Person person : group)
-    {
-      ASSERT_TRUE(person == this->people.At(i++));
-    }
-  });
-}
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
 
-TEST_F(GroupByFunctionalTest, GroupByWhereTest)
-{
-  typedef Grouping<double, Person> TAgePerson;
-  auto ageGroupsOverThirty = BuildQueryable(this->people.ToVector())
-    .GroupBy<double>([](Person p) { return p.GetAge(); })
-    .Where([](TAgePerson group) { return group.GetKey() > 30; });
+// TEST_F(GroupByFunctionalTest, SetDefaultsTest)
+// {
+//   auto genderGroups = BuildQueryable(this->people.ToSet())
+//     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+//   QueryableSet<Person> males = BuildQueryable(this->people.ToSet())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+// //   males = males.ToQueryableSet();
+//   QueryableSet<Person> females = BuildQueryable(this->people.ToSet())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
+// //   females = females.ToQueryableSet();
 
-  auto overThirtyAgeGroups = BuildQueryable(this->people.ToVector())
-    .Where([](Person person) { return person.GetAge() > 30; })
-    .GroupBy<double>([](Person p) { return p.GetAge(); });
+//   ASSERT_EQ(2, genderGroups.Count());
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-  // ASSERT_TRUE(ageGroupsOverThirty != NULL);
-  ASSERT_EQ(3, ageGroupsOverThirty.Count());
-  ASSERT_EQ(3, overThirtyAgeGroups.Count());
-  ASSERT_TRUE(ageGroupsOverThirty.At(0).GetKey() == 51);
-  ASSERT_TRUE(ageGroupsOverThirty.At(1).GetKey() == 52);
-  ASSERT_TRUE(ageGroupsOverThirty.At(2).GetKey() == 61);
-  ASSERT_TRUE(overThirtyAgeGroups.At(0).GetKey() == 51);
-  ASSERT_TRUE(overThirtyAgeGroups.At(1).GetKey() == 52);
-  ASSERT_TRUE(overThirtyAgeGroups.At(2).GetKey() == 61);
+//   genderGroups.ForEach([&](TGenderPerson group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
 
-  int iGroup = 0;
-  ageGroupsOverThirty.ForEach([&](TAgePerson group)
-  {
-    ASSERT_TRUE(group.Count() == overThirtyAgeGroups.At(iGroup).Count());
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
 
-    int iPerson = 0;
-    for (Person person : group)
-    {
-      ASSERT_TRUE(person == overThirtyAgeGroups.At(iGroup).ToVector()[iPerson++]);
-    }
+// TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
+// {
+//   auto genderGroups = BuildQueryable(this->people.ToVector())
+//     .GroupBy<Gender>([](Person p) { return p.GetGender(); });
+//   QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+//   QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-    iGroup++;
-  });
-}
+//   ASSERT_EQ(2, genderGroups.Count());
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+
+//   genderGroups.ForEach([&](TGenderPerson group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
+
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
+
+// TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
+// {
+//   auto genderGroups = BuildQueryable(this->people.ToVector())
+//     .GroupBy<Gender>(
+//         [](Person p) { return p.GetGender(); },
+//         [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; });
+
+//   QueryableVector<Person> males = BuildQueryable(this->people.ToVector())
+//     .Where([](Person p) { return p.GetGender() == Gender::Male; });
+//   QueryableVector<Person> females = BuildQueryable(this->people.ToVector())
+//     .Where([](Person p) { return p.GetGender() == Gender::Female; });
+
+//   ASSERT_EQ(2, genderGroups.Count());
+//   // order of keys are swapped
+//   ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Male);
+//   ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Female);
+
+//   genderGroups.ForEach([&](auto group)
+//   {
+//     ASSERT_GT(group.Count(), 0);
+//     if (group.GetKey() == Gender::Male)
+//     {
+//       ASSERT_EQ(males.Count(), group.Count());
+//     }
+//     else
+//     {
+//       ASSERT_EQ(females.Count(), group.Count());
+//     }
+
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       if (group.GetKey() == Gender::Male)
+//       {
+//         ASSERT_TRUE(person == males.At(i++));
+//       }
+//       else
+//       {
+//         ASSERT_TRUE(person == females.At(i++));
+//       }
+//     }
+//   });
+// }
+
+// TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
+// {
+//   typedef Grouping<void*, Person> TVoidGroup;
+//   auto voidGroups = BuildQueryable(this->people.ToVector())
+//     .GroupBy<void*>([](Person p) { return (void*)NULL; });
+
+//   ASSERT_EQ(1, voidGroups.Count());
+//   ASSERT_TRUE(voidGroups.At(0).GetKey() == NULL);
+
+//   voidGroups.ForEach([&](TVoidGroup group)
+//   {
+//     ASSERT_EQ(this->people.Count(), group.Count());
+
+//     int i = 0;
+//     for (Person person : group)
+//     {
+//       ASSERT_TRUE(person == this->people.At(i++));
+//     }
+//   });
+// }
+
+// TEST_F(GroupByFunctionalTest, GroupByWhereTest)
+// {
+//   typedef Grouping<double, Person> TAgePerson;
+//   auto ageGroupsOverThirty = BuildQueryable(this->people.ToVector())
+//     .GroupBy<double>([](Person p) { return p.GetAge(); })
+//     .Where([](TAgePerson group) { return group.GetKey() > 30; });
+
+//   auto overThirtyAgeGroups = BuildQueryable(this->people.ToVector())
+//     .Where([](Person person) { return person.GetAge() > 30; })
+//     .GroupBy<double>([](Person p) { return p.GetAge(); });
+
+//   // ASSERT_TRUE(ageGroupsOverThirty != NULL);
+//   ASSERT_EQ(3, ageGroupsOverThirty.Count());
+//   ASSERT_EQ(3, overThirtyAgeGroups.Count());
+//   ASSERT_TRUE(ageGroupsOverThirty.At(0).GetKey() == 51);
+//   ASSERT_TRUE(ageGroupsOverThirty.At(1).GetKey() == 52);
+//   ASSERT_TRUE(ageGroupsOverThirty.At(2).GetKey() == 61);
+//   ASSERT_TRUE(overThirtyAgeGroups.At(0).GetKey() == 51);
+//   ASSERT_TRUE(overThirtyAgeGroups.At(1).GetKey() == 52);
+//   ASSERT_TRUE(overThirtyAgeGroups.At(2).GetKey() == 61);
+
+//   int iGroup = 0;
+//   ageGroupsOverThirty.ForEach([&](TAgePerson group)
+//   {
+//     ASSERT_TRUE(group.Count() == overThirtyAgeGroups.At(iGroup).Count());
+
+//     int iPerson = 0;
+//     for (Person person : group)
+//     {
+//       ASSERT_TRUE(person == overThirtyAgeGroups.At(iGroup).ToVector()[iPerson++]);
+//     }
+
+//     iGroup++;
+//   });
+// }
 

@@ -25,7 +25,7 @@ public:
     : RandomAccessQueryableData<T, std::vector, TAllocator>(std::move(items)) { }
 
   QueryableVectorData(const QueryableVectorData & data)
-    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
+    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { std::cout << "queryable vector data copy constructor" << std::endl;}
 
   QueryableVectorData(QueryableVectorData && data)
     : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }

@@ -29,75 +29,90 @@
 
 using namespace QueryBuilder;
 
+class Test
+{
+private:
+    std::pair<const int, std::string> * kvp;
+
+public:
+  Test() { }
+
+  void Set(std::vector<std::pair<const int, std::string>> vector)
+  {
+    kvp = &(*vector.begin());
+  }
+};
+
 int main()
 {
-    std::vector<std::pair<const int, std::string>> pairs;
-    std::map<int, std::string> mapping;
-    mapping[5] = "Hello";
-    mapping[9] = "World";
-    // pairs.push_back(std::pair<int, std::string>(5, "hello"));
-    // pairs.push_back(std::pair<int, std::string>(9, "world"));
+  PersonLibrary personLibrary;
+  QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
+  std::cout << "1" << std::endl;
+  auto genderGroups = BuildQueryable(
+    people.ToMap<std::string, Person>(
+      [](Person p) { std::cout << "getting name" << std::endl; return p.GetName(); },
+      [](Person p) { return p; }))
+    .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { std::cout << "in group by" << std::endl; return kvp.second.GetGender(); });
+  std::cout << "2" << std::endl;
+  auto males = BuildQueryable(people.ToList())
+    .Where([](Person p) { return p.GetGender() == Gender::Male; });
+  std::cout << "3" << std::endl;
+  auto females = BuildQueryable(people.ToList())
+    .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-    std::map<const int, std::string>::iterator iter = mapping.begin();
+  std::cout << "4" << std::endl;
 
-    for (std::pair<const int, std::string> p : mapping)
+  for (const auto & group : genderGroups.ToVector())
+  {
+    std::cout << "key: " << (group.GetKey() == Gender::Male ? "M" : "F") << std::endl;
+  }
+
+  std::cout << "5" << std::endl;
+
+  // ASSERT_EQ(2, genderGroups.Count());
+  // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+  // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+
+  std::cout << "6" << std::endl;
+
+  // for (const auto & item : BuildQueryable(
+  //   this->people.ToMap<std::string, Person>(
+  //     [](Person p) { return p.GetName(); },
+  //     [](Person p) { return p; }))
+  //   .ToVector())
+  // {
+  //   std::cout << "key: " << item.first << ", " << item.second << std::endl;
+  // }
+
+  genderGroups.ForEach([&](auto group)
+  {
+    if (group.Count() <= 0) throw;
+    // ASSERT_GT(group.Count(), 0);
+    if (group.GetKey() == Gender::Male)
     {
-        pairs.push_back(p);
+      if (males.Count() != group.Count()) throw;
+      // ASSERT_EQ(males.Count(), group.Count());
     }
-    std::vector<std::pair<const int, std::string>>::iterator viter = pairs.begin();
+    else
+    {
+      if (females.Count() != group.Count()) throw;
+      // ASSERT_EQ(females.Count(), group.Count());
+    }
 
-    std::pair<const int, std::string> p = *viter;
-
-    // std::pair<int, std::string> * mainPair = pairs.get_allocator().allocate(1);
-
-    // for (std::pair<int, std::string> cpy : pairs)
-    // {
-    //     *mainPair = cpy;
-    //     std::cout << "pair: " << mainPair->first << ", " << mainPair->second << std::endl;
-    // }
-
-    std::cout << "pair: " << p.first << ", " << p.second << std::endl;
-    // auto data = std::vector<size_t>({7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12});
-
-    // auto queryable = BuildQueryable(data);
-
-    // auto myMap = queryable.ToMap<size_t, std::string>(
-    //     [](size_t value) { return value; },
-    //     [](size_t value) { return "Half Value: " + std::to_string(value / 2.0); });
-
-    // for (auto kvp : myMap)
-    // {
-    //     std::cout << "key: " << kvp.first << ", value: " << kvp.second << std::endl;
-    // }
-
-    // std::cout << "\n\n" << std::endl;
-
-    // QueryableMap<size_t, std::string> mapQueryable = BuildQueryable<size_t, std::string>(myMap);
-
-    // mapQueryable
-    //     .Select<bool>([&](std::pair<const size_t, std::string> kvp)
-    //     {
-    //         std::cout << "--- kvp first: " << kvp.first << ", result: " << (kvp.first % 2) << std::endl;
-    //         return (kvp.first % 2) == 0;
-    //     })
-    //     .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
-
-    // // I think this may be a problem... To Vector should return std::vector<TIterating>
-    // BuildQueryable(BuildQueryable(data).ToList())
-    //     .Select<bool>([&](size_t value)
-    //     {
-    //         std::cout << "--- value: " << value << ", result: " << (value % 2) << std::endl;
-    //         return (value % 2) == 0;
-    //     })
-    //     .ForEach([&](bool isEven) { std::cout << (isEven ? "EVEN" : "ODD") << std::endl; });
-
-    // auto result = mapQueryable.Average();
-
-    // std::cout << "\naverage of keys: " << result << std::endl;
-
-    // auto valueResult = mapQueryable.Aggregate<std::string>([&](std::string total, size_t key) { return total += myMap[key] + ",\n"; });
-
-    // std::cout << "\n" << valueResult << std::endl;
-
+    int i = 0;
+    for (const auto & kvp : group)
+    {
+      if (group.GetKey() == Gender::Male)
+      {
+        if (!(kvp.second == males.At(i++))) throw;
+        // ASSERT_TRUE(kvp.second == males.At(i++));
+      }
+      else
+      {
+        if (!(kvp.second == females.At(i++))) throw;
+        // ASSERT_TRUE(kvp.second == females.At(i++));
+      }
+    }
+  });
     return 0;
 }
