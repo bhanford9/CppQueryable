@@ -1,6 +1,6 @@
 CXX = g++ 
 CPPFLAGS = -Wall #-Werror
-DEBUG = -O0 -g -ggdb3 # -c
+DEBUG = -g -ggdb3 # -c
 
 # Prerequisits
 # 1. export PROJECTS_PATH environment variable to the full path to the directory housing CppQueryable project

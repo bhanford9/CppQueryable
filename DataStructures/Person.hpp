@@ -16,26 +16,26 @@ private:
   Gender gender;
 
 public:
-  Person()
+  Person() :  
+    id(0),
+    name(""),
+    age(0),
+    heightInches(0),
+    gender(Gender::Male)
   {
-    this->id = 0;
-    this->name = "";
-    this->age = 0;
-    this->heightInches = 0;
-    this->gender = Gender::Male;
   }
   Person(const Person & other) = default;
   Person(long id, std::string name, double age, int height, Gender gender);
 
-  long GetId();
+  long GetId() const;
   void SetId(long id);
-  std::string GetName();
+  std::string GetName() const;
   void SetName(std::string name);
-  double GetAge();
+  double GetAge() const;
   void SetAge(double age);
-  int GetHeight();
+  int GetHeight() const;
   void SetHeight(int height);
-  Gender GetGender();
+  Gender GetGender() const;
   void SetGender(Gender gender);
 
   bool IsGender(Gender gender) const;
@@ -44,15 +44,19 @@ public:
 
   std::string ToString() const;
 
-  Person operator=(Person other)
-  {
-    this->id = other.id;
-    this->name = other.name;
-    this->age = other.age;
-    this->heightInches = other.heightInches;
-    this->gender = other.gender;
-    return *this;
-  }
+  // Person operator=(const Person & other)
+  // {
+  //   if (this != &other)
+  //   {
+  //     this->id = other.id;
+  //     this->age = other.age;
+  //     this->heightInches = other.heightInches;
+  //     this->gender = other.gender;
+  //     this->name = other.name;
+  //   }
+
+  //   return *this;
+  // }
 
   bool operator<(const Person & other) const;
   bool operator==(const Person & other) const;

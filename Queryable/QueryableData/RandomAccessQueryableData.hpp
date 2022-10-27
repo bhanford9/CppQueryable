@@ -49,7 +49,7 @@ public:
 
   virtual IQueryableData<T> & Add(int addend, IteratorType type) override
   {
-    std::cout << "Random Access + Operator, adding: " << addend << std::endl;
+    // std::cout << "Random Access + Operator, adding: " << addend << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: this->beginIterator += addend; break;
@@ -79,7 +79,7 @@ public:
 
   virtual T & Get(IteratorType type) override
   {
-    std::cout << "RAQ Get" << std::endl;
+    // std::cout << "RAQ Get" << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: { this->value = &(*this->beginIterator); return *this->value; }
@@ -98,7 +98,7 @@ public:
 
   virtual const T & ConstGet(IteratorType type) override
   {
-    std::cout << "RAQ Const Get" << std::endl;
+    // std::cout << "RAQ Const Get" << std::endl;
     switch (type)
     {
       case IteratorType::BeginForward: { this->value = &(*this->beginIterator); return *this->value; }

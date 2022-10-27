@@ -45,74 +45,28 @@ public:
 
 int main()
 {
+
   PersonLibrary personLibrary;
   QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
-  std::cout << "1" << std::endl;
-  auto genderGroups = BuildQueryable(
-    people.ToMap<std::string, Person>(
-      [](Person p) { std::cout << "getting name" << std::endl; return p.GetName(); },
-      [](Person p) { return p; }))
-    .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { std::cout << "in group by" << std::endl; return kvp.second.GetGender(); });
-  std::cout << "2" << std::endl;
-  auto males = BuildQueryable(people.ToList())
-    .Where([](Person p) { return p.GetGender() == Gender::Male; });
-  std::cout << "3" << std::endl;
-  auto females = BuildQueryable(people.ToList())
-    .Where([](Person p) { return p.GetGender() == Gender::Female; });
+  QueryableSet<Person> local1 = BuildQueryable(people.ToSet());
+  QueryableSet<Person> local2 = BuildQueryable(people.ToSet());
+  QueryableVector<double> ages = local1
+    .Select<double>([](Person p) { return p.GetAge(); });
+  QueryableVector<std::string> names = local2
+    .Select<std::string>([](Person p) { return p.GetName(); });
 
-  std::cout << "4" << std::endl;
+  // ASSERT_EQ(local1.Count(), ages.Count());
+  // ASSERT_EQ(local1.Count(), names.Count());
 
-  for (const auto & group : genderGroups.ToVector())
+  int i = 0;
+  double previousAge = -1;
+  local1.ForEach([&](Person p)
   {
-    std::cout << "key: " << (group.GetKey() == Gender::Male ? "M" : "F") << std::endl;
-  }
-
-  std::cout << "5" << std::endl;
-
-  // ASSERT_EQ(2, genderGroups.Count());
-  // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-  // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
-
-  std::cout << "6" << std::endl;
-
-  // for (const auto & item : BuildQueryable(
-  //   this->people.ToMap<std::string, Person>(
-  //     [](Person p) { return p.GetName(); },
-  //     [](Person p) { return p; }))
-  //   .ToVector())
-  // {
-  //   std::cout << "key: " << item.first << ", " << item.second << std::endl;
-  // }
-
-  genderGroups.ForEach([&](auto group)
-  {
-    if (group.Count() <= 0) throw;
-    // ASSERT_GT(group.Count(), 0);
-    if (group.GetKey() == Gender::Male)
-    {
-      if (males.Count() != group.Count()) throw;
-      // ASSERT_EQ(males.Count(), group.Count());
-    }
-    else
-    {
-      if (females.Count() != group.Count()) throw;
-      // ASSERT_EQ(females.Count(), group.Count());
-    }
-
-    int i = 0;
-    for (const auto & kvp : group)
-    {
-      if (group.GetKey() == Gender::Male)
-      {
-        if (!(kvp.second == males.At(i++))) throw;
-        // ASSERT_TRUE(kvp.second == males.At(i++));
-      }
-      else
-      {
-        if (!(kvp.second == females.At(i++))) throw;
-        // ASSERT_TRUE(kvp.second == females.At(i++));
-      }
-    }
+    double currentAge = ages.At(i);
+    std::string currentName = names.At(i);
+    // ASSERT_STREQ(local2.At(i++).GetName().c_str(), currentName.c_str());
+    previousAge = currentAge;
   });
+
     return 0;
 }

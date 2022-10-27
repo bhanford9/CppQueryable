@@ -42,7 +42,7 @@ public:
     QueryableType type)
       : InternalQueryable<TObj, TIterable, TObj, TLessThan, TAllocator>(std::move(queryableData), type)
   {
-    std::cout << "Sorted Move Constructor" << std::endl;
+    // std::cout << "Sorted Move Constructor" << std::endl;
   }
 };
 

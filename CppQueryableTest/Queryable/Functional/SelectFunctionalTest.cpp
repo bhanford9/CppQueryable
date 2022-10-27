@@ -121,21 +121,28 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
 TEST_F(SelectFunctionalTest, SetDefaultOut)
 {
   QueryableSet<Person> local1 = BuildQueryable(this->people.ToSet());
+  
+std::cout << "-2" << std::endl;
   QueryableSet<Person> local2 = BuildQueryable(this->people.ToSet());
+std::cout << "-1" << std::endl;
   QueryableVector<double> ages = local1
-    .Select<double>([](Person p) { return p.GetAge(); })
+    .Select<double>([](const Person & p) { return p.GetAge(); })
     .ToQueryable();
+std::cout << "0" << std::endl;
   QueryableVector<std::string> names = local2
-    .Select<std::string>([](Person p) { return p.GetName(); })
+    .Select<std::string>([](const Person & p) { return p.GetName(); })
     .ToQueryable();
 
+std::cout << "1" << std::endl;
   ASSERT_EQ(local2.Count(), names.Count());
   ASSERT_EQ(local1.Count(), names.Count());
-
+std::cout << "2" << std::endl;
   int i = 0;
-  local2.ForEach([&](Person p)
+  local2.ForEach([&](const auto & p)
   {
-    ASSERT_TRUE(p.GetName() == names.At(i++));
+    std::cout << i << std::endl;
+    ASSERT_STREQ(p.GetName().c_str(), names.At(i++).c_str());
+    // ASSERT_TRUE(p.GetName() == names.At(i++));
   });
 }
 

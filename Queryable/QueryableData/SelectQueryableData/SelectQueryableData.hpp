@@ -74,7 +74,9 @@ public:
 
   virtual TDestination & Get(IteratorType type) override
   {
-    *this->value = this->selector(this->original->Get(type));
+    // TODO --> figure out why this temp is necessary for [multi]set
+    auto temp = this->selector(this->original->Get(type));
+    *this->value = temp;
     return *this->value;
   }
 

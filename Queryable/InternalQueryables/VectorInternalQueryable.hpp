@@ -39,7 +39,7 @@ public:
   VectorInternalQueryable(const InternalQueryable<TObj, std::vector, TObj, TAllocator> & other)
     : InternalQueryable<TObj, std::vector, TObj, TAllocator>(other)
   {
-    std::cout << "vector intenral queryable copy" << std::endl;
+    // std::cout << "vector intenral queryable copy" << std::endl;
     this->type = QueryableType::Vector;
   }
   

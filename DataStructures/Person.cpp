@@ -13,7 +13,7 @@ Person::Person(long id, std::string name, double age, int height, Gender gender)
   this->gender = gender;
 }
 
-long Person::GetId()
+long Person::GetId() const
 {
   return this->id;
 }
@@ -23,7 +23,7 @@ void Person::SetId(long id)
   this->id = id;
 }
 
-std::string Person::GetName()
+std::string Person::GetName() const
 {
   return this->name;
 }
@@ -33,7 +33,7 @@ void Person::SetName(std::string name)
   this->name = name;
 }
 
-double Person::GetAge()
+double Person::GetAge() const
 {
   return this->age;
 }
@@ -43,7 +43,7 @@ void Person::SetAge(double age)
   this->age = age;
 }
 
-int Person::GetHeight()
+int Person::GetHeight() const
 {
   return this->heightInches;
 }
@@ -53,7 +53,7 @@ void Person::SetHeight(int height)
   this->heightInches = height;
 }
 
-Gender Person::GetGender()
+Gender Person::GetGender() const
 {
   return this->gender;
 }

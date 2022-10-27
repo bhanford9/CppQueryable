@@ -16,7 +16,7 @@ class QueryableSetData : public SortedQueryableData<T, std::set, TCompare, TAllo
   typedef typename std::vector<T>::iterator TVectorIterator;
 public:
   QueryableSetData(TCompare comparator = {})
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>() { std::cout << "queryable set data default constructor" << std::endl;}
+    : SortedQueryableData<T, std::set, TCompare, TAllocator>() { }
 
   QueryableSetData(const std::set<T, TCompare, TAllocator> & items)
     : SortedQueryableData<T, std::set, TCompare, TAllocator>(items)
@@ -52,6 +52,23 @@ public:
     // returns true/false whether the item was added, but the size method is
     // also a constant time action, so its cleaner to use it
     this->size = this->items->size();
+  }
+  virtual T & Get(IteratorType type) override
+  {
+    std::cout << "queryable set data" << std::endl;
+    switch (type)
+    {
+      // case IteratorType::BeginForward: { return *this->beginIterator; }
+      // case IteratorType::EndForward: { return *this->endIterator; }
+      // case IteratorType::BeginReverse: { return *this->rbeginIterator; }
+      // case IteratorType::EndReverse: default: { return *this->rendIterator; }
+      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
+      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
+      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
+      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
+    }
+
+    return *this->value;
   }
 };
 

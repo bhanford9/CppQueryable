@@ -86,7 +86,7 @@ public:
   QueryableMapData(const QueryableMapData<TKey, TValue, TCompare, TAllocator> & data)
     : QueryableData<TKey, std::map, std::pair<const TKey, TValue>, TValue, TCompare, TAllocator>(data)
   {
-    std::cout << "queryable map data copy" << std::endl;
+    // std::cout << "queryable map data copy" << std::endl;
     // this->size = data.size;
     // this->items = data.items;
     // this->mapBeginIterator = data.mapBeginIterator;
@@ -105,7 +105,7 @@ public:
 
   virtual std::shared_ptr<IQueryableData<std::pair<const TKey, TValue>>> Clone() override
   {
-    std::cout << "queryable map data clone" << std::endl;
+    // std::cout << "queryable map data clone" << std::endl;
     return std::make_shared<QueryableMapData<TKey, TValue, TCompare, TAllocator>>(*this);
   }  
 

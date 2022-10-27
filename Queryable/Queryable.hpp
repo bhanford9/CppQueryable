@@ -64,7 +64,7 @@ public:
   Queryable(const Queryable<TStoring, TIterable, TIterating, TArgs...> & other)
     : queryable(other.queryable)
   {
-    std::cout << "queryable copy constructor" << std::endl;
+    // std::cout << "queryable copy constructor" << std::endl;
   }
 
   Queryable<TStoring, TIterable, TIterating, TArgs...> & operator=(const Queryable<TStoring, TIterable, TIterating, TArgs...> & other)
@@ -118,7 +118,6 @@ public:
     TLessThan keyCompare = {},
     TAllocator pairAllocator = {})
   {
-    std::cout << "in to map" << std::endl;
     return this->queryable->ToMap(getKey, getValue, keyCompare, pairAllocator);
   }
 
@@ -276,7 +275,6 @@ public:
     std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
     TAllocator allocator = {})
   {
-    std::cout << "within group by method" << std::endl;
     using TGrouping = Grouping<TKey, TIterating, TAllocator>;
     using TSetIter = typename std::set<TGrouping>::iterator;
 
@@ -298,11 +296,9 @@ public:
       }
     });
 
-    std::cout << "creating set internal queryable" << std::endl;
     // TODO --> Grouping should maybe be an unordered_set instead
     SetInternalQueryable<TGrouping, std::less<TGrouping>, std::allocator<TGrouping>> setGroupedQueryable(std::move(groups));
 
-    std::cout << "creating queryable" << std::endl;
     Queryable<TGrouping, std::set, TGrouping, std::less<TGrouping>, std::allocator<TGrouping>> queryable =
       Builders::FromInternalSet(std::move(setGroupedQueryable));
 
