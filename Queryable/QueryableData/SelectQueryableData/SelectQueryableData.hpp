@@ -73,23 +73,25 @@ public:
   }
 
   virtual TDestination & Get(IteratorType type) override
-  {
+  {    
+    this->value = this->selector(this->original->Get(type));
+    return this->value;
     // TODO --> figure out why this temp is necessary for [multi]set
-    auto selectedValue = this->selector(this->original->Get(type));
-    auto temp = this->value;
-    TDestinationAllocator allocator;
-    this->value = allocator.allocate(1);
-    *this->value = selectedValue;
-    return *this->value;
-    // auto temp = this->selector(this->original->Get(type));
-    // *this->value = temp;
+    // auto selectedValue = this->selector(this->original->Get(type));
+    // auto temp = this->value;
+    // TDestinationAllocator allocator;
+    // this->value = allocator.allocate(1);
+    // *this->value = selectedValue;
     // return *this->value;
+    // // auto temp = this->selector(this->original->Get(type));
+    // // *this->value = temp;
+    // // return *this->value;
   }
 
   virtual const TDestination & ConstGet(IteratorType type) override
   {
-    *this->value = this->selector(this->original->Get(type));
-    return *this->value;
+    this->value = this->selector(this->original->Get(type));
+    return this->value;
   }
   
   virtual IQueryableData<TDestination> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override

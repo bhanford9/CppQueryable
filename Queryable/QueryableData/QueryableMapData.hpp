@@ -143,7 +143,7 @@ public:
       case IteratorType::EndReverse: default: { return *this->rendIterator; }
     }
 
-    return *this->value;
+    return this->value;
     // std::cout << "Map Get: " << *this->value << std::endl;
   }
 
@@ -161,7 +161,7 @@ public:
       case IteratorType::EndReverse: default: { return *this->rendIterator; }
     }
 
-    return *this->value;
+    return this->value;
   }
 
 //   virtual bool CanIncrement(IteratorType type) override
