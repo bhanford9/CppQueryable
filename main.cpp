@@ -45,11 +45,11 @@ public:
 
 int main()
 {
-
   PersonLibrary personLibrary;
   QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
-  QueryableSet<Person> local1 = BuildQueryable(people.ToSet());
-  QueryableSet<Person> local2 = BuildQueryable(people.ToSet());
+
+  QueryableMultiSet<Person> local1 = BuildQueryable(people.ToMultiSet());
+  QueryableMultiSet<Person> local2 = BuildQueryable(people.ToMultiSet());
   QueryableVector<double> ages = local1
     .Select<double>([](Person p) { return p.GetAge(); });
   QueryableVector<std::string> names = local2
@@ -60,7 +60,7 @@ int main()
 
   int i = 0;
   double previousAge = -1;
-  local1.ForEach([&](Person p)
+  local1.ForEach([&](const Person & p)
   {
     double currentAge = ages.At(i);
     std::string currentName = names.At(i);

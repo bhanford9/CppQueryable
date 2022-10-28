@@ -37,7 +37,7 @@ public:
 
   static_assert(can_iterate<TIterable<TStoring, TArgs...>>::value, "Class must be able to be iterated over");
 protected:
-  TIterating * value = nullptr;
+  TIterating * value;
   size_t size = 0;
   bool forceToEnd = false;
   bool forceToBegin = false;
@@ -132,7 +132,10 @@ public:
 
     this->forceToEnd = data.forceToEnd;
     this->forceToBegin = data.forceToBegin;
-    this->value = data.value;
+
+    this->value = this->items->get_allocator().allocate(1);
+    *this->value = {};
+    *this->value = *data.value;
     // std::cout << "queryable data copy consturct 2 leaving" << std::endl;
   }
 
@@ -145,7 +148,7 @@ public:
 
     this->forceToEnd = data->forceToEnd;
     this->forceToBegin = data->forceToBegin;
-    this->value = data->value;
+    *this->value = *data->value;
   }
 
   QueryableData(QueryableIterator<TIterating> first, QueryableIterator<TIterating> last, TArgs... args) :
@@ -167,7 +170,14 @@ public:
     return *this;
   }
 
-  virtual ~QueryableData() { }
+  virtual ~QueryableData()
+  {
+    if (this->value != NULL)
+    {
+      this->items->get_allocator().deallocate(this->value, 1);
+      this->value = NULL;
+    }
+  }
 
   template<typename TAllocator>
   TAllocator GetAllocator()
@@ -317,6 +327,7 @@ public:
     this->forceToBegin = false;
     this->forceToEnd = false;
     QueryableIterator<TIterating> retVal(this->Clone(), 0, IteratorType::BeginForward);
+
     return retVal;
   }
 

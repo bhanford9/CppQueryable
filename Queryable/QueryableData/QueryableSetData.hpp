@@ -53,23 +53,6 @@ public:
     // also a constant time action, so its cleaner to use it
     this->size = this->items->size();
   }
-  virtual T & Get(IteratorType type) override
-  {
-    std::cout << "queryable set data" << std::endl;
-    switch (type)
-    {
-      // case IteratorType::BeginForward: { return *this->beginIterator; }
-      // case IteratorType::EndForward: { return *this->endIterator; }
-      // case IteratorType::BeginReverse: { return *this->rbeginIterator; }
-      // case IteratorType::EndReverse: default: { return *this->rendIterator; }
-      case IteratorType::BeginForward: { *this->value = *this->beginIterator; return *this->value; }
-      case IteratorType::EndForward: { *this->value = *this->endIterator; return *this->value; }
-      case IteratorType::BeginReverse: { *this->value = *this->rbeginIterator; return *this->value; }
-      case IteratorType::EndReverse: default: { *this->value = *this->rendIterator; return *this->value; }
-    }
-
-    return *this->value;
-  }
 };
 
 #endif

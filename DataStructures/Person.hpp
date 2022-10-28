@@ -44,19 +44,33 @@ public:
 
   std::string ToString() const;
 
-  // Person operator=(const Person & other)
-  // {
-  //   if (this != &other)
-  //   {
-  //     this->id = other.id;
-  //     this->age = other.age;
-  //     this->heightInches = other.heightInches;
-  //     this->gender = other.gender;
-  //     this->name = other.name;
-  //   }
+  Person operator=(const Person & other)
+  {
+    if (this != &other)
+    {
+      this->id = other.id;
+      this->age = other.age;
+      this->heightInches = other.heightInches;
+      this->gender = other.gender;
+      // this->name = other.name;
+    }
 
-  //   return *this;
-  // }
+    return *this;
+  }
+
+  Person operator=(Person && other)
+  {
+    if (this != &other)
+    {
+      this->id = other.id;
+      this->age = other.age;
+      this->heightInches = other.heightInches;
+      this->gender = other.gender;
+      // name = std::move(other.name);
+    }
+
+    return *this;
+  }
 
   bool operator<(const Person & other) const;
   bool operator==(const Person & other) const;

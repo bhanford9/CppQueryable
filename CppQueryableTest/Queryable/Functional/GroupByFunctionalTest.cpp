@@ -82,7 +82,7 @@ TEST_F(GroupByFunctionalTest, DequeDefaultsTest)
     }
 
     int i = 0;
-    for (Person person : group)
+    for (const Person & person : group)
     {
       if (group.GetKey() == Gender::Male)
       {
