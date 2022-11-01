@@ -138,7 +138,7 @@ std::cout << "1" << std::endl;
   ASSERT_EQ(local1.Count(), names.Count());
 std::cout << "2" << std::endl;
   int i = 0;
-  local2.ForEach([&](auto p)
+  local2.ForEach([&](Person p)
   {
     std::cout << i << std::endl;
     ASSERT_STREQ(p.GetName().c_str(), names.At(i++).c_str());

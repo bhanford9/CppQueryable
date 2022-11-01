@@ -45,6 +45,7 @@ public:
 
 int main()
 {
+  // std::cout << "within main" << std::endl;
   PersonLibrary personLibrary;
   QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
 
@@ -66,6 +67,7 @@ int main()
     std::string currentName = names.At(i);
     // ASSERT_STREQ(local2.At(i++).GetName().c_str(), currentName.c_str());
     previousAge = currentAge;
+    // std::cout << p << std::endl;
   });
 
     return 0;

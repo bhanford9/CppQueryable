@@ -10,7 +10,7 @@
 class PersonLibrary
 {
 private:
-  std::vector<std::unique_ptr<Person>> people;
+  std::vector<std::shared_ptr<Person>> people;
 
 public:
   PersonLibrary();

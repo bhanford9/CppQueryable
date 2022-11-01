@@ -52,6 +52,37 @@
         "iterator": "cpp",
         "memory_resource": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
-    }
+        "random": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "variant": "cpp"
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "googletest.failed",
+                "settings": {
+                    "foreground": "#f00"
+                }
+            },
+            {
+                "scope": "googletest.passed",
+                "settings": {
+                    "foreground": "#0f0"
+                }
+            },
+            {
+                "scope": "googletest.run",
+                "settings": {
+                    "foreground": "#0f0"
+                }
+            }
+        ]
+    },
+    "testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT,Bin}/**/*{test,Test,TEST}*"
 }

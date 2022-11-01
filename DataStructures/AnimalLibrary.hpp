@@ -10,7 +10,7 @@
 class AnimalLibrary
 {
 private:
-  std::vector<std::unique_ptr<Animal>> animals;
+  std::vector<std::shared_ptr<Animal>> animals;
 
 public:
   AnimalLibrary();

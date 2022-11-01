@@ -24,7 +24,28 @@ public:
     gender(Gender::Male)
   {
   }
-  Person(const Person & other) = default;
+  Person(const Person & other)
+  {
+    if (this != &other)
+    {
+      this->id = other.id;
+      this->age = other.age;
+      this->heightInches = other.heightInches;
+      this->gender = other.gender;
+      name = other.name;
+    }
+  }
+  Person(Person && other)
+  {
+    if (this != &other)
+    {
+      this->id = other.id;
+      this->age = other.age;
+      this->heightInches = other.heightInches;
+      this->gender = other.gender;
+      name = std::move(other.name);
+    }
+  }
   Person(long id, std::string name, double age, int height, Gender gender);
 
   long GetId() const;
@@ -52,7 +73,7 @@ public:
       this->age = other.age;
       this->heightInches = other.heightInches;
       this->gender = other.gender;
-      // this->name = other.name;
+      this->name = other.name;
     }
 
     return *this;
@@ -66,7 +87,7 @@ public:
       this->age = other.age;
       this->heightInches = other.heightInches;
       this->gender = other.gender;
-      // name = std::move(other.name);
+      name = std::move(other.name);
     }
 
     return *this;

@@ -12,7 +12,7 @@
 class PersonAndPetLibrary
 {
 private:
-  std::vector<std::unique_ptr<PersonAndPet>> petOwners;
+  std::vector<std::shared_ptr<PersonAndPet>> petOwners;
 
 public:
   PersonAndPetLibrary();

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <exception>
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -10,28 +11,13 @@
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
+#include "Headers/AggregateFunctionalTest.hpp"
 
-using namespace QueryBuilder;
-
-class AggregateFunctionalTest : public ::testing::Test
+TEST_F(AggregateFunctionalGTest, AggregateUninitialized)
 {
-protected:
-  PersonLibrary personLibrary;
-  QueryableVector<Person> people;
-
-  AggregateFunctionalTest() :
-    people(BuildQueryable(this->personLibrary.GetPeople()))
-  {
-  }
-
-  void SetUp() override
-  {
-  }
-
-  void TearDown() override {}
-};
-
-TEST_F(AggregateFunctionalTest, AggregateUninitialized)
+  this->AggregateUninitializedTest();
+}
+void AggregateFunctionalTest::AggregateUninitializedTest()
 {
   QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
   std::string result = local.Aggregate<std::string>([](std::string s, Person p)
@@ -42,7 +28,12 @@ TEST_F(AggregateFunctionalTest, AggregateUninitialized)
   ASSERT_STREQ("", result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededUninitialized)
+
+TEST_F(AggregateFunctionalGTest, AggregateSeededUninitialized)
+{
+  this->AggregateSeededUninitialized();
+}
+void AggregateFunctionalTest::AggregateSeededUninitialized()
 {
   std::string expected = "Hello World!";
   QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
@@ -55,7 +46,11 @@ TEST_F(AggregateFunctionalTest, AggregateSeededUninitialized)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateFinalizerUninitialized)
+TEST_F(AggregateFunctionalGTest, AggregateFinalizerUninitialized)
+{
+  this->AggregateFinalizerUninitialized();
+}
+void AggregateFunctionalTest::AggregateFinalizerUninitialized()
 {
   std::string expected = "Names: ";
   QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
@@ -66,7 +61,11 @@ TEST_F(AggregateFunctionalTest, AggregateFinalizerUninitialized)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateFinalizerSeededUninitialized)
+TEST_F(AggregateFunctionalGTest, AggregateFinalizerSeededUninitialized)
+{
+  this->AggregateFinalizerSeededUninitialized();
+}
+void AggregateFunctionalTest::AggregateFinalizerSeededUninitialized()
 {
   std::string expected = "Names: Hello World!";
   std::string finalizer = "Names: ";
@@ -80,7 +79,11 @@ TEST_F(AggregateFunctionalTest, AggregateFinalizerSeededUninitialized)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateDeque)
+TEST_F(AggregateFunctionalGTest, AggregateDeque)
+{
+  this->AggregateDeque();
+}
+void AggregateFunctionalTest::AggregateDeque()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
@@ -97,7 +100,11 @@ TEST_F(AggregateFunctionalTest, AggregateDeque)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateList)
+TEST_F(AggregateFunctionalGTest, AggregateList)
+{
+  this->AggregateList();
+}
+void AggregateFunctionalTest::AggregateList()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableList<Person> local = BuildQueryable(this->people.ToList());
@@ -114,7 +121,11 @@ TEST_F(AggregateFunctionalTest, AggregateList)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateMap)
+TEST_F(AggregateFunctionalGTest, AggregateMap)
+{
+  this->AggregateMap();
+}
+void AggregateFunctionalTest::AggregateMap()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableMap<std::string, Person> local = BuildQueryable(
@@ -134,7 +145,11 @@ TEST_F(AggregateFunctionalTest, AggregateMap)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateMultiSet)
+TEST_F(AggregateFunctionalGTest, AggregateMultiSet)
+{
+  this->AggregateMultiSet();
+}
+void AggregateFunctionalTest::AggregateMultiSet()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableMultiSet<Person> local = BuildQueryable(this->people.ToMultiSet());
@@ -151,7 +166,11 @@ TEST_F(AggregateFunctionalTest, AggregateMultiSet)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSet)
+TEST_F(AggregateFunctionalGTest, AggregateSet)
+{
+  this->AggregateSet();
+}
+void AggregateFunctionalTest::AggregateSet()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableSet<Person> local = BuildQueryable(this->people.ToSet());
@@ -168,7 +187,11 @@ TEST_F(AggregateFunctionalTest, AggregateSet)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateVector)
+TEST_F(AggregateFunctionalGTest, AggregateVector)
+{
+  this->AggregateVector();
+}
+void AggregateFunctionalTest::AggregateVector()
 {
   std::string expected = "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
   QueryableVector<Person> local = BuildQueryable(this->people.ToVector());
@@ -185,14 +208,20 @@ TEST_F(AggregateFunctionalTest, AggregateVector)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerDeque)
+TEST_F(AggregateFunctionalGTest, AggregateSeededFinalizerDeque)
+{
+  this->AggregateSeededFinalizerDeque();
+}
+void AggregateFunctionalTest::AggregateSeededFinalizerDeque()
 {
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
   std::string expected = seed + "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" + finalizer;
   QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
   std::string result = local
-    .Where([](Person p) { return p.GetName().find("Person 1") != std::string::npos; })
+    .Where([](Person p) { 
+      return p.GetName().find("Person 1") != std::string::npos; 
+      })
     .Aggregate<std::string, std::string>(
       [](std::string s, Person p)
       {
@@ -210,7 +239,11 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerDeque)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerList)
+TEST_F(AggregateFunctionalGTest, AggregateSeededFinalizerList)
+{
+  this->AggregateSeededFinalizerList();
+}
+void AggregateFunctionalTest::AggregateSeededFinalizerList()
 {
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
@@ -234,7 +267,11 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerList)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerMultiSet)
+TEST_F(AggregateFunctionalGTest, AggregateSeededFinalizerMultiSet)
+{
+  this->AggregateSeededFinalizerMultiSet();
+}
+void AggregateFunctionalTest::AggregateSeededFinalizerMultiSet()
 {
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
@@ -258,7 +295,11 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerMultiSet)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerSet)
+TEST_F(AggregateFunctionalGTest, AggregateSeededFinalizerSet)
+{
+  this->AggregateSeededFinalizerSet();
+}
+void AggregateFunctionalTest::AggregateSeededFinalizerSet()
 {
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";
@@ -282,7 +323,11 @@ TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerSet)
   ASSERT_STREQ(expected.c_str(), result.c_str());
 }
 
-TEST_F(AggregateFunctionalTest, AggregateSeededFinalizerVector)
+TEST_F(AggregateFunctionalGTest, AggregateSeededFinalizerVector)
+{
+  this->AggregateSeededFinalizerVector();
+}
+void AggregateFunctionalTest::AggregateSeededFinalizerVector()
 {
   std::string seed = "People: \n";
   std::string finalizer = "\n---END---\n";

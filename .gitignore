@@ -5,5 +5,15 @@ Makefile.dep
 **/*.gch
 *_testcases
 .vscode*
+*CMakeCache.txt
+**CMakeFiles*
+*_deps
+lib
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+*.a
+*.tcl
+Testing/**
 
 CppQueryableTest/Queryable/Performance/Time/Logs/*
