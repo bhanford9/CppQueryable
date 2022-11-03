@@ -82,22 +82,22 @@ TEST_F(TakeWhileFunctionalTest, TakeWhileList)
     }
 }
 
-//TEST_F(TakeWhileFunctionalTest, TakeWhileMap)
-//{
-//  QueryableMap<size_t, std::string> queryableMap = BuildQueryable<size_t, std::string>(
-//    this->queryable.ToMap<size_t, std::string>(
-//      [](size_t value) { return value; },
-//      [](size_t value) { return std::to_string(value / 2.0); }));
-//  QueryableMap<size_t, std::string> result = queryableMap
-//    .TakeWhile([&](std::pair<const size_t, std::string> kvp) { return kvp.first < this->threshold; });
-//
-//  ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
-//
-//  for (size_t i = 0; i < result.Count(); i++)
-//  {
-//    ASSERT_EQ(0, result.At(i).first / 10);
-//  }
-//}
+TEST_F(TakeWhileFunctionalTest, TakeWhileMap)
+{
+ QueryableMap<size_t, std::string> queryableMap = BuildQueryable<size_t, std::string>(
+   this->queryable.ToMap<size_t, std::string>(
+     [](const size_t value) { return value; },
+     [](const size_t value) { return std::to_string(value / 2.0); }));
+ QueryableMap<size_t , std::string> result = queryableMap
+   .TakeWhile([&](const std::pair<const size_t, std::string> & kvp) { return kvp.first < this->threshold; });
+
+ ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
+
+ for (size_t i = 0; i < result.Count(); i++)
+ {
+   ASSERT_EQ(0, result.At(i).first / 10);
+ }
+}
 
 TEST_F(TakeWhileFunctionalTest, TakeWhileMultiSet)
 {

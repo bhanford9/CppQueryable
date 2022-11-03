@@ -4,10 +4,11 @@
 #include <vector>
 
 #include "WhereQueryableData.hpp"
-#include "../Iterators/IteratorType.hpp"
-#include "../QueryableData/IQueryableData.hpp"
-#include "../QueryableData/VolatileQueryableData.hpp"
+#include "../../Iterators/IteratorType.hpp"
+#include "../../QueryableData/IQueryableData.hpp"
+#include "../../QueryableData/VolatileQueryableData.hpp"
 
+// TODO --> template this with contianer
 template <typename TObj, typename TAllocator = std::allocator<TObj>>
 class WhereQueryableVolatileData final : public WhereQueryableData<TObj, std::vector, TObj, TAllocator>
 {
@@ -121,7 +122,7 @@ public:
             data.push_back(value);
         }
 
-        return std::make_shared<VolatileQueryableData<TObj, std::vector, TAllocator>>(std::move(data));
+        return std::make_shared<VolatileQueryableData<TObj, std::vector, TObj, TAllocator>>(std::move(data));
     }
 };
 

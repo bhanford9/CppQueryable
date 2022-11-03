@@ -5,8 +5,8 @@
 #include <vector>
 #include "QueryableForwardDeclare.hpp"
 #include "../QueryableType.hpp"
-// #include "../QueryableData/SkipWhileQueryableData/SkipWhileQueryableVolatileData.hpp"
-// #include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableVolatileData.hpp"
+#include "../QueryableData/SkipWhileQueryableData/SkipWhileQueryableVolatileData.hpp"
+#include "../QueryableData/TakeWhileQueryableData/TakeWhileQueryableVolatileData.hpp"
 #include "../QueryableData/WhereQueryableData/WhereQueryableVolatileData.hpp"
 #include "../Utilities/IWhileCondition.hpp"
 
@@ -70,18 +70,18 @@ public:
 
     virtual void InternalSkipWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
     {
-        // this->items = std::move(
-        //     std::make_shared<SkipWhileQueryableVectorData<TObj, TAllocator>>(
-        //         std::move(this->items),
-        //         std::move(condition)));
+        this->items = std::move(
+            std::make_shared<SkipWhileQueryableVolatileData<TObj, TAllocator>>(
+                std::move(this->items),
+                std::move(condition)));
     }
 
     virtual void InternalTakeWhile(std::shared_ptr<IWhileCondition<TObj>> && condition) override
     {
-        // this->items = std::move(
-        //     std::make_shared<TakeWhileQueryableVectorData<TObj, TAllocator>>(
-        //         std::move(this->items),
-        //         std::move(condition)));
+        this->items = std::move(
+            std::make_shared<TakeWhileQueryableVolatileData<TObj, TAllocator>>(
+                std::move(this->items),
+                std::move(condition)));
     }
 };
 

@@ -6,47 +6,47 @@
 
 #include "QueryableData.hpp"
 
-template <typename T, template<typename, typename ...> class TIterable, typename TAllocator =
-          std::allocator<T>, typename ...TArgs>
-class VolatileQueryableData : public QueryableData<T, std::vector, T, TAllocator>
+template <typename TStoring, template<typename, typename ...> class TIterable, typename TIterating,
+          typename ...TArgs>
+class VolatileQueryableData : public QueryableData<TStoring, TIterable, TIterating, TArgs...>
 {
 public:
     VolatileQueryableData()
-        : QueryableData<T, std::vector, T, TAllocator>()
+        : QueryableData<TStoring, TIterable, TIterating, TArgs...>()
     {
     }
 
     VolatileQueryableData(const VolatileQueryableData & other)
-        : QueryableData<T, std::vector, T, TAllocator>(other)
+        : QueryableData<TStoring, TIterable, TIterating, TArgs...>(other)
     {
     }
 
     VolatileQueryableData(VolatileQueryableData && other) noexcept
-        : QueryableData<T, std::vector, T, TAllocator>(std::move(other))
+        : QueryableData<TStoring, TIterable, TIterating, TArgs...>(std::move(other))
     {
     }
 
-    explicit VolatileQueryableData(const std::vector<T, TAllocator> & vector)
-        : QueryableData<T, std::vector, T, TAllocator>(vector)
+    explicit VolatileQueryableData(const TIterable<TStoring, TArgs...> & iterable)
+        : QueryableData<TStoring, TIterable, TIterating, TArgs...>(iterable)
     {
     }
 
-    explicit VolatileQueryableData(std::vector<T, TAllocator> && vector) noexcept
-        : QueryableData<T, std::vector, T, TAllocator>(vector)
+    explicit VolatileQueryableData(TIterable<TStoring, TArgs...> && iterable) noexcept
+        : QueryableData<TStoring, TIterable, TIterating, TArgs...>(iterable)
     {
     }
 
     VolatileQueryableData & operator=(const VolatileQueryableData & other)
     {
         if (this == &other) return *this;
-        QueryableVectorData<T, TAllocator>::operator =(other);
+        QueryableData<TStoring, TIterable, TIterating, TArgs...>::operator =(other);
         return *this;
     }
 
     VolatileQueryableData & operator=(VolatileQueryableData && other) noexcept
     {
         if (this == &other) return *this;
-        QueryableVectorData<T, TAllocator>::operator =(std::move(other));
+        QueryableData<TStoring, TIterable, TIterating, TArgs...>::operator =(std::move(other));
         return *this;
     }
 
@@ -54,12 +54,12 @@ public:
     {
     }
 
-    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    virtual std::shared_ptr<IQueryableData<TIterating>> Clone() override
     {
-        return std::make_shared<VolatileQueryableData<T, std::vector, TAllocator>>(*this);
+        return std::make_shared<VolatileQueryableData<TStoring, TIterable, TIterating, TArgs...>>(*this);
     }
 
-    virtual IQueryableData<T> & Add(int addend, const IteratorType type) override
+    virtual IQueryableData<TIterating> & Add(int addend, const IteratorType type) override
     {
         // std::cout << "ConstRandom Access + Operator, adding: " << addend << std::endl;
         switch (type)
@@ -79,7 +79,7 @@ public:
         return *this;
     }
 
-    virtual IQueryableData<T> & Subtract(int subtrahend, const IteratorType type) override
+    virtual IQueryableData<TIterating> & Subtract(int subtrahend, const IteratorType type) override
     {
         // std::cout << "ConstRandom Access - Operator, adding: " << subtrahend << std::endl;
         switch (type)
@@ -97,19 +97,19 @@ public:
         return *this;
     }
 
-    virtual T & Get(const IteratorType type) override
+    virtual TIterating & Get(const IteratorType type) override
     {
         // std::cout << "Get" << std::endl;
         switch (type)
         {
-        case IteratorType::BeginForward: { return static_cast<T &>(*this->beginIterator); }
-        case IteratorType::EndForward: { return static_cast<T &>(*this->endIterator); }
-        case IteratorType::BeginReverse: { return static_cast<T &>(*this->rbeginIterator); }
-        case IteratorType::EndReverse: default: { return static_cast<T &>(*this->rendIterator); }
+        case IteratorType::BeginForward: { return static_cast<TIterating &>(*this->beginIterator); }
+        case IteratorType::EndForward: { return static_cast<TIterating &>(*this->endIterator); }
+        case IteratorType::BeginReverse: { return static_cast<TIterating &>(*this->rbeginIterator); }
+        case IteratorType::EndReverse: default: { return static_cast<TIterating &>(*this->rendIterator); }
         }
     }
 
-    virtual const T & ConstGet(const IteratorType type) override
+    virtual const TIterating & ConstGet(const IteratorType type) override
     {
         switch (type)
         {
@@ -120,7 +120,7 @@ public:
         }
     }
 
-    virtual void Add(T item) override
+    virtual void Add(TIterating item) override
     {
         this->items->push_back(item);
         ++this->size;

@@ -72,22 +72,22 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileList)
   }
 }
 
-//TEST_F(SkipWhileFunctionalTest, SkipWhileMap)
-//{
-//  QueryableMap<size_t, std::string> localQueryable = BuildQueryable<size_t, std::string>(
-//    this->queryable.ToMap<size_t, std::string>(
-//      [](size_t value) { return value; },
-//      [](size_t value) { return std::to_string(value / 2.0); }));
-//  QueryableMap<size_t, std::string> result = localQueryable
-//    .SkipWhile([&](std::pair<const size_t, std::string> kvp) { return kvp.first < this->threshold; });
-//
-//  ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
-//
-//  for (size_t i = 0; i < result.Count(); i++)
-//  {
-//    ASSERT_TRUE((result.At(i).first / 10.0) > 1.0);
-//  }
-//}
+TEST_F(SkipWhileFunctionalTest, SkipWhileMap)
+{
+ QueryableMap<size_t, std::string> localQueryable = BuildQueryable<size_t, std::string>(
+   this->queryable.ToMap<size_t, std::string>(
+     [](const size_t value) { return value; },
+     [](const size_t value) { return std::to_string(static_cast<double>(value) / 2.0); }));
+ QueryableMap<size_t, std::string> result = localQueryable
+   .SkipWhile([&](const std::pair<const size_t, std::string> & kvp) { return kvp.first < this->threshold; });
+
+ ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
+
+ for (size_t i = 0; i < result.Count(); i++)
+ {
+   ASSERT_TRUE((result.At(i).first / 10.0) > 1.0);
+ }
+}
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {

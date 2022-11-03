@@ -39,7 +39,7 @@ public:
         std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
         TValueAllocator allocator = { })
         : VolatileInternalQueryable<TValue, TValueAllocator>(
-            std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(
+            std::make_shared<VolatileQueryableData<TValue, std::vector, TValue, TValueAllocator>>(
                 std::vector<TValue, TValueAllocator>(1, value, allocator)),
             QueryableType::Vector)
     {
@@ -53,7 +53,7 @@ public:
         std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
         TValueAllocator allocator = { })
         : VolatileInternalQueryable<TValue, TValueAllocator>(
-            std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(values),
+            std::make_shared<VolatileQueryableData<TValue, std::vector, TValue, TValueAllocator>>(values),
             QueryableType::Vector)
     {
         this->key = key;
