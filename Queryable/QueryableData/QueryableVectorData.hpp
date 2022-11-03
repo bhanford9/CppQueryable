@@ -5,35 +5,55 @@
 
 #include "RandomAccessQueryableData.hpp"
 
-template<
-  typename T,
-  typename TAllocator = std::allocator<T>>
-class QueryableVectorData : public RandomAccessQueryableData<T, std::vector, TAllocator>
+template <typename T, typename TAllocator = std::allocator<T>>
+class QueryableVectorData final : public RandomAccessQueryableData<T, std::vector, TAllocator>
 {
 public:
-  QueryableVectorData() : RandomAccessQueryableData<T, std::vector, TAllocator>() { }
+    QueryableVectorData(const QueryableVectorData & other)
+        : RandomAccessQueryableData<T, std::vector, TAllocator>(other)
+    {
+    }
 
-  // QueryableVectorData(std::vector<T, TAllocator> items)
-  //   : RandomAccessQueryableData<T, std::vector, TAllocator>(items) { }
+    QueryableVectorData(QueryableVectorData && other) noexcept
+        : RandomAccessQueryableData<T, std::vector, TAllocator>(std::move(other))
+    {
+    }
 
-  QueryableVectorData(const std::vector<T, TAllocator> & items)
-    : RandomAccessQueryableData<T, std::vector, TAllocator>(items) { }
+    QueryableVectorData()
+        : RandomAccessQueryableData<T, std::vector, TAllocator>()
+    {
+    }
 
-  QueryableVectorData(std::vector<T, TAllocator> && items)
-    : RandomAccessQueryableData<T, std::vector, TAllocator>(std::move(items)) { }
+    explicit QueryableVectorData(const std::vector<T, TAllocator> & items)
+        : RandomAccessQueryableData<T, std::vector, TAllocator>(items)
+    {
+    }
 
-  QueryableVectorData(const QueryableVectorData & data)
-    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
+    explicit QueryableVectorData(std::vector<T, TAllocator> && items)
+        : RandomAccessQueryableData<T, std::vector, TAllocator>(std::move(items))
+    {
+    }
 
-  QueryableVectorData(QueryableVectorData && data)
-    : RandomAccessQueryableData<T, std::vector, TAllocator>(data) { }
+    QueryableVectorData & operator=(const QueryableVectorData & other)
+    {
+        if (this == &other) return *this;
+        RandomAccessQueryableData<T, std::vector, TAllocator>::operator =(other);
+        return *this;
+    }
 
-  virtual ~QueryableVectorData() { }
+    QueryableVectorData & operator=(QueryableVectorData && other) noexcept
+    {
+        if (this == &other) return *this;
+        RandomAccessQueryableData<T, std::vector, TAllocator>::operator =(std::move(other));
+        return *this;
+    }
 
-  virtual std::shared_ptr<IQueryableData<T>> Clone() override
-  {
-    return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
-  }
+    virtual ~QueryableVectorData() override = default;
+
+    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    {
+        return std::make_shared<QueryableVectorData<T, TAllocator>>(*this);
+    }
 };
 
 #endif

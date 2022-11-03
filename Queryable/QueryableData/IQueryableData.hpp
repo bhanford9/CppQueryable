@@ -12,7 +12,7 @@ template<typename TIterating>
 class IQueryableData
 {
 public:
-  virtual ~IQueryableData() { }
+  virtual ~IQueryableData() = default;
 
   virtual void Clear() = 0;
   virtual void Add(TIterating obj) = 0;

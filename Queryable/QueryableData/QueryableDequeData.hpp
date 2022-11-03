@@ -7,34 +7,58 @@
 
 #include "RandomAccessQueryableData.hpp"
 
-template<typename T, typename TAllocator = std::allocator<T>>
-class QueryableDequeData : public RandomAccessQueryableData<T, std::deque, TAllocator>
+template <typename T, typename TAllocator = std::allocator<T>>
+class QueryableDequeData final : public RandomAccessQueryableData<T, std::deque, TAllocator>
 {
 public:
-  QueryableDequeData() : RandomAccessQueryableData<T, std::deque, TAllocator>() { }
+    QueryableDequeData(const QueryableDequeData & other)
+        : RandomAccessQueryableData<T, std::deque, TAllocator>(other)
+    {
+    }
 
-  // QueryableDequeData(std::deque<T, TAllocator> items)
-  //   : RandomAccessQueryableData<T, std::deque, TAllocator>(items) { }
+    QueryableDequeData(QueryableDequeData && other) noexcept
+        : RandomAccessQueryableData<T, std::deque, TAllocator>(std::move(other))
+    {
+    }
 
-  QueryableDequeData(const std::deque<T, TAllocator> & items)
-    : RandomAccessQueryableData<T, std::deque, TAllocator>(items) { }
+    QueryableDequeData()
+        : RandomAccessQueryableData<T, std::deque, TAllocator>()
+    {
+    }
 
-  QueryableDequeData(std::deque<T, TAllocator> && items)
-    : RandomAccessQueryableData<T, std::deque, TAllocator>(std::move(items)) { }
+    explicit QueryableDequeData(const std::deque<T, TAllocator> & items)
+        : RandomAccessQueryableData<T, std::deque, TAllocator>(items)
+    {
+    }
 
-  QueryableDequeData(const QueryableDequeData& data)
-    : RandomAccessQueryableData<T, std::deque, TAllocator>(data) { }
+    explicit QueryableDequeData(std::deque<T, TAllocator> && items)
+        : RandomAccessQueryableData<T, std::deque, TAllocator>(std::move(items))
+    {
+    }
 
-  QueryableDequeData(QueryableDequeData && data)
-    : RandomAccessQueryableData<T, std::deque, TAllocator>(data) { }
+    QueryableDequeData & operator=(const QueryableDequeData & other)
+    {
+        if (this == &other) return *this;
+        RandomAccessQueryableData<T, std::deque, TAllocator>::operator =(other);
+        return *this;
+    }
 
-  virtual ~QueryableDequeData() { }
+    QueryableDequeData & operator=(QueryableDequeData && other) noexcept
+    {
+        if (this == &other) return *this;
+        RandomAccessQueryableData<T, std::deque, TAllocator>::operator =(std::move(other));
+        return *this;
+    }
 
-  virtual std::shared_ptr<IQueryableData<T>> Clone() override
-  {
-    // std::cout << "deque clone" << std::endl;
-    return std::make_shared<QueryableDequeData<T, TAllocator>>(*this);
-  }
+    virtual ~QueryableDequeData() override
+    {
+    }
+
+    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    {
+        // std::cout << "deque clone" << std::endl;
+        return std::make_shared<QueryableDequeData<T, TAllocator>>(*this);
+    }
 };
 
 #endif

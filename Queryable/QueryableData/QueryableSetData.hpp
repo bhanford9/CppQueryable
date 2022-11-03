@@ -6,52 +6,67 @@
 
 #include "SortedQueryableData.hpp"
 
-template<
-  typename T,
-  typename TCompare = std::less<T>,
-  typename TAllocator = std::allocator<T>>
-class QueryableSetData : public SortedQueryableData<T, std::set, TCompare, TAllocator>
+template <typename T, typename TCompare = std::less<T>, typename TAllocator = std::allocator<T>>
+class QueryableSetData final : public SortedQueryableData<T, std::set, TCompare, TAllocator>
 {
-  typedef typename std::vector<T>::iterator TVectorIterator;
 public:
-  QueryableSetData(TCompare comparator = {})
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>() { }
-
-  QueryableSetData(const std::set<T, TCompare, TAllocator> & items)
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(items)
+    QueryableSetData(const QueryableSetData & other)
+        : SortedQueryableData<T, std::set, TCompare, TAllocator>(other)
     {
     }
 
-  QueryableSetData(std::set<T, TCompare, TAllocator> && items)
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(std::move(items))
+    QueryableSetData(QueryableSetData && other) noexcept
+        : SortedQueryableData<T, std::set, TCompare, TAllocator>(std::move(other))
     {
     }
 
-  QueryableSetData(const QueryableSetData<T, TCompare, TAllocator> & data)
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(data) { }
+    explicit QueryableSetData(TCompare comparator = { })
+        : SortedQueryableData<T, std::set, TCompare, TAllocator>()
+    {
+    }
 
-  QueryableSetData(
-    TVectorIterator first,
-    TVectorIterator last,
-    TCompare comparator = {})
-    : SortedQueryableData<T, std::set, TCompare, TAllocator>(first, last, comparator) { }
+    explicit QueryableSetData(const std::set<T, TCompare, TAllocator> & items)
+        : SortedQueryableData<T, std::set, TCompare, TAllocator>(items)
+    {
+    }
 
-  virtual ~QueryableSetData() { }
+    explicit QueryableSetData(std::set<T, TCompare, TAllocator> && items)
+        : SortedQueryableData<T, std::set, TCompare, TAllocator>(std::move(items))
+    {
+    }
 
-  virtual std::shared_ptr<IQueryableData<T>> Clone() override
-  {
-    return std::make_shared<QueryableSetData<T, TCompare, TAllocator>>(*this);
-  }
+    QueryableSetData & operator=(const QueryableSetData & other)
+    {
+        if (this == &other) return *this;
+        SortedQueryableData<T, std::set, TCompare, TAllocator>::operator =(other);
+        return *this;
+    }
 
-  void Add(T item) override
-  {
-    this->items->insert(item);
+    QueryableSetData & operator=(QueryableSetData && other) noexcept
+    {
+        if (this == &other) return *this;
+        SortedQueryableData<T, std::set, TCompare, TAllocator>::operator =(std::move(other));
+        return *this;
+    }
 
-    // because its a set, the item may not have actually been added. Insert
-    // returns true/false whether the item was added, but the size method is
-    // also a constant time action, so its cleaner to use it
-    this->size = this->items->size();
-  }
+    virtual ~QueryableSetData() override
+    {
+    }
+
+    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    {
+        return std::make_shared<QueryableSetData<T, TCompare, TAllocator>>(*this);
+    }
+
+    virtual void Add(T item) override
+    {
+        this->items->insert(item);
+
+        // because its a set, the item may not have actually been added. Insert
+        // returns true/false whether the item was added, but the size method is
+        // also a constant time action, so its cleaner to use it
+        this->size = this->items->size();
+    }
 };
 
 #endif

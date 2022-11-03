@@ -6,46 +6,62 @@
 
 #include "SortedQueryableData.hpp"
 
-template<
-  typename T,
-  typename TCompare = std::less<T>,
-  typename TAllocator = std::allocator<T>>
-class QueryableMultiSetData : public SortedQueryableData<T, std::multiset, TCompare, TAllocator>
+template <typename T, typename TCompare = std::less<T>, typename TAllocator = std::allocator<T>>
+class QueryableMultiSetData final : public SortedQueryableData<
+        T, std::multiset, TCompare, TAllocator>
 {
-  typedef typename std::vector<T>::iterator TVectorIterator;
 public:
-  QueryableMultiSetData(TCompare comparator = {})
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>() { }
+    QueryableMultiSetData(const QueryableMultiSetData & other)
+        : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(other)
+    {
+    }
 
-  QueryableMultiSetData(const std::multiset<T, TCompare, TAllocator> & items)
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items) { }
+    QueryableMultiSetData(QueryableMultiSetData && other) noexcept
+        : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(std::move(other))
+    {
+    }
 
-  QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> && items)
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(std::move(items)) { }
+    explicit QueryableMultiSetData(TCompare comparator = { })
+        : SortedQueryableData<T, std::multiset, TCompare, TAllocator>()
+    {
+    }
 
-  QueryableMultiSetData(const QueryableMultiSetData<T, TCompare, TAllocator> & data)
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(data) { }
+    explicit QueryableMultiSetData(const std::multiset<T, TCompare, TAllocator> & items)
+        : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(items)
+    {
+    }
 
-  QueryableMultiSetData(
-    TVectorIterator first,
-    TVectorIterator last,
-    TCompare comparator = {})
-    : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(first, last, comparator)
-  {
-  }
+    explicit QueryableMultiSetData(std::multiset<T, TCompare, TAllocator> && items)
+        : SortedQueryableData<T, std::multiset, TCompare, TAllocator>(std::move(items))
+    {
+    }
 
-  virtual ~QueryableMultiSetData() { }
+    QueryableMultiSetData & operator=(const QueryableMultiSetData & other)
+    {
+        if (this == &other) return *this;
+        SortedQueryableData<T, std::multiset, TCompare, TAllocator>::operator =(other);
+        return *this;
+    }
 
-  virtual std::shared_ptr<IQueryableData<T>> Clone() override
-  {
-    return std::make_shared<QueryableMultiSetData<T, TCompare, TAllocator>>(*this);
-  }
+    QueryableMultiSetData & operator=(QueryableMultiSetData && other) noexcept
+    {
+        if (this == &other) return *this;
+        SortedQueryableData<T, std::multiset, TCompare, TAllocator>::operator =(std::move(other));
+        return *this;
+    }
 
-  void Add(T item) override
-  {
-    this->items->insert(item);
-    this->size++;
-  }
+    virtual ~QueryableMultiSetData() override = default;
+
+    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    {
+        return std::make_shared<QueryableMultiSetData<T, TCompare, TAllocator>>(*this);
+    }
+
+    virtual void Add(T item) override
+    {
+        this->items->insert(item);
+        ++this->size;
+    }
 };
 
 #endif

@@ -44,7 +44,6 @@ set(HEADER_FILES
     Queryable/QueryableAliases.hpp
     Queryable/QueryableData/ConstRandomAccessQueryableData.hpp
     Queryable/QueryableData/IQueryableData.hpp
-    Queryable/QueryableData/IQueryableIteratorData.hpp
     Queryable/QueryableData/QueryableData.hpp
     Queryable/QueryableData/QueryableDequeData.hpp
     Queryable/QueryableData/QueryableListData.hpp
