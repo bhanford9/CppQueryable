@@ -140,44 +140,44 @@ TEST_F(GroupByFunctionalTest, ListDefaultsTest)
 
 TEST_F(GroupByFunctionalTest, MapDefaultsTest)
 {
-    // auto genderGroups = BuildQueryable(
-    //   this->people.ToMap<std::string, Person>(
-    //     [](Person p) { return p.GetName(); },
-    //     [](Person p) { return p; }))
-    //   .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { return kvp.second.GetGender(); });
-    // auto males = BuildQueryable(this->people.ToList())
-    //   .Where([](Person p) { return p.GetGender() == Gender::Male; });
-    // auto females = BuildQueryable(this->people.ToList())
-    //   .Where([](Person p) { return p.GetGender() == Gender::Female; });
+    auto genderGroups = BuildQueryable(
+      this->people.ToMap<std::string, Person>(
+        [](Person p) { return p.GetName(); },
+        [](Person p) { return p; }))
+      .GroupBy<Gender>([](std::pair<const std::string, Person> kvp) { return kvp.second.GetGender(); });
+    auto males = BuildQueryable(this->people.ToList())
+      .Where([](Person p) { return p.GetGender() == Gender::Male; });
+    auto females = BuildQueryable(this->people.ToList())
+      .Where([](Person p) { return p.GetGender() == Gender::Female; });
 
-    // ASSERT_EQ(2, genderGroups.Count());
-    // ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
-    // ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
+    ASSERT_EQ(2, genderGroups.Count());
+    ASSERT_TRUE(genderGroups.At(0).GetKey() == Gender::Male);
+    ASSERT_TRUE(genderGroups.At(1).GetKey() == Gender::Female);
 
-    // genderGroups.ForEach([&](auto group)
-    // {
-    //   ASSERT_GT(group.Count(), 0);
-    //   if (group.GetKey() == Gender::Male)
-    //   {
-    //     ASSERT_EQ(males.Count(), group.Count());
-    //   }
-    //   else
-    //   {
-    //     ASSERT_EQ(females.Count(), group.Count());
-    //   }
+    genderGroups.ForEach([&](auto group)
+    {
+      ASSERT_GT(group.Count(), 0);
+      if (group.GetKey() == Gender::Male)
+      {
+        ASSERT_EQ(males.Count(), group.Count());
+      }
+      else
+      {
+        ASSERT_EQ(females.Count(), group.Count());
+      }
 
-    //   for (const auto & kvp : group)
-    //   {
-    //     if (group.GetKey() == Gender::Male)
-    //     {
-    //       ASSERT_TRUE(males.Contains(kvp.second));
-    //     }
-    //     else
-    //     {
-    //       ASSERT_TRUE(females.Contains(kvp.second));
-    //     }
-    //   }
-    // });
+      for (const auto & kvp : group)
+      {
+        if (group.GetKey() == Gender::Male)
+        {
+          ASSERT_TRUE(males.Contains(kvp.second));
+        }
+        else
+        {
+          ASSERT_TRUE(females.Contains(kvp.second));
+        }
+      }
+    });
 }
 
 TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)

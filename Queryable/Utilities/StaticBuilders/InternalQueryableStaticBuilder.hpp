@@ -61,7 +61,9 @@ namespace InternalBuilders
   static std::shared_ptr<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>> FromVector(const std::vector<TStoring, TAllocator> & vector)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>>(
-      std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(vector));
+      std::move(std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(
+        std::move(FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, std::vector, TStoring, TAllocator>>(
+          std::make_shared<QueryableVectorData<TStoring, TAllocator>>(vector))), QueryableType::Vector)));
   }
 
 
@@ -113,7 +115,10 @@ namespace InternalBuilders
   static std::shared_ptr<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>> FromVector(std::vector<TStoring, TAllocator> && vector)
   {
     return FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>>(
-      std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(std::move(vector)));
+      std::move(std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(
+        std::move(FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, std::vector, TStoring, TAllocator>>(
+          std::make_shared<QueryableVectorData<TStoring, TAllocator>>(
+            std::move(vector)))), QueryableType::Vector)));
   }
 }
 

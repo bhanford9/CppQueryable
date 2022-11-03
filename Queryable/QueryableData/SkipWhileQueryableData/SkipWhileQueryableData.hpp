@@ -8,6 +8,7 @@
 
 #include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
+#include "../QueryableVectorData.hpp"
 #include "../../Utilities/IWhileCondition.hpp"
 
 template <typename TObj, template<typename, typename ...> class TIterable, typename TIterating,
