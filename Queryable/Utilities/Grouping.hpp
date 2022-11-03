@@ -6,6 +6,7 @@
 
 #include "../InternalQueryables/VectorInternalQueryable.hpp"
 #include "../Iterators/QueryableIterator.hpp"
+#include "../QueryableData/VolatileQueryableData.hpp"
 
 // map gets tripped up here because it cannot return a copy of std::pair when iterating
 // to get around this, will need Grouping to be its own Internal Queryable which contains
@@ -39,7 +40,8 @@ public:
     std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
     TValueAllocator allocator = {})
     : VectorInternalQueryable<TValue, TValueAllocator>(
-        std::vector<TValue, TValueAllocator>(1, value, allocator))
+      std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(
+        std::vector<TValue, TValueAllocator>(1, value, allocator)), QueryableType::Vector)
   {
     this->key = key;
     this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
@@ -50,7 +52,8 @@ public:
     const std::vector<TValue, TValueAllocator> & values,
     std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
     TValueAllocator allocator = {})
-    : VectorInternalQueryable<TValue, TValueAllocator>(values)
+    : VectorInternalQueryable<TValue, TValueAllocator>(
+      std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(values), QueryableType::Vector)
   {
     this->key = key;
     this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };

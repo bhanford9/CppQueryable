@@ -19,7 +19,7 @@ protected:
 
     size_t expectedNoDupsSum = 1057;
     size_t expectedNoDupsCount = 10;
-    size_t expectedNoDupsAverage = expectedNoDupsSum / expectedNoDupsCount;
+    double expectedNoDupsAverage = static_cast<double>(expectedNoDupsSum) / static_cast<double>(expectedNoDupsCount);
     QueryableVector<size_t> queryable;
 
     AverageFunctionalTest()
