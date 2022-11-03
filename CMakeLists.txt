@@ -61,6 +61,7 @@ set(HEADER_FILES
     Queryable/QueryableData/SkipWhileQueryableData/SkipWhileQueryableMultiSetData.hpp
     Queryable/QueryableData/SkipWhileQueryableData/SkipWhileQueryableSetData.hpp
     Queryable/QueryableData/SkipWhileQueryableData/SkipWhileQueryableVectorData.hpp
+    Queryable/QueryableData/SkipWhileQueryableData/SkipWhileQueryableVolatileData.hpp
     Queryable/QueryableData/SortedQueryableData.hpp
     Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableData.hpp
     Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableDequeData.hpp
@@ -69,6 +70,7 @@ set(HEADER_FILES
     Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableMultiSetData.hpp
     Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableSetData.hpp
     Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableVectorData.hpp
+    Queryable/QueryableData/TakeWhileQueryableData/TakeWhileQueryableVolatileData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableDequeData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableListData.hpp
