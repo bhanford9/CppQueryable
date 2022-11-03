@@ -56,7 +56,7 @@ public:
   void AggregateFinalizerSeededUninitialized() const;
   void AggregateDeque() const;
   void AggregateList() const;
-  void AggregateMap();
+  void AggregateMap() const;
   void AggregateMultiSet() const;
   void AggregateSet() const;
   void AggregateVector() const;

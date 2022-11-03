@@ -20,7 +20,7 @@ protected:
   {
   }
 
-  void SetUp() override
+  virtual void SetUp() override
   {
   }
 
@@ -47,7 +47,7 @@ protected:
       ASSERT_EQ(expected[i++], value);
     });
 
-    for (size_t i = 0; i < result.Count(); i++)
+    for (i = 0; i < result.Count(); i++)
     {
       ASSERT_EQ(expected[i], result.At(i));
     }
@@ -77,7 +77,7 @@ protected:
     }
   }
 
-  void TearDown() override {}
+  virtual void TearDown() override {}
 };
 
 TEST_F(SkipFunctionalTest, SkipVectorSkipMoreThanSize)
@@ -155,12 +155,12 @@ TEST_F(SkipFunctionalTest, SkipVector)
 TEST_F(SkipFunctionalTest, SkipWhere)
 {
   int skipCount = 3;
-  const size_t expectedCount = 3;
+  constexpr size_t expectedCount = 3;
   QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = queryableVector
-    .Where([](size_t value) { return value % 2 == 0; })
+    .Where([](const size_t value) { return value % 2 == 0; })
     .Skip(skipCount);
 
   ASSERT_EQ(expectedCount, result.Count());
-  result.ForEach([&](size_t value) { ASSERT_EQ(skipCount++ * 2, value); });
+  result.ForEach([&](const size_t value) { ASSERT_EQ(skipCount++ * 2, value); });
 }

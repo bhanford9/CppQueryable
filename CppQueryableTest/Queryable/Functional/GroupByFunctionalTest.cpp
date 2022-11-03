@@ -46,11 +46,11 @@ protected:
     {
     }
 
-    void SetUp() override
+    virtual void SetUp() override
     {
     }
 
-    void TearDown() override
+    virtual void TearDown() override
     {
     }
 };
@@ -209,7 +209,7 @@ TEST_F(GroupByFunctionalTest, MultiSetDefaultsTest)
             }
 
             int i = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 if (group.GetKey() == Gender::Male)
                 {
@@ -252,7 +252,7 @@ TEST_F(GroupByFunctionalTest, SetDefaultsTest)
             }
 
             int i = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 if (group.GetKey() == Gender::Male)
                 {
@@ -293,7 +293,7 @@ TEST_F(GroupByFunctionalTest, VectorDefaultsTest)
             }
 
             int i = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 if (group.GetKey() == Gender::Male)
                 {
@@ -311,7 +311,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 {
     auto genderGroups = BuildQueryable(this->people.ToVector()).GroupBy<Gender>(
         [](const Person & p) { return p.GetGender(); },
-        [](Gender a, Gender b) { return a == Gender::Female && b == Gender::Male; });
+        [](const Gender a, const Gender b) { return a == Gender::Female && b == Gender::Male; });
 
     QueryableVector<Person> males = BuildQueryable(this->people.ToVector()).Where(
         [](const Person & p) { return p.GetGender() == Gender::Male; });
@@ -337,7 +337,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
             }
 
             int i = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 if (group.GetKey() == Gender::Male)
                 {
@@ -354,7 +354,7 @@ TEST_F(GroupByFunctionalTest, CustomKeyCompareTest)
 TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
 {
     auto voidGroups = BuildQueryable(this->people.ToVector()).GroupBy<void *>(
-        [](const Person & p) { return (void *)NULL; });
+        [](const Person &) { return static_cast<void *>(nullptr); });
 
     ASSERT_EQ(1, voidGroups.Count());
     ASSERT_TRUE(voidGroups.At(0).GetKey() == NULL);
@@ -365,7 +365,7 @@ TEST_F(GroupByFunctionalTest, GetKeyReturnNullTest)
             ASSERT_EQ(this->people.Count(), group.Count());
 
             int i = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 ASSERT_TRUE(person == this->people.At(i++));
             }
@@ -385,12 +385,12 @@ TEST_F(GroupByFunctionalTest, GroupByWhereTest)
     // ASSERT_TRUE(ageGroupsOverThirty != NULL);
     ASSERT_EQ(3, ageGroupsOverThirty.Count());
     ASSERT_EQ(3, overThirtyAgeGroups.Count());
-    ASSERT_TRUE(ageGroupsOverThirty.At(0).GetKey() == 51);
-    ASSERT_TRUE(ageGroupsOverThirty.At(1).GetKey() == 52);
-    ASSERT_TRUE(ageGroupsOverThirty.At(2).GetKey() == 61);
-    ASSERT_TRUE(overThirtyAgeGroups.At(0).GetKey() == 51);
-    ASSERT_TRUE(overThirtyAgeGroups.At(1).GetKey() == 52);
-    ASSERT_TRUE(overThirtyAgeGroups.At(2).GetKey() == 61);
+    EXPECT_NEAR(ageGroupsOverThirty.At(0).GetKey(), 51, 0.00001);
+    EXPECT_NEAR(ageGroupsOverThirty.At(1).GetKey(), 52, 0.00001);
+    EXPECT_NEAR(ageGroupsOverThirty.At(2).GetKey(), 61, 0.00001);
+    EXPECT_NEAR(overThirtyAgeGroups.At(0).GetKey(), 51, 0.00001);
+    EXPECT_NEAR(overThirtyAgeGroups.At(1).GetKey(), 52, 0.00001);
+    EXPECT_NEAR(overThirtyAgeGroups.At(2).GetKey(), 61, 0.00001);
 
     int iGroup = 0;
     ageGroupsOverThirty.ForEach(
@@ -399,7 +399,7 @@ TEST_F(GroupByFunctionalTest, GroupByWhereTest)
             ASSERT_TRUE(group.Count() == overThirtyAgeGroups.At(iGroup).Count());
 
             int iPerson = 0;
-            for (Person person : group)
+            for (const Person & person : group)
             {
                 ASSERT_TRUE(person == overThirtyAgeGroups.At(iGroup).ToVector()[iPerson++]);
             }

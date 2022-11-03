@@ -342,14 +342,9 @@ public:
         return this->items.get()->begin() == this->items.get()->end();
     }
 
-    TIterating & At(const int index) const
+    TIterating & At(const size_t index) const
     {
-        if (index < 0)
-        {
-            throw std::runtime_error("Index must be greater than zero");
-        }
-
-        int i = 0;
+        size_t i = 0;
         for (TIterating & obj : *this->items.get())
         {
             if (index == i++)
@@ -437,13 +432,13 @@ public:
         throw std::runtime_error("Cannot get last item of empty collection.");
     }
 
-    void Skip(int count)
+    void Skip(size_t count)
     {
         std::shared_ptr<IWhileCondition<TIterating>> whileCondition = std::make_shared<
             WhileCondition<TIterating, int>>(
             count,
-            [](const TIterating & value, int & current) { return current-- > 0; },
-            [count](int current) mutable { return count; });
+            [](const TIterating &, int & current) { return current-- > 0; },
+            [count](int) mutable { return count; });
 
         this->InternalSkipWhile(std::move(whileCondition));
     }
@@ -455,7 +450,7 @@ public:
         this->InternalSkipWhile(std::move(whileCondition));
     }
 
-    void Take(int count)
+    void Take(size_t count)
     {
         std::shared_ptr<IWhileCondition<TIterating>> whileCondition = std::make_shared<
             WhileCondition<TIterating, int>>(

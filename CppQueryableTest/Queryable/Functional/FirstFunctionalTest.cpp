@@ -31,11 +31,11 @@ protected:
     {
     }
 
-    void SetUp() override
+    virtual void SetUp() override
     {
     }
 
-    void TearDown() override
+    virtual void TearDown() override
     {
     }
 };
@@ -70,8 +70,11 @@ TEST_F(FirstFunctionalTest, FirstMap)
 {
     const size_t value = BuildQueryable(
         this->queryable.ToMap<size_t, std::string>(
-            [](size_t value) { return value; },
-            [](size_t value) { return std::to_string(value / 2.0); })).First().first;
+            [](const size_t value) { return value; },
+            [](const size_t value)
+            {
+                return std::to_string(static_cast<double>(value) / 2.0);
+            })).First().first;
     ASSERT_EQ(this->expectedOrderedFirst, value);
 }
 
@@ -122,14 +125,14 @@ TEST_F(FirstFunctionalTest, FirstWhereConditionFails)
 TEST_F(FirstFunctionalTest, FirstWhereDeque)
 {
     const size_t value = BuildQueryable(this->queryable.ToDeque()).First(
-        [&](size_t value) { return value > this->threshold; });
+        [&](const size_t v) { return v > this->threshold; });
     ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereList)
 {
     const size_t value = BuildQueryable(this->queryable.ToList()).First(
-        [&](size_t value) { return value > this->threshold; });
+        [&](const size_t v) { return v > this->threshold; });
     ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 
@@ -137,8 +140,8 @@ TEST_F(FirstFunctionalTest, FirstWhereMap)
 {
     const size_t value = BuildQueryable(
         this->queryable.ToMap<size_t, std::string>(
-            [](size_t value) { return value; },
-            [](size_t value) { return std::to_string(value / 2.0); })).First(
+            [](const size_t v) { return v; },
+            [](const size_t v) { return std::to_string(static_cast<double>(v) / 2.0); })).First(
         [&](const std::pair<const size_t &, std::string> & kvp)
         {
             return kvp.first > this->threshold;
@@ -149,50 +152,49 @@ TEST_F(FirstFunctionalTest, FirstWhereMap)
 TEST_F(FirstFunctionalTest, FirstWhereMultiSet)
 {
     const size_t value = BuildQueryable(this->queryable.ToMultiSet()).First(
-        [&](size_t value) { return value > this->threshold; });
+        [&](const size_t v) { return v > this->threshold; });
     ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereSet)
 {
     const size_t value = BuildQueryable(this->queryable.ToSet()).First(
-        [&](size_t value) { return value > this->threshold; });
+        [&](const size_t v) { return v > this->threshold; });
     ASSERT_EQ(this->expectedOrderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereVector)
 {
-    const size_t value = this->queryable.First(
-        [&](size_t value) { return value > this->threshold; });
+    const size_t value = this->queryable.First([&](const size_t v) { return v > this->threshold; });
     ASSERT_EQ(this->expectedUnorderedOver40, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereEven)
 {
-    const size_t expected = 4;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 0; }).First();
+    constexpr size_t expected = 4;
+    const size_t value = this->queryable.Where([](const size_t v) { return v % 2 == 0; }).First();
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereOdd)
 {
     const size_t expected = expectedUnorderedFirst;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 1; }).First();
+    const size_t value = this->queryable.Where([](const size_t v) { return v % 2 == 1; }).First();
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereWhereEven)
 {
-    const size_t expected = 76;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 0; }).First(
-        [](size_t value) { return value > 10; });
+    constexpr size_t expected = 76;
+    const size_t value = this->queryable.Where([](const size_t v) { return v % 2 == 0; }).First(
+        [](const size_t v) { return v > 10; });
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(FirstFunctionalTest, FirstWhereWhereOdd)
 {
-    const size_t expected = 45;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 1; }).First(
-        [](size_t value) { return value > 10; });
+    constexpr size_t expected = 45;
+    const size_t value = this->queryable.Where([](const size_t v) { return v % 2 == 1; }).First(
+        [](const size_t v) { return v > 10; });
     ASSERT_EQ(expected, value);
 }

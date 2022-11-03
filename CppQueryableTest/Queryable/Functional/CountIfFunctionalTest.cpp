@@ -11,25 +11,28 @@ using namespace QueryBuilder;
 class CountIfFunctionalTest : public ::testing::Test
 {
 protected:
-  int expectedEvensWithDuplicates = 7;
-  int expectedEvensWithoutDuplicates = 4;
-  QueryableVector<size_t> queryable;
+    size_t expectedEvensWithDuplicates    = 7;
+    size_t expectedEvensWithoutDuplicates = 4;
+    QueryableVector<size_t> queryable;
 
-  CountIfFunctionalTest() :
-    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
-  {
-  }
+    CountIfFunctionalTest()
+        : queryable(
+            BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 34, 76, 8, 867 })))
+    {
+    }
 
-  void SetUp() override
-  {
-  }
+    virtual void SetUp() override
+    {
+    }
 
-  static bool IsEven(size_t value)
-  {
-    return (value % 2) == 0;
-  }
+    static bool IsEven(const size_t value)
+    {
+        return (value % 2) == 0;
+    }
 
-  void TearDown() override {}
+    virtual void TearDown() override
+    {
+    }
 };
 
 // TEST_F(CountIfFunctionalTest, CountIfVectorUninitialized)
@@ -40,48 +43,53 @@ protected:
 
 TEST_F(CountIfFunctionalTest, CountIfDeque)
 {
-  const int count = BuildQueryable(this->queryable.ToDeque()).CountIf(this->IsEven);
-  ASSERT_EQ(this->expectedEvensWithDuplicates, count);
+    const size_t count = BuildQueryable(this->queryable.ToDeque()).CountIf(this->IsEven);
+    ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfList)
 {
-  const int count = BuildQueryable(this->queryable.ToList()).CountIf(this->IsEven);
-  ASSERT_EQ(this->expectedEvensWithDuplicates, count);
+    const size_t count = BuildQueryable(this->queryable.ToList()).CountIf(this->IsEven);
+    ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfMap)
 {
-  const int count = BuildQueryable(
-    this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); }))
-    .CountIf([](const std::pair<const size_t, std::string> & kvp) { return kvp.first % 2 == 0; });
-  ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
+    const size_t count = BuildQueryable(
+        this->queryable
+        .ToMap<size_t, std::string>(
+            [](const size_t value) { return value; },
+            [](const size_t value)
+            {
+                return std::to_string(static_cast<double>(value) / 2.0);
+            }))
+        .CountIf(
+            [](const std::pair<const size_t, std::string> & kvp) { return kvp.first % 2 == 0; });
+    ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfMultiSet)
 {
-  const int count = BuildQueryable(this->queryable.ToMultiSet()).CountIf(this->IsEven);
-  ASSERT_EQ(this->expectedEvensWithDuplicates, count);
+    const size_t count = BuildQueryable(this->queryable.ToMultiSet()).CountIf(this->IsEven);
+    ASSERT_EQ(this->expectedEvensWithDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfSet)
 {
-  const int count = BuildQueryable(this->queryable.ToSet()).CountIf(this->IsEven);
-  ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
+    const size_t count = BuildQueryable(this->queryable.ToSet()).CountIf(this->IsEven);
+    ASSERT_EQ(this->expectedEvensWithoutDuplicates, count);
 }
 
 TEST_F(CountIfFunctionalTest, CountIfVector)
 {
-  ASSERT_EQ(this->expectedEvensWithDuplicates, this->queryable.CountIf(this->IsEven));
+    ASSERT_EQ(this->expectedEvensWithDuplicates, this->queryable.CountIf(this->IsEven));
 }
 
 TEST_F(CountIfFunctionalTest, CountIfWhere)
 {
-  const int count = this->queryable
-                        .Where([](size_t value) { return value % 2 == 0; })
-                        .CountIf([] (size_t value) { return true; });
+    const auto count = this->queryable
+        .Where([](const size_t value) { return value % 2 == 0; })
+        .CountIf([](const size_t) { return true; });
 
-  ASSERT_EQ(expectedEvensWithDuplicates, count);
+    ASSERT_EQ(expectedEvensWithDuplicates, count);
 }

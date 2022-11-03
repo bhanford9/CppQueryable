@@ -30,11 +30,11 @@ protected:
     {
     }
 
-    void SetUp() override
+    virtual void SetUp() override
     {
     }
 
-    void TearDown() override
+    virtual void TearDown() override
     {
     }
 };
@@ -55,7 +55,7 @@ TEST_F(SelectFunctionalTest, DequeDefaultOut)
 
     ASSERT_EQ(local.Count(), result.Count());
 
-    int i = 0;
+    size_t i = 0;
     local.ForEach(
         [&](const Person & p)
         {
@@ -71,7 +71,7 @@ TEST_F(SelectFunctionalTest, ListDefaultOut)
 
     ASSERT_EQ(local.Count(), result.Count());
 
-    int i = 0;
+    size_t i = 0;
     local.ForEach(
         [&](const Person & p)
         {
@@ -90,7 +90,7 @@ TEST_F(SelectFunctionalTest, MapDefaultOut)
 
     ASSERT_EQ(local.Count(), result.Count());
 
-    int i = 0;
+    size_t i = 0;
     local.ForEach(
         [&](const std::pair<const std::string, Gender> & kvp)
         {
@@ -110,15 +110,12 @@ TEST_F(SelectFunctionalTest, MultiSetDefaultOut)
     ASSERT_EQ(local1.Count(), ages.Count());
     ASSERT_EQ(local1.Count(), names.Count());
 
-    int i = 0;
-    double previousAge = -1;
+    size_t i = 0;
     local1.ForEach(
-        [&](const Person & p)
+        [&](const Person &)
         {
-            const double currentAge = ages.At(i);
             const std::string currentName = names.At(i);
             ASSERT_STREQ(local2.At(i++).GetName().c_str(), currentName.c_str());
-            previousAge = currentAge;
         });
 }
 
@@ -139,7 +136,7 @@ TEST_F(SelectFunctionalTest, SetDefaultOut)
     ASSERT_EQ(local2.Count(), names.Count());
     ASSERT_EQ(local1.Count(), names.Count());
     std::cout << "2" << std::endl;
-    int i = 0;
+    size_t i = 0;
     local2.ForEach(
         [&](const Person & p)
         {
@@ -157,7 +154,7 @@ TEST_F(SelectFunctionalTest, VectorDefaultOut)
 
     ASSERT_EQ(local.Count(), result.Count());
 
-    int i = 0;
+    size_t i = 0;
     local.ForEach(
         [&](const Person & p)
         {
@@ -172,7 +169,7 @@ TEST_F(SelectFunctionalTest, SelectWhere)
 
     QueryableVector<double> ages1 = local1.Select<double>(
         [](const Person & p) { return p.GetAge() / 10; }).Where(
-        [](double age) { return age > 3 && age < 8; });
+        [](const double age) { return age > 3 && age < 8; });
 
     QueryableVector<double> ages2 = local2.Where(
         [](const Person & p) { return p.GetAge() > 30 && p.GetAge() < 80; }).Select<double>(
@@ -181,6 +178,6 @@ TEST_F(SelectFunctionalTest, SelectWhere)
     ASSERT_EQ(5, ages1.Count());
     ASSERT_EQ(ages1.Count(), ages2.Count());
 
-    int i = 0;
-    ages1.ForEach([&](double age) { ASSERT_EQ(age, ages2.At(i++)); });
+    size_t i = 0;
+    ages1.ForEach([&](const double age) { ASSERT_EQ(age, ages2.At(i++)); });
 }

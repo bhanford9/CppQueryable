@@ -24,11 +24,11 @@ protected:
   {
   }
 
-  void SetUp() override
+  virtual void SetUp() override
   {
   }
 
-  void TearDown() override {}
+  virtual void TearDown() override {}
 };
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVectorAlwaysTrue)
@@ -47,7 +47,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileDeque)
 {
   QueryableDeque<size_t> localQueryable = BuildQueryable(this->queryable.ToDeque());
   QueryableDeque<size_t> result = localQueryable
-    .SkipWhile([&](size_t value) { return value < this->threshold; });
+    .SkipWhile([&](const size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -62,7 +62,7 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileList)
   // somethings not right with Skip While. It seems to iterate over the collection several times
   QueryableList<size_t> localQueryable = BuildQueryable(this->queryable.ToList());
   QueryableList<size_t> result = localQueryable
-    .SkipWhile([&](size_t value) { return value < this->threshold; });
+    .SkipWhile([&](const size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -93,13 +93,13 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileMultiSet)
 {
   QueryableMultiSet<size_t> localQueryable = BuildQueryable(this->queryable.ToMultiSet());
   QueryableMultiSet<size_t> result = localQueryable
-    .SkipWhile([&](size_t value) { return value < this->threshold; });
+    .SkipWhile([&](const size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrdered, result.Count());
 
   for (size_t i = 0; i < result.Count(); i++)
   {
-    ASSERT_TRUE((result.At(i) / 10.0) > 1.0);
+    ASSERT_TRUE((static_cast<double>(result.At(i)) / 10.0) > 1.0);
   }
 }
 
@@ -107,20 +107,20 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileSet)
 {
   QueryableSet<size_t> localQueryable = BuildQueryable(this->queryable.ToSet());
   QueryableSet<size_t> result = localQueryable
-    .SkipWhile([&](size_t value) { return value < this->threshold; });
+    .SkipWhile([&](const size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountOrderedSet, result.Count());
 
   for (size_t i = 0; i < result.Count(); i++)
   {
-    ASSERT_TRUE((result.At(i) / 10.0) > 1.0);
+    ASSERT_TRUE((static_cast<double>(result.At(i)) / 10.0) > 1.0);
   }
 }
 
 TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 {
   QueryableVector<size_t> result = this->queryable
-    .SkipWhile([&](size_t value) { return value < this->threshold; });
+    .SkipWhile([&](const size_t value) { return value < this->threshold; });
 
   ASSERT_EQ(this->expectedCountUnordered, result.Count());
 
@@ -133,12 +133,12 @@ TEST_F(SkipWhileFunctionalTest, SkipWhileVector)
 TEST_F(SkipWhileFunctionalTest, SkipWhileWhere)
 {
   int skipCount = 4;
-  const int expectedCount = 2;
+  constexpr int expectedCount = 2;
   QueryableVector<size_t> localQueryable = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = localQueryable
-    .Where([](size_t value) { return value % 2 == 0; })
-    .SkipWhile([](size_t value) { return value < 8; });
+    .Where([](const size_t value) { return value % 2 == 0; })
+    .SkipWhile([](const size_t value) { return value < 8; });
 
   ASSERT_EQ(expectedCount, result.Count());
-  result.ForEach([&](size_t value) { ASSERT_EQ(skipCount++ * 2, value); });
+  result.ForEach([&](const size_t value) { ASSERT_EQ(skipCount++ * 2, value); });
 }

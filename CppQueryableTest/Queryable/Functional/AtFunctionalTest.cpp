@@ -11,7 +11,7 @@ using namespace QueryBuilder;
 class AtFunctionalTest : public ::testing::Test
 {
 protected:
-  int atIndex = 9;
+  size_t atIndex = 9;
   size_t expectedUnorderedAt = 34;
   size_t expectedOrderedAt = 45;
   size_t expectedSetAt = 867;
@@ -22,11 +22,11 @@ protected:
   {
   }
 
-  void SetUp() override
+  virtual void SetUp() override
   {
   }
 
-  void TearDown() override {}
+  virtual void TearDown() override {}
 };
 
 // TEST_F(AtFunctionalTest, AtVectorUninitialized)
@@ -55,18 +55,6 @@ TEST_F(AtFunctionalTest, AtVectorIndexToHigh)
   }
 }
 
-TEST_F(AtFunctionalTest, AtVectorIndexNegative)
-{
-  try
-  {
-    this->queryable.At(-1);
-  }
-  catch (std::runtime_error& ex)
-  {
-    ASSERT_STREQ(ex.what(), "Index must be greater than zero");
-  }
-}
-
 TEST_F(AtFunctionalTest, AtDeque)
 {
   const size_t value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
@@ -83,12 +71,12 @@ TEST_F(AtFunctionalTest, AtMap)
 {
   const std::pair<const size_t, std::string> value = BuildQueryable(
     this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); }))
+      [](const size_t value) { return value; },
+      [](const size_t value) { return std::to_string(static_cast<double>(value) / 2.0); }))
       .At(this->atIndex);
 
   ASSERT_EQ(this->expectedSetAt, value.first);
-  ASSERT_EQ(std::to_string(this->expectedSetAt / 2.0), value.second);
+  ASSERT_EQ(std::to_string(static_cast<double>(this->expectedSetAt) / 2.0), value.second);
 }
 
 TEST_F(AtFunctionalTest, AtMultiSet)
@@ -111,9 +99,9 @@ TEST_F(AtFunctionalTest, AtVector)
 
 TEST_F(AtFunctionalTest, AtWhere)
 {
-  const size_t expected = 8;
+  constexpr size_t expected = 8;
   const size_t value = this->queryable
-                           .Where([](size_t val) { return val % 2 == 0; })
+                           .Where([](const size_t val) { return val % 2 == 0; })
                            .At(3);
 
   ASSERT_EQ(expected, value);

@@ -30,11 +30,11 @@ protected:
     {
     }
 
-    void SetUp() override
+    virtual void SetUp() override
     {
     }
 
-    void TearDown() override
+    virtual void TearDown() override
     {
     }
 };
@@ -49,7 +49,7 @@ TEST_F(MinFunctionalTest, MinItemUninitialized)
 TEST_F(MinFunctionalTest, MinUninitialized)
 {
     const QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
-    const double min = emptyQueryable.Min<double>([&](const Person & p) { return p.GetAge(); });
+    const auto min = emptyQueryable.Min<double>([&](const Person & p) { return p.GetAge(); });
     ASSERT_DOUBLE_EQ(0.0, min);
 }
 
@@ -62,9 +62,9 @@ TEST_F(MinFunctionalTest, MinUninitialized)
 
 TEST_F(MinFunctionalTest, MinSeededUninitialized)
 {
-    const double seed = 9;
+    constexpr double seed = 9;
     const QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
-    const double min = emptyQueryable.Min<double>(
+    const auto min = emptyQueryable.Min<double>(
         [](const Person & p) { return p.GetAge(); },
         seed);
     ASSERT_EQ(seed, min);
@@ -72,7 +72,7 @@ TEST_F(MinFunctionalTest, MinSeededUninitialized)
 
 TEST_F(MinFunctionalTest, MinSeededUninitializedDefault)
 {
-    const double seed = 9;
+    constexpr double seed = 9;
     const QueryableVector<double> emptyQueryable(BuildQueryable(std::vector<double>()));
     const double min = emptyQueryable.Min(seed);
     ASSERT_EQ(seed, min);
@@ -81,41 +81,41 @@ TEST_F(MinFunctionalTest, MinSeededUninitializedDefault)
 TEST_F(MinFunctionalTest, MinItemString)
 {
     const std::string min = this->queryableStrings.MinItem<char>(
-        [](std::string str) { return str[0]; });
+        [](const std::string & str) { return str[0]; });
     ASSERT_STREQ(expectedMinStr.c_str(), min.c_str());
 }
 
 TEST_F(MinFunctionalTest, MinString)
 {
-    const char min = this->queryableStrings.Min<char>([](std::string str) { return str[0]; });
+    const char min = this->queryableStrings.Min<char>([](const std::string & str) { return str[0]; });
     ASSERT_EQ(expectedMinChar, min);
 }
 
 TEST_F(MinFunctionalTest, MinSmallerSeedString)
 {
-    const char seed = 'Z';
-    const char min = this->queryableStrings.Min<char>([](std::string str) { return str[0]; }, seed);
+    constexpr char seed = 'Z';
+    const char min = this->queryableStrings.Min<char>([](const std::string & str) { return str[0]; }, seed);
     ASSERT_EQ(seed, min);
 }
 
 TEST_F(MinFunctionalTest, MinLargerSeedString)
 {
-    const char seed = 'c';
-    const char min = this->queryableStrings.Min<char>([](std::string str) { return str[0]; }, seed);
+    constexpr char seed = 'c';
+    const char min = this->queryableStrings.Min<char>([](const std::string & str) { return str[0]; }, seed);
     ASSERT_EQ(expectedMinChar, min);
 }
 
 TEST_F(MinFunctionalTest, MinItemDeque)
 {
     const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-    const size_t min = local.MinItem<size_t>([](size_t value) { return value; });
+    const auto min = local.MinItem<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
 TEST_F(MinFunctionalTest, MinDeque)
 {
     const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; });
+    const auto min = local.Min<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -128,15 +128,15 @@ TEST_F(MinFunctionalTest, MinDequeDefault)
 
 TEST_F(MinFunctionalTest, MinSeededLowerDeque)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(seed, min);
 }
 
 TEST_F(MinFunctionalTest, MinSeededLowerDequeDefault)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
     const size_t min = local.Min(seed);
     ASSERT_EQ(seed, min);
@@ -146,7 +146,7 @@ TEST_F(MinFunctionalTest, MinSeededHigherDeque)
 {
     const size_t seed = expectedMin + 1;
     const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -161,14 +161,14 @@ TEST_F(MinFunctionalTest, MinSeededHigherDequeDefault)
 TEST_F(MinFunctionalTest, MinItemList)
 {
     const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-    const size_t min = local.MinItem<size_t>([](size_t value) { return value; });
+    const auto min = local.MinItem<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
 TEST_F(MinFunctionalTest, MinList)
 {
     const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; });
+    const auto min = local.Min<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -181,15 +181,15 @@ TEST_F(MinFunctionalTest, MinListDefault)
 
 TEST_F(MinFunctionalTest, MinSeededLowerList)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(seed, min);
 }
 
 TEST_F(MinFunctionalTest, MinSeededLowerListDefault)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
     const size_t min = local.Min(seed);
     ASSERT_EQ(seed, min);
@@ -199,7 +199,7 @@ TEST_F(MinFunctionalTest, MinSeededHigherList)
 {
     const size_t seed = expectedMin + 1;
     const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -214,14 +214,14 @@ TEST_F(MinFunctionalTest, MinSeededHigherListDefault)
 TEST_F(MinFunctionalTest, MinItemMultiSet)
 {
     const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-    const size_t min = local.MinItem<size_t>([](size_t value) { return value; });
+    const auto min = local.MinItem<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
 TEST_F(MinFunctionalTest, MinMultiSet)
 {
     const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; });
+    const auto min = local.Min<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -234,15 +234,15 @@ TEST_F(MinFunctionalTest, MinMultiSetDefault)
 
 TEST_F(MinFunctionalTest, MinSeededLowerMultiSet)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(seed, min);
 }
 
 TEST_F(MinFunctionalTest, MinSeededLowerMultiSetDefault)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
     const size_t min = local.Min(seed);
     ASSERT_EQ(seed, min);
@@ -252,7 +252,7 @@ TEST_F(MinFunctionalTest, MinSeededHigherMultiSet)
 {
     const size_t seed = expectedMin + 1;
     const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -267,14 +267,14 @@ TEST_F(MinFunctionalTest, MinSeededHigherMultiSetDefault)
 TEST_F(MinFunctionalTest, MinItemSet)
 {
     const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-    const size_t min = local.MinItem<size_t>([](size_t value) { return value; });
+    const auto min = local.MinItem<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
 TEST_F(MinFunctionalTest, MinSet)
 {
     const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; });
+    const auto min = local.Min<size_t>([](const size_t value) { return value; });
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -287,15 +287,15 @@ TEST_F(MinFunctionalTest, MinSetDefault)
 
 TEST_F(MinFunctionalTest, MinSeededLowerSet)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(seed, min);
 }
 
 TEST_F(MinFunctionalTest, MinSeededLowerSetDefault)
 {
-    const size_t seed = 0;
+    constexpr size_t seed = 0;
     const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
     const size_t min = local.Min(seed);
     ASSERT_EQ(seed, min);
@@ -305,7 +305,7 @@ TEST_F(MinFunctionalTest, MinSeededHigherSet)
 {
     const size_t seed = expectedMin + 1;
     const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-    const size_t min = local.Min<size_t>([](size_t value) { return value; }, seed);
+    const auto min = local.Min<size_t>([](const size_t value) { return value; }, seed);
     ASSERT_EQ(this->expectedMin, min);
 }
 
@@ -319,15 +319,15 @@ TEST_F(MinFunctionalTest, MinSeededHigherSetDefault)
 
 TEST_F(MinFunctionalTest, MinWhere)
 {
-    const size_t expected = 12;
-    const size_t min = this->queryable.Where([](size_t value) { return value > 10; }).Min<size_t>(
-        [](size_t value) { return value; });
+    constexpr size_t expected = 12;
+    const auto min = this->queryable.Where([](const size_t value) { return value > 10; }).Min<size_t>(
+        [](const size_t value) { return value; });
     ASSERT_EQ(expected, min);
 }
 
 TEST_F(MinFunctionalTest, MinWhereDefault)
 {
-    const size_t expected = 12;
-    const size_t min = this->queryable.Where([](size_t value) { return value > 10; }).Min();
+    constexpr size_t expected = 12;
+    const size_t min = this->queryable.Where([](const size_t value) { return value > 10; }).Min();
     ASSERT_EQ(expected, min);
 }

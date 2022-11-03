@@ -12,98 +12,100 @@ using namespace QueryBuilder;
 class TakeFunctionalTest : public ::testing::Test
 {
 protected:
-  int takeCount = 5;
-  QueryableVector<size_t> queryable;
+    int takeCount = 5;
+    QueryableVector<size_t> queryable;
 
-  TakeFunctionalTest() :
-    queryable(BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
-  {
-  }
-
-  void SetUp() override
-  {
-  }
-
-  template<
-    typename TStoring,
-    template<typename, typename ...> typename TIterable,
-    typename TIterating,
-    typename ...TArgs>
-  void TestTake(Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable, int toTake)
-  {
-    std::vector<TIterating> expected;
-    const size_t copyToTake = static_cast<size_t>(toTake);
-
-    for (size_t i = 0; i < copyToTake; i++)
+    TakeFunctionalTest()
+        : queryable(
+            BuildQueryable(std::vector<size_t>({ 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 })))
     {
-      if (i >= localQueryable.Count())
-      {
-        break;
-      }
-
-      expected.push_back(localQueryable.At(i));
     }
 
-    Queryable<TStoring, TIterable, TIterating, TArgs...> & result = localQueryable.Take(toTake);
-
-    ASSERT_EQ(expected.size(), result.Count());
-    
-    size_t i = 0;
-    result.ForEach([&](TIterating value)
+    virtual void SetUp() override
     {
-      ASSERT_EQ(expected[i++], value);
-    });
-
-    for (size_t i = 0; i < result.Count(); i++)
-    {
-      ASSERT_EQ(expected[i], result.At(i));
-    }
-  }
-
-  template<
-    typename TStoring,
-    template<typename, typename ...> typename TIterable,
-    typename TIterating,
-    typename ...TArgs>
-  void TestTakeNegative(Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable, int toTake)
-  {
-    std::vector<TIterating> expected;
-    const int startIndex = localQueryable.Count() + toTake;
-    for (size_t i = startIndex; i < localQueryable.Count(); i++)
-    {
-      expected.push_back(localQueryable.At(i));
     }
 
-    Queryable<TStoring, TIterable, TIterating, TArgs...> & result = localQueryable.Take(toTake);
-
-    ASSERT_EQ(-toTake, result.Count());
-    ASSERT_EQ(expected.size(), result.Count());
-
-    for (size_t i = 0; i < result.Count(); i++)
+    template <typename TStoring, template<typename, typename ...> typename TIterable, typename
+              TIterating, typename ...TArgs>
+    void TestTake(
+        Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable,
+        size_t toTake)
     {
-      ASSERT_EQ(expected[i], result.At(i));
-    }
-  }
+        std::vector<TIterating> expected;
+        const size_t copyToTake = static_cast<size_t>(toTake);
 
-  void TearDown() override {}
+        for (size_t i = 0; i < copyToTake; i++)
+        {
+            if (i >= localQueryable.Count())
+            {
+                break;
+            }
+
+            expected.push_back(localQueryable.At(i));
+        }
+
+        Queryable<TStoring, TIterable, TIterating, TArgs...> & result = localQueryable.Take(toTake);
+
+        ASSERT_EQ(expected.size(), result.Count());
+
+        size_t i = 0;
+        result.ForEach(
+            [&](TIterating value)
+            {
+                ASSERT_EQ(expected[i++], value);
+            });
+
+        for (i = 0; i < result.Count(); i++)
+        {
+            ASSERT_EQ(expected[i], result.At(i));
+        }
+    }
+
+    template <typename TStoring, template<typename, typename ...> typename TIterable, typename
+              TIterating, typename ...TArgs>
+    void TestTakeNegative(
+        Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable,
+        int toTake)
+    {
+        std::vector<TIterating> expected;
+        const int startIndex = localQueryable.Count() + toTake;
+        for (size_t i = startIndex; i < localQueryable.Count(); ++i)
+        {
+            expected.push_back(localQueryable.At(i));
+        }
+
+        Queryable<TStoring, TIterable, TIterating, TArgs...> & result = localQueryable.Take(toTake);
+
+        ASSERT_EQ(-toTake, result.Count());
+        ASSERT_EQ(expected.size(), result.Count());
+
+        for (size_t i = 0; i < result.Count(); i++)
+        {
+            ASSERT_EQ(expected[i], result.At(i));
+        }
+    }
+
+    virtual void TearDown() override
+    {
+    }
 };
 
 TEST_F(TakeFunctionalTest, TakeVectorTakeMoreThanSize)
 {
-  QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
-  this->TestTake(localQueryable, this->queryable.Count() + 1);
+    QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
+    this->TestTake(localQueryable, this->queryable.Count() + 1);
 }
 
 TEST_F(TakeFunctionalTest, TakeDeque)
 {
-  QueryableDeque<size_t> localQueryable(BuildQueryable(this->queryable.ToDeque()));
-  this->TestTake(localQueryable, this->takeCount);
+    QueryableDeque<size_t> localQueryable(BuildQueryable(this->queryable.ToDeque()));
+    this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeList)
 {
-  QueryableList<size_t> localQueryable(BuildQueryable(this->queryable.ToList()));
-  this->TestTake(localQueryable, this->takeCount);
+    QueryableList<size_t> localQueryable(BuildQueryable(this->queryable.ToList()));
+    this->TestTake(localQueryable, this->takeCount);
 }
 
 //TEST_F(TakeFunctionalTest, TakeMap)
@@ -117,20 +119,20 @@ TEST_F(TakeFunctionalTest, TakeList)
 
 TEST_F(TakeFunctionalTest, TakeMultiSet)
 {
-  QueryableMultiSet<size_t> localQueryable(BuildQueryable(this->queryable.ToMultiSet()));
-  this->TestTake(localQueryable, this->takeCount);
+    QueryableMultiSet<size_t> localQueryable(BuildQueryable(this->queryable.ToMultiSet()));
+    this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeSet)
 {
-  QueryableSet<size_t> localQueryable(BuildQueryable(this->queryable.ToSet()));
-  this->TestTake(localQueryable, this->takeCount);
+    QueryableSet<size_t> localQueryable(BuildQueryable(this->queryable.ToSet()));
+    this->TestTake(localQueryable, this->takeCount);
 }
 
 TEST_F(TakeFunctionalTest, TakeVector)
 {
-  QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
-  this->TestTake(localQueryable, this->takeCount);
+    QueryableVector<size_t> localQueryable = BuildQueryable(this->queryable.ToVector());
+    this->TestTake(localQueryable, this->takeCount);
 }
 
 // TEST_F(TakeFunctionalTest, TakeVectorNegative)
@@ -164,15 +166,15 @@ TEST_F(TakeFunctionalTest, TakeVector)
 
 TEST_F(TakeFunctionalTest, TakeWhere)
 {
-  int takeCount = 3;
-  const int expectedCount = 3;
-  QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
-  QueryableVector<size_t> result = queryableVector
-    .Where([](size_t value) { return value % 2 == 0; })
-    .Take(takeCount);
+    int takeCount = 3;
+    constexpr int expectedCount = 3;
+    QueryableVector<size_t> queryableVector = BuildQueryable(
+        std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
+    QueryableVector<size_t> result = queryableVector.Where(
+        [](const size_t value) { return value % 2 == 0; }).Take(takeCount);
 
-  ASSERT_EQ(expectedCount, result.Count());
+    ASSERT_EQ(expectedCount, result.Count());
 
-  takeCount = 0;
-  result.ForEach([&](size_t value) { ASSERT_EQ(takeCount++ * 2, value); });
+    takeCount = 0;
+    result.ForEach([&](const size_t value) { ASSERT_EQ(takeCount++ * 2, value); });
 }

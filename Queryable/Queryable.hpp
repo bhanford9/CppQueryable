@@ -167,7 +167,7 @@ public:
         return this->queryable->Any(condition);
     }
 
-    TIterating & At(int index) const
+    TIterating & At(size_t index) const
     {
         return this->queryable->At(index);
     }
@@ -509,7 +509,7 @@ public:
         // }
     }
 
-    Queryable<TStoring, TIterable, TIterating, TArgs...> & Skip(int count)
+    Queryable<TStoring, TIterable, TIterating, TArgs...> & Skip(size_t count)
     {
         this->queryable->Skip(count);
         return *this;
@@ -547,7 +547,7 @@ public:
     //   return this->queryable->Sum();
     // }
 
-    Queryable<TStoring, TIterable, TIterating, TArgs...> & Take(int count)
+    Queryable<TStoring, TIterable, TIterating, TArgs...> & Take(size_t count)
     {
         this->queryable->Take(count);
         return *this;

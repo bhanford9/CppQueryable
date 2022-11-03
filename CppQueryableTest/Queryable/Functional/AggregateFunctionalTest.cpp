@@ -92,11 +92,14 @@ void AggregateFunctionalTest::AggregateDeque() const
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -114,11 +117,14 @@ void AggregateFunctionalTest::AggregateList() const
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableList<Person> local = BuildQueryable(this->people.ToList());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -130,7 +136,7 @@ TEST_F(AggregateFunctionalGTest, AggregateMap)
     this->AggregateMap();
 }
 
-void AggregateFunctionalTest::AggregateMap()
+void AggregateFunctionalTest::AggregateMap() const
 {
     const std::string expected =
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
@@ -145,8 +151,8 @@ void AggregateFunctionalTest::AggregateMap()
         }).Aggregate<std::string>(
         [](const std::string & s, const std::pair<const std::string, Person> & p)
         {
-            const std::string newStr = p.first + " (" + (p.second.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.second.GetHeight()) + "in";
+            const std::string newStr = p.first + " (" + (p.second.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.second.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -164,11 +170,14 @@ void AggregateFunctionalTest::AggregateMultiSet() const
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableMultiSet<Person> local = BuildQueryable(this->people.ToMultiSet());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -186,11 +195,14 @@ void AggregateFunctionalTest::AggregateSet() const
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableSet<Person> local = BuildQueryable(this->people.ToSet());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -208,11 +220,14 @@ void AggregateFunctionalTest::AggregateVector() const
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableVector<Person> local = BuildQueryable(this->people.ToVector());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         });
 
@@ -229,8 +244,8 @@ void AggregateFunctionalTest::AggregateSeededFinalizerDeque() const
     std::string seed = "People: \n";
     const std::string finalizer = "\n---END---\n";
     const std::string expected = seed +
-        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" +
-        finalizer;
+        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n"
+        + finalizer;
     QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
     const std::string result = local.Where(
         [](const Person & p)
@@ -239,8 +254,8 @@ void AggregateFunctionalTest::AggregateSeededFinalizerDeque() const
         }).Aggregate<std::string, std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         },
         [&](const std::string & str)
@@ -262,16 +277,18 @@ void AggregateFunctionalTest::AggregateSeededFinalizerList() const
     std::string seed = "People: \n";
     const std::string finalizer = "\n---END---\n";
     const std::string expected = seed +
-        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" +
-        finalizer;
+        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n"
+        + finalizer;
     QueryableList<Person> local = BuildQueryable(this->people.ToList());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<
-        std::string, std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string, std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         },
         [&](const std::string & str)
@@ -293,16 +310,18 @@ void AggregateFunctionalTest::AggregateSeededFinalizerMultiSet() const
     std::string seed = "People: \n";
     const std::string finalizer = "\n---END---\n";
     const std::string expected = seed +
-        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" +
-        finalizer;
+        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n"
+        + finalizer;
     QueryableMultiSet<Person> local = BuildQueryable(this->people.ToMultiSet());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<
-        std::string, std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string, std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         },
         [&](const std::string & str)
@@ -324,16 +343,18 @@ void AggregateFunctionalTest::AggregateSeededFinalizerSet() const
     std::string seed = "People: \n";
     const std::string finalizer = "\n---END---\n";
     const std::string expected = seed +
-        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" +
-        finalizer;
+        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n"
+        + finalizer;
     QueryableSet<Person> local = BuildQueryable(this->people.ToSet());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<
-        std::string, std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string, std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         },
         [&](const std::string & str)
@@ -355,16 +376,18 @@ void AggregateFunctionalTest::AggregateSeededFinalizerVector() const
     std::string seed = "People: \n";
     const std::string finalizer = "\n---END---\n";
     const std::string expected = seed +
-        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n" +
-        finalizer;
+        "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n"
+        + finalizer;
     QueryableVector<Person> local = BuildQueryable(this->people.ToVector());
     const std::string result = local.Where(
-        [](const Person & p) { return p.GetName().find("Person 1") != std::string::npos; }).Aggregate<
-        std::string, std::string>(
+        [](const Person & p)
+        {
+            return p.GetName().find("Person 1") != std::string::npos;
+        }).Aggregate<std::string, std::string>(
         [](const std::string & s, const Person & p)
         {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") + ") - Height: " +
-                std::to_string(p.GetHeight()) + "in";
+            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                ") - Height: " + std::to_string(p.GetHeight()) + "in";
             return s + newStr + "\n";
         },
         [&](const std::string & str)

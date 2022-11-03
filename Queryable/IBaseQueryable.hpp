@@ -134,7 +134,7 @@ public:
     return this->queryable->Any(condition);
   }
 
-  TIterating & At(int index)
+  TIterating & At(size_t index)
   {
     return this->queryable->At(index);
   }

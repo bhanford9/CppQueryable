@@ -42,7 +42,7 @@ int main()
   // ASSERT_EQ(local1.Count(), ages.Count());
   // ASSERT_EQ(local1.Count(), names.Count());
 
-  const int i = 0;
+  const size_t i = 0;
   double previousAge = -1;
   local1.ForEach([&](const Person & p)
   {

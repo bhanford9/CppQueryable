@@ -45,11 +45,11 @@ protected:
     {
     }
 
-    void SetUp() override
+    virtual void SetUp() override
     {
     }
 
-    void TearDown() override
+    virtual void TearDown() override
     {
     }
 };
@@ -126,65 +126,64 @@ TEST_F(LastFunctionalTest, LastWhereConditionFails)
 
 TEST_F(LastFunctionalTest, LastWhereVector)
 {
-    const size_t value = this->queryable.Last(
-        [&](size_t value) { return value < this->threshold; });
+    const size_t value = this->queryable.Last([&](const size_t x) { return x < this->threshold; });
     ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereSet)
 {
     const size_t value = BuildQueryable(this->queryable.ToSet()).Last(
-        [&](size_t value) { return value < this->threshold; });
+        [&](const size_t x) { return x < this->threshold; });
     ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereMultiSet)
 {
     const size_t value = BuildQueryable(this->queryable.ToMultiSet()).Last(
-        [&](size_t value) { return value < this->threshold; });
+        [&](const size_t x) { return x < this->threshold; });
     ASSERT_EQ(this->expectedOrderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereDeque)
 {
     const size_t value = BuildQueryable(this->queryable.ToDeque()).Last(
-        [&](size_t value) { return value < this->threshold; });
+        [&](const size_t x) { return x < this->threshold; });
     ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereList)
 {
     const size_t value = BuildQueryable(this->queryable.ToList()).Last(
-        [&](size_t value) { return value < this->threshold; });
+        [&](const size_t x) { return x < this->threshold; });
     ASSERT_EQ(this->expectedUnorderedUnder40, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereEven)
 {
     const size_t expected = expectedOrderedUnder40;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 0; }).Last();
+    const size_t value = this->queryable.Where([](const size_t x) { return x % 2 == 0; }).Last();
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereOdd)
 {
     const size_t expected = expectedUnorderedLast;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 1; }).Last();
+    const size_t value = this->queryable.Where([](const size_t x) { return x % 2 == 1; }).Last();
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereWhereEven)
 {
-    const size_t expected = 76;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 0; }).Last(
-        [](size_t value) { return value > 40; });
+    constexpr size_t expected = 76;
+    const size_t value = this->queryable.Where([](const size_t x) { return x % 2 == 0; }).Last(
+        [](const size_t x) { return x > 40; });
     ASSERT_EQ(expected, value);
 }
 
 TEST_F(LastFunctionalTest, LastWhereWhereOdd)
 {
     const size_t expected = expectedOrderedLast;
-    const size_t value = this->queryable.Where([](size_t value) { return value % 2 == 1; }).Last(
-        [](size_t value) { return value > 40; });
+    const size_t value = this->queryable.Where([](const size_t x) { return x % 2 == 1; }).Last(
+        [](const size_t x) { return x > 40; });
     ASSERT_EQ(expected, value);
 }

@@ -19,18 +19,20 @@ using namespace QueryBuilder;
 class WhereFunctionalTest : public ::testing::Test
 {
 protected:
-  QueryableVector<Person> queryable;
+    QueryableVector<Person> queryable;
 
-  WhereFunctionalTest() :
-    queryable(BuildQueryable(PersonLibrary().GetPeople()))
-  {
-  }
+    WhereFunctionalTest()
+        : queryable(BuildQueryable(PersonLibrary().GetPeople()))
+    {
+    }
 
-  void SetUp() override
-  {
-  }
+    virtual void SetUp() override
+    {
+    }
 
-  void TearDown() override {}
+    virtual void TearDown() override
+    {
+    }
 };
 
 // TODO --> fix this
@@ -45,16 +47,16 @@ protected:
 
 TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 {
-  QueryableVector<int> localQueryable(BuildQueryable(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
-  const std::vector<int> expected({ 4, 4, 76, 8, 76, 0 });
+    QueryableVector<int> localQueryable(
+        BuildQueryable(std::vector<int>({ 4, 7, 4, 3, 76, 8, 45, 867, 76, 0 })));
+    const std::vector<int> expected({ 4, 4, 76, 8, 76, 0 });
 
-  const std::vector<int> values = localQueryable
-                                  .Where([](int x) { return (x % 2) == 0; })
-                                  .ToVector();
+    const std::vector<int> values = localQueryable.Where([](const int x) { return (x % 2) == 0; }).
+        ToVector();
 
-  ASSERT_EQ(expected.size(), values.size());
-  for (int i = 0; i < (int)expected.size(); i++)
-    ASSERT_EQ(expected[i], values[i]);
+    ASSERT_EQ(expected.size(), values.size());
+    for (size_t i = 0; i < expected.size(); i++)
+        ASSERT_EQ(expected[i], values[i]);
 }
 
 // TODO --> fix
@@ -79,71 +81,72 @@ TEST_F(WhereFunctionalTest, WhereVectorEvenTest)
 
 TEST_F(WhereFunctionalTest, WhereVectorFemale)
 {
-  const std::vector<Person> people = this->queryable
-                                         .Where([](const Person & p) { return p.GetGender() == Gender::Female; })
-                                         .ToVector();
+    const std::vector<Person> people = this->queryable.Where(
+        [](const Person & p) { return p.GetGender() == Gender::Female; }).ToVector();
 
-  for (Person p : people)
-    EXPECT_TRUE(p.GetGender() == Gender::Female);
+    for (const Person & p : people)
+        EXPECT_TRUE(p.GetGender() == Gender::Female);
 }
 
 TEST_F(WhereFunctionalTest, WhereSetFemale)
 {
-  using TCompare = std::function<bool(Person, Person)>;
-  const std::set<Person, TCompare> people =
-    BuildQueryable(this->queryable.ToSet<TCompare>([](const Person & a, const Person & b) { return a < b; }))
-      .Where([](const Person & p) { return p.GetGender() == Gender::Female; })
-      .ToSet<TCompare>([](const Person & a, const Person & b) { return a < b; });
+    using TCompare = std::function<bool(Person, Person)>;
+    const std::set<Person, TCompare> people = BuildQueryable(
+            this->queryable.ToSet<TCompare>(
+                [](const Person & a, const Person & b) { return a < b; })).
+        Where([](const Person & p) { return p.GetGender() == Gender::Female; }).ToSet<TCompare>(
+            [](const Person & a, const Person & b) { return a < b; });
 
-  for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
+    for (const Person & p : people)
+        ASSERT_TRUE(p.GetGender() == Gender::Female);
 }
 
 TEST_F(WhereFunctionalTest, WhereMapSetFemale)
 {
-  const std::map<std::string, Gender> kvps = BuildQueryable(
-                                               this->queryable.ToMap<std::string, Gender>(
-                                                 [](const Person & p) { return p.GetName(); },
-                                                 [](const Person & p) { return p.GetGender(); }))
-                                             .Where([](const std::pair<const std::string, Gender> & kvp) { return kvp.second == Gender::Female; })
-                                             .ToMap<std::string, Gender>(
-                                               [](const std::pair<const std::string, Gender> & kvp) { return kvp.first; },
-                                               [](const std::pair<const std::string, Gender> & kvp) { return kvp.second; });
+    const std::map<std::string, Gender> kvps = BuildQueryable(
+        this->queryable.ToMap<std::string, Gender>(
+            [](const Person & p) { return p.GetName(); },
+            [](const Person & p) { return p.GetGender(); })).Where(
+        [](const std::pair<const std::string, Gender> & kvp)
+        {
+            return kvp.second == Gender::Female;
+        }).ToMap<std::string, Gender>(
+        [](const std::pair<const std::string, Gender> & kvp) { return kvp.first; },
+        [](const std::pair<const std::string, Gender> & kvp) { return kvp.second; });
 
-  for (const std::pair<const std::string, Gender> kvp : kvps)
-  {
-    ASSERT_TRUE(kvp.second == Gender::Female);
-  }
+    for (const std::pair<const std::string, Gender> & kvp : kvps)
+    {
+        ASSERT_TRUE(kvp.second == Gender::Female);
+    }
 }
 
 TEST_F(WhereFunctionalTest, WhereMultiSetFemale)
 {
-  using TCompare = std::function<bool(Person, Person)>;
-  const std::multiset<Person, TCompare> people = BuildQueryable(this->queryable.ToMultiSet<TCompare>([](const Person & a,
-                                                   const Person & b) { return a < b; }))
-                                                 .Where([](const Person & p) { return p.GetGender() == Gender::Female; })
-                                                 .ToMultiSet<TCompare>([](const Person & a, const Person & b) { return a < b; });
+    using TCompare = std::function<bool(Person, Person)>;
+    const std::multiset<Person, TCompare> people = BuildQueryable(
+        this->queryable.ToMultiSet<TCompare>(
+            [](const Person & a, const Person & b) { return a < b; })).Where(
+        [](const Person & p) { return p.GetGender() == Gender::Female; }).ToMultiSet<TCompare>(
+        [](const Person & a, const Person & b) { return a < b; });
 
-  for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
+    for (const Person & p : people)
+        ASSERT_TRUE(p.GetGender() == Gender::Female);
 }
 
 TEST_F(WhereFunctionalTest, WhereDequeFemale)
 {
-  const std::deque<Person> people = BuildQueryable(this->queryable.ToDeque())
-                                    .Where([](const Person & p) { return p.GetGender() == Gender::Female; })
-                                    .ToDeque();
+    const std::deque<Person> people = BuildQueryable(this->queryable.ToDeque()).Where(
+        [](const Person & p) { return p.GetGender() == Gender::Female; }).ToDeque();
 
-  for (Person p : people)
-    EXPECT_TRUE(p.GetGender() == Gender::Female) << p;
+    for (const Person & p : people)
+        EXPECT_TRUE(p.GetGender() == Gender::Female) << p;
 }
 
 TEST_F(WhereFunctionalTest, WhereListFemale)
 {
-  const std::list<Person> people = BuildQueryable(this->queryable.ToList())
-                                   .Where([](const Person & p) { return p.GetGender() == Gender::Female; })
-                                   .ToList();
+    const std::list<Person> people = BuildQueryable(this->queryable.ToList()).Where(
+        [](const Person & p) { return p.GetGender() == Gender::Female; }).ToList();
 
-  for (Person p : people)
-    ASSERT_TRUE(p.GetGender() == Gender::Female);
+    for (const Person & p : people)
+        ASSERT_TRUE(p.GetGender() == Gender::Female);
 }

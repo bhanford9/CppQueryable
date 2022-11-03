@@ -16,7 +16,8 @@ TEST_F(AllFunctionalGTest, AllStringFalse)
 
 void AllFunctionalTest::AllStringFalse() const
 {
-    const bool all = this->queryableStrings.All([](const std::string & str) { return str[0] == 'a'; });
+    const bool all = this->queryableStrings.All(
+        [](const std::string & str) { return str[0] == 'a'; });
     ASSERT_FALSE(all);
 }
 
@@ -27,7 +28,8 @@ TEST_F(AllFunctionalGTest, AllStringTrue)
 
 void AllFunctionalTest::AllStringTrue() const
 {
-    const bool all = this->queryableStrings.All([](const std::string & str) { return str[0] >= 'a' && str[0] <= 'z'; });
+    const bool all = this->queryableStrings.All(
+        [](const std::string & str) { return str[0] >= 'a' && str[0] <= 'z'; });
     ASSERT_TRUE(all);
 }
 
@@ -90,7 +92,8 @@ void AllFunctionalTest::AllMapFalse() const
         this->queryable.ToMap<size_t, std::string>(
             [](const size_t value) { return value; },
             [](const size_t value) { return std::to_string(static_cast<double>(value) / 2.0); }));
-    const bool all = local.All([](const std::pair<const size_t, std::string> & kvp) { return kvp.first > 5; });
+    const bool all = local.All(
+        [](const std::pair<const size_t, std::string> & kvp) { return kvp.first > 5; });
     ASSERT_FALSE(all);
 }
 
@@ -105,7 +108,8 @@ void AllFunctionalTest::AllMapTrue() const
         this->queryable.ToMap<size_t, std::string>(
             [](const size_t value) { return value; },
             [](const size_t value) { return std::to_string(static_cast<double>(value) / 2.0); }));
-    const bool all = local.All([](const std::pair<const size_t, std::string> & kvp) { return kvp.first < 5000; });
+    const bool all = local.All(
+        [](const std::pair<const size_t, std::string> & kvp) { return kvp.first < 5000; });
     ASSERT_TRUE(all);
 }
 
