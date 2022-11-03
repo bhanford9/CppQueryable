@@ -8,7 +8,7 @@
 
 template<
   typename T,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TAllocator = std::allocator<T>,
   typename ...TArgs>
 class ConstRandomAccessQueryableData : public QueryableData<T, TIterable, T, TAllocator, TArgs...>

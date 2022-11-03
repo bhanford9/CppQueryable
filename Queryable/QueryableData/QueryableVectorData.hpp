@@ -6,7 +6,7 @@
 #include "RandomAccessQueryableData.hpp"
 
 template <typename T, typename TAllocator = std::allocator<T>>
-class QueryableVectorData final : public RandomAccessQueryableData<T, std::vector, TAllocator>
+class QueryableVectorData : public RandomAccessQueryableData<T, std::vector, TAllocator>
 {
 public:
     QueryableVectorData(const QueryableVectorData & other)

@@ -75,6 +75,7 @@ set(HEADER_FILES
     Queryable/QueryableData/WhereQueryableData/WhereQueryableMultiSetData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableSetData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp
+    Queryable/QueryableData/VolatileQueryableData.hpp
     Queryable/QueryablesForwardDeclarations.hpp
     Queryable/QueryableType.hpp
     Queryable/QueryBuilder.hpp
