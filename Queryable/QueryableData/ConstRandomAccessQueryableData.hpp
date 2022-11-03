@@ -2,7 +2,6 @@
 #define CPPQUERYABLE_QUERYABLE_CONSTRANDOMACCESSQUERYABLEDATA_H
 
 #include <algorithm>
-#include <iostream>
 #include <memory>
 
 #include "QueryableData.hpp"

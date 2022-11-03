@@ -24,7 +24,7 @@ AnimalLibrary::AnimalLibrary()
 
 }
 
-std::vector<Animal> AnimalLibrary::GetAnimals()
+std::vector<Animal> AnimalLibrary::GetAnimals() const
 {
   std::vector<Animal> newAnimals;
 

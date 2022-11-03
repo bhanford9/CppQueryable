@@ -1,7 +1,6 @@
 #ifndef CPPQUERYABLE_SORTERS_LISTSORTER_H
 #define CPPQUERYABLE_SORTERS_LISTSORTER_H
 
-#include <algorithm>
 #include <list>
 
 #include "Sorter.hpp"

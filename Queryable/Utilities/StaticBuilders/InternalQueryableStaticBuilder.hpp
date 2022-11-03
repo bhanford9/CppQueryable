@@ -2,7 +2,6 @@
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_STATICBUILDERS_INTERNALQUERYABLESTATICBUILDER_H
 
 #include <deque>
-#include <iostream>
 #include <list>
 #include <map>
 #include <memory>
@@ -10,7 +9,6 @@
 #include <vector>
 
 #include "../Casting.hpp"
-#include "../../Queryable.hpp"
 
 namespace InternalBuilders
 {  

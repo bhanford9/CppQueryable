@@ -54,19 +54,19 @@ public:
     return "Any";
   }
 
-  void AnyUninitialized();
-  void AnyStringFalse();
-  void AnyStringTrue();
-  void AnyDequeFalse();
-  void AnyDequeTrue();
-  void AnyListFalse();
-  void AnyListTrue();
-  void AnyMapFalse();
-  void AnyMapTrue();
-  void AnyMultiSetFalse();
-  void AnyMultiSetTrue();
-  void AnySetFalse();
-  void AnySetTrue();
+  void AnyUninitialized() const;
+  void AnyStringFalse() const;
+  void AnyStringTrue() const;
+  void AnyDequeFalse() const;
+  void AnyDequeTrue() const;
+  void AnyListFalse() const;
+  void AnyListTrue() const;
+  void AnyMapFalse() const;
+  void AnyMapTrue() const;
+  void AnyMultiSetFalse() const;
+  void AnyMultiSetTrue() const;
+  void AnySetFalse() const;
+  void AnySetTrue() const;
   void AnyWhereFalse();
   void AnyWhereTrue();
 };

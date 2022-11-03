@@ -2,17 +2,11 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
-#include <list>
-#include <set>
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
 #include "../../../DataStructures/PersonLibrary.hpp"
-#include "../../../DataStructures/Point.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -130,17 +124,17 @@ TEST_F(SortFunctionalTest, DequeClass)
 
   Person previous;
   previous.SetName("\0");
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetName() <= person.GetName());
     previous = person;
   });
 
-  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](const Person & p1, const Person & p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
     previous = person;
@@ -156,17 +150,17 @@ TEST_F(SortFunctionalTest, ListClass)
 
   Person previous;
   previous.SetName("\0");
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetName() <= person.GetName());
     previous = person;
   });
 
-  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](const Person & p1, const Person & p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
     previous = person;
@@ -210,17 +204,17 @@ TEST_F(SortFunctionalTest, VectorClass)
 
   Person previous;
   previous.SetName("\0");
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetName() <= person.GetName());
     previous = person;
   });
 
-  local.Sort([](Person p1, Person p2) { return p1.GetAge() < p2.GetAge(); });
+  local.Sort([](const Person & p1, const Person & p2) { return p1.GetAge() < p2.GetAge(); });
 
   previous = Person();
   previous.SetAge(-1);
-  local.ForEach([&](Person person)
+  local.ForEach([&](const Person & person)
   {
     ASSERT_TRUE(previous.GetAge() <= person.GetAge());
     previous = person;

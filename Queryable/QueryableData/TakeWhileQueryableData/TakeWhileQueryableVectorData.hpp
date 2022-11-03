@@ -1,18 +1,24 @@
 #ifndef CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEVECTORDATA_H
 #define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEVECTORDATA_H
 
-#include <iostream>
 #include <vector>
 
-#include "../../QueryableType.hpp"
-#include "../../Utilities/Condition.hpp"
-#include "../../Sorters/VectorSorter.hpp"
 #include "TakeWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
 class TakeWhileQueryableVectorData : public TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>
 {
 public:
+  TakeWhileQueryableVectorData(const TakeWhileQueryableVectorData & other)
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
+  {
+  }
+
+  TakeWhileQueryableVectorData(TakeWhileQueryableVectorData && other) noexcept
+    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(other))
+  {
+  }
+
   TakeWhileQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
@@ -34,13 +40,22 @@ public:
   {
     // std::cout << "TakeWhileQueryable Vector Data Constructor 3" << std::endl;
   }
-  TakeWhileQueryableVectorData(const TakeWhileQueryableVectorData<TObj, TAllocator> & other)
-    : TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
+
+  TakeWhileQueryableVectorData & operator=(const TakeWhileQueryableVectorData & other)
   {
-    // std::cout << "TakeWhileQueryable Vector Data Constructor 2" << std::endl;
+    if (this == &other) return *this;
+    TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>::operator =(other);
+    return *this;
   }
 
-  virtual ~TakeWhileQueryableVectorData() { }
+  TakeWhileQueryableVectorData & operator=(TakeWhileQueryableVectorData && other) noexcept
+  {
+    if (this == &other) return *this;
+    TakeWhileQueryableData<TObj, std::vector, TObj, TAllocator>::operator =(std::move(other));
+    return *this;
+  }
+
+  virtual ~TakeWhileQueryableVectorData() override = default;
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {

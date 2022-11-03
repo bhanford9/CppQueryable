@@ -3,7 +3,6 @@
 
 #include <deque>
 #include <functional>
-#include <iostream>
 #include <list>
 #include <memory>
 #include <set>
@@ -17,14 +16,6 @@
 // queue
 // priority_queue
 
-#include "IQueryable.hpp"
-#include "ISortedQueryable.hpp"
-#include "InternalQueryable.hpp"
-#include "InternalQueryables/DequeInternalQueryable.hpp"
-#include "InternalQueryables/ListInternalQueryable.hpp"
-#include "InternalQueryables/MultiSetInternalQueryable.hpp"
-#include "InternalQueryables/SetInternalQueryable.hpp"
-#include "InternalQueryables/VectorInternalQueryable.hpp"
 #include "Queryable.hpp"
 #include "QueryableAliases.hpp"
 
@@ -49,7 +40,7 @@ namespace QueryBuilder
     typename TValue,
     typename TKeyLessThan = std::less<TKey>,
     typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
-  inline Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TKeyLessThan, TAllocator> BuildQueryable(
+  Queryable<TKey, std::map, std::pair<const TKey, TValue>, TValue, TKeyLessThan, TAllocator> BuildQueryable(
     const std::map<TKey, TValue, TKeyLessThan, TAllocator> & items)
   {
     return Builders::FromMap<TKey, TValue, TKeyLessThan, TAllocator>(items);

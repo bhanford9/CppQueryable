@@ -50,18 +50,18 @@ public:
     return "All";
   }
 
-  void AllStringFalse();
-  void AllStringTrue();
-  void AllDequeFalse();
-  void AllDequeTrue();
-  void AllListFalse();
-  void AllListTrue();
-  void AllMapFalse();
-  void AllMapTrue();
-  void AllMultiSetFalse();
-  void AllMultiSetTrue();
-  void AllSetFalse();
-  void AllSetTrue();
+  void AllStringFalse() const;
+  void AllStringTrue() const;
+  void AllDequeFalse() const;
+  void AllDequeTrue() const;
+  void AllListFalse() const;
+  void AllListTrue() const;
+  void AllMapFalse() const;
+  void AllMapTrue() const;
+  void AllMultiSetFalse() const;
+  void AllMultiSetTrue() const;
+  void AllSetFalse() const;
+  void AllSetTrue() const;
   void AllWhereFalse();
   void AllWhereTrue();
 };

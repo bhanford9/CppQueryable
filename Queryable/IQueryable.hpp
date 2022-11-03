@@ -1,34 +1,30 @@
 #ifndef CPPQUERYABLE_QUERYABLE_IQUERYABLE_H
 #define CPPQUERYABLE_QUERYABLE_IQUERYABLE_H
 
-#include <deque>
 #include <functional>
-#include <list>
 #include <memory>
 #include <set>
-#include <vector>
 
 #include "IBaseQueryable.hpp"
 #include "Queryable.hpp"
-#include "QueryableType.hpp"
 
 template<
   typename TStoring,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TIterating,
   typename ...TArgs>
 class Queryable;
 
 template<
   typename TStoring,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TIterating,
   typename ...TArgs>
 class IBaseQueryable;
 
 template<
   typename TStoring, 
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TIterating,
   typename ...TArgs>
 class IQueryable : public IBaseQueryable<TStoring, TIterable, TIterating, TArgs...>
@@ -67,7 +63,7 @@ public:
   }
 
   template<
-    template<typename, typename ...> typename TExceptions,
+    template<typename, typename ...> class TExceptions,
     typename TLessThan = std::less<TStoring>,
     typename TAllocator = std::allocator<TStoring>,
     typename ...TExceptionArgs>
@@ -83,7 +79,7 @@ public:
   template<
     typename TKey,
     typename TAllocator = std::allocator<TStoring>>
-  inline IQueryable<
+  IQueryable<
       Grouping<TKey, TStoring, TAllocator>,
       std::set,
       TIterating,
@@ -141,7 +137,7 @@ public:
     return *this;
   }
 
-  inline IQueryable<TStoring, TIterable, TIterating, TArgs...> Where(std::function<bool(const TIterating &)> condition)
+  IQueryable<TStoring, TIterable, TIterating, TArgs...> Where(std::function<bool(const TIterating &)> condition)
   {
     this->queryable->Where(condition);
     return *this;

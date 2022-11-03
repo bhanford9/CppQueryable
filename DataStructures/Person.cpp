@@ -1,24 +1,26 @@
 #include <iostream>
+#include <sstream>
+#include <utility>
 
-#include "Gender.hpp"
 #include "Person.hpp"
+#include "Gender.hpp"
 
 
-Person::Person(long id, std::string name, double age, int height, Gender gender)
+Person::Person(size_t id, std::string name, double age, int height, Gender gender)
 {
   this->id = id;
-  this->name = name;
+  this->name = std::move(name);
   this->age = age;
   this->heightInches = height;
   this->gender = gender;
 }
 
-long Person::GetId() const
+size_t Person::GetId() const
 {
   return this->id;
 }
 
-void Person::SetId(long id)
+void Person::SetId(const long id)
 {
   this->id = id;
 }
@@ -30,7 +32,7 @@ std::string Person::GetName() const
 
 void Person::SetName(std::string name)
 {
-  this->name = name;
+  this->name = std::move(name);
 }
 
 double Person::GetAge() const
@@ -38,7 +40,7 @@ double Person::GetAge() const
   return this->age;
 }
 
-void Person::SetAge(double age)
+void Person::SetAge(const double age)
 {
   this->age = age;
 }
@@ -48,7 +50,7 @@ int Person::GetHeight() const
   return this->heightInches;
 }
 
-void Person::SetHeight(int height)
+void Person::SetHeight(const int height)
 {
   this->heightInches = height;
 }
@@ -58,12 +60,12 @@ Gender Person::GetGender() const
   return this->gender;
 }
 
-void Person::SetGender(Gender gender)
+void Person::SetGender(const Gender gender)
 {
   this->gender = gender;
 }
 
-bool Person::IsGender(Gender gender) const
+bool Person::IsGender(const Gender gender) const
 {
   return this->gender == gender;
 }
@@ -98,14 +100,8 @@ bool Person::operator==(const Person & other) const
   return this->id == other.id;
 }
 
-std::ostream & Person::operator<<(std::ostream & str)
+std::ostream & Person::operator<<(std::ostream & str) const
 {
   str << this->ToString();
   return str;
 }
-
-// std::ostream & Person::operator<<(std::ostream & str, const Person & v)
-// {
-//   str << v.ToString();
-//   return str;
-// }

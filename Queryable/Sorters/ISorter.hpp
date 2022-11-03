@@ -1,15 +1,9 @@
 #ifndef CPPQUERYABLE_SORTERS_ISORTER_H
 #define CPPQUERYABLE_SORTERS_ISORTER_H
 
-#include <functional>
-#include <iostream>
-#include <memory>
-
-#include "../Iterators/QueryableIterator.hpp"
-
 template<
   typename TObj,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename ...TArgs>
 class ISorter
 {

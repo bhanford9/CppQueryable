@@ -1,7 +1,6 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEMULTISETDATA_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEMULTISETDATA_H
 
-#include <iostream>
 #include <memory>
 #include <set>
 

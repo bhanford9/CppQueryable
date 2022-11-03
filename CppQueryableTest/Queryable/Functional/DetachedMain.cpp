@@ -1,15 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <exception>
-#include <functional>
-#include <iostream>
-#include <string>
-
-#include "../../../DataStructures/Gender.hpp"
-#include "../../../DataStructures/Person.hpp"
 #include "../../../DataStructures/PersonLibrary.hpp"
-
-#include "../../../Queryable/QueryBuilder.hpp"
 
 #include "Headers/FunctionalTests.hpp"
 

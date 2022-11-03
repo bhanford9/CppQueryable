@@ -1,10 +1,8 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEVECTORDATA_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEVECTORDATA_H
 
-#include <iostream>
 #include <vector>
 
-#include "../Sorters/VectorSorter.hpp"
 #include "RandomAccessQueryableData.hpp"
 
 template<

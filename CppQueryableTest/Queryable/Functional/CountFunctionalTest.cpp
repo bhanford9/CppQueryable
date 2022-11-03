@@ -1,10 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string>
 #include <vector>
-
-#include "../../../DataStructures/Person.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -38,19 +35,19 @@ protected:
 
 TEST_F(CountFunctionalTest, CountDeque)
 {
-  int count = BuildQueryable(this->queryable.ToDeque()).Count();
+  const int count = BuildQueryable(this->queryable.ToDeque()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CountList)
 {
-  int count = BuildQueryable(this->queryable.ToList()).Count();
+  const int count = BuildQueryable(this->queryable.ToList()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CounMap)
 {
-  int count = BuildQueryable(
+  const int count = BuildQueryable(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }))
@@ -60,13 +57,13 @@ TEST_F(CountFunctionalTest, CounMap)
 
 TEST_F(CountFunctionalTest, CountMultiSet)
 {
-  int count = BuildQueryable(this->queryable.ToMultiSet()).Count();
+  const int count = BuildQueryable(this->queryable.ToMultiSet()).Count();
   ASSERT_EQ(this->expectedWithDuplicates, count);
 }
 
 TEST_F(CountFunctionalTest, CountSet)
 {
-  int count = BuildQueryable(this->queryable.ToSet()).Count();
+  const int count = BuildQueryable(this->queryable.ToSet()).Count();
   ASSERT_EQ(this->expectedWithoutDuplicates, count);
 }
 
@@ -77,10 +74,10 @@ TEST_F(CountFunctionalTest, CountVector)
 
 TEST_F(CountFunctionalTest, CountWhere)
 {
-  int expected = 7;
-  int count = this->queryable
-    .Where([](size_t value) { return value % 2 == 0; })
-    .Count();
+  const int expected = 7;
+  const int count = this->queryable
+                        .Where([](size_t value) { return value % 2 == 0; })
+                        .Count();
 
   ASSERT_EQ(expected, count);
 }

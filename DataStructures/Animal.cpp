@@ -1,73 +1,80 @@
-#include <iostream>
-#include "Gender.hpp"
 #include "Animal.hpp"
+#include <sstream>
+#include <utility>
+#include "Gender.hpp"
 
 
-Animal::Animal(long id, long ownerId, std::string name, double age, Gender gender)
+Animal::Animal(
+  const size_t id,
+  const long ownerId,
+  std::string name,
+  const double age,
+  const Gender gender) :
+  heightInches(0)
 {
   this->id = id;
   this->ownerId = ownerId;
-  this->name = name;
+  this->name = std::move(name);
   this->age = age;
   this->gender = gender;
 }
 
-long Animal::GetId()
+size_t Animal::GetId() const
 {
   return this->id;
 }
 
-long Animal::GetOwnerId()
+long Animal::GetOwnerId() const
 {
   return this->ownerId;
 }
 
-std::string Animal::GetName()
+std::string Animal::GetName() const
 {
   return this->name;
 }
 
 void Animal::SetName(std::string name)
 {
-  this->name = name;
+  this->name = std::move(name);
 }
 
-double Animal::GetAge()
+double Animal::GetAge() const
 {
   return this->age;
 }
 
-void Animal::SetAge(double age)
+void Animal::SetAge(const double age)
 {
   this->age = age;
 }
 
-Gender Animal::GetGender()
+Gender Animal::GetGender() const
 {
   return this->gender;
 }
 
-void Animal::SetGender(Gender gender)
+void Animal::SetGender(const Gender gender)
 {
   this->gender = gender;
 }
 
-bool Animal::IsGender(Gender gender)
+bool Animal::IsGender(const Gender gender) const
 {
   return this->gender == gender;
 }
 
-bool Animal::IsMale()
+bool Animal::IsMale() const
 {
   return this->gender == Gender::Male;
 }
 
-bool Animal::IsFemale()
+bool Animal::IsFemale() const
 {
   return this->gender == Gender::Female;
 }
 
-std::string Animal::ToString()
+std::string Animal::ToString() const
 {
   return
     "Name: " + this->name +

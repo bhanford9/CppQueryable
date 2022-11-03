@@ -1,8 +1,6 @@
 #ifndef CPPQUERYABLE_QUERYABLE_IQUERYABLEDATAITERATOR_H
 #define CPPQUERYABLE_QUERYABLE_IQUERYABLEDATAITERATOR_H
 
-#include <vector>
-
 #include "../Iterators/IteratorType.hpp"
 #include "../Iterators/QueryableIterator.hpp"
 

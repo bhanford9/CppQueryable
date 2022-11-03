@@ -26,7 +26,7 @@ private:
   const size_t NANO_PER_MIN = NANO_PER_SEC * SEC_PER_MIN;
 
 public:
-  Duration() { }
+  Duration() { this->duration = std::chrono::duration<double>(0.0); }
   Duration(double duration) { this->duration = std::chrono::duration<double>(duration); }
   Duration(const Duration & duration) { this->duration = duration.duration; }
   Duration(const std::chrono::duration<double> & duration) { this->duration = duration; }

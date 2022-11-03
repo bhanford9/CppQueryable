@@ -8,7 +8,7 @@
 
 template<
   typename T,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TCompare = std::less<T>,
   typename TAllocator = std::allocator<T>,
   typename ...TArgs>

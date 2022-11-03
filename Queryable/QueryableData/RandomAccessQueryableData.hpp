@@ -2,14 +2,13 @@
 #define CPPQUERYABLE_QUERYABLE_RANDOMACCESSQUERYABLEDATA_H
 
 #include <algorithm>
-#include <iostream>
 #include <memory>
 
 #include "QueryableData.hpp"
 
 template<
   typename T,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TAllocator = std::allocator<T>,
   typename ...TArgs>
 class RandomAccessQueryableData : public QueryableData<T, TIterable, T, TAllocator, TArgs...>

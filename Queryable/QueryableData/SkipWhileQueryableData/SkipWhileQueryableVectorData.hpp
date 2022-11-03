@@ -1,18 +1,24 @@
 #ifndef CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEVECTORDATA_H
 #define CPPQUERYABLE_QUERYABLE_SKIPWHILEQUERYABLEDATA_SKIPWHILEQUERYABLEVECTORDATA_H
 
-#include <iostream>
 #include <vector>
 
-#include "../../QueryableType.hpp"
-#include "../../Utilities/Condition.hpp"
-#include "../../Sorters/VectorSorter.hpp"
 #include "SkipWhileQueryableData.hpp"
 
 template<typename TObj, typename TAllocator = std::allocator<TObj>>
-class SkipWhileQueryableVectorData : public SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>
+class SkipWhileQueryableVectorData final : public SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>
 {
 public:
+  SkipWhileQueryableVectorData(const SkipWhileQueryableVectorData & other)
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
+  {
+  }
+
+  SkipWhileQueryableVectorData(SkipWhileQueryableVectorData && other) noexcept
+    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(std::move(other))
+  {
+  }
+
   SkipWhileQueryableVectorData(
     std::shared_ptr<IQueryableData<TObj>> && data,
     std::shared_ptr<IWhileCondition<TObj>> && condition)
@@ -34,13 +40,22 @@ public:
   {
     // std::cout << "SkipWhileQueryable Vector Data Constructor 3" << std::endl;
   }
-  SkipWhileQueryableVectorData(const SkipWhileQueryableVectorData<TObj, TAllocator> & other)
-    : SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>(other)
+
+  SkipWhileQueryableVectorData & operator=(const SkipWhileQueryableVectorData & other)
   {
-    // std::cout << "SkipWhileQueryable Vector Data Constructor 2" << std::endl;
+    if (this == &other) return *this;
+    SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>::operator =(other);
+    return *this;
   }
 
-  virtual ~SkipWhileQueryableVectorData() { }
+  SkipWhileQueryableVectorData & operator=(SkipWhileQueryableVectorData && other) noexcept
+  {
+    if (this == &other) return *this;
+    SkipWhileQueryableData<TObj, std::vector, TObj, TAllocator>::operator =(std::move(other));
+    return *this;
+  }
+
+  virtual ~SkipWhileQueryableVectorData() override = default;
 
   virtual std::shared_ptr<IQueryableData<TObj>> Clone() override
   {

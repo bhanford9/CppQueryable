@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 
-#include "Gender.hpp"
 #include "Person.hpp"
 
 class PersonLibrary
@@ -15,7 +14,7 @@ private:
 public:
   PersonLibrary();
 
-  std::vector<Person> GetPeople();
+  std::vector<Person> GetPeople() const;
 };
 
 #endif

@@ -1,16 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/IQueryable.hpp"
-#include "../../../Queryable/ISortedQueryable.hpp"
-// #include "../../../Queryable/Queryable.hpp"
 #include "../../../Queryable/QueryableAliases.hpp"
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -20,171 +15,184 @@ using namespace QueryBuilder;
 
 TEST_F(AnyFunctionalGTest, AnyUninitialized)
 {
-  this->AnyUninitialized();
+    this->AnyUninitialized();
 }
-void AnyFunctionalTest::AnyUninitialized()
+
+void AnyFunctionalTest::AnyUninitialized() const
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
-  bool any = emptyQueryable.Any([](Person p) { return p.GetAge() > 10; });
-  ASSERT_FALSE(any);
+    const QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
+    const bool any = emptyQueryable.Any([](const Person & p) { return p.GetAge() > 10; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyStringFalse)
 {
-  this->AnyStringFalse();
+    this->AnyStringFalse();
 }
-void AnyFunctionalTest::AnyStringFalse()
+
+void AnyFunctionalTest::AnyStringFalse() const
 {
-  bool any = this->queryableStrings.Any([](std::string str) { return str[0] == 'z'; });
-  ASSERT_FALSE(any);
+    const bool any = this->queryableStrings.Any([](std::string str) { return str[0] == 'z'; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyStringTrue)
 {
-  this->AnyStringTrue();
+    this->AnyStringTrue();
 }
-void AnyFunctionalTest::AnyStringTrue()
+
+void AnyFunctionalTest::AnyStringTrue() const
 {
-  bool any = this->queryableStrings.Any([](std::string str) { return str[0] == 'c'; });
-  ASSERT_TRUE(any);
+    const bool any = this->queryableStrings.Any([](std::string str) { return str[0] == 'c'; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyDequeFalse)
 {
-  this->AnyDequeFalse();
+    this->AnyDequeFalse();
 }
-void AnyFunctionalTest::AnyDequeFalse()
+
+void AnyFunctionalTest::AnyDequeFalse() const
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  bool any = local.Any([](size_t value) { return value > 5000; });
-  ASSERT_FALSE(any);
+    const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+    const bool any = local.Any([](size_t value) { return value > 5000; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyDequeTrue)
 {
-  this->AnyDequeTrue();
+    this->AnyDequeTrue();
 }
-void AnyFunctionalTest::AnyDequeTrue()
+
+void AnyFunctionalTest::AnyDequeTrue() const
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  bool any = local.Any([](size_t value) { return value > 12; });
-  ASSERT_TRUE(any);
+    const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+    const bool any = local.Any([](size_t value) { return value > 12; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyListFalse)
 {
-  this->AnyListFalse();
+    this->AnyListFalse();
 }
-void AnyFunctionalTest::AnyListFalse()
+
+void AnyFunctionalTest::AnyListFalse() const
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  bool any = local.Any([](size_t value) { return value > 5000; });
-  ASSERT_FALSE(any);
+    const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+    const bool any = local.Any([](size_t value) { return value > 5000; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyListTrue)
 {
-  this->AnyListTrue();
+    this->AnyListTrue();
 }
-void AnyFunctionalTest::AnyListTrue()
+
+void AnyFunctionalTest::AnyListTrue() const
 {
-  QueryableMap<size_t, std::string> local = BuildQueryable(
-    this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); }));
-  bool any = local.Any([](std::pair<const size_t, std::string> kvp) { return kvp.first > 12; });
-  ASSERT_TRUE(any);
+    const QueryableMap<size_t, std::string> local = BuildQueryable(
+        this->queryable.ToMap<size_t, std::string>(
+            [](size_t value) { return value; },
+            [](size_t value) { return std::to_string(value / 2.0); }));
+    const bool any = local.Any([](const std::pair<const size_t &, std::string> & kvp) { return kvp.first > 12; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyMapFalse)
 {
-  this->AnyMapFalse();
+    this->AnyMapFalse();
 }
-void AnyFunctionalTest::AnyMapFalse()
+
+void AnyFunctionalTest::AnyMapFalse() const
 {
-  QueryableMap<size_t, std::string> local = BuildQueryable(
-    this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); }));
-  bool any = local.Any([](std::pair<const size_t, std::string> kvp) { return kvp.first > 5000; });
-  ASSERT_FALSE(any);
+    const QueryableMap<size_t, std::string> local = BuildQueryable(
+        this->queryable.ToMap<size_t, std::string>(
+            [](size_t value) { return value; },
+            [](size_t value) { return std::to_string(static_cast<double>(value) / 2.0); }));
+    const bool any = local.Any([](const std::pair<const size_t, std::string> & kvp) { return kvp.first > 5000; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyMapTrue)
 {
-  this->AnyMapTrue();
+    this->AnyMapTrue();
 }
-void AnyFunctionalTest::AnyMapTrue()
+
+void AnyFunctionalTest::AnyMapTrue() const
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  bool any = local.Any([](size_t value) { return value > 12; });
-  ASSERT_TRUE(any);
+    const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+    const bool any = local.Any([](size_t value) { return value > 12; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyMultiSetFalse)
 {
-  this->AnyMultiSetFalse();
+    this->AnyMultiSetFalse();
 }
-void AnyFunctionalTest::AnyMultiSetFalse()
+
+void AnyFunctionalTest::AnyMultiSetFalse() const
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  bool any = local.Any([](size_t value) { return value > 5000; });
-  ASSERT_FALSE(any);
+    const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+    const bool any = local.Any([](size_t value) { return value > 5000; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyMultiSetTrue)
 {
-  this->AnyMultiSetTrue();
+    this->AnyMultiSetTrue();
 }
-void AnyFunctionalTest::AnyMultiSetTrue()
+
+void AnyFunctionalTest::AnyMultiSetTrue() const
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  bool any = local.Any([](size_t value) { return value > 12; });
-  ASSERT_TRUE(any);
+    const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+    const bool any = local.Any([](size_t value) { return value > 12; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnySetFalse)
 {
-  this->AnySetFalse();
+    this->AnySetFalse();
 }
-void AnyFunctionalTest::AnySetFalse()
+
+void AnyFunctionalTest::AnySetFalse() const
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  bool any = local.Any([](size_t value) { return value > 5000; });
-  ASSERT_FALSE(any);
+    const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+    const bool any = local.Any([](size_t value) { return value > 5000; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnySetTrue)
 {
-  this->AnySetTrue();
+    this->AnySetTrue();
 }
-void AnyFunctionalTest::AnySetTrue()
+
+void AnyFunctionalTest::AnySetTrue() const
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  bool any = local.Any([](size_t value) { return value > 12; });
-  ASSERT_TRUE(any);
+    const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+    const bool any = local.Any([](size_t value) { return value > 12; });
+    ASSERT_TRUE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyWhereFalse)
 {
-  this->AnyWhereFalse();
+    this->AnyWhereFalse();
 }
+
 void AnyFunctionalTest::AnyWhereFalse()
 {
-  bool any = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Any([](size_t value) { return value < 10; });
-  ASSERT_FALSE(any);
+    const bool any = this->queryable.Where([](size_t value) { return value > 10; }).Any(
+        [](size_t value) { return value < 10; });
+    ASSERT_FALSE(any);
 }
 
 TEST_F(AnyFunctionalGTest, AnyWhereTrue)
 {
-  this->AnyWhereTrue();
+    this->AnyWhereTrue();
 }
+
 void AnyFunctionalTest::AnyWhereTrue()
 {
-  bool any = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Any([](size_t value) { return value % 2 == 0; });
-  ASSERT_TRUE(any);
+    const bool any = this->queryable.Where([](size_t value) { return value > 10; }).Any(
+        [](size_t value) { return value % 2 == 0; });
+    ASSERT_TRUE(any);
 }

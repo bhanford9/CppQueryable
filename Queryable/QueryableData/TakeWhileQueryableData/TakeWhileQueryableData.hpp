@@ -2,254 +2,268 @@
 #define CPPQUERYABLE_QUERYABLE_TAKEWHILEQUERYABLEDATA_TAKEWHILEQUERYABLEDATA_H
 
 #include <algorithm>
-#include <deque>
 #include <exception>
-#include <functional>
 #include <iostream>
-#include <list>
 #include <memory>
-#include <set>
-#include <vector>
 
-#include "../../TypeConstraintUtil.hpp"
-#include "../../Utilities/IWhileCondition.hpp"
 #include "../IQueryableData.hpp"
 #include "../QueryableData.hpp"
+#include "../../Utilities/IWhileCondition.hpp"
 
-template<
-  typename TObj,
-  template<typename, typename ...> typename TIterable,
-  typename TIterating,
-  typename ...TArgs>
+template <typename TObj, template<typename, typename ...> class TIterable, typename TIterating,
+          typename ...TArgs>
 class TakeWhileQueryableData : public QueryableData<TObj, TIterable, TIterating, TArgs...>
 {
 protected:
-  typedef typename std::vector<TObj>::iterator TVectorIterator;
-
-  using TForwardIterator = typename QueryableData<TObj, TIterable, TIterating, TArgs...>::TForwardIterator;
-  // using TReverseIterator = typename QueryableData<TObj, TIterable, TArgs...>::TReverseIterator;
-
-  std::shared_ptr<IWhileCondition<TIterating>> condition;
-  std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> original;
-  bool sizeIsCalculated;
+    std::shared_ptr<IWhileCondition<TIterating>> condition;
+    std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> original;
+    bool sizeIsCalculated;
 
 public:
-  TakeWhileQueryableData(
-    std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> && data,
-    std::shared_ptr<IWhileCondition<TIterating>> && condition)
-  {
-    // std::cout << "TakeWhileQueryableData move constructor" << std::endl;
-    this->original = std::move(data);
-    this->condition = std::move(condition);
-  }
-  TakeWhileQueryableData(
-    const std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> & data,
-    std::shared_ptr<IWhileCondition<TIterating>> && condition)
-  {
-    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
-    this->original = data;
-    this->condition = std::move(condition);
-  }
-  TakeWhileQueryableData(const TakeWhileQueryableData<TObj, TIterable, TIterating, TArgs...> & other)
-    : QueryableData<TObj, TIterable, TIterating, TArgs...>(other)
-  {
-    // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
-    this->original = other.original;
-    this->condition = other.condition;
-  }
+    TakeWhileQueryableData(const TakeWhileQueryableData & other)
+        : QueryableData<TObj, TIterable, TIterating, TArgs...>(other), condition(other.condition),
+          original(other.original), sizeIsCalculated(other.sizeIsCalculated)
+    {
+    }
 
-  virtual ~TakeWhileQueryableData() { }
+    TakeWhileQueryableData(TakeWhileQueryableData && other) noexcept
+        : QueryableData<TObj, TIterable, TIterating, TArgs...>(std::move(other)),
+          condition(std::move(other.condition)), original(std::move(other.original)),
+          sizeIsCalculated(other.sizeIsCalculated)
+    {
+    }
 
-  // TODO --> this is a pretty bad method to call for this class. finding a way
-  //    to track this instead of iterating over the container would be good.
-  virtual size_t Count() override
-  {
-    // TODO --> size is calculated needs to act like the state of an IEnumerable
-    //   where the size can simply be returned if it has already been enumerated
+    TakeWhileQueryableData(
+        std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> && data,
+        std::shared_ptr<IWhileCondition<TIterating>> && condition)
+        : condition(std::move(condition)), original(std::move(data)), sizeIsCalculated(false)
+    {
+        // std::cout << "TakeWhileQueryableData move constructor" << std::endl;
+    }
 
-    // if (this->sizeIsCalculated)
+    TakeWhileQueryableData(
+        const std::shared_ptr<QueryableData<TObj, TIterable, TIterating, TArgs...>> & data,
+        std::shared_ptr<IWhileCondition<TIterating>> && condition)
+        : original(data), condition(std::move(condition)), sizeIsCalculated(false)
+    {
+        // std::cout << "TakeWhileQueryableData copy constructor" << std::endl;
+    }
+
+    TakeWhileQueryableData & operator=(const TakeWhileQueryableData & other)
+    {
+        if (this == &other) return *this;
+        QueryableData<TObj, TIterable, TIterating, TArgs...>::operator =(other);
+        condition = other.condition;
+        original = other.original;
+        sizeIsCalculated = other.sizeIsCalculated;
+        return *this;
+    }
+
+    TakeWhileQueryableData & operator=(TakeWhileQueryableData && other) noexcept
+    {
+        if (this == &other) return *this;
+        QueryableData<TObj, TIterable, TIterating, TArgs...>::operator =(std::move(other));
+        condition = std::move(other.condition);
+        original = std::move(other.original);
+        sizeIsCalculated = other.sizeIsCalculated;
+        return *this;
+    }
+
+    virtual ~TakeWhileQueryableData() override = default;
+
+    // TODO --> this is a pretty bad method to call for this class. finding a way
+    //    to track this instead of iterating over the container would be good.
+    virtual size_t Count() override
+    {
+        // TODO --> size is calculated needs to act like the state of an IEnumerable
+        //   where the size can simply be returned if it has already been enumerated
+
+        // if (this->sizeIsCalculated)
+        // {
+        //   std::cout << "size is already calculated" << std::endl;
+        //   return this->size;
+        // }
+
+        size_t count = 0;
+
+        this->condition->Reset();
+
+        // not sure I like needing to get the realized queryable data
+        std::shared_ptr<IQueryableData<TIterating>> realized = this->original->
+            GetRealizedQueryableData();
+
+        for (const TIterating & item : *realized)
+        {
+            if (this->condition->Passes(item))
+            {
+                count++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        this->size = count;
+        this->sizeIsCalculated = true;
+
+        return count;
+    }
+
+    virtual void Add(TIterating item) override
+    {
+        // pretty sure we don't want this method to exist
+        // if (this->condition(item))
+        // {
+        //   this->InternalAdd(item);
+        //   this->size++;
+        // }
+    }
+
+    // virtual TIterable<TObj, TArgs...> & GetContainer() override
     // {
-    //   std::cout << "size is already calculated" << std::endl;
-    //   return this->size;
+    //   return this->original->GetContainer();
     // }
 
-    size_t count = 0;
+    virtual void InternalAdd(TIterating item) = 0;
 
-    this->condition->Reset();
-
-    // not sure I like needing to get the realized queryable data
-    std::shared_ptr<IQueryableData<TIterating>> realized = this->original->GetRealizedQueryableData();
-
-    for (const TIterating & item : *realized)
+    virtual TIterating & Get(IteratorType type) override
     {
-      if (this->condition->Passes(item))
-      {
-        count++;
-      }
-      else
-      {
-        break;
-      }
+        return this->original->Get(type);
     }
 
-    this->size = count;
-    this->sizeIsCalculated = true;
-
-    return count;
-  }
-
-  virtual void Add(TIterating item) override
-  {
-    // pretty sure we don't want this method to exist
-    // if (this->condition(item))
-    // {
-    //   this->InternalAdd(item);
-    //   this->size++;
-    // }
-  }
-
-  // virtual TIterable<TObj, TArgs...> & GetContainer() override
-  // {
-  //   return this->original->GetContainer();
-  // }
-
-  virtual void InternalAdd(TIterating item) = 0;
-
-  virtual TIterating & Get(IteratorType type) override
-  {
-    return this->original->Get(type);
-  }
-
-  virtual bool CanIncrement(IteratorType type) override
-  {
-    return this->original->CanIncrement(type);
-  }
-
-  virtual bool CanDecrement(IteratorType type) override
-  {
-    return this->original->CanDecrement(type);
-  }
-
-  virtual const TIterating & ConstGet(IteratorType type) override
-  {
-    return this->original->ConstGet(type);
-  }
-
-  virtual IQueryableData<TIterating> & Next(IteratorType type, size_t & iterated, bool & isForcingToEnd) override
-  {
-    // std::cout << "While Queryable Next" << std::endl;
-
-    if (!this->condition->Passes(this->original->Get(type)))
+    virtual bool CanIncrement(IteratorType type) override
     {
-      this->original->ForceEnd(type);
+        return this->original->CanIncrement(type);
     }
 
-    this->original->Next(type, iterated, isForcingToEnd);
-    
-    return *this;
-  }
-
-  virtual IQueryableData<TIterating> & Prev(IteratorType type, size_t & iterated) override
-  {
-    // std::cout << "While Queryable Prev" << std::endl;
-
-    if (!this->condition->Passes(this->original->Get(type)))
+    virtual bool CanDecrement(IteratorType type) override
     {
-        this->original->ForceBegin(type);
+        return this->original->CanDecrement(type);
     }
 
-    this->original->Prev(type, iterated);
-
-    return *this;
-  }
-
-  virtual IQueryableData<TIterating> & Add(int addend, IteratorType type) override
-  {
-    // this is the worse possible way to implement this and should be overriden for random access iterators
-    std::cout << "bad" << std::endl;
-    size_t dummy = 0;
-    while (this->original->CanIncrement(type) && addend-- > 0)
+    virtual const TIterating & ConstGet(IteratorType type) override
     {
-      bool isForcingToEnd = false;
-      this->Next(type, dummy, isForcingToEnd);
+        return this->original->ConstGet(type);
     }
 
-    return *this;
-  }
-
-  virtual IQueryableData<TIterating> & Subtract(int subtrahend, IteratorType type) override
-  {
-    // this is the worse possible way to implement this and should be overriden for random access iterators
-    std::cout << "bad" << std::endl;
-    size_t dummy = 0;
-    while (this->original->CanDecrement(type) && subtrahend-- > 0)
+    virtual IQueryableData<TIterating> & Next(
+        IteratorType type,
+        size_t & iterated,
+        bool & isForcingToEnd) override
     {
-      this->Prev(type, dummy);
+        // std::cout << "While Queryable Next" << std::endl;
+
+        if (!this->condition->Passes(this->original->Get(type)))
+        {
+            this->original->ForceEnd(type);
+        }
+
+        this->original->Next(type, iterated, isForcingToEnd);
+
+        return *this;
     }
 
-    return *this;
-  }
-
-  // remove the possibility to iterate if the first element does not pass condition
-  virtual QueryableIterator<TIterating> begin() override
-  {
-    // std::cout << "TakeWhileQueryableData::begin" << std::endl;
-    this->condition->Reset();
-    QueryableIterator<TIterating> child = this->original->begin();
-
-
-    if (!this->condition->Passes(*child))
+    virtual IQueryableData<TIterating> & Prev(IteratorType type, size_t & iterated) override
     {
-      child = this->original->end();
+        // std::cout << "While Queryable Prev" << std::endl;
+
+        if (!this->condition->Passes(this->original->Get(type)))
+        {
+            this->original->ForceBegin(type);
+        }
+
+        this->original->Prev(type, iterated);
+
+        return *this;
     }
 
-    size_t startIndex = child.index;
-    QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
-
-    return retVal;
-  }
-
-  // End only serves as a check of the last element while iterating begin.
-  // This will never be used to increment/decrement
-  virtual QueryableIterator<TIterating> end() override
-  {
-    // std::cout << "TakeWhileQueryableData::end" << std::endl;
-    QueryableIterator<TIterating> child = this->original->end();
-
-    size_t startIndex = child.index;
-    QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::EndForward);
-
-    return retVal;
-  }
-
-  // remove the possibility to iterate if the first element does not pass condition
-  virtual QueryableIterator<TIterating> rbegin() override
-  {
-    this->condition->Reset();
-    QueryableIterator<TIterating> child = this->original->rbegin();
-
-    if (!this->condition->Passes(*child))
+    virtual IQueryableData<TIterating> & Add(int addend, IteratorType type) override
     {
-        child = this->original->rend();
+        // this is the worse possible way to implement this and should be overriden for random access iterators
+        std::cout << "bad" << std::endl;
+        size_t dummy = 0;
+        while (this->original->CanIncrement(type) && addend-- > 0)
+        {
+            bool isForcingToEnd = false;
+            this->Next(type, dummy, isForcingToEnd);
+        }
+
+        return *this;
     }
 
-    size_t startIndex = child.index;
-    QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
+    virtual IQueryableData<TIterating> & Subtract(int subtrahend, IteratorType type) override
+    {
+        // this is the worse possible way to implement this and should be overriden for random access iterators
+        std::cout << "bad" << std::endl;
+        size_t dummy = 0;
+        while (this->original->CanDecrement(type) && subtrahend-- > 0)
+        {
+            this->Prev(type, dummy);
+        }
 
-    return retVal;
-  }
+        return *this;
+    }
 
-  // Rend only serves as a check of the last element while iterating begin.
-  // This will never be used to increment/decrement
-  virtual QueryableIterator<TIterating> rend() override
-  {
-    QueryableIterator<TIterating> child = this->original->end();
+    // remove the possibility to iterate if the first element does not pass condition
+    virtual QueryableIterator<TIterating> begin() override
+    {
+        // std::cout << "TakeWhileQueryableData::begin" << std::endl;
+        this->condition->Reset();
+        QueryableIterator<TIterating> child = this->original->begin();
 
-    size_t startIndex = child.index;
-    QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
+        if (!this->condition->Passes(*child))
+        {
+            child = this->original->end();
+        }
 
-    return retVal;
-  }
+        size_t startIndex = child.index;
+        QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::BeginForward);
+
+        return retVal;
+    }
+
+    // End only serves as a check of the last element while iterating begin.
+    // This will never be used to increment/decrement
+    virtual QueryableIterator<TIterating> end() override
+    {
+        // std::cout << "TakeWhileQueryableData::end" << std::endl;
+        QueryableIterator<TIterating> child = this->original->end();
+
+        size_t startIndex = child.index;
+        QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::EndForward);
+
+        return retVal;
+    }
+
+    // remove the possibility to iterate if the first element does not pass condition
+    virtual QueryableIterator<TIterating> rbegin() override
+    {
+        this->condition->Reset();
+        QueryableIterator<TIterating> child = this->original->rbegin();
+
+        if (!this->condition->Passes(*child))
+        {
+            child = this->original->rend();
+        }
+
+        size_t startIndex = child.index;
+        QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::BeginReverse);
+
+        return retVal;
+    }
+
+    // Rend only serves as a check of the last element while iterating begin.
+    // This will never be used to increment/decrement
+    virtual QueryableIterator<TIterating> rend() override
+    {
+        QueryableIterator<TIterating> child = this->original->end();
+
+        size_t startIndex = child.index;
+        QueryableIterator<TIterating> retVal(this->Clone(), startIndex, IteratorType::EndReverse);
+
+        return retVal;
+    }
 };
 
 #endif

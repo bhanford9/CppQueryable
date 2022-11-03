@@ -2,15 +2,12 @@
 #define CPPQUERYABLE_SORTERS_SORTER_H
 
 #include <functional>
-#include <iostream>
-#include <memory>
 
-#include "../Iterators/QueryableIterator.hpp"
 #include "ISorter.hpp"
 
 template<
   typename TObj,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TLessThan = std::less<TObj>,
   typename ...TArgs>
 class Sorter : public ISorter<TObj, TIterable, TArgs...>

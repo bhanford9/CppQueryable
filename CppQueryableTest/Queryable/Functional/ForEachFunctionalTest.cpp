@@ -2,19 +2,11 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
-#include <list>
-#include <set>
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
-
-#include "../../../Queryable/QueryablesForwardDeclarations.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -60,8 +52,8 @@ protected:
 
 TEST_F(ForEachFunctionalTest, ForEachVectorUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
-  emptyQueryable.ForEach([](Person p) { throw std::runtime_error("Should not hit"); });
+  const QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
+  emptyQueryable.ForEach([](const Person & p) { throw std::runtime_error("Should not hit"); });
   ASSERT_TRUE(true);
 }
 
@@ -118,7 +110,7 @@ TEST_F(ForEachFunctionalTest, ForEachWhere)
 {
   QueryableVector<size_t> IQueryable = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10, 99, 199 }));
 
-  int expectedCount = 6;
+  const int expectedCount = 6;
   int count = 0;
   IQueryable
     .Where([](size_t value) { return value % 2 == 0; })

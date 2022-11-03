@@ -2,7 +2,6 @@
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_WHILECONDITION_H
 
 #include <functional>
-#include <iostream>
 
 #include "IWhileCondition.hpp"
 
@@ -35,7 +34,7 @@ public:
   virtual ~WhileCondition() { }
 
   // TODO --> I think this method should be able to be const
-  inline virtual bool Passes(const TValue & obj) override
+  virtual bool Passes(const TValue & obj) override
   {
     bool passes = false;
     
@@ -51,12 +50,12 @@ public:
     return passes;
   }
 
-  inline virtual bool operator()(const TValue & obj) override
+  virtual bool operator()(const TValue & obj) override
   {
     return this->Passes(obj);
   }
 
-  inline virtual void Reset() override
+  virtual void Reset() override
   {
     if (this->resetCondition)
     {

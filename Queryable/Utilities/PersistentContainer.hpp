@@ -1,7 +1,6 @@
 #ifndef CPPQUERYABLE_QUERYABLE_UTILITIES_PERSISTENTCONTAINER_H
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_PERSISTENTCONTAINER_H
 
-#include <iostream>
 #include <memory>
 
 class PersistentContainer

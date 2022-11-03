@@ -5,7 +5,7 @@
 
 template<
   typename TObj,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TLessThan = std::less<TObj>,
   typename TAllocator = std::allocator<TObj>>
 class SortedInternalQueryable;

@@ -50,21 +50,21 @@ public:
     return "Aggregate";
   }
 
-  void AggregateUninitializedTest();
-  void AggregateSeededUninitialized();
-  void AggregateFinalizerUninitialized();
-  void AggregateFinalizerSeededUninitialized();
-  void AggregateDeque();
-  void AggregateList();
+  void AggregateUninitializedTest() const;
+  void AggregateSeededUninitialized() const;
+  void AggregateFinalizerUninitialized() const;
+  void AggregateFinalizerSeededUninitialized() const;
+  void AggregateDeque() const;
+  void AggregateList() const;
   void AggregateMap();
-  void AggregateMultiSet();
-  void AggregateSet();
-  void AggregateVector();
-  void AggregateSeededFinalizerDeque();
-  void AggregateSeededFinalizerList();
-  void AggregateSeededFinalizerMultiSet();
-  void AggregateSeededFinalizerSet();
-  void AggregateSeededFinalizerVector();
+  void AggregateMultiSet() const;
+  void AggregateSet() const;
+  void AggregateVector() const;
+  void AggregateSeededFinalizerDeque() const;
+  void AggregateSeededFinalizerList() const;
+  void AggregateSeededFinalizerMultiSet() const;
+  void AggregateSeededFinalizerSet() const;
+  void AggregateSeededFinalizerVector() const;
 };
 
 class AggregateFunctionalGTest : public ::testing::Test, public AggregateFunctionalTest

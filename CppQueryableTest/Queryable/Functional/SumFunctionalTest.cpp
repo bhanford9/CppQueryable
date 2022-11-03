@@ -2,17 +2,9 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
-#include <list>
-#include <set>
-#include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
 #include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
-#include "../../../DataStructures/Point.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -40,8 +32,8 @@ protected:
 
 TEST_F(SumFunctionalTest, SumUninitialized)
 {
-  QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
-  double sum = emptyQueryable.Sum([](Person p) { return p.GetAge(); });
+  const QueryableVector<Person> emptyQueryable(BuildQueryable(std::vector<Person>()));
+  const double sum = emptyQueryable.Sum([](const Person & p) { return p.GetAge(); });
   ASSERT_EQ(0, sum);
 }
 
@@ -72,86 +64,86 @@ TEST_F(SumFunctionalTest, SumUninitialized)
 
 TEST_F(SumFunctionalTest, SumVector)
 {
-  size_t sum = this->queryable.Sum([](size_t value) { return value; });
+  const double sum = this->queryable.Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumVectorDefault)
 {
-  size_t sum = this->queryable.Sum();
+  const double sum = this->queryable.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumDeque)
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  size_t sum = local.Sum([](size_t value) { return value; });
+  const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+  const double sum = local.Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumDequeDefault)
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  size_t sum = local.Sum();
+  const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+  const double sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumList)
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  size_t sum = local.Sum([](size_t value) { return value; });
+  const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+  const double sum = local.Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumListDefault)
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  size_t sum = local.Sum();
+  const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+  const double sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSet)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  size_t sum = local.Sum([](size_t value) { return value; });
+  const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+  const double sum = local.Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumMultiSetDefault)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  size_t sum = local.Sum();
+  const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+  const double sum = local.Sum();
   ASSERT_EQ(this->expectedSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSet)
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  size_t sum = local.Sum([](size_t value) { return value; });
+  const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+  const double sum = local.Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumSetDefault)
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  size_t sum = local.Sum();
+  const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+  const double sum = local.Sum();
   ASSERT_EQ(this->expectedNoDupsSum, sum);
 }
 
 TEST_F(SumFunctionalTest, SumWhere)
 {
-  size_t expected = 1110;
-  size_t sum = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Sum([](size_t value) { return value; });
+  const size_t expected = 1110;
+  const double sum = this->queryable
+                         .Where([](size_t value) { return value > 10; })
+                         .Sum([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(expected, sum);
 }
 
 TEST_F(SumFunctionalTest, SumWhereDefault)
 {
-  size_t expected = 1110;
-  size_t sum = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Sum();
+  const size_t expected = 1110;
+  const double sum = this->queryable
+                         .Where([](size_t value) { return value > 10; })
+                         .Sum();
   ASSERT_EQ(expected, sum);
 }

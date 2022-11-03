@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -39,18 +38,18 @@ protected:
 
 TEST_F(ContainsFunctionalTest, ContainsObjectCompare)
 {
-  QueryableVector<Person> people = BuildQueryable(PersonLibrary().GetPeople());
+  const QueryableVector<Person> people = BuildQueryable(PersonLibrary().GetPeople());
 
   // Person equality is based off of the ID (first param)
-  Person goodPerson(7, "Person 4", 51, 55, Gender::Female);
-  Person badPerson(16, "Person 4", 51, 55, Gender::Female);
+  const Person goodPerson(7, "Person 4", 51, 55, Gender::Female);
+  const Person badPerson(16, "Person 4", 51, 55, Gender::Female);
   ASSERT_TRUE(people.Contains(goodPerson));
   ASSERT_FALSE(people.Contains(badPerson));
 }
 
 TEST_F(ContainsFunctionalTest, DequeContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
@@ -59,7 +58,7 @@ TEST_F(ContainsFunctionalTest, DequeContains)
 
 TEST_F(ContainsFunctionalTest, ListContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
@@ -68,7 +67,7 @@ TEST_F(ContainsFunctionalTest, ListContains)
 
 TEST_F(ContainsFunctionalTest, MapContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableMap<size_t, std::string> local = BuildQueryable(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
@@ -80,7 +79,7 @@ TEST_F(ContainsFunctionalTest, MapContains)
 
 TEST_F(ContainsFunctionalTest, MultiSetContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
@@ -89,7 +88,7 @@ TEST_F(ContainsFunctionalTest, MultiSetContains)
 
 TEST_F(ContainsFunctionalTest, SetContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
   ASSERT_GT(count, local.Count());
   ASSERT_TRUE(local.Contains(76));
@@ -98,7 +97,7 @@ TEST_F(ContainsFunctionalTest, SetContains)
 
 TEST_F(ContainsFunctionalTest, VectorContains)
 {
-  size_t count = this->queryable.Count();
+  const size_t count = this->queryable.Count();
   QueryableVector<size_t> local = BuildQueryable(this->queryable.ToVector());
   ASSERT_EQ(count, local.Count());
   ASSERT_TRUE(local.Contains(76));

@@ -2,16 +2,7 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
-#include <list>
-#include <set>
-#include <string>
 #include <vector>
-
-#include "../../../DataStructures/Gender.hpp"
-#include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -70,7 +61,7 @@ protected:
   void TestSkipNegative(Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable, size_t toSkip)
   {
     std::vector<TIterating> expected;
-    size_t endIndex = localQueryable.Count() + toSkip;
+    const size_t endIndex = localQueryable.Count() + toSkip;
     for (size_t i = 0; i < endIndex; i++)
     {
       expected.push_back(localQueryable.At(i));
@@ -106,14 +97,14 @@ TEST_F(SkipFunctionalTest, SkipList)
   this->TestSkip(localQueryable, this->SkipCount);
 }
 
-TEST_F(SkipFunctionalTest, SkipMap)
-{
-  QueryableMap<size_t, std::string> localQueryable = BuildQueryable<size_t, std::string>(
-    this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); }));
-  this->TestSkip(localQueryable, this->SkipCount);
-}
+//TEST_F(SkipFunctionalTest, SkipMap)
+//{
+//  QueryableMap<size_t, std::string> localQueryable = BuildQueryable<size_t, std::string>(
+//    this->queryable.ToMap<size_t, std::string>(
+//      [](size_t value) { return value; },
+//      [](size_t value) { return std::to_string(value / 2.0); }));
+//  this->TestSkip(localQueryable, this->SkipCount);
+//}
 
 TEST_F(SkipFunctionalTest, SkipMultiSet)
 {
@@ -164,7 +155,7 @@ TEST_F(SkipFunctionalTest, SkipVector)
 TEST_F(SkipFunctionalTest, SkipWhere)
 {
   int skipCount = 3;
-  size_t expectedCount = 3;
+  const size_t expectedCount = 3;
   QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })

@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 
+#include "PersonLibrary.hpp"
 #include "Gender.hpp"
 #include "Person.hpp"
-#include "PersonLibrary.hpp"
 
 PersonLibrary::PersonLibrary()
 {
@@ -21,7 +21,7 @@ PersonLibrary::PersonLibrary()
   this->people.push_back(std::make_shared<Person>(this->people.size(), "Person 11", 61, 68, Gender::Male));
 }
 
-std::vector<Person> PersonLibrary::GetPeople()
+std::vector<Person> PersonLibrary::GetPeople() const
 {
   std::vector<Person> newPeople;
 

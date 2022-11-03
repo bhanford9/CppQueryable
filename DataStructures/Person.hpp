@@ -9,7 +9,7 @@
 class Person
 {
 private:
-  long id;
+  size_t id;
   std::string name;
   double age;
   int heightInches;
@@ -26,29 +26,23 @@ public:
   }
   Person(const Person & other)
   {
-    if (this != &other)
-    {
-      this->id = other.id;
-      this->age = other.age;
-      this->heightInches = other.heightInches;
-      this->gender = other.gender;
-      name = other.name;
-    }
+    this->id = other.id;
+    this->age = other.age;
+    this->heightInches = other.heightInches;
+    this->gender = other.gender;
+    this->name = other.name;
   }
-  Person(Person && other)
+  Person(Person && other) noexcept
   {
-    if (this != &other)
-    {
-      this->id = other.id;
-      this->age = other.age;
-      this->heightInches = other.heightInches;
-      this->gender = other.gender;
-      name = std::move(other.name);
-    }
+    this->id = other.id;
+    this->age = other.age;
+    this->heightInches = other.heightInches;
+    this->gender = other.gender;
+    this->name = std::move(other.name);
   }
-  Person(long id, std::string name, double age, int height, Gender gender);
+  Person(size_t id, std::string name, double age, int height, Gender gender);
 
-  long GetId() const;
+  size_t GetId() const;
   void SetId(long id);
   std::string GetName() const;
   void SetName(std::string name);
@@ -79,7 +73,7 @@ public:
     return *this;
   }
 
-  Person operator=(Person && other)
+  Person operator=(Person && other) noexcept
   {
     if (this != &other)
     {
@@ -95,7 +89,7 @@ public:
 
   bool operator<(const Person & other) const;
   bool operator==(const Person & other) const;
-  std::ostream & operator<<(std::ostream & str);
+  std::ostream & operator<<(std::ostream & str) const;
   friend std::ostream & operator<<(std::ostream & str, const Person & v)
   {
     str << v.ToString();

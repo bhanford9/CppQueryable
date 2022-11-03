@@ -1,9 +1,7 @@
 #ifndef CPPQUERYABLE_QUERYABLE_IQUERYABLEDATA_H
 #define CPPQUERYABLE_QUERYABLE_IQUERYABLEDATA_H
 
-#include <functional>
 #include <memory>
-#include <vector>
 
 #include "../Iterators/QueryableIterator.hpp"
 

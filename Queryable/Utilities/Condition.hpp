@@ -2,17 +2,48 @@
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_CONDITION_H
 
 #include <functional>
-#include <iostream>
 
 template<typename T>
-class Condition
+class Condition final
 {
 private:
   bool applied = false;
   std::function<bool(const T &)> condition;
 
 public:
+  Condition(const Condition & other)
+    : applied(other.applied), condition(other.condition)
+  {
+  }
+
+  Condition(Condition && other) noexcept
+    : applied(other.applied), condition(std::move(other.condition))
+  {
+  }
+
+  Condition & operator=(const Condition & other)
+  {
+    if (this == &other) return *this;
+    applied = other.applied;
+    condition = other.condition;
+    return *this;
+  }
+
+  Condition & operator=(Condition && other) noexcept
+  {
+    if (this == &other) return *this;
+    applied = other.applied;
+    condition = std::move(other.condition);
+    return *this;
+  }
+
+  explicit Condition(std::function<bool(const T &)> && condition)
+    : condition(std::move(condition))
+  {
+  }
+  
   Condition() { }
+  ~Condition() = default;
 
   void Add(std::function<bool(const T &)> condition)
   {

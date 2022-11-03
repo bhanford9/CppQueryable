@@ -2,11 +2,11 @@
 #include <memory>
 #include <vector>
 
+#include "PersonAndPetLibrary.hpp"
+#include "Animal.hpp"
 #include "Gender.hpp"
 #include "Person.hpp"
-#include "Animal.hpp"
 #include "PersonAndPet.hpp"
-#include "PersonAndPetLibrary.hpp"
 
 PersonAndPetLibrary::PersonAndPetLibrary()
 {
@@ -60,7 +60,7 @@ PersonAndPetLibrary::PersonAndPetLibrary()
   ));
 }
 
-std::vector<PersonAndPet> PersonAndPetLibrary::GetPetOwners()
+std::vector<PersonAndPet> PersonAndPetLibrary::GetPetOwners() const
 {
   std::vector<PersonAndPet> newPetOwners;
 

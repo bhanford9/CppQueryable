@@ -2,16 +2,7 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
-#include <list>
-#include <set>
-#include <string>
 #include <vector>
-
-#include "../../../DataStructures/Gender.hpp"
-#include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -77,7 +68,7 @@ protected:
   void TestTakeNegative(Queryable<TStoring, TIterable, TIterating, TArgs...> & localQueryable, int toTake)
   {
     std::vector<TIterating> expected;
-    int startIndex = localQueryable.Count() + toTake;
+    const int startIndex = localQueryable.Count() + toTake;
     for (size_t i = startIndex; i < localQueryable.Count(); i++)
     {
       expected.push_back(localQueryable.At(i));
@@ -115,14 +106,14 @@ TEST_F(TakeFunctionalTest, TakeList)
   this->TestTake(localQueryable, this->takeCount);
 }
 
-TEST_F(TakeFunctionalTest, TakeMap)
-{
-  QueryableMap<size_t, std::string> localQueryable(BuildQueryable<size_t, std::string>(
-    this->queryable.ToMap<size_t, std::string>(
-      [](size_t value) { return value; },
-      [](size_t value) { return std::to_string(value / 2.0); })));
-  this->TestTake(localQueryable, this->takeCount);
-}
+//TEST_F(TakeFunctionalTest, TakeMap)
+//{
+//  QueryableMap<size_t, std::string> localQueryable(BuildQueryable<size_t, std::string>(
+//    this->queryable.ToMap<size_t, std::string>(
+//      [](size_t value) { return value; },
+//      [](size_t value) { return std::to_string(value / 2.0); })));
+//  this->TestTake(localQueryable, this->takeCount);
+//}
 
 TEST_F(TakeFunctionalTest, TakeMultiSet)
 {
@@ -174,7 +165,7 @@ TEST_F(TakeFunctionalTest, TakeVector)
 TEST_F(TakeFunctionalTest, TakeWhere)
 {
   int takeCount = 3;
-  int expectedCount = 3;
+  const int expectedCount = 3;
   QueryableVector<size_t> queryableVector = BuildQueryable(std::vector<size_t>({ 7, 0, 7, 2, 3, 4, 6, 45, 8, 1, 3, 10 }));
   QueryableVector<size_t> result = queryableVector
     .Where([](size_t value) { return value % 2 == 0; })

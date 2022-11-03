@@ -15,5 +15,6 @@ install_manifest.txt
 *.a
 *.tcl
 Testing/**
+.idea/**
 
 CppQueryableTest/Queryable/Performance/Time/Logs/*

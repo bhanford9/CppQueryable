@@ -6,13 +6,13 @@ include(CTest)
 include(GoogleTest)
 
 set(CMAKE_BUILD_TYPE Debug)
+# GoogleTest requires at least C++14
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/DataStructures
     ${PROJECT_SOURCE_DIR}/CppQueryableTest/Functional/Headers)
-
-enable_testing()
 
 FetchContent_Declare(
     googletest
@@ -21,7 +21,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-
+enable_testing()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Bin/Test )
 add_executable(
     FunctionalTests
@@ -86,11 +86,11 @@ add_executable(
     WhereFunctionalTest.cpp)
 
 # important for this to go after add_executable and find_package
-target_link_libraries(FunctionalTests PRIVATE
+target_link_libraries(FunctionalTests
     GTest::gtest_main
     DataStructures)
 
-target_link_libraries(DetachedFunctionalTests PRIVATE
+target_link_libraries(DetachedFunctionalTests
     GTest::gtest_main
     DataStructures)
 

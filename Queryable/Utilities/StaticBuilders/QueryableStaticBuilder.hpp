@@ -2,7 +2,6 @@
 #define CPPQUERYABLE_QUERYABLE_UTILITIES_STATICBUILDERS_QUERYABLESTATICBUILDER_H
 
 #include <deque>
-#include <iostream>
 #include <list>
 #include <map>
 #include <set>
@@ -10,11 +9,10 @@
 
 #include "InternalQueryableStaticBuilder.hpp"
 #include "../Casting.hpp"
-#include "../../Queryable.hpp"
 
 template<
   typename TStoring,
-  template<typename, typename ...> typename TIterable,
+  template<typename, typename ...> class TIterable,
   typename TIterating,
   typename ...TArgs>
 class Queryable;

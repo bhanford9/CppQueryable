@@ -1,12 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include "../../../DataStructures/Gender.hpp"
-#include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 #include "../../../DataStructures/Point.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
@@ -57,22 +53,22 @@ protected:
 // TEST_F(AverageFunctionalTest, AverageUninitializedDefault)
 // {
 //   IQueryable<size_t> emptyQueryable;
-//   size_t average = emptyQueryable.Average();
+//   double average = emptyQueryable.Average();
 //   ASSERT_EQ(0, average);
 // }
 
 TEST_F(AverageFunctionalTest, AverageOperatorOverload)
 {
-  Point expected(5, 2.5);
-  QueryableVector<Point> points = BuildQueryable(std::vector<Point>({
+  const Point expected(5, 2.5);
+  const QueryableVector<Point> points = BuildQueryable(std::vector<Point>({
     Point(2, 4),
     Point(3, 5),
     Point(7, 1),
     Point(8, 0)
   }));
 
-  double averageX = points.Average([](Point point) { return point.X; });
-  double averageY = points.Average([](Point point) { return point.Y; });
+  const double averageX = points.Average([](const Point & point) { return point.X; });
+  const double averageY = points.Average([](const Point & point) { return point.Y; });
 
   ASSERT_EQ(expected.X, averageX);
   ASSERT_EQ(expected.Y, averageY);
@@ -80,96 +76,96 @@ TEST_F(AverageFunctionalTest, AverageOperatorOverload)
 
 TEST_F(AverageFunctionalTest, AverageVector)
 {
-  size_t average = this->queryable.Average([](size_t value) { return value; });
+  const double average = this->queryable.Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageVectorDefault)
 {
-  size_t average = this->queryable.Average();
+  const double average = this->queryable.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageDeque)
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  size_t average = local.Average([](size_t value) { return value; });
+  const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+  const double average = local.Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageDequeDefault)
 {
-  QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
-  size_t average = local.Average();
+  const QueryableDeque<size_t> local = BuildQueryable(this->queryable.ToDeque());
+  const double average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageList)
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  size_t average = local.Average([](size_t value) { return value; });
+  const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+  const double average = local.Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageListDefault)
 {
-  QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
-  size_t average = local.Average();
+  const QueryableList<size_t> local = BuildQueryable(this->queryable.ToList());
+  const double average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageMap)
 {
-  QueryableMap<size_t, std::string> local = BuildQueryable(
+  const QueryableMap<size_t, std::string> local = BuildQueryable(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }));
-  size_t average = local.Average([](std::pair<const size_t, std::string> kvp) { return kvp.first; });
+  const double average = local.Average([](const std::pair<const size_t, std::string> & kvp) { return static_cast<double>(kvp.first); });
   ASSERT_EQ(this->expectedNoDupsAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageMultiSet)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  size_t average = local.Average([](size_t value) { return value; });
+  const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+  const double average = local.Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageMultiSetDefault)
 {
-  QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
-  size_t average = local.Average();
+  const QueryableMultiSet<size_t> local = BuildQueryable(this->queryable.ToMultiSet());
+  const double average = local.Average();
   ASSERT_EQ(this->expectedAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageSet)
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  size_t average = local.Average([](size_t value) { return value; });
+  const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+  const double average = local.Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(this->expectedNoDupsAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageSetDefault)
 {
-  QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
-  size_t average = local.Average();
+  const QueryableSet<size_t> local = BuildQueryable(this->queryable.ToSet());
+  const double average = local.Average();
   ASSERT_EQ(this->expectedNoDupsAverage, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageWhere)
 {
-  size_t expected = 185;
-  size_t average = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Average([](size_t value) { return value; });
+  const size_t expected = 185;
+  const double average = this->queryable
+                             .Where([](size_t value) { return value > 10; })
+                             .Average([](size_t value) { return static_cast<double>(value); });
   ASSERT_EQ(expected, average);
 }
 
 TEST_F(AverageFunctionalTest, AverageWhereDefault)
 {
-  size_t expected = 185;
-  size_t average = this->queryable
-    .Where([](size_t value) { return value > 10; })
-    .Average();
+  const size_t expected = 185;
+  const double average = this->queryable
+                             .Where([](size_t value) { return value > 10; })
+                             .Average();
   ASSERT_EQ(expected, average);
 }

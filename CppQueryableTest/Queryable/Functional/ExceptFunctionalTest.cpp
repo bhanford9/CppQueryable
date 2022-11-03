@@ -2,10 +2,7 @@
 
 #include <array>
 #include <deque>
-#include <exception>
-#include <iostream>
 #include <list>
-#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -45,10 +42,10 @@ protected:
 
 TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmpty)
 {
-  std::vector<size_t> local;
-  std::vector<size_t> result = this->queryable
-    .Except(local)
-    .ToVector();
+  const std::vector<size_t> local;
+  const std::vector<size_t> result = this->queryable
+                                         .Except(local)
+                                         .ToVector();
 
   ASSERT_EQ(this->startingInput.size(), result.size());
 }
@@ -56,10 +53,10 @@ TEST_F(ExceptFunctionalTest, ExceptLocalFullInputEmpty)
 TEST_F(ExceptFunctionalTest, ExceptAllSame)
 {
   QueryableVector<size_t> a = BuildQueryable<size_t>(std::vector<size_t>({ 2, 5, 2, 5, 5, 5, 2, 2, 5 }));
-  std::vector<size_t> b = std::vector<size_t>({ 2, 5 });
-  std::vector<size_t> result = a
-    .Except<>(b)
-    .ToVector();
+  const std::vector<size_t> b = std::vector<size_t>({ 2, 5 });
+  const std::vector<size_t> result = a
+                                     .Except<>(b)
+                                     .ToVector();
 
   ASSERT_EQ(0, result.size());
 }
@@ -73,14 +70,14 @@ TEST_F(ExceptFunctionalTest, ExceptCustomCompare)
     Person(99, "Person 6", 14, 62, Gender::Female)
   }));
 
-  int originalLength = local.Count();
-  int afterExceptLength = originalLength - exceptions.Count();
+  const int originalLength = local.Count();
+  const int afterExceptLength = originalLength - exceptions.Count();
 
-  std::vector<Person> result = local
-    .Except(
-      exceptions.ToVector(),
-      [](Person a, Person b) { return a.GetName() < b.GetName(); })
-    .ToVector();
+  const std::vector<Person> result = local
+                                     .Except(
+                                       exceptions.ToVector(),
+                                       [](const Person & a, const Person & b) { return a.GetName() < b.GetName(); })
+                                     .ToVector();
 
   ASSERT_EQ(afterExceptLength, result.size());
   for (Person p : result)
@@ -93,10 +90,10 @@ TEST_F(ExceptFunctionalTest, ExceptCustomCompare)
 TEST_F(ExceptFunctionalTest, ExceptDequeDequeDefault)
 {
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .ToDeque();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -104,10 +101,10 @@ TEST_F(ExceptFunctionalTest, ExceptDequeDequeDefault)
 TEST_F(ExceptFunctionalTest, ExceptDequeListDefault)
 {
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::list<size_t> evens = this->queryableEvens.ToList();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .ToDeque();
+  const std::list<size_t> evens = this->queryableEvens.ToList();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -115,10 +112,10 @@ TEST_F(ExceptFunctionalTest, ExceptDequeListDefault)
 TEST_F(ExceptFunctionalTest, ExceptDequeMultiSetDefault)
 {
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .ToDeque();
+  const std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -126,10 +123,10 @@ TEST_F(ExceptFunctionalTest, ExceptDequeMultiSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptDequeSetDefault)
 {
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::set<size_t> evens = this->queryableEvens.ToSet();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .ToDeque();
+  const std::set<size_t> evens = this->queryableEvens.ToSet();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -137,10 +134,10 @@ TEST_F(ExceptFunctionalTest, ExceptDequeSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptDequeVectorDefault)
 {
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::vector<size_t> evens = this->queryableEvens.ToVector();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .ToDeque();
+  const std::vector<size_t> evens = this->queryableEvens.ToVector();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -148,10 +145,10 @@ TEST_F(ExceptFunctionalTest, ExceptDequeVectorDefault)
 TEST_F(ExceptFunctionalTest, ExceptListDequeDefault)
 {
   QueryableList<size_t> local = BuildQueryable<size_t>(this->queryable.ToList());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::list<size_t> result = local
-    .Except(evens)
-    .ToList();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::list<size_t> result = local
+                                   .Except(evens)
+                                   .ToList();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -159,10 +156,10 @@ TEST_F(ExceptFunctionalTest, ExceptListDequeDefault)
 TEST_F(ExceptFunctionalTest, ExceptListMultiSetDefault)
 {
   QueryableList<size_t> local = BuildQueryable<size_t>(this->queryable.ToList());
-  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
-  std::list<size_t> result = local
-    .Except(evens)
-    .ToList();
+  const std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  const std::list<size_t> result = local
+                                   .Except(evens)
+                                   .ToList();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -170,10 +167,10 @@ TEST_F(ExceptFunctionalTest, ExceptListMultiSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptListSetDefault)
 {
   QueryableList<size_t> local = BuildQueryable<size_t>(this->queryable.ToList());
-  std::set<size_t> evens = this->queryableEvens.ToSet();
-  std::list<size_t> result = local
-    .Except(evens)
-    .ToList();
+  const std::set<size_t> evens = this->queryableEvens.ToSet();
+  const std::list<size_t> result = local
+                                   .Except(evens)
+                                   .ToList();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -181,10 +178,10 @@ TEST_F(ExceptFunctionalTest, ExceptListSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptListVectorDefault)
 {
   QueryableList<size_t> local = BuildQueryable<size_t>(this->queryable.ToList());
-  std::vector<size_t> evens = this->queryableEvens.ToVector();
-  std::list<size_t> result = local
-    .Except(evens)
-    .ToList();
+  const std::vector<size_t> evens = this->queryableEvens.ToVector();
+  const std::list<size_t> result = local
+                                   .Except(evens)
+                                   .ToList();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -195,17 +192,17 @@ TEST_F(ExceptFunctionalTest, ExceptMapSetDefault)
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }));
-  
-  std::set<std::pair<const size_t, std::string>> evens = BuildQueryable(
+
+  const std::set<std::pair<const size_t, std::string>> evens = BuildQueryable(
     this->queryableEvens
       .ToMap<size_t, std::string>(
         [](size_t value) { return value; },
         [](size_t value) { return std::to_string(value / 2.0); }))
     .ToSet();
 
-  std::set<std::pair<const size_t, std::string>> result = local
-    .Except(evens)
-    .ToSet();
+  const std::set<std::pair<const size_t, std::string>> result = local
+                                                                .Except(evens)
+                                                                .ToSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -216,17 +213,17 @@ TEST_F(ExceptFunctionalTest, ExceptMapVectorDefault)
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }));
-  
-  std::vector<std::pair<const size_t, std::string>> evens = BuildQueryable(
+
+  const std::vector<std::pair<const size_t, std::string>> evens = BuildQueryable(
     this->queryableEvens
       .ToMap<size_t, std::string>(
         [](size_t value) { return value; },
         [](size_t value) { return std::to_string(value / 2.0); }))
     .ToVector();
 
-  std::vector<std::pair<const size_t, std::string>> result = local
-    .Except(evens)
-    .ToVector();
+  const std::vector<std::pair<const size_t, std::string>> result = local
+                                                                   .Except(evens)
+                                                                   .ToVector();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -234,10 +231,10 @@ TEST_F(ExceptFunctionalTest, ExceptMapVectorDefault)
 TEST_F(ExceptFunctionalTest, ExceptMultiSetDequeDefault)
 {
   QueryableMultiSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToMultiSet());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::multiset<size_t> result = local
-    .Except(evens)
-    .ToMultiSet();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::multiset<size_t> result = local
+                                       .Except(evens)
+                                       .ToMultiSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -245,10 +242,10 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetDequeDefault)
 TEST_F(ExceptFunctionalTest, ExceptMultiSetListDefault)
 {
   QueryableMultiSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToMultiSet());
-  std::list<size_t> evens = this->queryableEvens.ToList();
-  std::multiset<size_t> result = local
-    .Except(evens)
-    .ToMultiSet();
+  const std::list<size_t> evens = this->queryableEvens.ToList();
+  const std::multiset<size_t> result = local
+                                       .Except(evens)
+                                       .ToMultiSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -256,10 +253,10 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetListDefault)
 TEST_F(ExceptFunctionalTest, ExceptMultiSetSetDefault)
 {
   QueryableMultiSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToMultiSet());
-  std::set<size_t> evens = this->queryableEvens.ToSet();
-  std::multiset<size_t> result = local
-    .Except(evens)
-    .ToMultiSet();
+  const std::set<size_t> evens = this->queryableEvens.ToSet();
+  const std::multiset<size_t> result = local
+                                       .Except(evens)
+                                       .ToMultiSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -267,10 +264,10 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptMultiSetVectorDefault)
 {
   QueryableMultiSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToMultiSet());
-  std::vector<size_t> evens = this->queryableEvens.ToVector();
-  std::multiset<size_t> result = local
-    .Except(evens)
-    .ToMultiSet();
+  const std::vector<size_t> evens = this->queryableEvens.ToVector();
+  const std::multiset<size_t> result = local
+                                       .Except(evens)
+                                       .ToMultiSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -278,10 +275,10 @@ TEST_F(ExceptFunctionalTest, ExceptMultiSetVectorDefault)
 TEST_F(ExceptFunctionalTest, ExceptSetDequeDefault)
 {
   QueryableSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToSet());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::set<size_t> result = local
-    .Except(evens)
-    .ToSet();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::set<size_t> result = local
+                                  .Except(evens)
+                                  .ToSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -289,10 +286,10 @@ TEST_F(ExceptFunctionalTest, ExceptSetDequeDefault)
 TEST_F(ExceptFunctionalTest, ExceptSetListDefault)
 {
   QueryableSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToSet());
-  std::list<size_t> evens = this->queryableEvens.ToList();
-  std::set<size_t> result = local
-    .Except(evens)
-    .ToSet();
+  const std::list<size_t> evens = this->queryableEvens.ToList();
+  const std::set<size_t> result = local
+                                  .Except(evens)
+                                  .ToSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -300,10 +297,10 @@ TEST_F(ExceptFunctionalTest, ExceptSetListDefault)
 TEST_F(ExceptFunctionalTest, ExceptSetSetDefault)
 {
   QueryableSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToSet());
-  std::set<size_t> evens = this->queryableEvens.ToSet();
-  std::set<size_t> result = local
-    .Except(evens)
-    .ToSet();
+  const std::set<size_t> evens = this->queryableEvens.ToSet();
+  const std::set<size_t> result = local
+                                  .Except(evens)
+                                  .ToSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -311,10 +308,10 @@ TEST_F(ExceptFunctionalTest, ExceptSetSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptSetVectorDefault)
 {
   QueryableSet<size_t> local = BuildQueryable<size_t>(this->queryable.ToSet());
-  std::vector<size_t> evens = this->queryableEvens.ToVector();
-  std::set<size_t> result = local
-    .Except(evens)
-    .ToSet();
+  const std::vector<size_t> evens = this->queryableEvens.ToVector();
+  const std::set<size_t> result = local
+                                  .Except(evens)
+                                  .ToSet();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -322,10 +319,10 @@ TEST_F(ExceptFunctionalTest, ExceptSetVectorDefault)
 TEST_F(ExceptFunctionalTest, ExceptVectorDequeDefault)
 {
   QueryableVector<size_t> local = BuildQueryable<size_t>(this->queryable.ToVector());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::vector<size_t> result = local
-    .Except(evens)
-    .ToVector();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::vector<size_t> result = local
+                                     .Except(evens)
+                                     .ToVector();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -333,10 +330,10 @@ TEST_F(ExceptFunctionalTest, ExceptVectorDequeDefault)
 TEST_F(ExceptFunctionalTest, ExceptVectorListDefault)
 {
   QueryableVector<size_t> local = BuildQueryable<size_t>(this->queryable.ToVector());
-  std::list<size_t> evens = this->queryableEvens.ToList();
-  std::vector<size_t> result = local
-    .Except(evens)
-    .ToVector();
+  const std::list<size_t> evens = this->queryableEvens.ToList();
+  const std::vector<size_t> result = local
+                                     .Except(evens)
+                                     .ToVector();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -344,10 +341,10 @@ TEST_F(ExceptFunctionalTest, ExceptVectorListDefault)
 TEST_F(ExceptFunctionalTest, ExceptVectorMultiSetDefault)
 {
   QueryableVector<size_t> local = BuildQueryable<size_t>(this->queryable.ToVector());
-  std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
-  std::vector<size_t> result = local
-    .Except(evens)
-    .ToVector();
+  const std::multiset<size_t> evens = this->queryableEvens.ToMultiSet();
+  const std::vector<size_t> result = local
+                                     .Except(evens)
+                                     .ToVector();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
@@ -355,40 +352,40 @@ TEST_F(ExceptFunctionalTest, ExceptVectorMultiSetDefault)
 TEST_F(ExceptFunctionalTest, ExceptVectorSetDefault)
 {
   QueryableVector<size_t> local = BuildQueryable<size_t>(this->queryable.ToVector());
-  std::set<size_t> evens = this->queryableEvens.ToSet();
-  std::vector<size_t> result = local
-    .Except(evens)
-    .ToVector();
+  const std::set<size_t> evens = this->queryableEvens.ToSet();
+  const std::vector<size_t> result = local
+                                     .Except(evens)
+                                     .ToVector();
 
   ASSERT_EQ(this->oddCount, result.size());
 }
 
 TEST_F(ExceptFunctionalTest, WhereExcept)
 {
-  int oddsOverTen = 2;
+  const int oddsOverTen = 2;
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::deque<size_t> result = local
-    .Where([](size_t value) { return value > 10; })
-    .Except(evens)
-    .ToDeque();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::deque<size_t> result = local
+                                    .Where([](size_t value) { return value > 10; })
+                                    .Except(evens)
+                                    .ToDeque();
 
   ASSERT_EQ(oddsOverTen, result.size());
-  for (int value : result) { ASSERT_TRUE(value > 10); }
+  for (const int value : result) { ASSERT_TRUE(value > 10); }
 }
 
 TEST_F(ExceptFunctionalTest, ExceptWhere)
 {
-  int oddsUnderTen = 3;
+  const int oddsUnderTen = 3;
   QueryableDeque<size_t> local = BuildQueryable<size_t>(this->queryable.ToDeque());
-  std::deque<size_t> evens = this->queryableEvens.ToDeque();
-  std::deque<size_t> result = local
-    .Except(evens)
-    .Where([](size_t value) { return value < 10; })
-    .ToDeque();
+  const std::deque<size_t> evens = this->queryableEvens.ToDeque();
+  const std::deque<size_t> result = local
+                                    .Except(evens)
+                                    .Where([](size_t value) { return value < 10; })
+                                    .ToDeque();
 
 
   ASSERT_EQ(oddsUnderTen, result.size());
-  for (int value : result) { ASSERT_TRUE(value < 10); }
+  for (const int value : result) { ASSERT_TRUE(value < 10); }
 }
 

@@ -1,9 +1,8 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLEMAPDATA_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLEMAPDATA_H
 
-#include <iostream>
-#include <memory>
 #include <map>
+#include <memory>
 
 #include "QueryableData.hpp"
 

@@ -26,7 +26,11 @@ private:
   std::function<bool(TKey, TKey)> keyLessThan;
 
 public:
-  Grouping() { }
+  Grouping() :
+    key(),
+    keyLessThan()
+  {
+  }
   virtual ~Grouping() { }
 
   Grouping(
@@ -78,27 +82,27 @@ public:
     this->keyLessThan = std::move(other.keyLessThan);
   }
 
-  inline TKey GetKey() const
+  TKey GetKey() const
   {
     return this->key;
   }
 
-  inline bool operator==(const Grouping<TKey, TValue, TValueAllocator> & other) const
+  bool operator==(const Grouping<TKey, TValue, TValueAllocator> & other) const
   {
     return this->key == other.key;
   }
 
-  inline bool operator!=(const Grouping<TKey, TValue, TValueAllocator> & other) const
+  bool operator!=(const Grouping<TKey, TValue, TValueAllocator> & other) const
   {
     return this->key != other.key;
   }
 
-  inline bool operator<(const Grouping<TKey, TValue, TValueAllocator> & other) const
+  bool operator<(const Grouping<TKey, TValue, TValueAllocator> & other) const
   {
     return this->keyLessThan(this->key, other.key);
   }
 
-  inline Grouping<TKey, TValue, TValueAllocator>& operator=(
+  Grouping<TKey, TValue, TValueAllocator>& operator=(
     const Grouping<TKey, TValue, TValueAllocator> & other)
   {
     this->key = other.key;
@@ -107,7 +111,7 @@ public:
     return *this;
   }
 
-  inline Grouping<TKey, TValue, TValueAllocator>& operator=(
+  Grouping<TKey, TValue, TValueAllocator>& operator=(
     Grouping<TKey, TValue, TValueAllocator> && other)
   {
     this->key = other.key;
@@ -116,7 +120,7 @@ public:
     return *this;
   }
 
-  inline size_t Count()
+  size_t Count()
   {
     return this->items->Count();
   }

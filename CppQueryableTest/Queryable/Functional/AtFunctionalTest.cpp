@@ -1,12 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string>
 #include <vector>
-
-#include "../../../DataStructures/Gender.hpp"
-#include "../../../DataStructures/Person.hpp"
-#include "../../../DataStructures/PersonLibrary.hpp"
 
 #include "../../../Queryable/QueryBuilder.hpp"
 
@@ -74,19 +69,19 @@ TEST_F(AtFunctionalTest, AtVectorIndexNegative)
 
 TEST_F(AtFunctionalTest, AtDeque)
 {
-  size_t value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
+  const size_t value = BuildQueryable(this->queryable.ToDeque()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtList)
 {
-  size_t value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
+  const size_t value = BuildQueryable(this->queryable.ToList()).At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtMap)
 {
-  std::pair<const size_t, std::string> value = BuildQueryable(
+  const std::pair<const size_t, std::string> value = BuildQueryable(
     this->queryable.ToMap<size_t, std::string>(
       [](size_t value) { return value; },
       [](size_t value) { return std::to_string(value / 2.0); }))
@@ -98,28 +93,28 @@ TEST_F(AtFunctionalTest, AtMap)
 
 TEST_F(AtFunctionalTest, AtMultiSet)
 {
-  size_t value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
+  const size_t value = BuildQueryable(this->queryable.ToMultiSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedOrderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtSet)
 {
-  size_t value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
+  const size_t value = BuildQueryable(this->queryable.ToSet()).At(this->atIndex);
   ASSERT_EQ(this->expectedSetAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtVector)
 {
-  size_t value = this->queryable.At(this->atIndex);
+  const size_t value = this->queryable.At(this->atIndex);
   ASSERT_EQ(this->expectedUnorderedAt, value);
 }
 
 TEST_F(AtFunctionalTest, AtWhere)
 {
-  size_t expected = 8;
-  size_t value = this->queryable
-    .Where([](size_t val) { return val % 2 == 0; })
-    .At(3);
+  const size_t expected = 8;
+  const size_t value = this->queryable
+                           .Where([](size_t val) { return val % 2 == 0; })
+                           .At(3);
 
   ASSERT_EQ(expected, value);
 }

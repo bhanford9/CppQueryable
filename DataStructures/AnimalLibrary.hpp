@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 
-#include "Gender.hpp"
 #include "Animal.hpp"
 
 class AnimalLibrary
@@ -15,7 +14,7 @@ private:
 public:
   AnimalLibrary();
 
-  std::vector<Animal> GetAnimals();
+  std::vector<Animal> GetAnimals() const;
 };
 
 #endif

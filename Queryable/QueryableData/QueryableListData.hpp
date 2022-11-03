@@ -1,11 +1,10 @@
 #ifndef CPPQUERYABLE_QUERYABLE_QUERYABLELISTDATA_H
 #define CPPQUERYABLE_QUERYABLE_QUERYABLELISTDATA_H
 
-#include <iostream>
 #include <list>
 
-#include "../Sorters/ListSorter.hpp"
 #include "QueryableData.hpp"
+#include "../Sorters/ListSorter.hpp"
 
 template<
   typename T,

@@ -3,10 +3,8 @@
 
 #include <algorithm>
 #include <deque>
-#include <iostream>
 #include <memory>
 
-#include "../Sorters/DequeSorter.hpp"
 #include "RandomAccessQueryableData.hpp"
 
 template<typename T, typename TAllocator = std::allocator<T>>

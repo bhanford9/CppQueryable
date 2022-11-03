@@ -1,31 +1,14 @@
-#include <cstdint>
-#include <functional>
-#include <iostream>
-#include <memory>
-#include <set>
 #include <string>
 #include <vector>
 
-#include "Queryable/InternalQueryables/VectorInternalQueryable.hpp"
-#include "Queryable/QueryableData/IQueryableData.hpp"
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableData.hpp"
 // #include "Queryable/QueryableData/SelectQueryableData/SelectQueryableVectorData.hpp"
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableData.hpp"
 // #include "Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp"
-#include "Queryable/QueryableData/WhereQueryableData/WhereQueryableMapData.hpp"
-#include "Queryable/QueryableData/QueryableData.hpp"
 // #include "Queryable/IQueryable.hpp"
-#include "Queryable/ISortedQueryable.hpp"
-#include "Queryable/QueryBuilder.hpp"
-#include "Queryable/QueryableType.hpp"
-#include "Queryable/InternalQueryable.hpp"
-#include "Queryable/Queryable.hpp"
-#include "DataStructures/People.hpp"
 #include "DataStructures/PersonLibrary.hpp"
-
-#include "DataStructures/Base.hpp"
-#include "DataStructures/Derived.hpp"
-#include "Queryable/QueryableData/QueryableVectorData.hpp"
+#include "Queryable/Queryable.hpp"
+#include "Queryable/QueryBuilder.hpp"
 
 using namespace QueryBuilder;
 
@@ -35,7 +18,7 @@ private:
     std::pair<const int, std::string> * kvp;
 
 public:
-  Test() { }
+  Test() : kvp(nullptr) { }
 
   void Set(std::vector<std::pair<const int, std::string>> vector)
   {
@@ -47,28 +30,28 @@ int main()
 {
   // std::cout << "within main" << std::endl;
   PersonLibrary personLibrary;
-  QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
+  const QueryableVector<Person> people(BuildQueryable(personLibrary.GetPeople()));
 
   QueryableMultiSet<Person> local1 = BuildQueryable(people.ToMultiSet());
   QueryableMultiSet<Person> local2 = BuildQueryable(people.ToMultiSet());
-  QueryableVector<double> ages = local1
-    .Select<double>([](Person p) { return p.GetAge(); });
-  QueryableVector<std::string> names = local2
-    .Select<std::string>([](Person p) { return p.GetName(); });
+  const QueryableVector<double> ages = local1
+    .Select<double>([](const Person & p) { return p.GetAge(); });
+  const QueryableVector<std::string> names = local2
+    .Select<std::string>([](const Person & p) { return p.GetName(); });
 
   // ASSERT_EQ(local1.Count(), ages.Count());
   // ASSERT_EQ(local1.Count(), names.Count());
 
-  int i = 0;
+  const int i = 0;
   double previousAge = -1;
   local1.ForEach([&](const Person & p)
   {
-    double currentAge = ages.At(i);
+    const double currentAge = ages.At(i);
     std::string currentName = names.At(i);
     // ASSERT_STREQ(local2.At(i++).GetName().c_str(), currentName.c_str());
     previousAge = currentAge;
     // std::cout << p << std::endl;
   });
 
-    return 0;
+  return 0;
 }

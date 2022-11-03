@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "Person.hpp"
 #include "Animal.hpp"
+#include "Person.hpp"
 
 class PersonAndPet
 {
