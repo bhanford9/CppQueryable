@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../Casting.hpp"
+#include "../../InternalQueryables/VolatileInternalQueryable.hpp"
 
 namespace InternalBuilders
 {  
@@ -64,6 +65,16 @@ namespace InternalBuilders
       std::move(std::make_shared<VectorInternalQueryable<TStoring, TAllocator>>(
         std::move(FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, std::vector, TStoring, TAllocator>>(
           std::make_shared<QueryableVectorData<TStoring, TAllocator>>(vector))), QueryableType::Vector)));
+  }
+
+  template<typename TStoring, typename TAllocator = std::allocator<TStoring>>
+  static std::shared_ptr<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>> FromVolatile(const std::vector<TStoring, TAllocator> & vector)
+  {
+    return FutureStd::reinterpret_pointer_cast<InternalQueryable<TStoring, std::vector, TStoring, TAllocator>>(
+      std::move(std::make_shared<VolatileInternalQueryable<TStoring, TAllocator>>(
+        std::move(FutureStd::reinterpret_pointer_cast<QueryableData<TStoring, std::vector, TStoring, TAllocator>>(
+          std::make_shared<VolatileQueryableData<TStoring, std::vector, TAllocator>>(vector))),
+        QueryableType::Vector)));
   }
 
 

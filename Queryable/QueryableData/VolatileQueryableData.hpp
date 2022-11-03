@@ -8,34 +8,34 @@
 
 template <typename T, template<typename, typename ...> class TIterable, typename TAllocator =
           std::allocator<T>, typename ...TArgs>
-class VolatileQueryableData final : public QueryableVectorData<T, TAllocator>
+class VolatileQueryableData : public QueryableData<T, std::vector, T, TAllocator>
 {
 public:
     VolatileQueryableData()
-        : QueryableVectorData<T, TAllocator>()
+        : QueryableData<T, std::vector, T, TAllocator>()
     {
     }
 
     VolatileQueryableData(const VolatileQueryableData & other)
-        : QueryableVectorData<T, TAllocator>(other)
+        : QueryableData<T, std::vector, T, TAllocator>(other)
     {
     }
 
     VolatileQueryableData(VolatileQueryableData && other) noexcept
-        : QueryableVectorData<T, TAllocator>(std::move(other))
+        : QueryableData<T, std::vector, T, TAllocator>(std::move(other))
     {
     }
 
     explicit VolatileQueryableData(const std::vector<T, TAllocator> & vector)
-        : QueryableVectorData<T, TAllocator>(vector)
-    {        
+        : QueryableData<T, std::vector, T, TAllocator>(vector)
+    {
     }
 
     explicit VolatileQueryableData(std::vector<T, TAllocator> && vector) noexcept
-        : QueryableVectorData<T, TAllocator>(vector)
-    {        
+        : QueryableData<T, std::vector, T, TAllocator>(vector)
+    {
     }
-    
+
     VolatileQueryableData & operator=(const VolatileQueryableData & other)
     {
         if (this == &other) return *this;
@@ -54,36 +54,48 @@ public:
     {
     }
 
-    //
-    // virtual IQueryableData<T> & Add(int addend, IteratorType type) override
-    // {
-    //   // std::cout << "ConstRandom Access + Operator, adding: " << addend << std::endl;
-    //   switch (type)
-    //   {
-    //     case IteratorType::BeginForward: this->beginIterator += addend; break;
-    //     case IteratorType::EndForward: this->endIterator += addend; break;
-    //     case IteratorType::BeginReverse: this->rbeginIterator += addend; break;
-    //     case IteratorType::EndReverse: this->rendIterator += addend; break;
-    //   }
-    //
-    //   // std::cout << "ConstRandom Access add result: " << *this->beginIterator << std::endl;
-    //
-    //   return *this;
-    // }
-    //
-    // virtual IQueryableData<T> & Subtract(int subtrahend, IteratorType type) override
-    // {
-    //   // std::cout << "ConstRandom Access - Operator, adding: " << subtrahend << std::endl;
-    //   switch (type)
-    //   {
-    //     case IteratorType::BeginForward: this->beginIterator -= subtrahend; break;
-    //     case IteratorType::EndForward: this->endIterator -= subtrahend; break;
-    //     case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend; break;
-    //     case IteratorType::EndReverse: this->rendIterator -= subtrahend; break;
-    //   }
-    //
-    //   return *this;
-    // }
+    virtual std::shared_ptr<IQueryableData<T>> Clone() override
+    {
+        return std::make_shared<VolatileQueryableData<T, std::vector, TAllocator>>(*this);
+    }
+
+    virtual IQueryableData<T> & Add(int addend, const IteratorType type) override
+    {
+        // std::cout << "ConstRandom Access + Operator, adding: " << addend << std::endl;
+        switch (type)
+        {
+        case IteratorType::BeginForward: this->beginIterator += addend;
+            break;
+        case IteratorType::EndForward: this->endIterator += addend;
+            break;
+        case IteratorType::BeginReverse: this->rbeginIterator += addend;
+            break;
+        case IteratorType::EndReverse: this->rendIterator += addend;
+            break;
+        }
+
+        // std::cout << "ConstRandom Access add result: " << *this->beginIterator << std::endl;
+
+        return *this;
+    }
+
+    virtual IQueryableData<T> & Subtract(int subtrahend, const IteratorType type) override
+    {
+        // std::cout << "ConstRandom Access - Operator, adding: " << subtrahend << std::endl;
+        switch (type)
+        {
+        case IteratorType::BeginForward: this->beginIterator -= subtrahend;
+            break;
+        case IteratorType::EndForward: this->endIterator -= subtrahend;
+            break;
+        case IteratorType::BeginReverse: this->rbeginIterator -= subtrahend;
+            break;
+        case IteratorType::EndReverse: this->rendIterator -= subtrahend;
+            break;
+        }
+
+        return *this;
+    }
 
     virtual T & Get(const IteratorType type) override
     {
@@ -108,11 +120,11 @@ public:
         }
     }
 
-    // void Add(T item) override
-    // {
-    //   this->items->push_back(item);
-    //   this->size++;
-    // }
+    virtual void Add(T item) override
+    {
+        this->items->push_back(item);
+        ++this->size;
+    }
 };
 
 #endif

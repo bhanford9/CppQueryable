@@ -36,6 +36,7 @@ set(HEADER_FILES
     Queryable/InternalQueryables/SetInternalQueryable.hpp
     Queryable/InternalQueryables/SortedInternalQueryable.hpp
     Queryable/InternalQueryables/VectorInternalQueryable.hpp
+    Queryable/InternalQueryables/VolatileInternalQueryable.hpp
     Queryable/IQueryable.hpp
     Queryable/ISortedQueryable.hpp
     Queryable/Iterators/IteratorType.hpp
@@ -75,6 +76,7 @@ set(HEADER_FILES
     Queryable/QueryableData/WhereQueryableData/WhereQueryableMultiSetData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableSetData.hpp
     Queryable/QueryableData/WhereQueryableData/WhereQueryableVectorData.hpp
+	Queryable/QueryableData/WhereQueryableData/WhereQueryableVolatileData.hpp
     Queryable/QueryableData/VolatileQueryableData.hpp
     Queryable/QueryablesForwardDeclarations.hpp
     Queryable/QueryableType.hpp

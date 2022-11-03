@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../InternalQueryables/VectorInternalQueryable.hpp"
+#include "../InternalQueryables/VolatileInternalQueryable.hpp"
 #include "../Iterators/QueryableIterator.hpp"
 #include "../QueryableData/VolatileQueryableData.hpp"
 
@@ -17,7 +17,7 @@
 //   
 //   My only potential idea right now would be to try making the QueryableData's 'value' field a pointer
 template <typename TKey, typename TValue, typename TValueAllocator>
-class Grouping final : public VectorInternalQueryable<TValue, TValueAllocator>
+class Grouping final : public VolatileInternalQueryable<TValue, TValueAllocator>
 {
 private:
     TKey key;
@@ -25,7 +25,7 @@ private:
 
 public:
     Grouping()
-        : key(), keyLessThan()
+        : VolatileInternalQueryable<TValue, TValueAllocator>(), key(), keyLessThan()
     {
     }
 
@@ -38,7 +38,7 @@ public:
         const TValue & value,
         std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
         TValueAllocator allocator = { })
-        : VectorInternalQueryable<TValue, TValueAllocator>(
+        : VolatileInternalQueryable<TValue, TValueAllocator>(
             std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(
                 std::vector<TValue, TValueAllocator>(1, value, allocator)),
             QueryableType::Vector)
@@ -52,7 +52,7 @@ public:
         const std::vector<TValue, TValueAllocator> & values,
         std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
         TValueAllocator allocator = { })
-        : VectorInternalQueryable<TValue, TValueAllocator>(
+        : VolatileInternalQueryable<TValue, TValueAllocator>(
             std::make_shared<VolatileQueryableData<TValue, std::vector, TValueAllocator>>(values),
             QueryableType::Vector)
     {
@@ -66,21 +66,21 @@ public:
         const QueryableIterator<TValue> & last,
         std::function<bool(TKey, TKey)> lessThan = [](TKey a, TKey b) { return a < b; },
         TValueAllocator allocator = { })
-        : VectorInternalQueryable<TValue, TValueAllocator>(first, last, allocator)
+        : VolatileInternalQueryable<TValue, TValueAllocator>(first, last, allocator)
     {
         this->key = key;
         this->keyLessThan = [&](TKey a, TKey b) { return lessThan(a, b); };
     }
 
     Grouping(const Grouping<TKey, TValue, TValueAllocator> & other)
-        : VectorInternalQueryable<TValue, TValueAllocator>(other)
+        : VolatileInternalQueryable<TValue, TValueAllocator>(other)
     {
         this->key = other.key;
         this->keyLessThan = other.keyLessThan;
     }
 
     Grouping(Grouping<TKey, TValue, TValueAllocator> && other) noexcept
-        : VectorInternalQueryable<TValue, TValueAllocator>(std::move(other))
+        : VolatileInternalQueryable<TValue, TValueAllocator>(std::move(other))
     {
         this->key = std::move(other.key);
         this->keyLessThan = std::move(other.keyLessThan);
