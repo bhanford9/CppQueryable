@@ -7,6 +7,7 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 6)
 
 add_subdirectory(DataStructures)
 add_subdirectory(CppQueryableTest/Queryable/Functional)
+add_subdirectory(CppQueryableTest/Queryable/Performance/Time)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}

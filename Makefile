@@ -624,6 +624,19 @@ gtest/fast:
 	$(MAKE) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
 .PHONY : gtest/fast
 
+#=============================================================================
+# Target rules for targets named TimePerformanceTests
+
+# Build rule for target.
+TimePerformanceTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TimePerformanceTests
+.PHONY : TimePerformanceTests
+
+# fast build rule for target.
+TimePerformanceTests/fast:
+	$(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build
+.PHONY : TimePerformanceTests/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -699,6 +712,7 @@ help:
 	@echo "... gmock"
 	@echo "... gtest_main"
 	@echo "... gtest"
+	@echo "... TimePerformanceTests"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

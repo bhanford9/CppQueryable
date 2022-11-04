@@ -1,27 +1,31 @@
 #ifndef CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_BASETIMETEST_H
 #define CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_BASETIMETEST_H
 
-#include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include <time.h>
 
+#include "Utilities/TimingUtilities.hpp"
 #include "Utilities/TimeStats.hpp"
 #include "Utilities/TimeTestParams/DateTimeUtils.hpp"
 #include "Utilities/TimeTestParams/TimeTestCategory.hpp"
 #include "Utilities/TimeTestParams/TimeTestParams.hpp"
 #include "Utilities/TimeTestParams/TriggerType.hpp"
-#include "Utilities/TimingUtilities.hpp"
+#include "../../TestSuite.hpp"
+#include "../../TestCase.hpp"
+#include "../../../../Queryable/Utilities/Casting.hpp"
 
-class BaseTimeTest : public ::testing::TestWithParam<TimeTestParams>
+class BaseTimeTest : public TestSuite
 {
 protected:
   std::string dequeName = "Deque";
   std::string listName = "List";
+  std::string mapName = "Map";
   std::string multiSetName = "MultiSet";
   std::string setName = "Set";
   std::string vectorName = "Vector";
+  std::vector<std::shared_ptr<TimeTestParams>> params;
 
 public:
   std::string queryableName = "QUERYABLE";
@@ -31,24 +35,13 @@ public:
   std::string currentPath = __FILE__;
   TimeStats standardStats;
   TimeStats queryableStats;
-  TimeTestParams params;
   static std::string suiteStartTime;
 
   BaseTimeTest() :
     methodName(""),
     containerName(""),
     standardStats(TimeStats()),
-    queryableStats(TimeStats()),
-    params({})
-  {
-  }
-
-  static void SetUpTestSuite()
-  {
-    // suiteStartTime = DateTimeUtils::DateTimeString();
-  }
-
-  static void TearDownTestSuite()
+    queryableStats(TimeStats())
   {
   }
 
@@ -61,6 +54,10 @@ public:
     else if (testName.compare(0, this->listName.length(), this->listName) == 0)
     {
       return this->listName;
+    }
+    else if (testName.compare(0, this->mapName.length(), this->mapName) == 0)
+    {
+      return this->mapName;
     }
     else if (testName.compare(0, this->multiSetName.length(), this->multiSetName) == 0)
     {
@@ -78,34 +75,64 @@ public:
     return "Invalid Test Case Name: " + testName;
   }
 
-  void SetUp() override
+  void AddTestParam(std::shared_ptr<TimeTestParams> param)
   {
-    const testing::TestInfo* const testInfo =
-      testing::UnitTest::GetInstance()->current_test_info();
-
-    printf("We are in test %s of test suite %s.\n",
-      testInfo->name(),
-      testInfo->test_suite_name());
-
-    this->containerName = this->GetContainerNameFromTestName(testInfo->name());
+    this->params.emplace_back(param);
   }
 
-  void TearDown() override
+  virtual void SetupTestSuite() override
   {
-    this->params.SetMethodName(this->methodName);
-    this->params.SetContainerType(this->containerName);
-    this->params.SetStandardStats(this->standardStats);
-    this->params.SetQueryableStats(this->queryableStats);
-    this->ProcessResults(this->params);
+    std::vector<std::shared_ptr<TestCaseParams>> testCaseParams;
+    for (const auto & param : this->params)
+    {
+      testCaseParams.emplace_back(FutureStd::reinterpret_pointer_cast<TestCaseParams>(param));
+    }
+
+    size_t i = 0;
+    for (const auto & kvp : this->testFxns)
+    {
+      this->tests.emplace_back(TestCase(i++, kvp.first, kvp.second, testCaseParams));
+    }
+  }
+
+  virtual void TeardownTestSuite() override
+  {
+  }
+
+  virtual std::string GetName() const override
+  {
+    return this->methodName;
+  }
+
+  void SetupTest() override
+  {
+    // const testing::TestInfo* const testInfo =
+    //   testing::UnitTest::GetInstance()->current_test_info();
+
+    // printf("We are in test %s of test suite %s.\n",
+    //   testInfo->name(),
+    //   testInfo->test_suite_name());
+
+    // this->containerName = this->GetContainerNameFromTestName();
+  }
+
+  void TeardownTest(const TestCase & test) override
+  {
+    size_t testCaseNumber = test.GetTestCaseNumber();
+    this->params[testCaseNumber]->SetMethodName(this->methodName);
+    this->params[testCaseNumber]->SetContainerType(this->containerName);
+    this->params[testCaseNumber]->SetStandardStats(this->standardStats);
+    this->params[testCaseNumber]->SetQueryableStats(this->queryableStats);
+    this->ProcessResults(*this->params[testCaseNumber], this->results[testCaseNumber]);
   }
 
   void LogBaseData(std::string preCompareInfo = "")
   {
-    std::cout << "\nTest Data:" << std::endl
-      << "\tSize: " << this->params.GetContainerSize() << std::endl
-      << "\tIterations: " << this->params.GetIterations() << std::endl
-      << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl
-      << preCompareInfo;
+    // std::cout << "\nTest Data:" << std::endl
+    //   << "\tSize: " << this->params.GetContainerSize() << std::endl
+    //   << "\tIterations: " << this->params.GetIterations() << std::endl
+    //   << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl
+    //   << preCompareInfo;
     TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
   }
 
@@ -120,7 +147,7 @@ public:
     }
   }
 
-  void ProcessResults(const TimeTestParams & params)
+  void ProcessResults(const TimeTestParams & params, const TestCaseResult & results)
   {
     if (params.GetDoLog())
     {
@@ -147,7 +174,7 @@ public:
       //   ------ YYYY-MM-DD-HH-MM-SS
       //   -------- Category_Trigger_Id
 
-      system(("mkdir -p " + logFileDirectory).c_str());
+      auto _ = system(("mkdir -p " + logFileDirectory).c_str());
       std::ofstream fileStream;
       fileStream.open(logFilePath, std::ios_base::app);
 
@@ -174,7 +201,5 @@ public:
     }
   }
 };
-
-std::string BaseTimeTest::suiteStartTime = DateTimeUtils::DateTimeString();
 
 #endif

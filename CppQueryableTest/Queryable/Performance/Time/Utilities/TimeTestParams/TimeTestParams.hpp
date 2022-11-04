@@ -6,8 +6,9 @@
 #include "../TimeStats.hpp"
 #include "TimeTestCategory.hpp"
 #include "TriggerType.hpp"
+#include "../../../../TestCaseParams/TestCaseParams.hpp"
 
-class TimeTestParams
+class TimeTestParams : public TestCaseParams
 {
 private:
   std::string id = "";
