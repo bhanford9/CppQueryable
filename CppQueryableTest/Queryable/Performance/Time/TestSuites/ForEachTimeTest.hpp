@@ -14,22 +14,22 @@ protected:
     this->methodName = "ForEach";
 
     std::vector<TimeTestParams> params;
-    params.emplace_back(TimeTestParams(30, 10, 1)),
-    params.emplace_back(TimeTestParams(30, 10, 10)),
-    params.emplace_back(TimeTestParams(30, 10, 50)),
-    params.emplace_back(TimeTestParams(30, 10, 100)),
-    params.emplace_back(TimeTestParams(30, 30, 1)),
-    params.emplace_back(TimeTestParams(30, 30, 10)),
-    params.emplace_back(TimeTestParams(30, 30, 50)),
-    params.emplace_back(TimeTestParams(30, 30, 100)),
-    params.emplace_back(TimeTestParams(30, 1000, 1)),
-    params.emplace_back(TimeTestParams(30, 1000, 10)),
-    params.emplace_back(TimeTestParams(30, 1000, 50)),
-    params.emplace_back(TimeTestParams(30, 1000, 100)),
-    params.emplace_back(TimeTestParams(30, 10000, 1)),
-    params.emplace_back(TimeTestParams(30, 10000, 10)),
-    params.emplace_back(TimeTestParams(30, 10000, 50)),
-    params.emplace_back(TimeTestParams(30, 10000, 100)),
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 1));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 10));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 50));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 100));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 30, 1));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 30, 10));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 30, 50));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 30, 100));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 1000, 1));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 1000, 10));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 1000, 50));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 1000, 100));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10000, 1));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10000, 10));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10000, 50));
+    this->AddTestParam(std::make_shared<TimeTestParams>(30, 10000, 100));
 
     this->testFxns["DequeNumberTest"] =
       [&](TestCaseParams & p) { this->DequeNumberTest(static_cast<TimeTestParams &>(p)); };

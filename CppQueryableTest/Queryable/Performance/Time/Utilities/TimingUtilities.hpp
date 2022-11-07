@@ -11,7 +11,7 @@
 #include "TimeStats.hpp"
 #include "TimingTypes.hpp"
 
-namespace TimingUtilities
+namespace
 {
   Duration RunAndTime(std::function<void()> action)
   {

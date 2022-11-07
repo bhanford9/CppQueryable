@@ -9,7 +9,7 @@ public:
     TestCaseParams() { }
     virtual ~TestCaseParams() { }
 
-    virtual std::string ToString() { return ""; }
+    virtual std::string ToString() const { return ""; }
 };
 
 #endif

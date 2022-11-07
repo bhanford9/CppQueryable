@@ -1,6 +1,7 @@
 #ifndef CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_UTILITIES_TIMETESTPARAMS_TIMETESTPARAMS_H
 #define CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_UTILITIES_TIMETESTPARAMS_TIMETESTPARAMS_H
 
+#include <sstream>
 #include <string>
 
 #include "../TimeStats.hpp"
@@ -12,10 +13,10 @@ class TimeTestParams : public TestCaseParams
 {
 private:
   std::string id = "";
-  TimeTestCategory category = TimeTestCategory::Other;
+  TimeTestCategory::Type category = TimeTestCategory::Type::Other;
   std::string containerType = "";
   std::string methodName = "";
-  TriggerType triggerType = TriggerType::NotApplicable;
+  TriggerType::Type triggerType = TriggerType::Type::NotApplicable;
 
   size_t containerSize = 0;
   size_t iterations = 0;
@@ -31,10 +32,10 @@ private:
 public:
   TimeTestParams() :
     id(""),
-    category(TimeTestCategory::Other),
+    category(TimeTestCategory::Type::Other),
     containerType(""),
     methodName(""),
-    triggerType(TriggerType::NotApplicable),
+    triggerType(TriggerType::Type::NotApplicable),
     containerSize(0),
     iterations(0),
     load(1),
@@ -68,7 +69,7 @@ public:
     size_t iterations,
     size_t containerSize,
     size_t load = 1,
-    TriggerType triggerType = TriggerType::NotApplicable,
+    TriggerType::Type triggerType = TriggerType::Type::NotApplicable,
     bool doLog = true,
     bool doRecordStats = false) : TimeTestParams()
   {
@@ -81,10 +82,10 @@ public:
   }
 
   std::string GetId() const { return this->id; }
-  TimeTestCategory GetCategory() const { return this->category; }
+  TimeTestCategory::Type GetCategory() const { return this->category; }
   std::string GetContainerType() const { return this->containerType; }
   std::string GetMethodName() const { return this->methodName; }
-  TriggerType GetTriggerType() const { return this->triggerType; }
+  TriggerType::Type GetTriggerType() const { return this->triggerType; }
 
   size_t GetContainerSize() const { return this->containerSize; }
   size_t GetIterations() const { return this->iterations; }
@@ -98,10 +99,10 @@ public:
   std::string GetStatsFilePath() const { return this->statsFilePath; }
 
   void SetId(std::string id) { this->id = id; }
-  void SetCategory(TimeTestCategory category) { this->category = category; }
+  void SetCategory(TimeTestCategory::Type category) { this->category = category; }
   void SetContainerType(std::string containerType) { this->containerType = containerType; }
   void SetMethodName(std::string methodName) { this->methodName = methodName; }
-  void SetTriggerType(TriggerType type) { this->triggerType = type; }
+  void SetTriggerType(TriggerType::Type type) { this->triggerType = type; }
 
   void SetContainerSize(size_t containerSize) { this->containerSize = containerSize; }
   void SetIterations(size_t iterations) { this->iterations = iterations; }
@@ -113,6 +114,34 @@ public:
   void SetDoLog(bool doLog) { this->doLog = doLog; }
   void SetDoRecordStats(bool doRecordStats) { this->doRecordStats = doRecordStats; }
   void SetStatsFilePath(std::string statsFilePath) { this->statsFilePath = statsFilePath; }
+
+  virtual std::string ToString() const override
+  {
+    std::stringstream str;
+    str
+      << "\tid: " << this->id << std::endl
+      << "\tcategory: " << TimeTestCategory::GetCategoryName(this->category) << std::endl
+      << "\tcontainerType: " << this->containerType << std::endl
+      << "\tmethodName: " << this->methodName << std::endl
+      << "\ttriggerType: " << TriggerType::GetTriggerName(this->triggerType) << std::endl
+      << "\tcontainerSize: " << this->containerSize << std::endl
+      << "\titerations: " << this->iterations << std::endl
+      << "\tload: " << this->load << std::endl;
+
+    return str.str();
+  }
+
+  std::ostream & operator<<(std::ostream & str) const
+  {
+    str << this->ToString();
+    return str;
+  }
+
+  friend std::ostream & operator<<(std::ostream & str, const TimeTestParams & params)
+  {
+    str << params.ToString();
+    return str;
+  }
 };
 
 #endif

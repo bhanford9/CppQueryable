@@ -48,13 +48,59 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time
+CMAKE_SOURCE_DIR = /home/bmhanford/Projects/CppQueryable
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time
+CMAKE_BINARY_DIR = /home/bmhanford/Projects/CppQueryable
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -80,14 +126,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time/CMakeFiles /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time/CMakeFiles 0
+	cd /home/bmhanford/Projects/CppQueryable && $(CMAKE_COMMAND) -E cmake_progress_start /home/bmhanford/Projects/CppQueryable/CMakeFiles /home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/Performance/Time/CMakeFiles/progress.marks
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CMakeFiles/Makefile2 CppQueryableTest/Queryable/Performance/Time/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bmhanford/Projects/CppQueryable/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CMakeFiles/Makefile2 CppQueryableTest/Queryable/Performance/Time/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,30 +143,32 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CMakeFiles/Makefile2 CppQueryableTest/Queryable/Performance/Time/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CMakeFiles/Makefile2 CppQueryableTest/Queryable/Performance/Time/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/bmhanford/Projects/CppQueryable && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named TimePerformanceTests
+# Convenience name for target.
+CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/rule:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CMakeFiles/Makefile2 CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/rule
+.PHONY : CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/rule
 
-# Build rule for target.
-TimePerformanceTests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TimePerformanceTests
+# Convenience name for target.
+TimePerformanceTests: CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/rule
+
 .PHONY : TimePerformanceTests
 
 # fast build rule for target.
 TimePerformanceTests/fast:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/build
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build
 .PHONY : TimePerformanceTests/fast
 
 ForEachTimeTest.o: ForEachTimeTest.cpp.o
@@ -129,7 +177,7 @@ ForEachTimeTest.o: ForEachTimeTest.cpp.o
 
 # target to build an object file
 ForEachTimeTest.cpp.o:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.o
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.o
 .PHONY : ForEachTimeTest.cpp.o
 
 ForEachTimeTest.i: ForEachTimeTest.cpp.i
@@ -138,7 +186,7 @@ ForEachTimeTest.i: ForEachTimeTest.cpp.i
 
 # target to preprocess a source file
 ForEachTimeTest.cpp.i:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.i
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.i
 .PHONY : ForEachTimeTest.cpp.i
 
 ForEachTimeTest.s: ForEachTimeTest.cpp.s
@@ -147,35 +195,35 @@ ForEachTimeTest.s: ForEachTimeTest.cpp.s
 
 # target to generate assembly for a file
 ForEachTimeTest.cpp.s:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.s
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.s
 .PHONY : ForEachTimeTest.cpp.s
 
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.o: home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.o
+__/__/CustomTestMain.o: __/__/CustomTestMain.cpp.o
 
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.o
+.PHONY : __/__/CustomTestMain.o
 
 # target to build an object file
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.o:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.o
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.o
+__/__/CustomTestMain.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/__/__/CustomTestMain.cpp.o
+.PHONY : __/__/CustomTestMain.cpp.o
 
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.i: home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.i
+__/__/CustomTestMain.i: __/__/CustomTestMain.cpp.i
 
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.i
+.PHONY : __/__/CustomTestMain.i
 
 # target to preprocess a source file
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.i:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.i
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.i
+__/__/CustomTestMain.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/__/__/CustomTestMain.cpp.i
+.PHONY : __/__/CustomTestMain.cpp.i
 
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.s: home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.s
+__/__/CustomTestMain.s: __/__/CustomTestMain.cpp.s
 
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.s
+.PHONY : __/__/CustomTestMain.s
 
 # target to generate assembly for a file
-home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.s:
-	$(MAKE) -f CMakeFiles/TimePerformanceTests.dir/build.make CMakeFiles/TimePerformanceTests.dir/home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.s
-.PHONY : home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.cpp.s
+__/__/CustomTestMain.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/__/__/CustomTestMain.cpp.s
+.PHONY : __/__/CustomTestMain.cpp.s
 
 # Help Target
 help:
@@ -183,15 +231,19 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/strip"
+	@echo "... install/local"
+	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... TimePerformanceTests"
 	@echo "... ForEachTimeTest.o"
 	@echo "... ForEachTimeTest.i"
 	@echo "... ForEachTimeTest.s"
-	@echo "... home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.o"
-	@echo "... home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.i"
-	@echo "... home/bmhanford/Projects/CppQueryable/CppQueryableTest/Queryable/CustomTestMain.s"
+	@echo "... __/__/CustomTestMain.o"
+	@echo "... __/__/CustomTestMain.i"
+	@echo "... __/__/CustomTestMain.s"
 .PHONY : help
 
 
@@ -203,6 +255,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/bmhanford/Projects/CppQueryable && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -35,7 +35,6 @@ public:
   std::string currentPath = __FILE__;
   TimeStats standardStats;
   TimeStats queryableStats;
-  static std::string suiteStartTime;
 
   BaseTimeTest() :
     methodName(""),
@@ -45,7 +44,7 @@ public:
   {
   }
 
-  std::string GetContainerNameFromTestName(std::string testName)
+  std::string GetContainerNameFromTestName(const std::string & testName)
   {
     if (testName.compare(0, this->dequeName.length(), this->dequeName) == 0)
     {
@@ -82,15 +81,20 @@ public:
 
   virtual void SetupTestSuite() override
   {
-    std::vector<std::shared_ptr<TestCaseParams>> testCaseParams;
-    for (const auto & param : this->params)
-    {
-      testCaseParams.emplace_back(FutureStd::reinterpret_pointer_cast<TestCaseParams>(param));
-    }
-
     size_t i = 0;
     for (const auto & kvp : this->testFxns)
     {
+      std::vector<std::shared_ptr<TestCaseParams>> testCaseParams;
+
+      for (auto param : this->params)
+      {
+        TimeTestParams copy = *param;
+        copy.SetMethodName(kvp.first);
+        testCaseParams.emplace_back(
+          FutureStd::reinterpret_pointer_cast<TestCaseParams>(
+            std::make_shared<TimeTestParams>(copy)));
+      }
+
       this->tests.emplace_back(TestCase(i++, kvp.first, kvp.second, testCaseParams));
     }
   }
@@ -104,36 +108,31 @@ public:
     return this->methodName;
   }
 
-  void SetupTest() override
+  void SetupTest(TestCase & test) override
   {
-    // const testing::TestInfo* const testInfo =
-    //   testing::UnitTest::GetInstance()->current_test_info();
-
-    // printf("We are in test %s of test suite %s.\n",
-    //   testInfo->name(),
-    //   testInfo->test_suite_name());
-
-    // this->containerName = this->GetContainerNameFromTestName();
+    this->containerName = this->GetContainerNameFromTestName(test.GetName());
+    for (auto & param : test.GetParams())
+    {
+      (static_cast<TimeTestParams *>(param.get()))->SetMethodName(this->methodName);
+      (static_cast<TimeTestParams *>(param.get()))->SetContainerType(containerName);
+    }
   }
 
-  void TeardownTest(const TestCase & test) override
+  void TeardownTest(TestCase & test) override
   {
-    size_t testCaseNumber = test.GetTestCaseNumber();
-    this->params[testCaseNumber]->SetMethodName(this->methodName);
-    this->params[testCaseNumber]->SetContainerType(this->containerName);
-    this->params[testCaseNumber]->SetStandardStats(this->standardStats);
-    this->params[testCaseNumber]->SetQueryableStats(this->queryableStats);
-    this->ProcessResults(*this->params[testCaseNumber], this->results[testCaseNumber]);
+    for (auto & param : test.GetParams())
+    {
+      TimeTestParams * params = static_cast<TimeTestParams *>(param.get());
+      params->SetStandardStats(params->GetStandardStats());
+      params->SetQueryableStats(params->GetQueryableStats());
+      this->ProcessResults(*params, this->results[test.GetTestCaseNumber()]);
+    }
   }
 
-  void LogBaseData(std::string preCompareInfo = "")
+  void LogBaseData(const TimeTestParams & params, const std::string & preCompareInfo = "")
   {
-    // std::cout << "\nTest Data:" << std::endl
-    //   << "\tSize: " << this->params.GetContainerSize() << std::endl
-    //   << "\tIterations: " << this->params.GetIterations() << std::endl
-    //   << "\tLoad Magnitude: " << this->params.GetLoad() << std::endl
-    //   << preCompareInfo;
-    TimingUtilities::CompareAndLog(this->queryableStats, this->standardStats);
+    std::cout << "\nTest Data:" << std::endl << params << std::endl;
+    CompareAndLog(params.GetQueryableStats(), params.GetStandardStats());
   }
 
   template<typename T = size_t>
@@ -152,7 +151,7 @@ public:
     if (params.GetDoLog())
     {
 
-      std::cout << "suite start time: " << BaseTimeTest::suiteStartTime << std::endl;
+      std::cout << "suite start time: " << this->suiteStartTime << std::endl;
 
       int indexOfLastSlash = currentPath.find_last_of('/');
       std::string currentDir = currentPath.substr(0, indexOfLastSlash);
@@ -161,7 +160,7 @@ public:
         currentDir + "/Logs/" +
         params.GetContainerType() + "/" +
         params.GetMethodName() + "/" +
-        BaseTimeTest::suiteStartTime + "/";
+        this->suiteStartTime + "/";
       std::string logFilePath =
         logFileDirectory +
         GetCategoryName(params.GetCategory()) + "Category_" + GetTriggerName(params.GetTriggerType()) + "Trigger.qbl.txt";

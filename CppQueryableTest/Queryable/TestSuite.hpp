@@ -1,8 +1,11 @@
 #ifndef CPPQUERYABLETEST_QUERYABLE_TESTSUITE_H
 #define CPPQUERYABLETEST_QUERYABLE_TESTSUITE_H
 
+#include <ctime>
 #include <functional>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -15,6 +18,7 @@ protected:
   std::map<std::string, std::function<void(TestCaseParams &)>> testFxns;
   std::vector<TestCase> tests;
   std::vector<TestCaseResult> results;
+  std::string suiteStartTime;
 
 public:
  
@@ -24,22 +28,29 @@ public:
 
   virtual void SetupTestSuite() {}
   virtual void TeardownTestSuite() {}
-  virtual void SetupTest() {}
-  virtual void TeardownTest(const TestCase & test) {}
+  virtual void SetupTest(TestCase & test) {}
+  virtual void TeardownTest(TestCase & test) {}
 
   void RunAll()
-  {    
+  {
+    
+    auto time = std::time(nullptr);
+    auto localTime = *std::localtime(&time);
+    std::stringstream timeStream;
+    timeStream << std::put_time(&localTime, "%Y-%m-%d-%H-%M-%S");
+    this->suiteStartTime = timeStream.str();
+
     std::cout << "Starting Test Suite: " << this->GetName() << std::endl;
     this->SetupTestSuite();
 
     size_t testsRan = 0;
     size_t testsPassing = 0;
     
-    for (const TestCase & test : tests)
+    for (TestCase & test : tests)
     {
       std::cout << "Starting Test: " << test.GetName() << "..." << std::endl;
       
-      this->SetupTest();      
+      this->SetupTest(test);      
       
       TestCaseResult result = test();
       

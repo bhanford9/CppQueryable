@@ -115,7 +115,7 @@ public:
         size_t testsPassed = 0;
         TestCaseResult result(this->testCaseNumber, this->name);
 
-        for (const std::shared_ptr<TestCaseParams> & p : params)
+        for (const std::shared_ptr<TestCaseParams> & p : this->params)
         {
             try
             {

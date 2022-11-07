@@ -19,11 +19,11 @@
 #include "TestSuites/ForEachTimeTest.hpp"
 
 using namespace QueryBuilder;
-using namespace TimingUtilities;
+// using namespace TimingUtilities;
 
 void ForEachTimeTest::DequeNumberTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::BuiltIn);
+  params.SetCategory(TimeTestCategory::Type::BuiltIn);
 
   std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::deque<size_t> data;
@@ -34,23 +34,22 @@ void ForEachTimeTest::DequeNumberTest(TimeTestParams & params)
 
   QueryableDeque<size_t> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (size_t value : data) { this->ApplyLoad(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::ListNumberTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::BuiltIn);
+  params.SetCategory(TimeTestCategory::Type::BuiltIn);
 
   std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::list<size_t> data;
@@ -61,23 +60,22 @@ void ForEachTimeTest::ListNumberTest(TimeTestParams & params)
 
   QueryableList<size_t> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (size_t value : data) { this->ApplyLoad(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::MultiSetNumberTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::BuiltIn);
+  params.SetCategory(TimeTestCategory::Type::BuiltIn);
 
   std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::multiset<size_t> data;
@@ -88,23 +86,22 @@ void ForEachTimeTest::MultiSetNumberTest(TimeTestParams & params)
 
   QueryableMultiSet<size_t> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (size_t value : data) { this->ApplyLoad(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::SetNumberTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::BuiltIn);
+  params.SetCategory(TimeTestCategory::Type::BuiltIn);
 
   std::set<size_t> data;
   for (size_t i = 0; i < params.GetContainerSize(); i++)
@@ -114,23 +111,22 @@ void ForEachTimeTest::SetNumberTest(TimeTestParams & params)
 
   QueryableSet<size_t> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (size_t value : data) { this->ApplyLoad(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::VectorNumberTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::BuiltIn);
+  params.SetCategory(TimeTestCategory::Type::BuiltIn);
 
   std::vector<size_t> dataSample = { 7, 4, 7, 4, 3, 76, 8, 45, 76, 34, 1, 867, 12 };
   std::vector<size_t> data;
@@ -141,23 +137,22 @@ void ForEachTimeTest::VectorNumberTest(TimeTestParams & params)
 
   QueryableVector<size_t> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](size_t value) { this->ApplyLoad(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (size_t value : data) { this->ApplyLoad(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::DequePersonTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::Class);
+  params.SetCategory(TimeTestCategory::Type::Class);
 
   std::vector<Person> dataSample =
   {
@@ -177,23 +172,22 @@ void ForEachTimeTest::DequePersonTest(TimeTestParams & params)
 
   QueryableDeque<Person> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (Person value : data) { this->ApplyLoad<Person>(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::ListPersonTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::Class);
+  params.SetCategory(TimeTestCategory::Type::Class);
 
   std::vector<Person> dataSample =
   {
@@ -213,23 +207,22 @@ void ForEachTimeTest::ListPersonTest(TimeTestParams & params)
 
   QueryableList<Person> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (Person value : data) { this->ApplyLoad<Person>(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::MultiSetPersonTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::Class);
+  params.SetCategory(TimeTestCategory::Type::Class);
 
   std::vector<Person> dataSample =
   {
@@ -249,23 +242,22 @@ void ForEachTimeTest::MultiSetPersonTest(TimeTestParams & params)
 
   QueryableMultiSet<Person> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (Person value : data) { this->ApplyLoad<Person>(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::SetPersonTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::Class);
+  params.SetCategory(TimeTestCategory::Type::Class);
 
   std::vector<Person> dataSample =
   {
@@ -285,23 +277,22 @@ void ForEachTimeTest::SetPersonTest(TimeTestParams & params)
 
   QueryableSet<Person> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (Person value : data) { this->ApplyLoad<Person>(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
 
 void ForEachTimeTest::VectorPersonTest(TimeTestParams & params)
 {
-  params.SetCategory(TimeTestCategory::Class);
+  params.SetCategory(TimeTestCategory::Type::Class);
 
   std::vector<Person> dataSample =
   {
@@ -321,16 +312,15 @@ void ForEachTimeTest::VectorPersonTest(TimeTestParams & params)
 
   QueryableVector<Person> local = BuildQueryable(data);
 
-  this->queryableStats = RunTimeAndLog(
+  params.SetQueryableStats(RunTimeAndLog(
     [&]() { local.ForEach([&](Person value) { this->ApplyLoad<Person>(params.GetLoad(), value); }); },
     params.GetIterations(),
-    this->queryableName
-  );
+    this->queryableName));
 
-  this->standardStats = RunTimeAndLog(
+  params.SetStandardStats(RunTimeAndLog(
     [&]() { for (Person value : data) { this->ApplyLoad<Person>(params.GetLoad(), value); }},
     params.GetIterations(),
-    this->standardName);
+    this->standardName));
 
-  this->LogBaseData();
+  this->LogBaseData(params);
 }
