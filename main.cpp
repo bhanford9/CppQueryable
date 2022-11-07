@@ -12,19 +12,6 @@
 
 using namespace QueryBuilder;
 
-class Test
-{
-private:
-    std::pair<const int, std::string> * kvp;
-
-public:
-  Test() : kvp(nullptr) { }
-
-  void Set(std::vector<std::pair<const int, std::string>> vector)
-  {
-    kvp = &(*vector.begin());
-  }
-};
 
 int main()
 {

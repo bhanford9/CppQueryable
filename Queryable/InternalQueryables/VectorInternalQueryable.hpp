@@ -31,19 +31,6 @@ public:
     {
     }
 
-    // explicit VectorInternalQueryable(TAllocator allocator = {}) :
-    //   InternalQueryable<TObj, std::vector, TObj, TAllocator>(QueryableType::Vector)
-    // {
-    //   std::vector<TObj> localVector(allocator);
-    //   this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>(localVector);
-    // }
-
-    // explicit VectorInternalQueryable(const std::vector<TObj, TAllocator> & vector)
-    // {
-    //   this->type = QueryableType::Vector;
-    //   this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>(vector);
-    // }
-
     explicit VectorInternalQueryable(
         const InternalQueryable<TObj, std::vector, TObj, TAllocator> & other)
         : InternalQueryable<TObj, std::vector, TObj, TAllocator>(other)
@@ -58,12 +45,6 @@ public:
         : InternalQueryable<TObj, std::vector, TObj, TAllocator>(std::move(queryableData), type)
     {
     }
-
-    // VectorInternalQueryable(const QueryableIterator<TObj> & first, const QueryableIterator<TObj> & last, TAllocator allocator = {})
-    // {
-    //   this->items = std::make_shared<QueryableVectorData<TObj, TAllocator>>(std::vector<TObj, TAllocator>(first, last, allocator));
-    //   this->type = QueryableType::Vector;
-    // }
 
     VectorInternalQueryable & operator=(const VectorInternalQueryable & other)
     {

@@ -177,16 +177,6 @@ public:
         return this->items->rend();
     }
 
-    std::pair<QueryableIterator<TIterating>, QueryableIterator<TIterating>> ForwardIterators()
-    {
-        return { this->begin(), this->end() };
-    }
-
-    std::pair<QueryableIterator<TIterating>, QueryableIterator<TIterating>> ReverseIterators()
-    {
-        return { this->rbegin(), this->rend() };
-    }
-
     template <typename TAllocator = std::allocator<TIterating>>
     std::deque<TIterating, TAllocator> ToDeque(TAllocator allocator = { }) const
     {
@@ -361,11 +351,11 @@ public:
         return this->items.get()->Count();
     }
 
-    size_t CountIf(std::function<bool(TIterating)> condition) const
+    size_t CountIf(const std::function<bool(const TIterating &)> & condition) const
     {
         size_t count = 0;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (condition(item))
             {
@@ -378,7 +368,7 @@ public:
 
     void ForEach(std::function<void(const TIterating &)> action) const
     {
-        for (const auto & item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             action(item);
         }

@@ -199,7 +199,7 @@ public:
         return this->queryable->Count();
     }
 
-    size_t CountIf(std::function<bool(TIterating)> condition) const
+    size_t CountIf(const std::function<bool(const TIterating &)> & condition) const
     {
         return this->queryable->CountIf(condition);
     }

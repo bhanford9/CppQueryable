@@ -32,14 +32,29 @@ public:
         // std::cout << "QueryableIterator constructor 0" << std::endl;
     }
 
-    QueryableIterator(std::shared_ptr<IQueryableData<T>> queryableData, const IteratorType type)
+    QueryableIterator(const std::shared_ptr<IQueryableData<T>> & queryableData, const IteratorType type)
         : queryableData(queryableData), index(0), type(type)
     {
         // std::cout << "QueryableIterator constructor 1" << std::endl;
     }
 
+    QueryableIterator(std::shared_ptr<IQueryableData<T>> && queryableData, const IteratorType type)
+        : queryableData(std::move(queryableData)), index(0), type(type)
+    {
+        // std::cout << "QueryableIterator constructor 1" << std::endl;
+    }
+
     QueryableIterator(
-        std::shared_ptr<IQueryableData<T>> queryableData,
+        const std::shared_ptr<IQueryableData<T>> & queryableData,
+        const size_t startingIndex,
+        const IteratorType type)
+        : queryableData(queryableData), index(startingIndex), type(type)
+    {
+        // std::cout << "QueryableIterator constructor 2, starting index: " << startingIndex << std::endl;
+    }
+
+    QueryableIterator(
+        std::shared_ptr<IQueryableData<T>> && queryableData,
         const size_t startingIndex,
         const IteratorType type)
         : queryableData(std::move(queryableData)), index(startingIndex), type(type)
@@ -54,7 +69,7 @@ public:
     }
 
     QueryableIterator(QueryableIterator<T> && other) noexcept
-        : queryableData(other.queryableData->Clone()), index(other.index), type(other.type)
+        : queryableData(std::move(other.queryableData)), index(other.index), type(other.type)
     {
         // std::cout << "QueryableIterator constructor 4" << std::endl;
         // std::cout << "Iterator move constructor" << std::endl;
