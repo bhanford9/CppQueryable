@@ -8,11 +8,15 @@ using namespace std::placeholders;
 
 class ForEachTimeTest final : public BaseTimeTest
 {
+public:
+  ForEachTimeTest()
+  {
+    this->methodName = "ForEach";
+  }
+
 protected:
   void SetupTestSuite() override
   {
-    this->methodName = "ForEach";
-
     std::vector<TimeTestParams> params;
     this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 1));
     this->AddTestParam(std::make_shared<TimeTestParams>(30, 10, 10));

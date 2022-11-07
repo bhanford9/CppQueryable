@@ -171,6 +171,33 @@ TimePerformanceTests/fast:
 	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build
 .PHONY : TimePerformanceTests/fast
 
+AnyTimeTest.o: AnyTimeTest.cpp.o
+
+.PHONY : AnyTimeTest.o
+
+# target to build an object file
+AnyTimeTest.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AnyTimeTest.cpp.o
+.PHONY : AnyTimeTest.cpp.o
+
+AnyTimeTest.i: AnyTimeTest.cpp.i
+
+.PHONY : AnyTimeTest.i
+
+# target to preprocess a source file
+AnyTimeTest.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AnyTimeTest.cpp.i
+.PHONY : AnyTimeTest.cpp.i
+
+AnyTimeTest.s: AnyTimeTest.cpp.s
+
+.PHONY : AnyTimeTest.s
+
+# target to generate assembly for a file
+AnyTimeTest.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AnyTimeTest.cpp.s
+.PHONY : AnyTimeTest.cpp.s
+
 ForEachTimeTest.o: ForEachTimeTest.cpp.o
 
 .PHONY : ForEachTimeTest.o
@@ -197,6 +224,33 @@ ForEachTimeTest.s: ForEachTimeTest.cpp.s
 ForEachTimeTest.cpp.s:
 	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/ForEachTimeTest.cpp.s
 .PHONY : ForEachTimeTest.cpp.s
+
+WhereTimeTest.o: WhereTimeTest.cpp.o
+
+.PHONY : WhereTimeTest.o
+
+# target to build an object file
+WhereTimeTest.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/WhereTimeTest.cpp.o
+.PHONY : WhereTimeTest.cpp.o
+
+WhereTimeTest.i: WhereTimeTest.cpp.i
+
+.PHONY : WhereTimeTest.i
+
+# target to preprocess a source file
+WhereTimeTest.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/WhereTimeTest.cpp.i
+.PHONY : WhereTimeTest.cpp.i
+
+WhereTimeTest.s: WhereTimeTest.cpp.s
+
+.PHONY : WhereTimeTest.s
+
+# target to generate assembly for a file
+WhereTimeTest.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/WhereTimeTest.cpp.s
+.PHONY : WhereTimeTest.cpp.s
 
 __/__/CustomTestMain.o: __/__/CustomTestMain.cpp.o
 
@@ -238,9 +292,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... TimePerformanceTests"
+	@echo "... AnyTimeTest.o"
+	@echo "... AnyTimeTest.i"
+	@echo "... AnyTimeTest.s"
 	@echo "... ForEachTimeTest.o"
 	@echo "... ForEachTimeTest.i"
 	@echo "... ForEachTimeTest.s"
+	@echo "... WhereTimeTest.o"
+	@echo "... WhereTimeTest.i"
+	@echo "... WhereTimeTest.s"
 	@echo "... __/__/CustomTestMain.o"
 	@echo "... __/__/CustomTestMain.i"
 	@echo "... __/__/CustomTestMain.s"

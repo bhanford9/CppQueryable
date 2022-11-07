@@ -5,6 +5,7 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -50,7 +51,7 @@ public:
     {
       std::cout << "Starting Test: " << test.GetName() << "..." << std::endl;
       
-      this->SetupTest(test);      
+      this->SetupTest(test);
       
       TestCaseResult result = test();
       
@@ -64,7 +65,7 @@ public:
     }
 
     std::cout << std::endl << "Test Suite Complete: " << this->GetName()
-      << " (Passing " << testsPassing << " / " << this->GetTestCount() << ")"
+      << " (Passing " << testsPassing << " / " << testsRan << ")"
       << std::endl;
     
     this->TeardownTestSuite();

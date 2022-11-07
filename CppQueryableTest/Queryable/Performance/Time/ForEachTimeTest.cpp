@@ -19,7 +19,6 @@
 #include "TestSuites/ForEachTimeTest.hpp"
 
 using namespace QueryBuilder;
-// using namespace TimingUtilities;
 
 void ForEachTimeTest::DequeNumberTest(TimeTestParams & params)
 {
