@@ -104,8 +104,8 @@ public:
     template <typename TKey, typename TValue = TStoring, typename TLessThan = std::less<TKey>,
               typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
     std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
-        std::function<TKey(TIterating)> getKey,
-        std::function<TValue(TIterating)> getValue,
+        const std::function<TKey(const TIterating &)> & getKey,
+        const std::function<TValue(const TIterating &)> & getValue,
         TLessThan keyCompare = {},
         TAllocator pairAllocator = {}) const
     {
@@ -157,12 +157,12 @@ public:
         return this->queryable->Aggregate(accumulate, finalizer, seed);
     }
 
-    bool All(std::function<bool(TIterating)> condition) const
+    bool All(const std::function<bool(const TIterating &)> & condition) const
     {
         return this->queryable->All(condition);
     }
 
-    bool Any(std::function<bool(TIterating)> condition) const
+    bool Any(const std::function<bool(const TIterating &)> & condition) const
     {
         return this->queryable->Any(condition);
     }
@@ -172,19 +172,16 @@ public:
         return this->queryable->At(index);
     }
 
-    double Average(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value)
-        {
-            return static_cast<double>(value);
-        }) const
+    double Average(const std::function<double(const TIterating &)> & retrieveValue
+        = [](const TIterating & value) { return static_cast<double>(value); }) const
     {
         return this->queryable->Average(retrieveValue);
     }
 
     double Average(
-        std::function<double(double, size_t)> divisor,
-        std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; })
-    const
+        const std::function<double(double, size_t)> & divisor,
+        const std::function<double(const TIterating &)> & retrieveValue
+            = [](const TIterating & value) { return value; }) const
     {
         return this->queryable->Average(divisor, retrieveValue);
     }
@@ -242,17 +239,17 @@ public:
         return *this;
     }
 
-    TIterating First(std::function<bool(TIterating)> condition)
+    TIterating & First(const std::function<bool(TIterating &)> & condition)
     {
         return this->queryable->First(condition);
     }
 
-    TIterating First()
+    TIterating & First()
     {
         return this->queryable->First();
     }
 
-    void ForEach(std::function<void(TIterating)> action) const
+    void ForEach(const std::function<void(const TIterating &)> & action) const
     {
         this->queryable->ForEach(action);
     }
@@ -300,24 +297,24 @@ public:
 
     // Join
 
-    TIterating Last(std::function<bool(TIterating)> condition)
+    TIterating & Last(const std::function<bool(TIterating &)> & condition)
     {
         return this->queryable->Last(condition);
     }
 
-    TIterating Last()
+    TIterating & Last()
     {
         return this->queryable->Last();
     }
 
     template <typename T>
-    TIterating MaxItem(std::function<T(TIterating)> retrieveValue) const
+    TIterating MaxItem(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         return this->queryable->MaxItem(retrieveValue);
     }
 
     template <typename T>
-    T Max(std::function<T(TIterating)> retrieveValue) const
+    T Max(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         return this->queryable->Max(retrieveValue);
     }
@@ -328,7 +325,7 @@ public:
     }
 
     template <typename T>
-    T Max(std::function<T(TIterating)> retrieveValue, T startSeed) const
+    T Max(const std::function<T(const TIterating &)> & retrieveValue, T startSeed) const
     {
         return this->queryable->Max(retrieveValue, startSeed);
     }
@@ -339,13 +336,13 @@ public:
     }
 
     template <typename T>
-    TIterating MinItem(std::function<T(TIterating)> retrieveValue) const
+    TIterating MinItem(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         return this->queryable->MinItem(retrieveValue);
     }
 
     template <typename T>
-    T Min(std::function<T(TIterating)> retrieveValue) const
+    T Min(const std::function<T( const TIterating &)> & retrieveValue) const
     {
         return this->queryable->Min(retrieveValue);
     }
@@ -356,7 +353,7 @@ public:
     }
 
     template <typename T>
-    T Min(std::function<T(TIterating)> retrieveValue, T startSeed) const
+    T Min(const std::function<T(const TIterating &)> & retrieveValue, T startSeed) const
     {
         return this->queryable->Min(retrieveValue, startSeed);
     }
@@ -367,16 +364,14 @@ public:
     }
 
     template <typename T>
-    T Range(std::function<T(TIterating)> retrieveValue) const
+    T Range(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         return this->queryable->Range(retrieveValue);
     }
 
     double Range(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value)
-        {
-            return static_cast<double>(value);
-        }) const
+        const std::function<double(const TIterating &)> & retrieveValue = 
+            [](TIterating value) { return static_cast<double>(value); }) const
     {
         return this->queryable->Range(retrieveValue);
     }
@@ -528,11 +523,8 @@ public:
         this->queryable->Sort(lessThan);
     }
 
-    double Sum(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value) -> double
-        {
-            return static_cast<double>(value);
-        }) const
+    double Sum(const std::function<double(const TIterating &)> & retrieveValue
+        = [](const TIterating & value) { return static_cast<double>(value); }) const
     {
         return this->queryable->Sum(retrieveValue);
     }

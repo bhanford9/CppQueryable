@@ -182,7 +182,7 @@ public:
     {
         std::deque<TIterating, TAllocator> newItems(allocator);
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             newItems.push_back(item);
         }
@@ -195,7 +195,7 @@ public:
     {
         std::list<TIterating, TAllocator> newItems(allocator);
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             newItems.push_back(item);
         }
@@ -206,14 +206,14 @@ public:
     template <typename TKey, typename TValue = TStoring, typename TLessThan = std::less<TKey>,
               typename TAllocator = std::allocator<std::pair<const TKey, TValue>>>
     std::map<TKey, TValue, TLessThan, TAllocator> ToMap(
-        std::function<TKey(TIterating)> getKey,
-        std::function<TValue(TIterating)> getValue,
+        const std::function<TKey(const TIterating &)> & getKey,
+        const std::function<TValue(const TIterating &)> & getValue,
         TLessThan keyCompare = { },
         TAllocator pairAllocator = { }) const
     {
         std::map<TKey, TValue, TLessThan, TAllocator> newItems(keyCompare, pairAllocator);
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             newItems[getKey(item)] = getValue(item);
         }
@@ -245,7 +245,7 @@ public:
     {
         std::set<TIterating, TLessThan, TAllocator> newItems(lessThan, allocator);
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             newItems.insert(item);
         }
@@ -259,7 +259,7 @@ public:
         // probably be better to use the constructor that takes the iterators as parameters
         std::vector<TIterating, TAllocator> newItems(allocator);
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             newItems.push_back(item);
         }
@@ -366,7 +366,7 @@ public:
         return count;
     }
 
-    void ForEach(std::function<void(const TIterating &)> action) const
+    void ForEach(const std::function<void(const TIterating &)> & action) const
     {
         for (const TIterating & item : *this->items.get())
         {
@@ -376,9 +376,9 @@ public:
 
     virtual void Where(std::function<bool(const TIterating &)> condition) = 0;
 
-    TIterating First(std::function<bool(TIterating)> condition)
+    TIterating & First(const std::function<bool(TIterating &)> & condition)
     {
-        for (TIterating item : *this->items.get())
+        for (TIterating & item : *this->items.get())
         {
             if (condition(item))
             {
@@ -389,7 +389,7 @@ public:
         throw std::runtime_error("No item fitting the condition was found.");
     }
 
-    TIterating First()
+    TIterating & First()
     {
         if (!this->IsEmpty())
         {
@@ -399,7 +399,7 @@ public:
         throw std::runtime_error("Cannot get first item of empty collection.");
     }
 
-    TIterating Last(std::function<bool(TIterating)> condition)
+    TIterating & Last(const std::function<bool(TIterating &)> & condition)
     {
         for (auto it = this->items.get()->rbegin(); it != this->items.get()->rend(); ++it)
         {
@@ -412,7 +412,7 @@ public:
         throw std::runtime_error("No item fitting the condition was found.");
     }
 
-    TIterating Last()
+    TIterating & Last()
     {
         if (!this->IsEmpty())
         {
@@ -560,15 +560,12 @@ public:
     //   return this;
     // }
 
-    double Sum(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value)
-        {
-            return static_cast<double>(value);
-        }) const
+    double Sum(const std::function<double(const TIterating &)> & retrieveValue
+        = [](const TIterating & value) { return static_cast<double>(value); }) const
     {
         double sum = 0;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             sum += retrieveValue(item);
         }
@@ -588,16 +585,13 @@ public:
     //  return sum;
     //}
 
-    double Average(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value)
-        {
-            return static_cast<double>(value);
-        }) const
+    double Average(const std::function<double(const TIterating &)> & retrieveValue
+        = [](const TIterating & value) { return static_cast<double>(value); }) const
     {
         double sum = 0;
         size_t count = 0;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             sum += retrieveValue(item);
             count++;
@@ -608,13 +602,13 @@ public:
 
     double Average(
         const std::function<double(double, size_t)> & divisor,
-        std::function<double(TIterating)> retrieveValue = [](TIterating value) { return value; })
-    const
+        const std::function<double(const TIterating &)> & retrieveValue
+            = [](const TIterating & value) { return value; }) const
     {
         double sum = 0;
         size_t count = 0;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             sum += retrieveValue(item);
             count++;
@@ -624,7 +618,7 @@ public:
     }
 
     template <typename T>
-    TIterating MaxItem(std::function<T(TIterating)> retrieveValue) const
+    TIterating MaxItem(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -632,7 +626,7 @@ public:
         T maxValue;
         TIterating maxItem;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             T newValue = retrieveValue(item);
 
@@ -653,7 +647,7 @@ public:
     }
 
     template <typename T>
-    T Max(std::function<T(TIterating)> retrieveValue) const
+    T Max(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
         return retrieveValue(this->MaxItem(retrieveValue));
@@ -666,7 +660,7 @@ public:
         bool isFirst = true;
         TIterating maxItem;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (isFirst)
             {
@@ -683,13 +677,13 @@ public:
     }
 
     template <typename T>
-    T Max(std::function<T(TIterating)> retrieveValue, T startSeed) const
+    T Max(const std::function<T(const TIterating &)> & retrieveValue, T startSeed) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
         T max = startSeed;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             T newValue = retrieveValue(item);
 
@@ -708,7 +702,7 @@ public:
 
         TIterating max = startSeed;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (max < item)
             {
@@ -720,7 +714,7 @@ public:
     }
 
     template <typename T>
-    TIterating MinItem(std::function<T(TIterating)> retrieveValue) const
+    TIterating MinItem(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
@@ -728,7 +722,7 @@ public:
         T minValue = T();
         TIterating minItem;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             T newValue = retrieveValue(item);
 
@@ -749,7 +743,7 @@ public:
     }
 
     template <typename T>
-    T Min(std::function<T(TIterating)> retrieveValue) const
+    T Min(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
         return retrieveValue(this->MinItem(retrieveValue));
@@ -762,7 +756,7 @@ public:
         bool isFirst = true;
         TIterating minItem;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (isFirst)
             {
@@ -779,13 +773,13 @@ public:
     }
 
     template <typename T>
-    T Min(std::function<T(TIterating)> retrieveValue, T startSeed) const
+    T Min(const std::function<T(const TIterating &)> & retrieveValue, T startSeed) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
 
         T min = startSeed;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             T newValue = retrieveValue(item);
 
@@ -804,7 +798,7 @@ public:
 
         TIterating min = startSeed;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (item < min)
             {
@@ -816,7 +810,7 @@ public:
     }
 
     template <typename T>
-    T Range(std::function<T(TIterating)> retrieveValue) const
+    T Range(const std::function<T(const TIterating &)> & retrieveValue) const
     {
         static_assert(is_less_comparable<T>::value, "Type must be 'less than' comparable");
         static_assert(is_subtractable<T>::value, "Type must overload subtraction operator");
@@ -825,7 +819,7 @@ public:
         T max;
         T min;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             T value = retrieveValue(item);
 
@@ -851,16 +845,14 @@ public:
     }
 
     double Range(
-        std::function<double(TIterating)> retrieveValue = [](TIterating value)
-        {
-            return static_cast<double>(value);
-        }) const
+        const std::function<double(const TIterating &)> & retrieveValue = 
+            [](TIterating value) { return static_cast<double>(value); }) const
     {
         bool isFirst = true;
         double max = 0.0;
         double min = 0.0;
 
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             const double value = retrieveValue(item);
 
@@ -886,23 +878,9 @@ public:
     }
 
     // TODO : templates are supposed to be faster than std::function. will require static asserts though
-    bool Any(std::function<bool(TIterating)> condition) const
+    bool All(const std::function<bool(const TIterating &)> & condition) const
     {
-        for (auto item = this->items->begin(); item != this->items->end(); ++item)
-        {
-            if (condition(*item))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // TODO : templates are supposed to be faster than std::function. will require static asserts though
-    bool All(std::function<bool(TIterating)> condition) const
-    {
-        for (TIterating item : *this->items.get())
+        for (const TIterating & item : *this->items.get())
         {
             if (!condition(item))
             {
@@ -911,6 +889,20 @@ public:
         }
 
         return true;
+    }
+
+    // TODO : templates are supposed to be faster than std::function. will require static asserts though
+    bool Any(const std::function<bool(const TIterating &)> & condition) const
+    {
+        for (const TIterating & item : *this->items.get())
+        {
+            if (condition(item))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     template <typename TDestination, typename TAllocatorDestination = std::allocator<TDestination>>
