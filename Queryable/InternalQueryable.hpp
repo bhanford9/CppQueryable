@@ -1079,19 +1079,33 @@ public:
     }
 
     // TODO: changing std::function to a templated member is supposed to be faster
-    // TODO: not sure I like this implementation:
-    //   - No guarantee that we can create a T (i.e., default constructor)
-    template <typename T = TIterating>
-    T Aggregate(const std::function<T(T, TIterating)> & accumulate, T * seed = nullptr)
+    TIterating Aggregate(const std::function<TIterating(const TIterating &, const TIterating &)> & accumulate)
     {
-        T aggregatedValue;
+        bool isFirst = true;
+        TIterating aggregatedValue;
 
-        if (seed != nullptr)
+        for (const TIterating & item : *this->items.get())
         {
-            aggregatedValue = *seed;
+            if (isFirst)
+            {
+                aggregatedValue = item;
+            }
+            else
+            {
+                aggregatedValue = accumulate(aggregatedValue, item);
+            }            
         }
 
-        for (TIterating item : *this->items.get())
+        return aggregatedValue;
+    }
+
+    // TODO: changing std::function to a templated member is supposed to be faster
+    template <typename T = TIterating>
+    T Aggregate(const T & seed, const std::function<T(const T &, const TIterating &)> & accumulate)
+    {
+        T aggregatedValue = seed;
+
+        for (const TIterating & item : *this->items.get())
         {
             aggregatedValue = accumulate(aggregatedValue, item);
         }
@@ -1102,11 +1116,11 @@ public:
     // TODO: changing std::function to a templated member is supposed to be faster
     template <typename TFinalized, typename T = TIterating>
     TFinalized Aggregate(
-        const std::function<T(T, TIterating)> & accumulate,
-        const std::function<TFinalized(T)> & finalizer,
-        T * seed = nullptr)
+        const T & seed, 
+        const std::function<T(const T &, const TIterating &)> & accumulate,
+        const std::function<TFinalized(const T &)> & finalizer)
     {
-        return finalizer(this->Aggregate<T>(accumulate, seed));
+        return finalizer(this->Aggregate<T>(seed, accumulate));
     }
 
     // template<

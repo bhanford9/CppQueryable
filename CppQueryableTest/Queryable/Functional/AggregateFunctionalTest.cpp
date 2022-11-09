@@ -18,6 +18,7 @@ void AggregateFunctionalTest::AggregateUninitializedTest() const
 {
     QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
     const std::string result = local.Aggregate<std::string>(
+        "",
         [](const std::string & s, const Person & p)
         {
             return s + ", " + p.GetName();
@@ -36,12 +37,11 @@ void AggregateFunctionalTest::AggregateSeededUninitialized() const
 {
     std::string expected = "Hello World!";
     QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
-    const std::string result = local.Aggregate<std::string>(
+    const std::string result = local.Aggregate<std::string>(expected,
         [](const std::string & s, const Person & p)
         {
             return s + ", " + p.GetName();
-        },
-        &expected);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -56,6 +56,7 @@ void AggregateFunctionalTest::AggregateFinalizerUninitialized() const
     const std::string expected = "Names: ";
     QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
     const std::string result = local.Aggregate<std::string, std::string>(
+        "",
         [](const std::string & s, const Person & p) { return s + ", " + p.GetName(); },
         [&](const std::string & output) -> std::string { return expected + output; });
 
@@ -74,9 +75,9 @@ void AggregateFunctionalTest::AggregateFinalizerSeededUninitialized() const
     const std::string seed = "Hello World!";
     QueryableVector<Person> local(BuildQueryable(std::vector<Person>()));
     const std::string result = local.Aggregate<std::string, std::string>(
+        expected,
         [](const std::string & s, const Person & p) { return s + ", " + p.GetName(); },
-        [&](const std::string & output) -> std::string { return finalizer + seed; },
-        &expected);
+        [&](const std::string & output) -> std::string { return finalizer + seed; });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -91,17 +92,20 @@ void AggregateFunctionalTest::AggregateDeque() const
     const std::string expected =
         "Person 1 (Male) - Height: 73in\nPerson 10 (Female) - Height: 55in\nPerson 11 (Male) - Height: 68in\n";
     QueryableDeque<Person> local = BuildQueryable(this->people.ToDeque());
-    const std::string result = local.Where(
-        [](const Person & p)
-        {
-            return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
-        [](const std::string & s, const Person & p)
-        {
-            const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
-                ") - Height: " + std::to_string(p.GetHeight()) + "in";
-            return s + newStr + "\n";
-        });
+    const std::string result = local
+        .Where(
+            [](const Person & p)
+            {
+                return p.GetName().find("Person 1") != std::string::npos;
+            })
+        .Aggregate<std::string>(
+            "",
+            [](const std::string & s, const Person & p)
+            {
+                const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
+                    ") - Height: " + std::to_string(p.GetHeight()) + "in";
+                return s + newStr + "\n";
+            });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -120,7 +124,7 @@ void AggregateFunctionalTest::AggregateList() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
+        }).Aggregate<std::string>("",
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -148,7 +152,7 @@ void AggregateFunctionalTest::AggregateMap() const
         [](const std::pair<const std::string, Person> & p)
         {
             return p.first.find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
+        }).Aggregate<std::string>("",
         [](const std::string & s, const std::pair<const std::string, Person> & p)
         {
             const std::string newStr = p.first + " (" + (p.second.IsMale() ? "Male" : "Female") +
@@ -173,7 +177,7 @@ void AggregateFunctionalTest::AggregateMultiSet() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
+        }).Aggregate<std::string>("",
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -198,7 +202,7 @@ void AggregateFunctionalTest::AggregateSet() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
+        }).Aggregate<std::string>("",
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -223,7 +227,7 @@ void AggregateFunctionalTest::AggregateVector() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string>(
+        }).Aggregate<std::string>("",
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -251,7 +255,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerDeque() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string, std::string>(
+        }).Aggregate<std::string, std::string>(seed,
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -261,8 +265,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerDeque() const
         [&](const std::string & str)
         {
             return str + finalizer;
-        },
-        &seed);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -284,7 +287,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerList() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string, std::string>(
+        }).Aggregate<std::string, std::string>(seed,
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -294,8 +297,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerList() const
         [&](const std::string & str)
         {
             return str + finalizer;
-        },
-        &seed);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -317,7 +319,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerMultiSet() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string, std::string>(
+        }).Aggregate<std::string, std::string>(seed,
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -327,8 +329,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerMultiSet() const
         [&](const std::string & str)
         {
             return str + finalizer;
-        },
-        &seed);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -350,7 +351,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerSet() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string, std::string>(
+        }).Aggregate<std::string, std::string>(seed,
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -360,8 +361,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerSet() const
         [&](const std::string & str)
         {
             return str + finalizer;
-        },
-        &seed);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }
@@ -383,7 +383,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerVector() const
         [](const Person & p)
         {
             return p.GetName().find("Person 1") != std::string::npos;
-        }).Aggregate<std::string, std::string>(
+        }).Aggregate<std::string, std::string>(seed,
         [](const std::string & s, const Person & p)
         {
             const std::string newStr = p.GetName() + " (" + (p.IsMale() ? "Male" : "Female") +
@@ -393,8 +393,7 @@ void AggregateFunctionalTest::AggregateSeededFinalizerVector() const
         [&](const std::string & str)
         {
             return str + finalizer;
-        },
-        &seed);
+        });
 
     ASSERT_STREQ(expected.c_str(), result.c_str());
 }

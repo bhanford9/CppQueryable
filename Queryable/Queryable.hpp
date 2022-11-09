@@ -142,19 +142,24 @@ public:
         return *this;
     }
 
-    template <typename T = TIterating>
-    T Aggregate(const std::function<T(T, TIterating)> & accumulate, T * seed = nullptr)
+    TIterating Aggregate(const std::function<TIterating(const TIterating &, const TIterating &)> & accumulate)
     {
-        return this->queryable->Aggregate(accumulate, seed);
+        return this->queryable->Aggreagte(accumulate);
+    }
+
+    template <typename T = TIterating>
+    T Aggregate(const T & seed, const std::function<T(const T &, const TIterating &)> & accumulate)
+    {
+        return this->queryable->Aggregate(seed, accumulate);
     }
 
     template <typename TFinalized, typename T = TIterating>
     TFinalized Aggregate(
-        const std::function<T(T, TIterating)> & accumulate,
-        const std::function<TFinalized(T)> & finalizer,
-        T * seed = nullptr)
+        const T & seed, 
+        const std::function<T(const T &, const TIterating &)> & accumulate,
+        const std::function<TFinalized(const T &)> & finalizer)
     {
-        return this->queryable->Aggregate(accumulate, finalizer, seed);
+        return this->queryable->Aggregate(seed, accumulate, finalizer);
     }
 
     bool All(const std::function<bool(const TIterating &)> & condition) const
