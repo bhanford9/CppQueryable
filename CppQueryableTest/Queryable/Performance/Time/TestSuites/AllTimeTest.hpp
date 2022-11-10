@@ -1,6 +1,6 @@
   
-#ifndef CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_TESTSUITES_ANYTIMETEST_H
-#define CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_TESTSUITES_ANYTIMETEST_H
+#ifndef CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_TESTSUITES_ALLTIMETEST_H
+#define CPPQUERYABLE_CPPQUERYABLETEST_QUERYABLE_PERFORMANCE_TIME_TESTSUITES_ALLTIMETEST_H
 
 #include <functional>
 #include <sstream>
@@ -8,12 +8,12 @@
 #include "../BaseTimeTest.hpp"
 using namespace std::placeholders;
 
-class AnyTimeTest final : public BaseTimeTest
+class AllTimeTest final : public BaseTimeTest
 {
 public:
-  AnyTimeTest()
+  AllTimeTest()
   {
-    this->methodName = "Any";
+    this->methodName = "All";
   }
 
 protected:  

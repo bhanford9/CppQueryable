@@ -10,12 +10,17 @@
 
 #include "TestSuite.hpp"
 #include "Performance/Time/TestSuites/AggregateTimeTest.hpp"
+#include "Performance/Time/TestSuites/AllTimeTest.hpp"
 #include "Performance/Time/TestSuites/AnyTimeTest.hpp"
 #include "Performance/Time/TestSuites/ForEachTimeTest.hpp"
 #include "Performance/Time/TestSuites/WhereTimeTest.hpp"
 
 class TestSuiteCollection
 {
+private:
+  std::string functionalSuffix = "FunctionalTest";
+  std::string timeSuffix = "TimeTest";
+
 protected:
   std::map<std::string, std::shared_ptr<TestSuite>> tests;
 
@@ -25,6 +30,7 @@ public:
     this->AggregateSimple = std::make_shared<AggregateTimeTest>(0);
     this->AggregateSeeded = std::make_shared<AggregateTimeTest>(1);
     this->AggregateFinalizer = std::make_shared<AggregateTimeTest>(2);
+    this->All = std::make_shared<AllTimeTest>();
     this->Any = std::make_shared<AnyTimeTest>();
     this->ForEach = std::make_shared<ForEachTimeTest>();
     this->Where = std::make_shared<WhereTimeTest>();
@@ -32,6 +38,7 @@ public:
     this->AddTimeTestSuite(this->AggregateSimple);
     this->AddTimeTestSuite(this->AggregateSeeded);
     this->AddTimeTestSuite(this->AggregateFinalizer);
+    this->AddTimeTestSuite(this->All);
     this->AddTimeTestSuite(this->Any);
     this->AddTimeTestSuite(this->ForEach);
     this->AddTimeTestSuite(this->Where);
@@ -92,12 +99,12 @@ public:
 
   void AddFunctionalTestSuite(const std::shared_ptr<TestSuite> & test)
   {
-    this->AddTestSuite(test, "FunctionalTest");
+    this->AddTestSuite(test, this->functionalSuffix);
   }
 
   void AddTimeTestSuite(const std::shared_ptr<TestSuite> & test)
   {
-    this->AddTestSuite(test, "TimeTest");
+    this->AddTestSuite(test, this->timeSuffix);
   }
 
   void AddTestSuite(const std::shared_ptr<TestSuite> & testSuite, const std::string & suffix)
@@ -120,6 +127,7 @@ public:
   std::shared_ptr<AggregateTimeTest> AggregateSimple;
   std::shared_ptr<AggregateTimeTest> AggregateSeeded;
   std::shared_ptr<AggregateTimeTest> AggregateFinalizer;
+  std::shared_ptr<AllTimeTest> All;
   std::shared_ptr<AnyTimeTest> Any;
   std::shared_ptr<ForEachTimeTest> ForEach;
   std::shared_ptr<WhereTimeTest> Where;

@@ -11,6 +11,7 @@ include_directories(
 set(HEADER_FILES
     BaseTimeTest.hpp
     TestSuites/AggregateTimeTest.hpp
+    TestSuites/AllTimeTest.hpp
     TestSuites/AnyTimeTest.hpp
     TestSuites/ForEachTimeTest.hpp
     TestSuites/WhereTimeTest.hpp
@@ -24,6 +25,7 @@ add_executable(
     
     ../../CustomTestMain.cpp
     AggregateTimeTest.cpp
+    AllTimeTest.cpp
     AnyTimeTest.cpp
     ForEachTimeTest.cpp
     WhereTimeTest.cpp
