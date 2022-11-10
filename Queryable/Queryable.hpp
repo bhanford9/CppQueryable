@@ -144,7 +144,7 @@ public:
 
     TIterating Aggregate(const std::function<TIterating(const TIterating &, const TIterating &)> & accumulate)
     {
-        return this->queryable->Aggreagte(accumulate);
+        return this->queryable->Aggregate(accumulate);
     }
 
     template <typename T = TIterating>

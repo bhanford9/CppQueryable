@@ -171,6 +171,33 @@ TimePerformanceTests/fast:
 	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build
 .PHONY : TimePerformanceTests/fast
 
+AggregateTimeTest.o: AggregateTimeTest.cpp.o
+
+.PHONY : AggregateTimeTest.o
+
+# target to build an object file
+AggregateTimeTest.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AggregateTimeTest.cpp.o
+.PHONY : AggregateTimeTest.cpp.o
+
+AggregateTimeTest.i: AggregateTimeTest.cpp.i
+
+.PHONY : AggregateTimeTest.i
+
+# target to preprocess a source file
+AggregateTimeTest.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AggregateTimeTest.cpp.i
+.PHONY : AggregateTimeTest.cpp.i
+
+AggregateTimeTest.s: AggregateTimeTest.cpp.s
+
+.PHONY : AggregateTimeTest.s
+
+# target to generate assembly for a file
+AggregateTimeTest.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AggregateTimeTest.cpp.s
+.PHONY : AggregateTimeTest.cpp.s
+
 AnyTimeTest.o: AnyTimeTest.cpp.o
 
 .PHONY : AnyTimeTest.o
@@ -292,6 +319,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... TimePerformanceTests"
+	@echo "... AggregateTimeTest.o"
+	@echo "... AggregateTimeTest.i"
+	@echo "... AggregateTimeTest.s"
 	@echo "... AnyTimeTest.o"
 	@echo "... AnyTimeTest.i"
 	@echo "... AnyTimeTest.s"

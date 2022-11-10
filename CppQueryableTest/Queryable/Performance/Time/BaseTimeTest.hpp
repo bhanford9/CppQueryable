@@ -173,7 +173,7 @@ public:
       //   ------ YYYY-MM-DD-HH-MM-SS
       //   -------- Category_Trigger_Id
 
-      auto _ = system(("mkdir -p " + logFileDirectory).c_str());
+      auto _ = system(("mkdir -p \"" + logFileDirectory + "\"").c_str());
       std::ofstream fileStream;
       fileStream.open(logFilePath, std::ios_base::app);
 

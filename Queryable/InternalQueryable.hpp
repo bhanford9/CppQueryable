@@ -1089,6 +1089,7 @@ public:
             if (isFirst)
             {
                 aggregatedValue = item;
+                isFirst = false;
             }
             else
             {
