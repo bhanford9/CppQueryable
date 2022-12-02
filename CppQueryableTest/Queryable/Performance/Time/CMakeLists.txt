@@ -13,6 +13,8 @@ set(HEADER_FILES
     TestSuites/AggregateTimeTest.hpp
     TestSuites/AllTimeTest.hpp
     TestSuites/AnyTimeTest.hpp
+    TestSuites/AtTimeTest.hpp
+    TestSuites/AverageTimeTest.hpp
     TestSuites/ForEachTimeTest.hpp
     TestSuites/WhereTimeTest.hpp
     Utilities/Duration.hpp
@@ -27,6 +29,8 @@ add_executable(
     AggregateTimeTest.cpp
     AllTimeTest.cpp
     AnyTimeTest.cpp
+    AtTimeTest.cpp
+    AverageTimeTest.cpp
     ForEachTimeTest.cpp
     WhereTimeTest.cpp
 

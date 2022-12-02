@@ -12,6 +12,8 @@
 #include "Performance/Time/TestSuites/AggregateTimeTest.hpp"
 #include "Performance/Time/TestSuites/AllTimeTest.hpp"
 #include "Performance/Time/TestSuites/AnyTimeTest.hpp"
+#include "Performance/Time/TestSuites/AtTimeTest.hpp"
+#include "Performance/Time/TestSuites/AverageTimeTest.hpp"
 #include "Performance/Time/TestSuites/ForEachTimeTest.hpp"
 #include "Performance/Time/TestSuites/WhereTimeTest.hpp"
 
@@ -32,6 +34,8 @@ public:
     this->AggregateFinalizer = std::make_shared<AggregateTimeTest>(2);
     this->All = std::make_shared<AllTimeTest>();
     this->Any = std::make_shared<AnyTimeTest>();
+    this->At = std::make_shared<AtTimeTest>();
+    this->Average = std::make_shared<AverageTimeTest>();
     this->ForEach = std::make_shared<ForEachTimeTest>();
     this->Where = std::make_shared<WhereTimeTest>();
 
@@ -40,6 +44,8 @@ public:
     this->AddTimeTestSuite(this->AggregateFinalizer);
     this->AddTimeTestSuite(this->All);
     this->AddTimeTestSuite(this->Any);
+    this->AddTimeTestSuite(this->At);
+    this->AddTimeTestSuite(this->Average);
     this->AddTimeTestSuite(this->ForEach);
     this->AddTimeTestSuite(this->Where);
   }
@@ -129,6 +135,8 @@ public:
   std::shared_ptr<AggregateTimeTest> AggregateFinalizer;
   std::shared_ptr<AllTimeTest> All;
   std::shared_ptr<AnyTimeTest> Any;
+  std::shared_ptr<AtTimeTest> At;
+  std::shared_ptr<AverageTimeTest> Average;
   std::shared_ptr<ForEachTimeTest> ForEach;
   std::shared_ptr<WhereTimeTest> Where;
 };

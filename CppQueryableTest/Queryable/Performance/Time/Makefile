@@ -252,6 +252,60 @@ AnyTimeTest.cpp.s:
 	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AnyTimeTest.cpp.s
 .PHONY : AnyTimeTest.cpp.s
 
+AtTimeTest.o: AtTimeTest.cpp.o
+
+.PHONY : AtTimeTest.o
+
+# target to build an object file
+AtTimeTest.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AtTimeTest.cpp.o
+.PHONY : AtTimeTest.cpp.o
+
+AtTimeTest.i: AtTimeTest.cpp.i
+
+.PHONY : AtTimeTest.i
+
+# target to preprocess a source file
+AtTimeTest.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AtTimeTest.cpp.i
+.PHONY : AtTimeTest.cpp.i
+
+AtTimeTest.s: AtTimeTest.cpp.s
+
+.PHONY : AtTimeTest.s
+
+# target to generate assembly for a file
+AtTimeTest.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AtTimeTest.cpp.s
+.PHONY : AtTimeTest.cpp.s
+
+AverageTimeTest.o: AverageTimeTest.cpp.o
+
+.PHONY : AverageTimeTest.o
+
+# target to build an object file
+AverageTimeTest.cpp.o:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AverageTimeTest.cpp.o
+.PHONY : AverageTimeTest.cpp.o
+
+AverageTimeTest.i: AverageTimeTest.cpp.i
+
+.PHONY : AverageTimeTest.i
+
+# target to preprocess a source file
+AverageTimeTest.cpp.i:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AverageTimeTest.cpp.i
+.PHONY : AverageTimeTest.cpp.i
+
+AverageTimeTest.s: AverageTimeTest.cpp.s
+
+.PHONY : AverageTimeTest.s
+
+# target to generate assembly for a file
+AverageTimeTest.cpp.s:
+	cd /home/bmhanford/Projects/CppQueryable && $(MAKE) -f CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/build.make CppQueryableTest/Queryable/Performance/Time/CMakeFiles/TimePerformanceTests.dir/AverageTimeTest.cpp.s
+.PHONY : AverageTimeTest.cpp.s
+
 ForEachTimeTest.o: ForEachTimeTest.cpp.o
 
 .PHONY : ForEachTimeTest.o
@@ -355,6 +409,12 @@ help:
 	@echo "... AnyTimeTest.o"
 	@echo "... AnyTimeTest.i"
 	@echo "... AnyTimeTest.s"
+	@echo "... AtTimeTest.o"
+	@echo "... AtTimeTest.i"
+	@echo "... AtTimeTest.s"
+	@echo "... AverageTimeTest.o"
+	@echo "... AverageTimeTest.i"
+	@echo "... AverageTimeTest.s"
 	@echo "... ForEachTimeTest.o"
 	@echo "... ForEachTimeTest.i"
 	@echo "... ForEachTimeTest.s"
